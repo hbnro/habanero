@@ -1,5 +1,5 @@
 <?php
-
+// TODO: rearrange for clarity
 /**
  * Basic routing/request functions
  */
