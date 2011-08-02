@@ -102,7 +102,7 @@ function meta($name, $content, $http = FALSE)
   
   $attrs[is_true($http) ? 'http-equiv' : 'name'] = $name;
 
-  return tag('meta', $atributes);
+  return tag('meta', $attrs);
 }
 
 
