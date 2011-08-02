@@ -1,0 +1,28 @@
+# - Default error
+# ErrorDocument 404 /path/to/script.php
+
+# - Activate
+# RewriteEngine On
+# RewriteBase /path/to
+
+# - Canonic URLs
+# RewriteCond %{HTTP_HOST} !^www\.domain\.tld$
+# RewriteRule ^(.*)$ http://www.domain.tld/$1 [L,R=301]
+
+# - 4Ever alone scripts
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_FILENAME}.php -f
+# RewriteRule ^([^/]*)/$ $1.php [PT,L]
+
+# - Blocked directories
+# RewriteCond $1 ^(private|includes|classes|library) [OR]
+
+# - Conventional rewrite
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.*)$ script.php/$1 [PT,L]
+
+# - Always allowed
+# RewriteCond $1 ^(script\.php|robots\.txt|favicon\.ico)$ [OR]
+# RewriteCond $1 ^(public|images|audio|css|js)/
+# RewriteRule ^(.*)$ - [PT,L]
