@@ -48,7 +48,7 @@ class prototype
    */
   
   // public function stack
-  protected static $_public = array();
+  protected static $public = array();
   
   // avoid constructor
   private function __construct()
@@ -58,11 +58,11 @@ class prototype
   // public method callback
   public static function __callStatic($method, $arguments = array())
   {
-    if ( ! isset(self::$_public[get_called_class()][$method]))
+    if ( ! isset(self::$public[get_called_class()][$method]))
     {
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
-    return call_user_func_array(self::$_public[get_called_class()][$method], $arguments);
+    return call_user_func_array(self::$public[get_called_class()][$method], $arguments);
   }
   
   /**#@-*/
@@ -76,7 +76,7 @@ class prototype
    */
   public static function method($name, Closure $lambda)
   {
-    self::$_public[get_called_class()][$name] = $lambda;
+    self::$public[get_called_class()][$name] = $lambda;
   }
   
   
@@ -88,7 +88,7 @@ class prototype
    */
   public static function defined($name)
   {
-    if (isset(self::$_public[get_called_class()][$name]))
+    if (isset(self::$public[get_called_class()][$name]))
     {
       return TRUE;
     }
