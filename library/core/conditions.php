@@ -158,24 +158,6 @@ function is_num($test, $min = NULL, $max = NULL)
 
 
 /**
- * Is wildcard match?
- *
- * @param  string  Expression
- * @param  string  String
- * @return boolean
- */
-function is_wm($filter, $test = '')
-{
-  if (match($filter, $test))
-  {
-    return TRUE;
-  }
-  
-  return FALSE;
-}
-
-
-/**
  * Is hex valid?
  *
  * @param  scalar  String

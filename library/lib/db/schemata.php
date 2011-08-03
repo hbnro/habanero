@@ -160,7 +160,7 @@ db::method('tables', function($filter = '*')
 
   foreach ($test as $one)
   {
-    if (is_wm($filter, $one))
+    if (fnmatch($filter, $one))
     {
       $out []= $one;
     }
