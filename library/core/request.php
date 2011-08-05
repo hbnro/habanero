@@ -41,6 +41,18 @@ function post($key, $or = FALSE)
 
 
 /**
+ * Upload variable access
+ *
+ * @param  string Key or name
+ * @return mixed
+ */
+function upload($key)
+{
+  return value($_FILES, $key);
+}
+
+
+/**
  * Common client IP
  *
  * @param  string Default value
@@ -437,7 +449,7 @@ function route($match, $to = NULL, array $params = array())
   }
 
 
-  foreach ($valid = array('GET', 'POST', 'PUT' , 'DELETE') as $method)
+  foreach (array('GET', 'POST', 'PUT' , 'DELETE') as $method)
   {
     $key = strtolower($method);
 
