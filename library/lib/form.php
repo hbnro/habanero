@@ -49,7 +49,7 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::to', 'input' => 'action')));
     }
-    elseif (is_callable($params['action']))
+    elseif (is_closure($params['action']))
     {
       return filter('form::to', $params['action']);
     }
@@ -57,7 +57,7 @@ class form extends prototype
     
     $params = filter('form::to', extend($defs, $params), TRUE);
     
-    if ( ! is_callable($params['content']))
+    if ( ! is_closure($params['content']))
     {
       raise(ln('failed_to_execute', array('callback' => $params['content'])));
     }
@@ -229,7 +229,7 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::input', 'input' => 'type')));
     }
-    elseif (is_callable($params['type']))
+    elseif (is_closure($params['type']))
     {
       return filter('form::input', $params['type']);
     }
@@ -294,7 +294,7 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::select', 'input' => 'name')));
     }
-    elseif (is_callable($params['name']))
+    elseif (is_closure($params['name']))
     {
       return filter('form::select', $params['name']);
     }
@@ -393,7 +393,7 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
-    elseif (is_callable($params['name']))
+    elseif (is_closure($params['name']))
     {
       return filter('form::group', $params['name']);
     }

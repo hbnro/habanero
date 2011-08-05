@@ -82,7 +82,7 @@ function translate($string, $default = '', array $params = array())
   }
   
   
-  if (is_callable($params['string']))
+  if (is_closure($params['string']))
   {
     return filter(__FUNCTION__, $params['string']);
   }

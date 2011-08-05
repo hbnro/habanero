@@ -162,7 +162,7 @@ function run($bootstrap, array $params = array())
   ), $params), TRUE);
 
 
-  if ( ! is_callable($params['bootstrap']))
+  if ( ! is_closure($params['bootstrap']))
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'bootstrap')));
   }
