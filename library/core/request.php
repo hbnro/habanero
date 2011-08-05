@@ -41,6 +41,18 @@ function post($key, $or = FALSE)
 
 
 /**
+ * Upload variable access
+ *
+ * @param  string Key or name
+ * @return mixed
+ */
+function upload($key)
+{
+  return value($_FILES, $key);
+}
+
+
+/**
  * Common client IP
  *
  * @param  string Default value
