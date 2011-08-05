@@ -48,7 +48,7 @@ class prototype
    */
   
   // public function stack
-  protected static $public = array();
+  private static $public = array();
   
   // avoid constructor
   private function __construct()
