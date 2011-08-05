@@ -221,7 +221,7 @@ function link_to($route, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
-  elseif (is_callable($params['to']))
+  elseif (is_closure($params['to']))
   {
     return filter(__FUNCTION__, $params['to']);
   }
@@ -452,7 +452,7 @@ function route($match, $to = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
   }
-  elseif (is_callable($params['match']))
+  elseif (is_closure($params['match']))
   {
     return filter(__FUNCTION__, $params['match']);
   }
@@ -488,7 +488,7 @@ function route($match, $to = NULL, array $params = array())
     
     
     if (empty($params['to']) OR
-     ! (is_callable($params['to']) OR
+     ! (is_closure($params['to']) OR
         is_file($params['to']) OR
         is_url($params['to'])))
     {

@@ -50,7 +50,7 @@ function dispatch($route, $to = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'route')));
   }
-  elseif (is_callable($params['route']))
+  elseif (is_closure($params['route']))
   {
     return filter(__FUNCTION__, $params['route']);
   }
@@ -91,7 +91,7 @@ function dispatch($route, $to = NULL, array $params = array())
 
     ob_start();
 
-    if (is_callable($params['to']))
+    if (is_closure($params['to']))
     {
       call_user_func_array($params['to'], (array) $params);
     }
@@ -161,7 +161,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
-  elseif (is_callable($params['to']))
+  elseif (is_closure($params['to']))
   {
     return filter(__FUNCTION__, $params['to']);
   }
@@ -240,7 +240,7 @@ function render($content, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
   }
-  elseif (is_callable($params['output']))
+  elseif (is_closure($params['output']))
   {
     return filter(__FUNCTION__, $params['output']);
   }
