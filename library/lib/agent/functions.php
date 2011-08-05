@@ -25,7 +25,7 @@ function client($ua = '')
   }
   
   $out = $defs;
-  $ua  = (string) ($ua ?: agent());
+  $ua  = $ua ?: agent();
   
   
   // platform
