@@ -437,7 +437,7 @@ function route($match, $to = NULL, array $params = array())
   }
 
 
-  foreach ($valid = array('GET', 'POST', 'PUT' , 'DELETE') as $method)
+  foreach (array('GET', 'POST', 'PUT' , 'DELETE') as $method)
   {
     $key = strtolower($method);
 
