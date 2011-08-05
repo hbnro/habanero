@@ -8,6 +8,6 @@
  * @ignore
  */
 
-require __DIR__.DS.'system'.EXT;
+require __DIR__.DS.'functions'.EXT;
 
 /* EOF: ./lib/agent/initialize.php */
