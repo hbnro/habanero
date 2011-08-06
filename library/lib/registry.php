@@ -91,4 +91,19 @@ function registry_unset($item, $bag = '')
   return TRUE;
 }
 
+
+/**
+ * Check if item exists on registry
+ *
+ * @param  string Key
+ * @param  string Container
+ * @return mixed
+ */
+function registry_exists($item, $bag = '')
+{
+  $bag = registry($bag);
+  
+  return isset($bag->$item);
+}
+
 /* EOF: ./lib/registry.php */
