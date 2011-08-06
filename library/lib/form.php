@@ -579,7 +579,7 @@ class form extends prototype
    */
    
   // dynamic input identifier
-  private static function index($name = '', $inc = FALSE)
+  final private static function index($name = '', $inc = FALSE)
   {
     static $num = 0;
   
