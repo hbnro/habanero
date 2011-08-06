@@ -157,9 +157,10 @@ class pager extends prototype
   /**
    * All links pager
    *
+   * @param  string Wrapper
    * @return array
    */
-  final public static function page_all()
+  final public static function page_all($wrap = '[%s]')
   {
     $out = array();
     $end = pager::pages();
@@ -171,7 +172,7 @@ class pager extends prototype
       
       if ($cur === $i)
       {
-        $link = "[$link]";
+        $link = sprintf($wrap, $link);
       }
       $out []= $link;
     } 
