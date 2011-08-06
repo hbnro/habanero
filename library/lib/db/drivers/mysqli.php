@@ -17,7 +17,7 @@ define('DB_DRIVER', 'MySQLi');
 /**#@-*/
 
 
-sql::method('connect', function()
+sql::implement('connect', function()
 {
   static $resource = NULL;
   
@@ -35,7 +35,7 @@ sql::method('connect', function()
   return $resource;
 });
 
-sql::method('version', function()
+sql::implement('version', function()
 {
   $res  = mysqli_query(sql::connect(), 'SELECT version()');
   $test = sql::fetch_assoc($res);
@@ -43,47 +43,47 @@ sql::method('version', function()
   return array_shift($test);
 });
 
-sql::method('execute', function($sql)
+sql::implement('execute', function($sql)
 {
   return mysqli_query(sql::connect(), $sql);
 });
 
-sql::method('escape', function($test)
+sql::implement('escape', function($test)
 {
   return str_replace("'", '\\\'', stripslashes($test));
 });
 
-sql::method('error', function()
+sql::implement('error', function()
 {
   return mysqli_error(sql::connect());
 });
 
-sql::method('result', function($res)
+sql::implement('result', function($res)
 {
   return @array_shift(sql::fetch_assoc($res));
 });
 
-sql::method('fetch_assoc', function($res)
+sql::implement('fetch_assoc', function($res)
 {
   return mysqli_fetch_assoc($res);
 });
 
-sql::method('fetch_object', function($res)
+sql::implement('fetch_object', function($res)
 {
   return mysqli_fetch_object($res);
 });
 
-sql::method('count_rows', function($res)
+sql::implement('count_rows', function($res)
 {
   return mysqli_num_rows($res);
 });
 
-sql::method('affected_rows', function()
+sql::implement('affected_rows', function()
 {
   return mysqli_affected_rows(sql::connect());
 });
 
-sql::method('last_id', function()
+sql::implement('last_id', function()
 {
   return mysqli_insert_id(sql::connect());
 });

@@ -16,7 +16,7 @@ define('CACHE_DRIVER', 'SQLite3');
 /**#@-*/
 
 
-cache::method('link', function()
+cache::implement('link', function()
 {
   static $object = NULL;
   
@@ -53,12 +53,12 @@ cache::method('link', function()
   return $object;
 });
 
-cache::method('free_all', function()
+cache::implement('free_all', function()
 {
   cache::link()->exec('DELETE FROM "data"');
 });
 
-cache::method('fetch_item', function($key)
+cache::implement('fetch_item', function($key)
 {
   $sql  = 'SELECT value FROM "data"';
   $sql .= "\nWHERE \"key\" = PHP('md5', '$key')";
@@ -75,7 +75,7 @@ cache::method('fetch_item', function($key)
   }
 });
 
-cache::method('store_item', function($key, $val, $max)
+cache::implement('store_item', function($key, $val, $max)
 {
   $time = time() + $max;
   $val  = str_replace("'", "''", serialize($val));
@@ -87,7 +87,7 @@ cache::method('store_item', function($key, $val, $max)
   return cache::link()->exec($sql);
 });
 
-cache::method('delete_item', function($key)
+cache::implement('delete_item', function($key)
 {
   $sql  = 'DELETE FROM "data"';
   $sql .= "\nWHERE \"key\" = PHP('md5', '$key')";
@@ -95,7 +95,7 @@ cache::method('delete_item', function($key)
   return cache::link()->exec($sql);
 });
 
-cache::method('check_item', function($key)
+cache::implement('check_item', function($key)
 {
   $sql  = "SELECT COUNT(*) FROM \"data\"";
   $sql .= "\nWHERE \"key\" = PHP('md5', '$key')";

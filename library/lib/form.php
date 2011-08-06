@@ -610,7 +610,7 @@ lambda(function()
   {
     if ( ! form::defined(strtr($type, '-', '_')))
     {
-      form::method(strtr($type, '-', '_'), function($name, $value = '', array $args = array())
+      form::implement(strtr($type, '-', '_'), function($name, $value = '', array $args = array())
         use($type)
       {
         return form::input($type, $name, $value, $args);

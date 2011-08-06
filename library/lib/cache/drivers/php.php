@@ -11,7 +11,7 @@ define('CACHE_DRIVER', 'PHP');
 /**#@-*/
 
 
-cache::method('free_all', function()
+cache::implement('free_all', function()
 {
   foreach (dir2arr(TMP, '--cache-php*') as $cache_file)
   {
@@ -19,7 +19,7 @@ cache::method('free_all', function()
   }
 });
 
-cache::method('fetch_item', function($key)
+cache::implement('fetch_item', function($key)
 {
   if (is_file($cache_file = TMP.DS.'--cache-php'.md5($key)))
   {
@@ -38,7 +38,7 @@ cache::method('fetch_item', function($key)
   return FALSE;
 });
 
-cache::method('store_item', function($key, $set = array(), $ttl = 0)
+cache::implement('store_item', function($key, $set = array(), $ttl = 0)
 {
   $cache_file = TMP.DS.'--cache-php'.md5($key);
   
@@ -48,7 +48,7 @@ cache::method('store_item', function($key, $set = array(), $ttl = 0)
   return write($cache_file, $code);
 });
 
-cache::method('delete_item', function($key)
+cache::implement('delete_item', function($key)
 {
   if (is_file($cache_file = TMP.DS.'--cache-php'.md5($key)))
   {
@@ -56,7 +56,7 @@ cache::method('delete_item', function($key)
   }
 });
 
-cache::method('check_item', function($key)
+cache::implement('check_item', function($key)
 {
   return ! is_false(cache::fetch_item($key));
 });

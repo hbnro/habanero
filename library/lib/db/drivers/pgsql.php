@@ -17,7 +17,7 @@ define('DB_DRIVER', 'PostgreSQL');
 /**#@-*/
 
 
-sql::method('connect', function()
+sql::implement('connect', function()
 {
   static $resource = NULL;
  
@@ -37,52 +37,52 @@ sql::method('connect', function()
   return $resource;
 });
 
-sql::method('version', function()
+sql::implement('version', function()
 {
   return pg_fetch_result(pg_exec(sql::connect(), 'SELECT version()'), 0);
 });
 
-sql::method('execute', function($sql)
+sql::implement('execute', function($sql)
 {
   return pg_query(sql::connect(), $sql);
 });
 
-sql::method('escape', function($test)
+sql::implement('escape', function($test)
 {
   return str_replace("'", '\\\'', $test);
 });
 
-sql::method('error', function()
+sql::implement('error', function()
 {
   return pg_last_error(sql::connect());
 });
 
-sql::method('result', function($res)
+sql::implement('result', function($res)
 {
   return pg_fetch_result($res, 0);
 });
 
-sql::method('fetch_assoc', function($res)
+sql::implement('fetch_assoc', function($res)
 {
   return pg_fetch_assoc($res);
 });
 
-sql::method('fetch_object', function($res)
+sql::implement('fetch_object', function($res)
 {
   return pg_fetch_object($res);
 });
 
-sql::method('count_rows', function($res)
+sql::implement('count_rows', function($res)
 {
   return pg_num_rows($res);
 });
 
-sql::method('affected_rows', function($res)
+sql::implement('affected_rows', function($res)
 {
   return pg_affected_rows($res);
 });
 
-sql::method('last_id', function($res, $table, $column)
+sql::implement('last_id', function($res, $table, $column)
 {
   $tmp = pg_fetch_row(pg_query(sql::connect(), 'SELECT version()'), 0);
 

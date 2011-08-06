@@ -9,7 +9,7 @@
  *
  * @return boolean
  */
-db::method('begin', function()
+db::implement('begin', function()
 {
   return (boolean) sql::begin();
 });
@@ -20,7 +20,7 @@ db::method('begin', function()
  *
  * @return boolean
  */
-db::method('commit', function()
+db::implement('commit', function()
 {
   return (boolean) sql::commit();
 });
@@ -31,7 +31,7 @@ db::method('commit', function()
  *
  * @return boolean
  */
-db::method('rollback', function()
+db::implement('rollback', function()
 {
   return (boolean) sql::rollback();
 });
@@ -44,7 +44,7 @@ db::method('rollback', function()
  * @param  boolean Treat as plain SQL?
  * @return mixed
  */
-db::method('import', function($from, $raw = FALSE)
+db::implement('import', function($from, $raw = FALSE)
 {
   ob_start();
   
@@ -88,7 +88,7 @@ db::method('import', function($from, $raw = FALSE)
  * @param  boolean Export as plain SQL?
  * @return array
  */
-db::method('export', function($to, $mask = '*', $data = FALSE, $raw = FALSE)
+db::implement('export', function($to, $mask = '*', $data = FALSE, $raw = FALSE)
 {
   $out = array();
   
@@ -147,7 +147,7 @@ db::method('export', function($to, $mask = '*', $data = FALSE, $raw = FALSE)
  * @param  string Simple filter
  * @return array
  */
-db::method('tables', function($filter = '*')
+db::implement('tables', function($filter = '*')
 {
   $out  = array();
   $test = sql::tables();
@@ -177,7 +177,7 @@ db::method('tables', function($filter = '*')
  * @staticvar array  Column conversion set
  * @return    array
  */
-db::method('columns', function($of)
+db::implement('columns', function($of)
 {
   static $set = NULL;
 
@@ -209,7 +209,7 @@ db::method('columns', function($of)
  * @staticvar array   SQL definition set
  * @return    string
  */
-db::method('field', function($type, $length = 0, $default = NULL)
+db::implement('field', function($type, $length = 0, $default = NULL)
 {
   static $set = NULL;
 
@@ -267,7 +267,7 @@ db::method('field', function($type, $length = 0, $default = NULL)
  * @param  array  Table definition
  * @return string
  */
-db::method('build', function($table, array $columns = array())
+db::implement('build', function($table, array $columns = array())
 {
   $name = sql::names($table);
 
