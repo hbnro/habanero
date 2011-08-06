@@ -12,7 +12,7 @@ class cache extends prototype
    */
   
   // dynamic depth indicator
-  protected static $last = array();
+  private static $last = array();
   
   /**#@-*/
    
@@ -23,7 +23,7 @@ class cache extends prototype
    * @param  string  Identifier
    * @return boolean
    */
-  function begin($key = NULL)
+  final public static function begin($key = NULL)
   {
     $key = func_num_args() === 0 ? '--n' . ob_get_level() : $key;
     
@@ -49,7 +49,7 @@ class cache extends prototype
    * @param  mixed   Tags|Array
    * @return boolean
    */
-  function end($max = 0, $tags = array())
+  final public static function end($max = 0, $tags = array())
   {
     if ( ! ob_get_level())
     {
@@ -81,7 +81,7 @@ class cache extends prototype
    * @param  integer Duration in secs
    * @return mixed
    */
-  function block($key, Closure $lambda, $max = 0)
+  final public static function block($key, Closure $lambda, $max = 0)
   {
     if (is_false($old = cache::get($key)))
     {
@@ -103,7 +103,7 @@ class cache extends prototype
    * @param  mixed  Default value
    * @return mixed
    */
-  function get($key, $default = FALSE)
+  final public static function get($key, $default = FALSE)
   {
     if (is_num($key) OR is_false($old = cache::fetch_item($key)))
     {
@@ -122,7 +122,7 @@ class cache extends prototype
    * @param  mixed   Tags|Array
    * @return boolean
    */
-  function set($key, $value, $max = 0, $tags = array())
+  final public static function set($key, $value, $max = 0, $tags = array())
   {
     if (is_num($key))
     {
@@ -161,7 +161,7 @@ class cache extends prototype
    * @param  mixed   Identifier|Tags|Array
    * @return boolean
    */
-  function remove($key)
+  final public static function remove($key)
   {
     if (is_string($key) && ! is_false(strpos($key, ',')))
     {
@@ -197,7 +197,7 @@ class cache extends prototype
    *
    * @return void
    */
-  function clear()
+  final public static function clear()
   {
     cache::free_all();
   }
@@ -209,7 +209,7 @@ class cache extends prototype
    * @param  string  Identifier
    * @return boolean
    */
-  function exists($key)
+  final public static function exists($key)
   {
     return ! is_num($key) && cache::check_item($key);
   }

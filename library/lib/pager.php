@@ -12,13 +12,13 @@ class pager extends prototype
    */
   
   // number of pages
-  protected static $count = 0;
+  private static $count = 0;
   
   // number of current page
-  protected static $current = 0;
+  private static $current = 0;
   
   // defaults
-  protected static $defs = array(
+  private static $defs = array(
     'link_text' => '%d',
     'link_href' => '?p=%d',
     'link_root' => ROOT,
@@ -37,7 +37,7 @@ class pager extends prototype
    * @param  mixed Value
    * @return void
    */
-  function setup($key, $value = '')
+  final public static function setup($key, $value = '')
   {
     if (is_assoc($key))
     {
@@ -56,7 +56,7 @@ class pager extends prototype
    * @param  array Result set
    * @return array
    */
-  function set_array(array $set)
+  final public static function set_array(array $set)
   {
     $index = pager::offset(sizeof($set));
     $set   = array_slice($set, $index, pager::count_page());
@@ -70,7 +70,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  function total()
+  final public static function total()
   {
     return (int) pager::$count;
   }
@@ -81,7 +81,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  function pages()
+  final public static function pages()
   {
     return ceil(pager::$count / pager::$defs['count_page']);
   }
@@ -92,7 +92,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  function count_page()
+  final public static function count_page()
   {
     return (int) pager::$defs['count_page'];
   }
@@ -103,7 +103,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  function count_max()
+  final public static function count_max()
   {
     return (int) pager::$defs['count_max'];
   }
@@ -114,7 +114,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  function current()
+  final public static function current()
   {
     return pager::$current ?  (int) pager::$current : 1;
   }
@@ -125,7 +125,7 @@ class pager extends prototype
    *
    * @return void
    */
-  function index($num)
+  final public static function index($num)
   {
     pager::$current = (int) $num;
   }
@@ -138,7 +138,7 @@ class pager extends prototype
    * @param  integer Number of current page
    * @return integer
    */
-  function offset($count, $current = FALSE)
+  final public static function offset($count, $current = FALSE)
   {
     pager::$count = (int) $count;
     
@@ -159,7 +159,7 @@ class pager extends prototype
    *
    * @return array
    */
-  function page_all()
+  final public static function page_all()
   {
     $out = array();
     $end = pager::pages();
@@ -187,7 +187,7 @@ class pager extends prototype
    * @param  array   Attributes
    * @return string
    */
-  function page_link($num, $text = '', array $args = array())
+  final public static function page_link($num, $text = '', array $args = array())
   {
     $text = $text ? sprintf(pager::$defs['link_text'], number_format($num)) : number_format($num);
     
@@ -202,7 +202,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  function page_step($from = 0)
+  final public static function page_step($from = 0)
   {
     $out = 0;
     $max = pager::count_max();

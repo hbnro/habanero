@@ -56,7 +56,7 @@ class prototype
   }
   
   // public method callback
-  public static function __callStatic($method, $arguments = array())
+  final public static function __callStatic($method, $arguments = array())
   {
     if ( ! isset(self::$public[get_called_class()][$method]))
     {
@@ -74,7 +74,7 @@ class prototype
    * @param  string Method name
    * @param  mixed  Closure function
    */
-  public static function method($name, Closure $lambda)
+  final public static function method($name, Closure $lambda)
   {
     self::$public[get_called_class()][$name] = $lambda;
   }
@@ -86,7 +86,7 @@ class prototype
    * @param  string  Method name
    * @return boolean
    */
-  public static function defined($name)
+  final public static function defined($name)
   {
     if (isset(self::$public[get_called_class()][$name]))
     {
