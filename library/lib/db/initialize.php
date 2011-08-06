@@ -61,7 +61,7 @@ lambda(function()
   $scheme_file = $driver_file = '';
 
   
-  if (class_exists('PDO'))
+  if (class_exists('PDO') && option('pdo'))
   {
     if ( ! in_array($parts['scheme'], pdo_drivers()))
     {
