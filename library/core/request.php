@@ -154,7 +154,7 @@ function server($key = '', $default = FALSE, $complete = FALSE)
 
       $host .= strtolower(array_shift($pre));
       $host .= ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '';
-      $host .= '';
+      $host .= ':';//FIX
     }
 
     $host .= '//' . strtolower($_SERVER['HTTP_HOST']);
