@@ -373,7 +373,7 @@ function submit_to($url, array $args = array(), array $files = array(), $method 
 
   if ( ! empty($args))
   {
-    foreach ((array) $args as $name => $value)
+    foreach ($args as $name => $value)
     {
       $output .= "\r\nContent-Disposition: form-data; name=\"" . slug($name) . '"';
       $output .= "\r\n\r\n$value\r\n--$bound";
