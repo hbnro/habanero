@@ -365,8 +365,8 @@ function extend($base)
   foreach ($test as $set)
   {
     foreach ($set as $key => $val)
-    {// TODO: improve the check-in?
-      $val ? $base[$key] = $val : NULL;
+    {
+      NULL !== $val ? $base[$key] = $val : NULL;
     }
   }
 
