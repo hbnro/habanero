@@ -11,7 +11,7 @@ define('CACHE_DRIVER', 'Filesystem');
 /**#@-*/
 
 
-cache::method('free_all', function()
+cache::implement('free_all', function()
 {
   foreach (dir2arr(TMP, '--cache-file*') as $cache_file)
   {
@@ -19,7 +19,7 @@ cache::method('free_all', function()
   }
 });
 
-cache::method('fetch_item', function($key)
+cache::implement('fetch_item', function($key)
 {
   if (is_file($cache_file = TMP.DS.'--cache-file'.md5($key)))
   {
@@ -42,7 +42,7 @@ cache::method('fetch_item', function($key)
   return FALSE;
 });
 
-cache::method('store_item', function($key, $val, $max)
+cache::implement('store_item', function($key, $val, $max)
 {
   $cache_file = TMP.DS.'--cache-file'.md5($key);
   $binary     = sprintf('%d|%s', time() + $max, serialize($val));
@@ -50,7 +50,7 @@ cache::method('store_item', function($key, $val, $max)
   return write($cache_file, @gzcompress($binary));
 });
 
-cache::method('delete_item', function($key)
+cache::implement('delete_item', function($key)
 {
   if (is_file($cache_file = TMP.DS.'--cache-file'.md5($key)))
   {
@@ -58,7 +58,7 @@ cache::method('delete_item', function($key)
   }
 });
 
-cache::method('check_item', function($key)
+cache::implement('check_item', function($key)
 {
   return is_file(TMP.DS.'--cache-file'.md5($key));
 });

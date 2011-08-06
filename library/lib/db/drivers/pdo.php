@@ -17,7 +17,7 @@ define('DB_DRIVER', 'PDO');
 /**#@-*/
 
 
-sql::method('connect', function()
+sql::implement('connect', function()
 {
   static $object = NULL;
   
@@ -52,14 +52,14 @@ sql::method('connect', function()
   return $object;
 });
 
-sql::method('version', function()
+sql::implement('version', function()
 {
   $test = sql::connect()->getAttribute(PDO::ATTR_SERVER_VERSION);
   
   return $test['versionString'];
 });
 
-sql::method('execute', function($sql)
+sql::implement('execute', function($sql)
 {
   if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $sql))
   {
@@ -68,34 +68,34 @@ sql::method('execute', function($sql)
   return sql::connect()->query($sql);
 });
 
-sql::method('escape', function($test)
+sql::implement('escape', function($test)
 {
   return substr(sql::connect()->quote($test), 1, -1);
 });
 
-sql::method('error', function()
+sql::implement('error', function()
 {
   $test = sql::connect()->errorInfo();
   
   return $test[0] == '00000' ? FALSE : $test[2];
 });
 
-sql::method('result', function($res)
+sql::implement('result', function($res)
 {
   return @array_shift(sql::fetch_assoc($res));
 });
 
-sql::method('fetch_assoc', function($res)
+sql::implement('fetch_assoc', function($res)
 {
   return $res ? $res->fetch(PDO::FETCH_ASSOC) : array();
 });
 
-sql::method('fetch_object', function($res)
+sql::implement('fetch_object', function($res)
 {
   return $res ? $res->fetch(PDO::FETCH_OBJ) : new stdClass;
 });
 
-sql::method('count_rows', function($res)
+sql::implement('count_rows', function($res)
 {
   if ( ! $res)
   {
@@ -113,12 +113,12 @@ sql::method('count_rows', function($res)
   return (int) $out;
 });
 
-sql::method('affected_rows', function ($res)
+sql::implement('affected_rows', function ($res)
 {
   return $res ? (int) $res : FALSE;
 });
 
-sql::method('last_id', function()
+sql::implement('last_id', function()
 {
   if (DB_SCHEME == 'pgsql')
   {// http://www.php.net/manual/en/pdo.lastinsertid.php#86178

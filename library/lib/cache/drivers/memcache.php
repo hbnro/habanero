@@ -16,7 +16,7 @@ define('CACHE_DRIVER', 'Memcached');
 /**#@-*/
 
 
-cache::method('connect', function()
+cache::implement('connect', function()
 {// TODO: overwrite if needed?
   static $resource = NULL;
   
@@ -29,7 +29,7 @@ cache::method('connect', function()
   return $resource;
 });
 
-cache::method('free_all', function()
+cache::implement('free_all', function()
 {
   memcache_flush(cache::connect());
   
@@ -38,22 +38,22 @@ cache::method('free_all', function()
   while(time() < $end);
 });
 
-cache::method('fetch_item', function($key)
+cache::implement('fetch_item', function($key)
 {
   return memcache_get(cache::connect(), $key);
 });
 
-cache::method('store_item', function($key, $val, $max)
+cache::implement('store_item', function($key, $val, $max)
 {
   return memcache_set(cache::connect(), $key, $val, 0, $max);
 });
 
-cache::method('delete_item', function($key)
+cache::implement('delete_item', function($key)
 {
   return memcache_delete(cache::connect(), $key);
 });
 
-cache::method('check_item', function($key)
+cache::implement('check_item', function($key)
 {// http://www.php.net/manual/en/memcache.getextendedstats.php#98161
   $list  = array();
   $slabs = memcache_get_extended_stats(cache::connect(), 'slabs');

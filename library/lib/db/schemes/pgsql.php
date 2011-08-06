@@ -4,7 +4,7 @@
  * PostgreSQL database scheme
  */
 
-sql::method('type', function()
+sql::implement('type', function()
 {
   static $set = array(
             'CHARACTER' => 'string',
@@ -25,7 +25,7 @@ sql::method('type', function()
   return $set;
 });
 
-sql::method('raw', function()
+sql::implement('raw', function()
 {
   static $set = array(
             'primary_key' => 'SERIAL PRIMARY KEY',
@@ -35,27 +35,27 @@ sql::method('raw', function()
   return $set;
 });
 
-sql::method('begin', function()
+sql::implement('begin', function()
 {
   return sql::execute('BEGIN');
 });
 
-sql::method('commit', function()
+sql::implement('commit', function()
 {
   return sql::execute('COMMIT');
 });
 
-sql::method('rollback', function()
+sql::implement('rollback', function()
 {
   return sql::execute('ROLLBACK');
 });
 
-sql::method('encoding', function($test)
+sql::implement('encoding', function($test)
 {
   return sql::execute("SET NAMES '$test'");
 });
 
-sql::method('tables', function()
+sql::implement('tables', function()
 {
   $out = array();
   
@@ -72,7 +72,7 @@ sql::method('tables', function()
   return $out;
 });
 
-sql::method('columns', function($test)
+sql::implement('columns', function($test)
 {
   $out = array();
   
@@ -110,47 +110,47 @@ sql::method('columns', function($test)
   return $out;
 });
 
-sql::method('limit', function($from, $to)
+sql::implement('limit', function($from, $to)
 {
   return $to ? "\nLIMIT $to OFFSET $from" : "\nLIMIT $from\n";
 });
 
-sql::method('rename_table', function($from, $to)
+sql::implement('rename_table', function($from, $to)
 {
   return sql::execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
 });
 
-sql::method('add_column', function($to, $name, $type)
+sql::implement('add_column', function($to, $name, $type)
 {
   return sql::execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, db::field($type)));
 });
 
-sql::method('remove_column', function($from, $name)
+sql::implement('remove_column', function($from, $name)
 {
   return sql::execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
 });
 
-sql::method('rename_column', function($from, $name, $to)
+sql::implement('rename_column', function($from, $name, $to)
 {
   return sql::execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
 });
 
-sql::method('change_column', function($from, $name, $to)
+sql::implement('change_column', function($from, $name, $to)
 {
   return sql::execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, db::field($to)));
 });
 
-sql::method('add_index', function($to, $name, $column, $unique = FALSE)
+sql::implement('add_index', function($to, $name, $column, $unique = FALSE)
 {
   return sql::execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
 });
 
-sql::method('remove_index', function($name)
+sql::implement('remove_index', function($name)
 {
   return sql::execute(sprintf('DROP INDEX "%s"', $name));
 });
 
-sql::method('quotes', function($test)
+sql::implement('quotes', function($test)
 {
   return '"' . $test . '"';
 });

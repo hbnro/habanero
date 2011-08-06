@@ -230,12 +230,12 @@ class pager extends prototype
 // database hooks
 if (class_exists('db'))
 {
-  pager::method('select', function($table, $fields = ALL, array $where = array(), array $options = array())
+  pager::implement('select', function($table, $fields = ALL, array $where = array(), array $options = array())
   {
     return db::paginate(db::select($table, $fields, $where, $options, TRUE));
   });
   
-  db::method('paginate', function($sql, $offset = 0, $limit = 10)
+  db::implement('paginate', function($sql, $offset = 0, $limit = 10)
   {
     $sql  = sql::query_repare(preg_replace('/\bLIMIT\s+[\d,]+\s*$/s', '', $sql));
     $tmp  = sql::execute("SELECT COUNT(*) FROM ($sql) AS c");

@@ -16,7 +16,7 @@ define('CACHE_DRIVER', 'eAccelerator');
 /**#@-*/
 
 
-cache::method('free_all', function()
+cache::implement('free_all', function()
 {
   eaccelerator_gc();
   
@@ -26,22 +26,22 @@ cache::method('free_all', function()
   }
 });
 
-cache::method('fetch_item', function($key)
+cache::implement('fetch_item', function($key)
 {
   return eaccelerator_get($key);
 });
 
-cache::method('store_item', function($key, $val, $max)
+cache::implement('store_item', function($key, $val, $max)
 {
   return eaccelerator_put($key, $val, $max);
 });
 
-cache::method('delete_item', function($key)
+cache::implement('delete_item', function($key)
 {
   eaccelerator_rm($key);
 });
 
-cache::method('check_item', function($key)
+cache::implement('check_item', function($key)
 {
   return in_array($key, eaccelerator_list_keys());
 });

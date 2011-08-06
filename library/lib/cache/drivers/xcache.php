@@ -16,27 +16,27 @@ define('CACHE_DRIVER', 'XCache');
 /**#@-*/
 
 
-cache::method('free_all', function()
+cache::implement('free_all', function()
 {
   xcache_clear_cache(XC_TYPE_VAR, 0);
 });
 
-cache::method('fetch_item', function($key)
+cache::implement('fetch_item', function($key)
 {
   return xcache_get($key);
 });
 
-cache::method('store_item', function($key, $val, $max)
+cache::implement('store_item', function($key, $val, $max)
 {
   return xcache_set($key, $val, $max);
 });
 
-cache::method('delete_item', function($key)
+cache::implement('delete_item', function($key)
 {
   return xcache_unset($key);
 });
 
-cache::method('check_item', function($key)
+cache::implement('check_item', function($key)
 {
   return xcache_isset($key);
 });

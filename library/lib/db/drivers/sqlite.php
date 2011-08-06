@@ -17,7 +17,7 @@ define('DB_DRIVER', 'SQLite3');
 /**#@-*/
 
 
-sql::method('connect', function()
+sql::implement('connect', function()
 {
   static $object = NULL;
   
@@ -63,54 +63,54 @@ sql::method('connect', function()
   return $object;
 });
 
-sql::method('version', function()
+sql::implement('version', function()
 {
   $test = sql::connect()->version();
   
   return $test['versionString'];
 });
 
-sql::method('execute', function($sql)
+sql::implement('execute', function($sql)
 {
   return sql::connect()->query($sql);
 });
 
-sql::method('escape', function($test)
+sql::implement('escape', function($test)
 {
   return str_replace("'", "''", stripslashes($test));
 });
 
-sql::method('error', function()
+sql::implement('error', function()
 {
   return sql::connect()->lastErrorMsg();
 });
 
-sql::method('result', function($res)
+sql::implement('result', function($res)
 {
   return $res ? $res->fetchArray(SQLITE3_ASSOC) : FALSE;
 });
 
-sql::method('fetch_assoc', function($res)
+sql::implement('fetch_assoc', function($res)
 {
   return $res ? $res->fetchArray(SQLITE3_ASSOC) : array();
 });
 
-sql::method('fetch_object', function($res)
+sql::implement('fetch_object', function($res)
 {
   return (object) sql::fetch_assoc($res);
 });
 
-sql::method('count_rows', function($res)
+sql::implement('count_rows', function($res)
 {
   return $res ? sizeof($res) : 0;
 });
 
-sql::method('affected_rows', function()
+sql::implement('affected_rows', function()
 {
   return sql::connect()->changes();
 });
 
-sql::method('last_id', function()
+sql::implement('last_id', function()
 {
   return sql::connect()->lastInsertRowID();
 });

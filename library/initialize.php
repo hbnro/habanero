@@ -74,9 +74,9 @@ class prototype
    * @param  string Method name
    * @param  mixed  Closure function
    */
-  final public static function method($name, Closure $lambda)
+  final public static function implement($method, Closure $lambda)
   {
-    self::$public[get_called_class()][$name] = $lambda;
+    self::$public[get_called_class()][$method] = $lambda;
   }
   
   
@@ -86,13 +86,13 @@ class prototype
    * @param  string  Method name
    * @return boolean
    */
-  final public static function defined($name)
+  final public static function defined($method)
   {
-    if (isset(self::$public[get_called_class()][$name]))
+    if (isset(self::$public[get_called_class()][$method]))
     {
       return TRUE;
     }
-    return method_exists(get_called_class(), $name);
+    return method_exists(get_called_class(), $method);
   }
   
 }
