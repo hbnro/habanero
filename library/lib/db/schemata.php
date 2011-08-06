@@ -116,7 +116,7 @@ db::implement('export', function($to, $mask = '*', $data = FALSE, $raw = FALSE)
 
     foreach ($out as $key => $val)
     {
-      $old []= db::build($key, $val['scheme'], TRUE) . ';';
+      $old []= db::build($key, $val['scheme']) . ';';
 
       if ( ! empty($val['data']))
       {
@@ -240,6 +240,15 @@ db::implement('field', function($type, $length = 0, $default = NULL)
   elseif (is_array($test))
   {
     @list($type, $length, $default) = $test;
+    
+    if ( ! empty($set[$type]))
+    {//FIX
+      if (is_string($set[$type]))
+      {
+        return $set[$type];
+      }
+      $type = $set[$type]['type'];
+    }
   }
   elseif ($test !== $type)
   {
