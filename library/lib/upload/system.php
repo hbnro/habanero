@@ -127,7 +127,7 @@ class upload extends prototype
     {
       if ($val > 0)
       {
-        if (is_false($skip) OR is_false(upload::$defs['skip_error']))
+        if (is_false(upload::$defs['skip_error'], $skip))
         {
           return upload::set_error($val);
         }
