@@ -506,11 +506,11 @@ function value($from, $that = NULL, $or = FALSE)
     $get   = join('.', $matches[1]);
     $depth = sizeof($matches[1]);
 
-    if (isset($from->$key))
+    if (is_object($from) && isset($from->$key))
     {
       $tmp = $from->$key;
     }
-    elseif (isset($from[$key]))
+    elseif (is_array($from) && isset($from[$key]))
     {
       $tmp = $from[$key];
     }
