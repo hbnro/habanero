@@ -17,7 +17,7 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  function select($table, $fields = ALL, array $where = array(), array $options = array(), $return = FALSE)
+  final public static function select($table, $fields = ALL, array $where = array(), array $options = array(), $return = FALSE)
   {
     $sql  = "SELECT\n" . sql::build_fields($fields);
     $sql .= "\nFROM\n" . sql::build_fields($table);
@@ -85,7 +85,7 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  function insert($table, $values, $column = NULL, $return = FALSE)
+  final public static function insert($table, $values, $column = NULL, $return = FALSE)
   {
     $sql  = "INSERT INTO\n" . sql::build_fields($table);
     $sql .= sql::build_values($values, TRUE);
@@ -113,7 +113,7 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  function delete($table, array $where = array(), $limit = 0, $return = FALSE)
+  final public static function delete($table, array $where = array(), $limit = 0, $return = FALSE)
   {
     $sql = "DELETE FROM\n" . sql::build_fields($table);
   
@@ -137,7 +137,7 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  function update($table, $fields, array $where = array(), $limit = 0, $return = FALSE)
+  final public static function update($table, $fields, array $where = array(), $limit = 0, $return = FALSE)
   {
     $sql  = "UPDATE\n" . sql::build_fields($table);
     $sql .= "\nSET\n" . sql::build_values($fields, FALSE);
@@ -155,7 +155,7 @@ class db extends prototype
    * @param  array  Params|Arguments
    * @return string
    */
-  function prepare($sql, array $vars = array())
+  final public static function prepare($sql, array $vars = array())
   {
     if (is_array($vars))
     {
@@ -179,7 +179,7 @@ class db extends prototype
    * @staticvar mixed Function callback
    * @return    mixed
    */
-  function escape($sql, $vars = array())
+  final public static function escape($sql, $vars = array())
   {
     static $repl = NULL;
     
@@ -229,7 +229,7 @@ class db extends prototype
    * @param  string Query
    * @return mixed
    */
-  function query($sql)
+  final public static function query($sql)
   {
     $args     = func_get_args();
     $callback = array('db', strpos($sql, '?') > 0 ? 'prep' : 'escape');
@@ -252,7 +252,7 @@ class db extends prototype
    * @param  mixed Default value
    * @return mixed
    */
-  function result($result, $default = FALSE)
+  final public static function result($result, $default = FALSE)
   {
     if (is_string($result))
     {
@@ -274,7 +274,7 @@ class db extends prototype
    * @param  mixed AS_ARRAY|AS_OBJECT
    * @return array
    */
-  function fetch_all($result, $output = AS_ARRAY)
+  final public static function fetch_all($result, $output = AS_ARRAY)
   {
     $out = array();
     
@@ -301,7 +301,7 @@ class db extends prototype
    * @param  mixed AS_ARRAY|AS_OBJECT
    * @return array
    */
-  function fetch($result, $output = AS_ARRAY)
+  final public static function fetch($result, $output = AS_ARRAY)
   {
     return $output === AS_OBJECT ? sql::fetch_object($result) : sql::fetch_assoc($result);
   }
@@ -313,7 +313,7 @@ class db extends prototype
    * @param  mixed SQL result
    * @return mixed
    */
-  function numrows($result)
+  final public static function numrows($result)
   {
     return sql::count_rows($result);
   }
@@ -325,7 +325,7 @@ class db extends prototype
    * @param  mixed SQL result
    * @return mixed
    */
-  function affected($result)
+  final public static function affected($result)
   {
     return sql::affected_rows($result);
   }
@@ -339,7 +339,7 @@ class db extends prototype
    * @param  mixed Primary key|Index
    * @return mixed
    */
-  function inserted($result, $table = NULL, $column = NULL)
+  final public static function inserted($result, $table = NULL, $column = NULL)
   {
     return sql::last_id($result, $table, $column);
   }

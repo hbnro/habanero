@@ -11,7 +11,7 @@
 class sql extends prototype
 {
   
-  function names($test)
+  final public static function names($test)
   {
     static $callback = NULL;
     
@@ -45,7 +45,7 @@ class sql extends prototype
     return join(', ', $set);
   }
   
-  function mix_columns($test, $value)
+  final public static function mix_columns($test, $value)
   {
     $set    = explode('_', $test);
     $length = sizeof($set);
@@ -73,7 +73,7 @@ class sql extends prototype
     return " (" . join('', $output) . " )\n";
   }
   
-  function fixate_string($test, $alone = FALSE)
+  final public static function fixate_string($test, $alone = FALSE)
   {
     if (is_array($test))
     {
@@ -103,7 +103,7 @@ class sql extends prototype
     return $test;
   }
   
-  function build_fields($values)
+  final public static function build_fields($values)
   {
     $sql = array();
     
@@ -123,7 +123,7 @@ class sql extends prototype
     return join(",\n", $sql);
   }
   
-  function build_values($fields, $insert = FALSE)
+  final public static function build_values($fields, $insert = FALSE)
   {
     $sql    = array();
     $fields = (array) $fields;
@@ -174,8 +174,7 @@ class sql extends prototype
     return join('', $sql);
   }
   
-  
-  function build_where($test, $operator = 'AND')
+  final public static function build_where($test, $operator = 'AND')
   {
     if ( ! empty($test))
     {
@@ -262,7 +261,7 @@ class sql extends prototype
     }
   }
   
-  function query_repare($test)
+  final public static function query_repare($test)
   {
     static $rand_expr = '/RAND(?:OM)?\s*\(([^\(\)]*)\)/i',
            $delete_expr = '/^\s*DELETE\s+FROM\s+(\S+)\s*$/is';
@@ -282,7 +281,7 @@ class sql extends prototype
     return $test;
   }
   
-  function query_parse($test, $separator = 59)
+  final public static function query_parse($test, $separator = 59)
   {
     $last = substr($separator, 0, 2);
     

@@ -16,7 +16,7 @@ class form extends prototype
    * @staticvar array  Defaults
    * @return    string
    */
-  function to($action, $content, array $params = array())
+  final public static function to($action, $content, array $params = array())
   {
     static $defs = array(
               'action'    => '.',
@@ -107,7 +107,7 @@ class form extends prototype
   * @param  mixed  Attributes
   * @return string
   */
-  function file($name, array $args = array())
+  final public static function file($name, array $args = array())
   {
    return form::input('file', $name, '', $args);
   }
@@ -120,7 +120,7 @@ class form extends prototype
   * @staticvar array  Defaults
   * @return    string
   */
-  function field($params)
+  final public static function field($params)
   {
     static $defs = array(
               'type'    => '',
@@ -188,7 +188,7 @@ class form extends prototype
   * @staticvar array  Defaults
   * @return    string
   */
-  function input($type, $name, $value = '', array $params = array())
+  final public static function input($type, $name, $value = '', array $params = array())
   {
     static $defs = array(
               'type'  => '',
@@ -278,7 +278,7 @@ class form extends prototype
   * @param  array  Options hash
   * @return string
   */
-  function select($name, array $options, array $params = array())
+  final public static function select($name, array $options, array $params = array())
   {
     if (is_assoc($name))
     {
@@ -367,7 +367,7 @@ class form extends prototype
   * @staticvar array  Defaults
   * @return    string
   */
-  function group($name, array $options, array $params = array())
+  final public static function group($name, array $options, array $params = array())
   {
     static $defs = array(
               'name'      => '',
@@ -453,7 +453,7 @@ class form extends prototype
   * @param  array  Attributes hash
   * @return string
   */
-  function textarea($name, $value = '', array $args = array())
+  final public static function textarea($name, $value = '', array $args = array())
   {
     static $defs = array(
              'cols' => 40,
@@ -515,7 +515,7 @@ class form extends prototype
   * @param  array  Attributes
   * @return void
   */
-  function label($for, $text = '', array $args = array())
+  final public static function label($for, $text = '', array $args = array())
   {
     if (is_assoc($for))
     {
@@ -564,7 +564,7 @@ class form extends prototype
   * @param  mixed  Default value
   * @return string
   */
-  function value($from, $or = FALSE)
+  final public static function value($from, $or = FALSE)
   {
     $set   = method() <> 'GET' ? $_POST : $_GET;
     $value = value($set, $from, $or);
@@ -579,7 +579,7 @@ class form extends prototype
    */
    
   // dynamic input identifier
-  protected static function index($name = '', $inc = FALSE)
+  private static function index($name = '', $inc = FALSE)
   {
     static $num = 0;
   
