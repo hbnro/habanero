@@ -188,8 +188,13 @@ class pager extends prototype
    * @param  array   Attributes
    * @return string
    */
-  final public static function page_link($num, $text = '', array $args = array())
+  final public static function page_link($num, $text = '', $args = array())
   {
+    if (is_string($args))
+    {
+      $args = args(attrs($args));
+    }
+    
     $text = $text ? sprintf(pager::$defs['link_text'], number_format($num)) : number_format($num);
     
     $args['href'] = sprintf($num <= 1 ? pager::$defs['link_root'] : str_replace('%25d', '%d', pager::$defs['link_href']), $num);//FIX

@@ -122,14 +122,19 @@ function nbsp($num = 1)
  * Threaded block tags
  *
  * @param  string Inner text value
- * @param  array  Attributes hash
+ * @param  mixed  Attributes
  * @param  string Inner wrapper
  * @param  string Tag name
  * @return string
  */
-function block($text, array $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote')
+function block($text, $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote')
 {
-  if (is_scalar($text))
+  if (is_string($args))
+  {
+    $args = args(attrs($args));
+  }
+    
+    if (is_scalar($text))
   {
     return tag($tag, $args, sprintf($wrap, $text));
   }
@@ -179,11 +184,16 @@ function block($text, array $args = array(), $wrap = '<p>%s</p>', $tag = 'blockq
  *
  * @param  string Inner text value
  * @param  mixed  Fieldset legend|Attributes
- * @param  array  Attributes
+ * @param  mixed  Attributes
  * @return string
  */
-function fieldset($text, $title = '', array $args = array())
+function fieldset($text, $title = '', $args = array())
 {
+  if (is_string($args))
+  {
+    $args = args(attrs($args));
+  }
+  
   if (is_assoc($title))
   {
     $args  += $title;
@@ -205,7 +215,7 @@ function fieldset($text, $title = '', array $args = array())
  * @param  array   Attributes
  * @return string
  */
-function heading($text, $num = 1, array $args = array())
+function heading($text, $num = 1, $args = array())
 {
   if (is_num($num, 1, 6))
   {
@@ -220,12 +230,12 @@ function heading($text, $num = 1, array $args = array())
  * @param  mixed  Headers|Hash
  * @param  array  Vector data
  * @param  mixed  Footer|Hash
- * @param  array  Attributes
+ * @param  mixed  Attributes
  * @param  mixed  Function callback
  * @return string
  *
  */
-function table($head, $body, $foot = array(), array $args = array(), $filter = FALSE)
+function table($head, array $body, $foot = array(), $args = array(), $filter = FALSE)
 {
   $thead =
   $tfoot = '';
@@ -296,14 +306,14 @@ function table($head, $body, $foot = array(), array $args = array(), $filter = F
  *
  * @link   http://snipplr.com/view/2225/php-tag-cloud-based-on-word-frequency/
  * @param  array   Words set
- * @param  array   Attributes
+ * @param  mixed   Attributes
  * @param  string  Default link
  * @param  integer Minimum font-size
  * @param  integer Maximum font-size
  * @param  string  Default size unit
  * @return string
  */
-function cloud(array $from = array(), array $args = array(), $href = '?q=%s', $min = 12, $max = 30, $unit = 'px')
+function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 12, $max = 30, $unit = 'px')
 {
   $min_count = min(array_values($set));
   $max_count = max(array_values($set));
@@ -322,7 +332,7 @@ function cloud(array $from = array(), array $args = array(), $href = '?q=%s', $m
     ));
   }
   
-  return ulist($set);
+  return ulist($set, $args);
 }
 
 
@@ -330,13 +340,19 @@ function cloud(array $from = array(), array $args = array(), $href = '?q=%s', $m
  * Navigation list
  *
  * @param  array  Links
- * @param  array  Attributes
+ * @param  mixed  Attributes
  * @param  string Default value
  * @param  string CSS marker class
  * @return string
  */
-function navlist($set, array $args = array(), $default = URI, $class = 'here')
+function navlist($set, $args = array(), $default = URI, $class = 'here')
 {
+  if (is_string($args))
+  {
+    $args = args(attrs($args));
+  }
+  
+  
   $out = array();
 
   foreach ($set as $key => $val)
@@ -359,11 +375,11 @@ function navlist($set, array $args = array(), $default = URI, $class = 'here')
  * Definition list
  *
  * @param  array  Values
- * @param  array  Attributes
+ * @param  mixed  Attributes
  * @param  mixed  Function callback
  * @return string
  */
-function dlist($set, array $args = array(), $filter = FALSE)
+function dlist($set, $args = array(), $filter = FALSE)
 {
   return ulist($set, $args, $filter, 0, 0);
 }
@@ -373,11 +389,11 @@ function dlist($set, array $args = array(), $filter = FALSE)
  * Ordered list
  *
  * @param  array  Values
- * @param  array  Attributes
+ * @param  mixed  Attributes
  * @param  mixed  Function callback
  * @return string
  */
-function olist($set, array $args = array(), $filter = FALSE)
+function olist($set, $args = array(), $filter = FALSE)
 {
   return ulist($set, $args, $filter, 0);
 }
@@ -391,7 +407,7 @@ function olist($set, array $args = array(), $filter = FALSE)
  * @param  mixed  Function callback
  * @return string
  */
-function ulist($set, array $args = array(), $filter = FALSE)
+function ulist($set, $args = array(), $filter = FALSE)
 {
   $ol = func_num_args() == 4;
   $dl = func_num_args() == 5;
@@ -491,6 +507,7 @@ function a($href, $text = '', $title = array())
     }
     $attrs['title'] = $title;
   }
+  
   return tag('a', $attrs, $text ?: $href);
 }
 
@@ -500,10 +517,10 @@ function a($href, $text = '', $title = array())
  *
  * @param  string Identifier key name
  * @param  string Inner text value
- * @param  array  Attributes
+ * @param  mixed  Attributes
  * @return string
  */
-function anchor($name, $text = '', array $args = array())
+function anchor($name, $text = '', $args = array())
 {
   $attrs = array();
   
@@ -544,5 +561,29 @@ function img($url, $alt = '')
 
   return tag('img', $attrs);
 }
+
+
+// dynamic tags
+lambda(function()
+{
+  $code = <<<'PHP'
+  
+  function %s($text, $args = array())
+  {
+    if (is_string($args))
+    {
+      $args = args(attrs($args));
+    }
+    
+    return tag(__FUNCTION__, $args, $text);
+  }
+  
+PHP;
+
+  foreach (array('p', 'div', 'span') as $tag)
+  {// TODO: wich tags should be?
+    eval(sprintf($code, $tag));
+  }
+});
 
 /* EOF: ./lib/html.php */

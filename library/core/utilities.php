@@ -280,12 +280,12 @@ function unents($text)
  * HTML generic tag
  *
  * @param   string  Tag name
- * @param   array   Attributes
+ * @param   mixed   Attributes
  * @param   string  Inner text value
  * @param   boolean Self close tag?
  * @return  string
  */
-function tag($name, array $args = array(), $text = '', $close = FALSE)
+function tag($name, $args = array(), $text = '', $close = FALSE)
 {
   static $set = NULL;
   

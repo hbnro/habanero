@@ -107,7 +107,7 @@ class form extends prototype
   * @param  mixed  Attributes
   * @return string
   */
-  final public static function file($name, array $args = array())
+  final public static function file($name, $args = array())
   {
    return form::input('file', $name, '', $args);
   }
@@ -450,16 +450,21 @@ class form extends prototype
   *
   * @param  string Textfield name
   * @param  string Inner text
-  * @param  array  Attributes hash
+  * @param  mixed  Attributes
   * @return string
   */
-  final public static function textarea($name, $value = '', array $args = array())
+  final public static function textarea($name, $value = '', $args = array())
   {
     static $defs = array(
              'cols' => 40,
              'rows' => 6,
            );
     
+    
+    if (is_string($args))
+    {
+      $args = args(attrs($args));
+    }
     
     if (is_assoc($name))
     {
@@ -512,11 +517,16 @@ class form extends prototype
   *
   * @param  string Input name|Function callback|Attributes
   * @param  mixed  Label text|Attributes
-  * @param  array  Attributes
+  * @param  mixed  Attributes
   * @return void
   */
-  final public static function label($for, $text = '', array $args = array())
+  final public static function label($for, $text = '', $args = array())
   {
+    if (is_string($args))
+    {
+      $args = args(attrs($args));
+    }
+    
     if (is_assoc($for))
     {
       $args += $for;
@@ -610,7 +620,7 @@ lambda(function()
   {
     if ( ! form::defined(strtr($type, '-', '_')))
     {
-      form::implement(strtr($type, '-', '_'), function($name, $value = '', array $args = array())
+      form::implement(strtr($type, '-', '_'), function($name, $value = '', $args = array())
         use($type)
       {
         return form::input($type, $name, $value, $args);
