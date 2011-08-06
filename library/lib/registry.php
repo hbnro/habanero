@@ -8,7 +8,7 @@
  * Registry root
  *
  * @param  string Container
- * @return mixed
+ * @return object
  */
 function registry($bag = '')
 {
@@ -50,10 +50,10 @@ function registry_get($item, $or = NULL, $bag = '')
 /**
  * Assign registry item
  *
- * @param  string Key
- * @param  mixed  Value
- * @param  string Container
- * @return mixed
+ * @param  string  Key
+ * @param  mixed   Value
+ * @param  string  Container
+ * @return boolean
  */
 function registry_set($item, $value, $bag = '')
 {
@@ -73,9 +73,9 @@ function registry_set($item, $value, $bag = '')
 /**
  * Delete item from registry
  *
- * @param  string Key
- * @param  string Container
- * @return mixed
+ * @param  string  Key
+ * @param  string  Container
+ * @return boolean
  */
 function registry_unset($item, $bag = '')
 {
@@ -89,6 +89,21 @@ function registry_unset($item, $bag = '')
   unset($bag->$item);
 
   return TRUE;
+}
+
+
+/**
+ * Check if item exists on registry
+ *
+ * @param  string  Key
+ * @param  string  Container
+ * @return boolean
+ */
+function registry_exists($item, $bag = '')
+{
+  $bag = registry($bag);
+  
+  return isset($bag->$item);
 }
 
 /* EOF: ./lib/registry.php */
