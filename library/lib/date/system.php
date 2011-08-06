@@ -106,21 +106,21 @@ function mdate($with, $of = 0)
 function strdate($to, $from = 0)
 {
   static $set = array(
-    '/\bDDDD\b/' => '%l',
-    '/\bDDD\b/' => '%D',
-    '/\bDD\b/' => '%d',
-    '/\bD\b/' => '%j',
-    '/\bMMMM\b/' => '%F',
-    '/\bMMM\b/' => '%M',
-    '/\bMM\b/' => '%m',
-    '/\bM\b/' => '%n',
-    '/\bYYYY\b/' => '%Y',
-    '/\bYY\b/' => '%y',
-    '/\bHH\b/' => '%H',
-    '/\bhh\b/' => '%g',
-    '/\bii\b/' => '%i',
-    '/\bss\b/' => '%s',
-  );
+            '/\bDDDD\b/' => '%l',
+            '/\bDDD\b/' => '%D',
+            '/\bDD\b/' => '%d',
+            '/\bD\b/' => '%j',
+            '/\bMMMM\b/' => '%F',
+            '/\bMMM\b/' => '%M',
+            '/\bMM\b/' => '%m',
+            '/\bM\b/' => '%n',
+            '/\bYYYY\b/' => '%Y',
+            '/\bYY\b/' => '%y',
+            '/\bHH\b/' => '%H',
+            '/\bhh\b/' => '%g',
+            '/\bii\b/' => '%i',
+            '/\bss\b/' => '%s',
+          );
   
   $to = preg_replace(array_keys($set), $set, $to);
   $to = mdate($to, $from);
@@ -157,14 +157,14 @@ function fmtdate($time, $format = DATE_RFC822)
 function duration($secs, $used = 'hms', $zero = FALSE)
 {
   static $period = array(
-    'Years' => 31556926,
-    'Months' => 2629743,
-    'Weeks' => 604800,
-    'Days' => 86400,
-    'hours' => 3600,
-    'minutes' => 60,
-    'seconds' => 1,
-  );
+            'Years' => 31556926,
+            'Months' => 2629743,
+            'Weeks' => 604800,
+            'Days' => 86400,
+            'hours' => 3600,
+            'minutes' => 60,
+            'seconds' => 1,
+          );
 
   
   $out   =

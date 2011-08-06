@@ -19,12 +19,12 @@ class pager extends prototype
   
   // defaults
   private static $defs = array(
-    'link_text' => '%d',
-    'link_href' => '?p=%d',
-    'link_root' => ROOT,
-    'count_max' => 13,
-    'count_page' => 20,
-  );
+                    'link_text' => '%d',
+                    'link_href' => '?p=%d',
+                    'link_root' => ROOT,
+                    'count_max' => 13,
+                    'count_page' => 20,
+                  );
   
   /**#@-*/
   
