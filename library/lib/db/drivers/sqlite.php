@@ -71,7 +71,9 @@ sql::implement('version', function()
 });
 
 sql::implement('execute', function($sql)
-{
+{//FIX
+  sql::connect()->lastQuery = $sql;
+  
   return sql::connect()->query($sql);
 });
 
@@ -82,27 +84,30 @@ sql::implement('escape', function($test)
 
 sql::implement('error', function()
 {
-  return sql::connect()->lastErrorMsg();
+  return sql::connect()->lastErrorCode() ? sql::connect()->lastErrorMsg() : FALSE;
 });
 
 sql::implement('result', function($res)
 {
-  return $res ? $res->fetchArray(SQLITE3_ASSOC) : FALSE;
+  return ($tmp = sql::fetch_assoc($res)) ? array_shift($tmp) : FALSE;
 });
 
 sql::implement('fetch_assoc', function($res)
 {
-  return $res ? $res->fetchArray(SQLITE3_ASSOC) : array();
+  return $res ? $res->fetchArray(SQLITE3_ASSOC) : FALSE;
 });
 
 sql::implement('fetch_object', function($res)
 {
-  return (object) sql::fetch_assoc($res);
+  if ($res && $out = sql::fetch_assoc($res))
+  {//FIX
+    return (object) $out;
+  }
 });
 
 sql::implement('count_rows', function($res)
-{
-  return $res ? sizeof($res) : 0;
+{//FIX
+  return sql::result(sql::execute(sprintf('SELECT COUNT(*) FROM (%s)', sql::connect()->lastQuery)));
 });
 
 sql::implement('affected_rows', function()

@@ -87,7 +87,7 @@ function salt($length = 8)
 
   $length = (int) $length;
 
-  if ($length > 32) $length = 32;
+  $length > 32 && $length = 32;
 
   $out = '';
 
@@ -530,7 +530,7 @@ function dump($var, $show = FALSE, $deep = 99)
 
     foreach ($test as $key => $val)
     {
-      $old   = lambda(__FUNCTION__, $val, FALSE, $deep - 1, $depth + 1);
+      $old   = call_user_func(__FUNCTION__, $val, FALSE, $deep - 1, $depth + 1);
       $pre   = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
 
       $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;

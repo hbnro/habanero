@@ -86,7 +86,7 @@ class cache extends prototype
     if (is_false($old = cache::get($key)))
     {
       ob_start();
-      lambda($lambda);
+      call_user_func($lambda);
       $old = ob_get_clean();
       
       cache::set($key, $old, $max);

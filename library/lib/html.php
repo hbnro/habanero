@@ -273,7 +273,7 @@ function table($head, $body, $foot = array(), array $args = array(), $filter = F
     {
       if (is_callable($filter))
       {
-        $cell = lambda($filter, $cell);
+        $cell = call_user_func($filter, $cell);
       }
       
       if (is_array($cell))
@@ -416,7 +416,7 @@ function ulist($set, array $args = array(), $filter = FALSE)
 
   foreach ((array) $set as $item => $value)
   {
-    $test = is_callable($filter) ? lambda($filter, $item, $value) : array($item, $value);
+    $test = is_callable($filter) ? call_user_func($filter, $item, $value) : array($item, $value);
 
     if ( ! isset($test[1]))
     {
@@ -434,7 +434,7 @@ function ulist($set, array $args = array(), $filter = FALSE)
       
       if (is_callable($filter))
       {
-        $item = lambda($filter, -1, $item);
+        $item = call_user_func($filter, -1, $item);
         $item = array_pop($item);
       }
 

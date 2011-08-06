@@ -365,8 +365,8 @@ function extend($base)
   foreach ($test as $set)
   {
     foreach ($set as $key => $val)
-    {// TODO: improve the check-in?
-      $val ? $base[$key] = $val : NULL;
+    {
+      NULL !== $val && $base[$key] = $val;
     }
   }
 
@@ -380,16 +380,16 @@ function extend($base)
  * @param  mixed Function callback
  * @return mixed
  */
-function lambda($closure)
+function lambda($function)
 {
-  if ( ! is_callable($closure))
+  if ( ! is_closure($function))
   {
-    raise(ln('failed_to_execute', array('callback' => dump($closure))));
+    raise(ln('failed_to_execute', array('callback' => dump($function))));
   }
 
 
   $args   = array_slice(func_get_args(), 1);
-  $result = call_user_func_array($closure, $args);
+  $result = call_user_func_array($function, $args);
 
   return $result;
 }
@@ -506,11 +506,11 @@ function value($from, $that = NULL, $or = FALSE)
     $get   = join('.', $matches[1]);
     $depth = sizeof($matches[1]);
 
-    if (isset($from->$key))
+    if (is_object($from) && isset($from->$key))
     {
       $tmp = $from->$key;
     }
-    elseif (isset($from[$key]))
+    elseif (is_array($from) && isset($from[$key]))
     {
       $tmp = $from[$key];
     }
@@ -546,7 +546,7 @@ function filter($to, $value, $apply = FALSE)
     {
       foreach ($set[$to] as $test)
       {
-        $value = lambda($test, $value);
+        $value = call_user_func($test, $value);
       }
     }
 

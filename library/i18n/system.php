@@ -184,7 +184,7 @@ function load_path($from, $scope = '')
     {
       if (is_file($one))
       {
-        $lang = lambda($callback, $one);
+        $lang = call_user_func($callback, $one);
         load_locale($lang, $scope);
         break;
       }

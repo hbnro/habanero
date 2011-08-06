@@ -53,12 +53,15 @@ lambda(function()
 
   $parts = array();
 
-  foreach ($test as $key) $parts[$key] = ! empty($set[$key]) ? $set[$key] : '';
+  foreach ($test as $key)
+  {
+    $parts[$key] = ! empty($set[$key]) ? $set[$key] : '';
+  }
 
   $scheme_file = $driver_file = '';
 
   
-  if (class_exists('PDO'))
+  if (class_exists('PDO') && option('pdo'))
   {
     if ( ! in_array($parts['scheme'], pdo_drivers()))
     {
