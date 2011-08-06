@@ -719,7 +719,7 @@ function is_serialized($test)
  */
 function is_json($test)
 {
-  return preg_match('/^("(\\.|[^"\\\n\r])*?"|[,:{}\[\]0-9.\-+Eaeflnr-u\s\n\r\t])+?$/', $test) > 0;
+  return preg_match('/^("(\\.|[^"\\\n\r])*?"|[,:{}\[\]0-9.\-+Eaeflnr-u\s])+?$/', $test) > 0;
 }
 
 

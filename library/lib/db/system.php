@@ -305,7 +305,7 @@ class sql extends prototype
     
     $test = str_replace("\\'", $hash, $test);
     $test = preg_replace("/{$exep}+/", $separator, $test);
-    $test = preg_replace("/{$exep}[\r\n\t\s]*{$exep}/", $separator, $test);
+    $test = preg_replace("/{$exep}\s*{$exep}/", $separator, $test);
   
     $query  = '';
     $length = strlen($test);
