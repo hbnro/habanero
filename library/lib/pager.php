@@ -191,7 +191,7 @@ class pager extends prototype
   {
     $text = $text ? sprintf(pager::$defs['link_text'], number_format($num)) : number_format($num);
     
-    $args['href'] = sprintf($num <= 1 ? pager::$defs['link_root'] : pager::$defs['link_href'], $num);
+    $args['href'] = sprintf($num <= 1 ? pager::$defs['link_root'] : str_replace('%25d', '%d', pager::$defs['link_href']), $num);//FIX
     
     return tag('a', $args, $text);
   }
