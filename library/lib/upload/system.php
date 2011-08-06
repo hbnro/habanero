@@ -143,15 +143,42 @@ class upload extends prototype
       {
         return upload::set_error(UPLOAD_ERR_MIN_SIZE);
       }
-      elseif ( ! fnmatch(upload::$defs['type'], $set['type'][$i]))
+      
+      
+      $type = FALSE;
+      
+      foreach ((array) upload::$defs['type'] as $one)
+      {
+        if (fnmatch($one, $set['type'][$i]))
+        {
+          $type = TRUE;
+          break;
+        }
+      }
+      
+      if (is_false($type))
       {
         return upload::set_error(UPLOAD_ERR_TYPE);
       }
-      elseif ( ! fnmatch(upload::$defs['extension'], $set['name'][$i]))
+      
+      
+      $ext = FALSE;
+      
+      foreach ((array) upload::$defs['extension'] as $one)
+      {
+      
+        if (fnmatch($one, strtolower($set['name'][$i])))
+        {
+          $ext = TRUE;
+          break;
+        }
+      }
+      
+      if (is_false($ext))
       {
         return upload::set_error(UPLOAD_ERR_EXT);
       }
-  
+      
   
       $name = slug($set['name'][$i], '_');
       $file = upload::$defs['path'].DS.$name;
