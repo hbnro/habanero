@@ -81,7 +81,7 @@ class form extends prototype
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
     
     ob_start();
-    lambda($callback, $params);
+    call_user_func($callback, $params);
     
     echo '<div style="display:none">';
     echo '<input type="hidden" name="_token" value="', TOKEN, '">';
@@ -152,7 +152,7 @@ class form extends prototype
           case 'group';
           case 'select';
           case 'textarea';
-            $input = lambda(array('form', $one['type']), $one['name'], $one['value'], (array) $one['options']);
+            $input = call_user_func(array('form', $one['type']), $one['name'], $one['value'], (array) $one['options']);
           break;
           default;
             $input = form::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
