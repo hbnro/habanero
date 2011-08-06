@@ -93,7 +93,10 @@ function dispatch($route, $to = NULL, array $params = array())
 
     if (is_closure($params['to']))
     {
-      call_user_func_array($params['to'], (array) $params);
+      if (is_true(call_user_func_array($params['to'], (array) $params)))
+      {//FIX
+        return TRUE;
+      }
     }
     elseif (is_url($params['to']))
     {
