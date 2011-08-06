@@ -433,7 +433,7 @@ function ext($from, $dot = FALSE)
       $from = substr($from, 1);
     }
 
-    $output = explode('?', strtolower($from));
+    $output = explode('?', $from);
 
     return basename($output[0]);
   }
