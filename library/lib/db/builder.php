@@ -48,14 +48,14 @@ class db extends prototype
       
       foreach ($options['order'] as $one => $set)
       {
-        if (($inc += 1) > 0)
+        if (($inc += 1) > 1)
         {
           $sql .= ', ';
         }
         
         if (is_num($one))
-        {
-          $sql .= "\n" . sql::names($set[0]) . " $set[1]";
+        {//FIX
+          $sql .= $set === RANDOM ? "\n$set" : "\n" . sql::names($set[0]) . " $set[1]";
           continue;
         }
         
