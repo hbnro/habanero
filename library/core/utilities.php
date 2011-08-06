@@ -87,7 +87,7 @@ function salt($length = 8)
 
   $length = (int) $length;
 
-  if ($length > 32) $length = 32;
+  $length > 32 && $length = 32;
 
   $out = '';
 

@@ -366,7 +366,7 @@ function extend($base)
   {
     foreach ($set as $key => $val)
     {
-      NULL !== $val ? $base[$key] = $val : NULL;
+      NULL !== $val && $base[$key] = $val;
     }
   }
 

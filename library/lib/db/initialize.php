@@ -53,7 +53,10 @@ lambda(function()
 
   $parts = array();
 
-  foreach ($test as $key) $parts[$key] = ! empty($set[$key]) ? $set[$key] : '';
+  foreach ($test as $key)
+  {
+    $parts[$key] = ! empty($set[$key]) ? $set[$key] : '';
+  }
 
   $scheme_file = $driver_file = '';
 

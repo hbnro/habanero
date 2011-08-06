@@ -352,7 +352,7 @@ function sorttok($text, $ord = 32, $mode = '', $join = TRUE)
     }
   }
 
-  ! $mode ? sort($out) : NULL;
+  ! $mode && sort($out);
   
   return is_true($join) ? join(char($ord), $out) : $out;
 }
