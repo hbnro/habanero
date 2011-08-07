@@ -75,10 +75,12 @@ function dirsize($of, $recursive = FALSE)
 /**
  * Retrieve a file collection from given path
  *
- * @param  string  Directory
- * @param  string  Simple filter
- * @param  mixed   DIR_RECURSIVE|DIR_EMPTY|DIR_MAP
- * @return mixed
+ * @param     string Directory
+ * @param     string Simple filter
+ * @param     mixed  DIR_RECURSIVE|DIR_EMPTY|DIR_SORT|DIR_MAP
+ * @staticvar mixed  Empty paths
+ * @staticvar mixed  Function callback
+ * @return    mixed
 */
 function dir2arr($from, $filter = '*', $options = FALSE)
 {
@@ -111,16 +113,19 @@ function dir2arr($from, $filter = '*', $options = FALSE)
     return FALSE;
   }
 
-  $items = glob(rtrim($from, DS).DS.'*');
+  $items = glob(rtrim($from, DS).DS.'*') ?: array();
   
-  array_walk_recursive($items, function(&$value, $old)
+  array_walk_recursive($items, function($value, $old)
     use(&$items, &$extra, $filter, $options, $recursive, $empty, $map)
   {
     if (is_dir($value) && $recursive)
     {
       $key = ! $map ? basename($value) : $value;
       
-      if ( ! in_array($key, $extra)) $extra []= $key;
+      if ( ! in_array($key, $extra))
+      {
+        $extra []= $key;
+      }
       
       if (($test = dir2arr($value, $filter, $options, TRUE)) OR $empty)
       {
@@ -142,8 +147,8 @@ function dir2arr($from, $filter = '*', $options = FALSE)
   }, $items);
     
     
-  if ((func_num_args() < 4) && $empty && $map)
-  {
+  if (func_num_args() < 4)
+  {//FIX
     $items = array_merge($items, $extra);
     $extra = array();
   }
@@ -190,7 +195,7 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE)
     return FALSE;
   }
   
-  ! is_dir($to) && mkpath($to);
+  ! is_dir($to) && mkpath($to, PERMS);
   
   $options = (is_true($recursive) ? DIR_RECURSIVE : 0) | DIR_EMPTY;
   $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
@@ -218,7 +223,7 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE)
 function mkpath($dir, $perms = FALSE)
 {
   $path  = strtr($dir, '\\/', DS.DS);
-  $perms = ! is_false($perms) ? $perms : PERMS;
+  $perms = $perms ?: PERMS;
 
 
   if ( ! is_file($path) && ! is_dir($path))
@@ -230,12 +235,11 @@ function mkpath($dir, $perms = FALSE)
     {
       $path .= $one.DS;
 
-      if (($path !== DS) && ! @is_dir($path))
+      if (($path <> DS) && ! @is_dir($path))
       {
         // http://www.php.net/manual/es/function.mkdir.php#96990
-        
-        @mkdir($path, $perms);
-        @chmod($path, $perms);
+        mkdir(rtrim($path, DS), $perms);
+        chmod($path, $perms);
       }
     }
   }
