@@ -523,7 +523,7 @@ function params($key = NULL, $default = FALSE)
 {
   static $set = array();
 
-  if (func_num_args() === 0)
+  if ( ! func_num_args())
   {
     return $set;
   }
@@ -586,7 +586,7 @@ function segment($index = 1, $default = FALSE)
   $set = parts();
 
 
-  if ($index === 0)
+  if ( ! $index)
   {
     return sizeof($set);
   }

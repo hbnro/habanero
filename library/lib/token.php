@@ -30,7 +30,7 @@ function gettok($text, $index = 0, $ord = 32, $join = TRUE)
 {
   $test = explode(char($ord), $text);
 
-  if ($index === 0)
+  if ( ! $index)
   {
     return is_true($join) ? join(char($ord), $test) : $test;
   }

@@ -33,7 +33,7 @@ function config($set = NULL, $value = NULL)
   static $bag = array();
 
 
-  if (func_num_args() === 0)
+  if ( ! func_num_args())
   {
     return $bag;
   }
@@ -519,7 +519,7 @@ function value($from, $that = NULL, $or = FALSE)
       $tmp = $or;
     }
 
-    $value = $depth === 0 ? $tmp : value($tmp, $get, $or);
+    $value = ! $depth ? $tmp : value($tmp, $get, $or);
     
     return $value;
   }

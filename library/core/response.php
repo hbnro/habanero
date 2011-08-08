@@ -501,7 +501,7 @@ function flash($key = -1, $value = FALSE)
     {
       return $output[$key];
     }
-    elseif ( ! is_null($output) && (func_num_args() === 0))
+    elseif ( ! is_null($output) && ! func_num_args())
     {
       return $output;
     }

@@ -191,7 +191,7 @@ class db extends prototype
         switch($type)
         {
           case '%n';
-            return strlen(trim($value, "\\'")) === 0 ? 'NULL' : $value;
+            return ! strlen(trim($value, "\\'")) ? 'NULL' : $value;
           break;
           case '%f';
             return (float) $value;

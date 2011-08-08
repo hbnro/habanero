@@ -535,15 +535,15 @@ function mime($of)
     
     $data = read($of);
     
-    if (strncmp($data, "\xff\xd8", 2) === 0)
+    if ( ! strncmp($data, "\xff\xd8", 2))
     {
       return 'image/jpeg';
     }
-    elseif (strncmp($data, "\x89PNG", 4) === 0)
+    elseif ( ! strncmp($data, "\x89PNG", 4))
     {
       return 'image/png';
     }
-    elseif (strncmp($data, "GIF", 3) === 0)
+    elseif ( ! strncmp($data, "GIF", 3))
     {
       return 'image/gif';
     }

@@ -322,7 +322,7 @@ function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 1
   $set    = array();
   $spread = $max_count - $min_count;
   
-  $spread === 0 && $spread = 1;
+  ! $spread && $spread = 1;
   
   foreach($from as $tag => $count)
   {

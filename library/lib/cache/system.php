@@ -25,7 +25,7 @@ class cache extends prototype
    */
   final public static function begin($key = NULL)
   {
-    $key = func_num_args() === 0 ? '--n' . ob_get_level() : $key;
+    $key = ! func_num_args() ? '--n' . ob_get_level() : $key;
     
     if (cache::exists($key))
     {
