@@ -69,7 +69,6 @@ class form extends prototype
       {
         $params['enctype'] = 'multipart/form-data';
       }
-      $params['method']  = 'post';
     }
     
     
@@ -89,6 +88,7 @@ class form extends prototype
     if (preg_match('/^(?:put|delete)$/', $params['method']))
     {
       echo '<input type="hidden" name="_method" value="', $params['method'], '"/>';
+      $params['method']  = 'post';
     }
     
     echo '</div>';
