@@ -289,7 +289,7 @@ function raise($message)
 
   $var['message']   = dump($message);
   $var['backtrace'] = array_reverse($trace);
-  $var['route']     = IS_CLI ? array_shift($_SERVER['argv']) : server(TRUE, server('REQUEST_URI'));
+  $var['route']     = IS_CLI ? @array_shift($_SERVER['argv']) : server(TRUE, server('REQUEST_URI'));
   
   // raw headers
   $var['headers']   = array();
