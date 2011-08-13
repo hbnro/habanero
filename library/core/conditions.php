@@ -966,6 +966,9 @@ function is_safe()
   
   if (is_null($check))
   {
+    global $_PUT; //FIX
+    
+    
     $check = ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : FALSE;
     
     if ($_token = value($_POST, '_token', value($_PUT, '_token')))
