@@ -132,7 +132,7 @@ function uses($lib)
  * @param     array   Options hash
  * @return    void
  */
-function run($bootstrap, array $params = array())
+function run(Closure $bootstrap, array $params = array())
 {
   if (defined('BEGIN'))
   {
@@ -157,17 +157,22 @@ function run($bootstrap, array $params = array())
   }
 
   $params = filter(__FUNCTION__, extend(array(
-    'bootstrap' => 'raise',
-    'arguments' => array(),
+    'bootstrap'  => 'raise',
+    'arguments'  => array(),
+    'middleware' => array(),
   ), $params), TRUE);
-
-
-  if ( ! is_closure($params['bootstrap']))
+  
+  $callback = $params['bootstrap'];
+  
+  foreach ((array) $params['middleware'] as $one)
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'bootstrap')));
+    if (is_closure($one))
+    {//FIX
+      $callback = call_user_func($one, $callback);
+    }
   }
 
-  return call_user_func_array($params['bootstrap'], (array) $params['arguments']);
+  return call_user_func_array($callback, (array) $params['arguments']);
 }
 
 
