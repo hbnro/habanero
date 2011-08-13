@@ -17,7 +17,11 @@ lambda(function()
   foreach ($test as $one)
   {
     $one = explode(';q=', $one);
-    $out[$one[0]] = ! empty($one[1]) ? (float) $one[1] : 1;
+    
+    if ($lang = trim($one[0]))
+    {//FIX
+      $out[$lang] = ! empty($one[1]) ? (float) $one[1] : 1;
+    }
   }
   
   arsort($out, SORT_NUMERIC);
