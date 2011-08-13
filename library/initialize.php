@@ -128,7 +128,7 @@ lambda(function()
 
   // useful constants
   define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
-  define('IS_CLI', ! isset($_SERVER['HTTP_HOST']) && isset($GLOBALS['argc']));
+  define('IS_CLI', (bool) defined('STDIN'));
 
 
   // global
