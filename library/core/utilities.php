@@ -281,7 +281,7 @@ function unents($text)
  *
  * @param   string  Tag name
  * @param   mixed   Attributes
- * @param   string  Inner text value
+ * @param   mixed   Inner text value|Function callback
  * @param   boolean Self close tag?
  * @return  string
  */
@@ -301,6 +301,14 @@ function tag($name, $args = array(), $text = '', $close = FALSE)
   if (is_true($close) OR in_array($name, $set))
   {
     return "<$name$attrs/>";
+  }
+  
+  
+  if (is_closure($text))
+  {//FIX
+    ob_start();
+    call_user_func($text);
+    $text = ob_get_clean();
   }
   
   return "<$name$attrs>$text</$name>";
