@@ -245,13 +245,6 @@ lambda(function()
     }
 
     
-    // built-in CSRF protection
-    if (is_safe() && ($_method = post('_method')))
-    {
-      $_SERVER['REQUEST_METHOD'] = strtoupper($_method);
-    }
-    
-    
     // PUT support
     global $_PUT;
     
@@ -267,6 +260,17 @@ lambda(function()
         $input = (string) @file_get_contents('php://input');
         parse_str($input, $_PUT);
       }
+    }
+    
+    
+    // CSRF; method override
+    if (is_safe() && ($_method = post('_method')))
+    {
+      $_SERVER['REQUEST_METHOD'] = strtoupper($_method);
+      
+      unset($_POST['_method']);
+      
+      $_PUT =& $_POST;
     }
     
     

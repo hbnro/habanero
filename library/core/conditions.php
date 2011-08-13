@@ -960,30 +960,30 @@ function is_false($test)
  */
 function is_safe()
 {
-  static $check = NULL;
+  static $check = NULL,
+         $_token = NULL;
   
   
   if (is_null($check))
   {
     $check = ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : FALSE;
-  }
-  
-  if ( ! is_post('_token'))
-  {
-    return FALSE;
-  }
-  
-  if ($token = (string) $_POST['_token'])
-  {
-    @list($old_time, $old_token) = explode(' ', $check);
-    @list($new_time, $new_token) = explode(' ', $token);
     
-    if (((time() - $old_time) < 720) && ($old_token === $new_token))
-    {// TODO: must be configurable?
-      return TRUE;
+    if ($_token = value($_POST, '_token', value($_PUT, '_token')))
+    {//FIX
+      unset($_POST['_token']);
     }
   }
   
+  
+  global $_PUT;//FIX
+  
+  @list($old_time, $old_token) = explode(' ', $check);
+  @list($new_time, $new_token) = explode(' ', $_token);
+  
+  if (((time() - $old_time) < 720) && ($old_token === $new_token))
+  {// TODO: must be configurable?
+    return TRUE;
+  }
   return FALSE;
 }
 

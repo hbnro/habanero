@@ -200,10 +200,7 @@ function fieldset($text, $title = '', $args = array())
     $title  = '';
   }
   
-  $attrs = attrs($args);
-  $title = $title ? "<legend>$title</legend>\n" : '';
-
-  return "<fieldset$attrs>\n$title$text\n</fieldset>";
+  return tag('fieldset', $args, ($title ? tag('legend', '', $title) : '') . $text);
 }
 
 
@@ -238,46 +235,45 @@ function heading($text, $num = 1, $args = array())
 function table($head, array $body, $foot = array(), $args = array(), $filter = FALSE)
 {
   $thead =
+  $tbody =
   $tfoot = '';
-  $attrs = attrs($args);
   
-
   if ( ! empty($head))
   {
     $head = ! is_string($head) ? (array) $head : explode('|', $head);
 
     foreach($head as $col)
     {
-      $thead .= "<th>$col</th>\n";
+      $thead .= tag('th', '', $col);
     }
-    $thead = "<thead>\n<tr>\n$thead</tr>\n</thead>\n";
+    $thead = tag('thead', '', tag('tr', '', $thead));
   }
 
   if ( ! empty($foot))
   {
-    $foot    = ! is_string($foot) ? (array) $foot : explode('|', $foot);
-    $colspan = sizeof($foot) > 1 ? '' : ' colspan="99"';
+    $foot  = ! is_string($foot) ? (array) $foot : explode('|', $foot);
+    $attrs = array(
+      'colspan' => sizeof($foot) > 1 ? 99 : FALSE,
+    );
 
     foreach ($foot as $col)
     {
-      $tfoot .= "<th$colspan>$col</th>\n";
+      $tfoot .= tag('th', $attrs, $col);
     }
-    $tfoot = "<tfoot>\n<tr>\n$tfoot</tr>\n</tfoot>";
+    $tfoot = tag('tfoot', '', tag('tr', '', $tfoot));
   }
-
-  $out = "<table$attrs>\n$thead<tbody>";
 
   
   foreach ((array) $body as $cols => $rows)
   {
     if ( ! is_array($rows))
     {
-      $out .= "<tr>\n<td colspan=\"99\">$rows</td>\n</tr>\n";
+      $tbody .= tag('tr', '', tag('td', array('colspan' => 99), $rows));
       continue;
     }
 
 
-    $out .= "<tr>\n";
+    $row = '';
 
     foreach ($rows as $cell)
     {
@@ -290,14 +286,12 @@ function table($head, array $body, $foot = array(), $args = array(), $filter = F
       {
         $cell = table('', $cell);
       }
-      $out .= "<td>$cell</td>\n";
+      $row .= tag('td', '', $cell);
     }
-    $out .= "</tr>\n";
+    $tbody .= tag('tr', '', $row);
   }
   
-  $out = "$out</tbody>\n$tfoot</table>";
-  
-  return $out;
+  return tag('table', $args, $thead . $tbody . $tfoot);
 }
 
 
@@ -413,7 +407,6 @@ function ulist($set, $args = array(), $filter = FALSE)
   $dl = func_num_args() == 5;
 
 
-  $attrs = attrs($args);
   $tag   = 'ul';
   $el    = 'li';
   $out   = '';
@@ -440,7 +433,7 @@ function ulist($set, $args = array(), $filter = FALSE)
     }
     elseif (is_true($dl))
     {
-      $out .= "<dt>$test[0]</dt>\n";
+      $out .= tag('dt', '', $test[0]);
     }
 
     if (is_array($test[1]))
@@ -462,12 +455,12 @@ function ulist($set, $args = array(), $filter = FALSE)
       $tmp[1] = NULL;
 
       $inner = call_user_func_array(__FUNCTION__, $tmp);
-      $out  .= "<$el>$item{$inner}</$el>\n";
+      $out  .= tag($el, '', $item . $inner);
       continue;
     }
-    $out .= "<$el>$test[1]</$el>\n";
+    $out .= tag($el, '', $test[1]);
   }
-  return "<$tag$attrs>\n$out</$tag>";
+  return tag($tag, $args, $out);
 }
 
 

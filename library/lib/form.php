@@ -79,24 +79,37 @@ class form extends prototype
     $params['method'] = strtolower($params['method'] ?: GET);
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
     
-    ob_start();
-    call_user_func($callback, $params);
     
-    echo '<div style="display:none">';
-    echo '<input type="hidden" name="_token" value="', TOKEN, '">';
+    $input = tag('input', array(
+      'type' => 'hidden',
+      'name' => '_token',
+      'value' => TOKEN,
+    ));
+    
     
     if (preg_match('/^(?:put|delete)$/', $params['method']))
     {
-      echo '<input type="hidden" name="_method" value="', $params['method'], '"/>';
       $params['method']  = 'post';
+      
+      $input .= tag('input', array(
+        'type' => 'hidden',
+        'name' => '_method',
+        'value' => $params['method'],
+      ));
     }
     
-    echo '</div>';
+    $div = tag('div', array(
+      'style' => 'display:none',
+    ), $input);
     
-    $out   = ob_get_clean();
-    $attrs = attrs($params);
     
-    return "<form$attrs>\n$out\n</form>";
+    ob_start();
+    
+    call_user_func($callback, $params);
+    
+    $div .= ob_get_clean();
+    
+    return tag('form', $params, $div);
   }
   
   
@@ -174,7 +187,7 @@ class form extends prototype
       }
     }
     
-    return sprintf("<div>%s</div>\n", join('', $out));
+    return tag('div', '', join('', $out));
   }
   
   
@@ -264,9 +277,7 @@ class form extends prototype
       }
     }
     
-    $attrs = attrs($params);
-    
-    return "<input$attrs/>";
+    return tag('input', $params);
   }
   
   
@@ -316,22 +327,27 @@ class form extends prototype
     {
       if (is_array($value))
       {
-        $out .= '<optgroup label="' . ents($key, TRUE) . '">';
+        $sub = '';
         
         foreach ($value as $key => $val)
         {
-          $val  = ents($val, TRUE);
-          $sel  = is_array($default) ? (in_array($key, $default) ? ' selected' : '') : ( ! strcmp($key, $default) ? ' selected' : '');
-          $out .= "<option value=\"$key\"$sel>$val</option>\n";
+          $sub .= tag('option', array(
+            'value' => $key,
+            'selected' => is_array($default) ? in_array($key, $default) : ! strcmp($key, $default),
+          ), ents($val, TRUE));
         }
         
-        $out .= '</optgroup>';
+        $out .= tag('optgroup', array(
+          'label' => ents($key, TRUE),
+        ), $sub);
+        
         continue;
       }
       
-      $value = ents($value, TRUE);
-      $sel   = is_array($default) ? (in_array($key, $default) ? ' selected' : '') : ( ! strcmp($key, $default) ? ' selected' : '');
-      $out  .= "<option value=\"$key\"$sel>$value</option>\n";
+      $out  .= tag('option', array(
+        'value' => $key,
+        'selected' => is_array($default) ? in_array($key, $default) : ! strcmp($key, $default),
+      ), ents($value, TRUE));
     }
     
     
@@ -352,9 +368,7 @@ class form extends prototype
     $args  = extend($params, $args);
     $args  = filter('form::select', $args, TRUE);
     
-    $attrs = attrs($args);
-    
-    return "<select$attrs>\n$out</select>";
+    return tag('select', $args, $out);
   }
   
   
@@ -425,18 +439,23 @@ class form extends prototype
         continue;
       }
       
-      $value = ents($value, TRUE);
+      $input = tag('input', array(
+        'type' => $params['multiple'] ? 'checkbox' : 'radio',
+        'name' => $params['name'],
+        'value' => $key,
+        'checked' => in_array($key, $default),
+        'title' => $value,
+        'id' => $index . '_' . $key,
+      ));
       
-      $input = '<input type="' . ($params['multiple'] ? 'checkbox' : 'radio')
-             . '" value="' . $key . '" title="' . $value . '" name="'
-             . $params['name'] . '" id="' . $index . '_' . $key . '"'
-             . (in_array($key, $default) ? ' checked' : '')
-             . '/>';
       
-      $label = '<label for="' . $index . '_' . $key . '">'
-             . ($params['placement'] === 'before' ? $input : '') . $value
-             . ($params['placement'] === 'after' ? $input : '')
-             . '</label>';
+      $text = ($params['placement'] === 'before' ? $input : '')
+            . ents($value, TRUE)
+            . ($params['placement'] === 'after' ? $input : '');
+      
+      $label = tag('label', array(
+        'for' => $index . '_' . $key,
+      ), $text);
       
       $out .= $label . $params['break'];
     }
@@ -507,8 +526,7 @@ class form extends prototype
     
     unset($args['text']);
     
-        
-    return sprintf('<textarea%s>%s</textarea>', attrs($args), $value);
+    return tag('textarea', $args, $value);
   }
   
   
@@ -563,7 +581,7 @@ class form extends prototype
       $args['for'] = strtr($id, '.', '_');
     }
     
-    return sprintf('<label%s>%s</label>', attrs($args), $text);
+    return tag('label', $args, $text);
   }
   
   
