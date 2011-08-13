@@ -4,7 +4,7 @@
  * Intialize translation backend
  */
 
-lambda(function()
+call_user_func(function()
 {
   // locales
   $out  = array();

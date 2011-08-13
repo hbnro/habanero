@@ -4,7 +4,7 @@
  * Database initialization
  */
 
-lambda(function()
+call_user_func(function()
 {
   define('ALL', '*');
   define('ASC', 'ASC');

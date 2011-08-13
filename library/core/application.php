@@ -379,27 +379,6 @@ function extend($base)
 
 
 /**
- * Anonymous functions
- *
- * @param  mixed Function callback
- * @return mixed
- */
-function lambda($function)
-{
-  if ( ! is_closure($function))
-  {
-    raise(ln('failed_to_execute', array('callback' => dump($function))));
-  }
-
-
-  $args   = array_slice(func_get_args(), 1);
-  $result = call_user_func_array($function, $args);
-
-  return $result;
-}
-
-
-/**
  * Common wildcard filter matching
  *
  * @param     string Expression

@@ -557,7 +557,7 @@ function img($url, $alt = '')
 
 
 // dynamic tags
-lambda(function()
+call_user_func(function()
 {
   $code = <<<'PHP'
   

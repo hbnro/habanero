@@ -4,7 +4,7 @@
  * Cache initialization
  */
 
-lambda(function()
+call_user_func(function()
 {
   $aux = option('cache');
   $aux = is_empty($aux) ? 'php' : $aux;

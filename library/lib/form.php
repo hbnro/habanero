@@ -602,7 +602,7 @@ class form extends prototype
 
 
 // dynamic inputs
-lambda(function()
+call_user_func(function()
 {
   $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
   

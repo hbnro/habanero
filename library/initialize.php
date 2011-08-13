@@ -96,7 +96,7 @@ class prototype
 
 
 // do!
-lambda(function()
+call_user_func(function()
 {
   // the root-script
 
