@@ -7,10 +7,6 @@
  * @link    https://github.com/pateketrueke/tetlphp
  */
 
-// constants tricky to raise
-$_ENV['CONSTANTS_LENGTH'] = sizeof(get_defined_constants());
-
-
 // framework version
 define('VER', '1.0.0');
 

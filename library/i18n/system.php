@@ -63,6 +63,13 @@ function pluralize($number, $string, array $params = array())
  */
 function translate($string, $default = '', array $params = array())
 {
+  static $defs = array(
+            'scope'   => '',
+            'string'  => '',
+            'default' => '',
+          );
+  
+  
   if (is_assoc($string))
   {
     $params += $string;
@@ -82,17 +89,8 @@ function translate($string, $default = '', array $params = array())
   }
   
   
-  if (is_closure($params['string']))
-  {
-    return filter(__FUNCTION__, $params['string']);
-  }
   
-  
-  $params = filter(__FUNCTION__, extend(array(
-    'scope'   => '',
-    'string'  => '',
-    'default' => '',
-  ), $params), TRUE);
+  $params = extend($defs, $params);
   
   $params['default'] = (array) $params['default'];
   

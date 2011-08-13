@@ -31,19 +31,12 @@ function urlify($text, $options = FALSE)
           . '[-\.\w]+(?::\d{1,5})?[\/\w?:;+=#!%.-]+(?:\b|$)/i';
   }
   
-  if (is_callable($text))
-  {
-    return filter(__FUNCTION__, $text);
-  }
-  
   $hash = uniqid('--amp-entity');
   $text = str_replace('&amp;', $hash, $text);
   $text = preg_replace_callback($expr, function($matches)
     use($options)
   {
-    $args = filter(__FUNCTION__, array(
-      'href' => $matches[0],
-    ), TRUE);
+    $args['href'] = $matches[0];
     
     $nofollow = ((int) $options & URL_NO_FOLLOW) == 0 ? FALSE : TRUE;
     $external = ((int) $options & URL_EXTERNAL) == 0 ? FALSE : TRUE;

@@ -49,13 +49,9 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::to', 'input' => 'action')));
     }
-    elseif (is_closure($params['action']))
-    {
-      return filter('form::to', $params['action']);
-    }
     
     
-    $params = filter('form::to', extend($defs, $params), TRUE);
+    $params = extend($defs, $params);
     
     if ( ! is_closure($params['content']))
     {
@@ -155,7 +151,7 @@ class form extends prototype
    {
       if (is_assoc($one))
       {
-        $one = filter('form::field', extend($defs, $one), TRUE);
+        $one = extend($defs, $one);
         
         switch ($one['type'])
         {
@@ -242,13 +238,9 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::input', 'input' => 'type')));
     }
-    elseif (is_closure($params['type']))
-    {
-      return filter('form::input', $params['type']);
-    }
     
     
-    $params = filter('form::input', extend($defs, $params), TRUE);
+    $params = extend($defs, $params);
     
     $key = form::index($params['name'], TRUE);
     
@@ -305,10 +297,6 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::select', 'input' => 'name')));
     }
-    elseif (is_closure($params['name']))
-    {
-      return filter('form::select', $params['name']);
-    }
     
     
     if ( ! isset($params['default']))
@@ -364,11 +352,7 @@ class form extends prototype
     
     unset($params['default']);
     
-    
-    $args  = extend($params, $args);
-    $args  = filter('form::select', $args, TRUE);
-    
-    return tag('select', $args, $out);
+    return tag('select', extend($params, $args), $out);
   }
   
   
@@ -407,13 +391,9 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
-    elseif (is_closure($params['name']))
-    {
-      return filter('form::group', $params['name']);
-    }
     
     
-    $params = filter('form::group', extend($defs, $params), TRUE);
+    $params = extend($defs, $params);
     
     $out = '';
     $key = form::index($params['name'], TRUE);
@@ -508,10 +488,6 @@ class form extends prototype
     {
       raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
-    elseif (is_callable($args['name']))
-    {
-      return filter('form::group', $args['name']);
-    }
     
     
     if ($id = form::index($args['name'], TRUE))
@@ -521,7 +497,7 @@ class form extends prototype
       $args['name'] = $args['name'];
     }
    
-    $args  = filter('form::textarea', extend($defs, $args), TRUE);
+    $args  = extend($defs, $args);
     $value = ents($args['text'], TRUE);
     
     unset($args['text']);
@@ -548,10 +524,6 @@ class form extends prototype
     if (is_assoc($for))
     {
       $args += $for;
-    }
-    elseif (is_callable($for))
-    {
-      return filter('form::label', $for);
     }
     elseif ( ! isset($args['for']))
     {

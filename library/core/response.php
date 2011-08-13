@@ -27,6 +27,17 @@ define('NOW', - 300);
  */
 function dispatch($route, $to = NULL, array $params = array())
 {
+  static $defs = array(
+            'constraints' => array(),
+            'defaults'    => array(),
+            'matches'     => array(),
+            'locals'      => array(),
+            'route'       => '',
+            'type'        => '',
+            'to'          => '',
+          );
+  
+  
   if (is_assoc($route))
   {
     $params += $route;
@@ -50,12 +61,8 @@ function dispatch($route, $to = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'route')));
   }
-  elseif (is_closure($params['route']))
-  {
-    return filter(__FUNCTION__, $params['route']);
-  }
-
-
+  
+  
   if ( ! isset($params['constraints']))
   {
     $params['constraints'] = array();
@@ -67,15 +74,7 @@ function dispatch($route, $to = NULL, array $params = array())
     $params['matches'] = match($params['route'], URI, (array) $params['constraints']);
   }
 
-  $params = filter(__FUNCTION__, extend(array(
-    'constraints' => array(),
-    'defaults'    => array(),
-    'matches'     => array(),
-    'locals'      => array(),
-    'route'       => '',
-    'type'        => '',
-    'to'          => '',
-  ), $params), TRUE);
+  $params = extend($defs, $params);
 
 
   if ( ! empty($params['matches']))
@@ -141,6 +140,14 @@ function dispatch($route, $to = NULL, array $params = array())
  */
 function redirect($to = ROOT, $status = NULL, array $params = array())
 {
+  static $defs = array(
+            'headers' => array(),
+            'locals'  => array(),
+            'status'  => 200,
+            'to'      => ROOT,
+          );
+  
+  
   if (is_assoc($to))
   {
     $params += $to;
@@ -164,18 +171,9 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
-  elseif (is_closure($params['to']))
-  {
-    return filter(__FUNCTION__, $params['to']);
-  }
   
 
-  $params = filter(__FUNCTION__, extend(array(
-    'headers' => array(),
-    'locals'  => array(),
-    'status'  => 200,
-    'to'      => ROOT,
-  ), $params), TRUE);
+  $params = extend($defs, $params);
 
 
   if ($params['to'] === 'back')
@@ -207,6 +205,15 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
  */
 function render($content, array $params = array())
 {
+  static $defs = array(
+            'type'    => 'text/html',
+            'charset' => CHARSET,
+            'headers' => array(),
+            'status'  => 200,
+            'output'  => '',
+          );
+  
+  
   if (is_assoc($content))
   {
     $params += $content;
@@ -243,19 +250,9 @@ function render($content, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
   }
-  elseif (is_closure($params['output']))
-  {
-    return filter(__FUNCTION__, $params['output']);
-  }
-
   
-  $params = filter(__FUNCTION__, extend(array(
-    'type'    => 'text/html',
-    'charset' => CHARSET,
-    'headers' => array(),
-    'status'  => 200,
-    'output'  => '',
-  ), $params), TRUE);
+  
+  $params = extend($defs, $params);
 
   $params['type'] = $params['type'] ?: ini_get('default_mimetype');
   

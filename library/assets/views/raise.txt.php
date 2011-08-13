@@ -33,12 +33,6 @@ if (isset($headers))
   dump($headers, TRUE);
 }
 
-if (isset($constants))
-{
-  echo "\n\nConstants\n---------\n";  
-  dump($constants, TRUE);
-}
-
 if (isset($backtrace))
 {
   echo "\n\nBacktrace\n---------\n";  

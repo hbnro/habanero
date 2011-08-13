@@ -219,6 +219,14 @@ function url_to($path = '.', $host = FALSE)
  */
 function link_to($route, array $params = array())
 {
+  static $defs = array(
+            'complete' => FALSE,
+            'locals'   => array(),
+            'host'     => FALSE,
+            'to'       => '.',
+          );
+  
+  
   if (is_array($route))
   {
     $params += $route;
@@ -233,18 +241,9 @@ function link_to($route, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
-  elseif (is_closure($params['to']))
-  {
-    return filter(__FUNCTION__, $params['to']);
-  }
-
   
-  $params = filter(__FUNCTION__, extend(array(
-    'complete' => FALSE,
-    'locals'   => array(),
-    'host'     => FALSE,
-    'to'       => '.',
-  ), $params), TRUE);
+  
+  $params = extend($defs, $params);
 
   if (is_url($params['to']) OR preg_match('/^[?#.]/', $params['to']))
   {
@@ -464,12 +463,8 @@ function route($match, $to = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
   }
-  elseif (is_closure($params['match']))
-  {
-    return filter(__FUNCTION__, $params['match']);
-  }
-
-
+  
+  
   $params['match'] = trim($params['match']);
 
   if (is_false(strpos($params['match'], ' ')))
@@ -477,12 +472,12 @@ function route($match, $to = NULL, array $params = array())
     $params['match'] = 'GET ' . $params['match'];
   }
 
-  $params = filter(__FUNCTION__, extend(array(
+  $params = extend(array(
     'constraints' => array(),
     'defaults'    => array(),
     'route'       => $params['match'],
     'to'          => 'raise',
-  ), $params), TRUE);
+  ), $params);
 
 
   

@@ -134,6 +134,14 @@ function uses($lib)
  */
 function run(Closure $bootstrap, array $params = array())
 {
+  static $defs = array(
+            'bootstrap'   => 'raise',
+            'arguments'   => array(),
+            'middleware'  => array(),
+            'environment' => '',
+          );
+  
+  
   if (defined('BEGIN'))
   {
     raise(ln('application_error'));
@@ -156,12 +164,7 @@ function run(Closure $bootstrap, array $params = array())
     $params['bootstrap'] = $bootstrap;
   }
 
-  $params = filter(__FUNCTION__, extend(array(
-    'bootstrap'   => 'raise',
-    'arguments'   => array(),
-    'middleware'  => array(),
-    'environment' => '',
-  ), $params), TRUE);
+  $params = extend($defs, $params);
   
   $callback = $params['bootstrap'];
   
@@ -239,12 +242,6 @@ function trigger($event, $bind, array $args = array())
  */
 function raise($message)
 {
-  if (is_closure($message))
-  {
-    return filter(__FUNCTION__, $message);
-  }
-  
-  
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(), 1);
@@ -262,12 +259,7 @@ function raise($message)
     unset($GLOBALS['--raise-message']);
   }
 
-  if ( ! empty($_ENV['CONSTANTS_LENGTH']))
-  {
-    $var['constants'] = array_slice(get_defined_constants(), $_ENV['CONSTANTS_LENGTH']);
-  }
-
-
+  
   foreach ($trace as $i => $on)
   {
     $type   = ! empty($on['type']) ? $on['type'] : '';
@@ -345,14 +337,18 @@ function raise($message)
       unset($var['global'][$one]);
     }
   }
+  
+  
+  // invoke custom handler
+  trigger(__FUNCTION__, TRUE, $var);
 
 
   // output
   $type = IS_CLI ? 'txt' : 'html';
-  $output = render(filter(__FUNCTION__, array(
+  $output = render(array(
     'partial' => LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT,
     'locals' => $var,
-  ), TRUE));
+  ));
   
   $output = IS_CLI ? unents($output) : $output;
 
@@ -535,50 +531,6 @@ function value($from, $that = NULL, $or = FALSE)
 
 
 /**
- * Filter function utility
- *
- * @param     mixed   Key or name
- * @param     mixed   Default value|Function callback
- * @param     boolean Apply filter?
- * @staticvar array   Filter bag
- * @return    mixed
- */
-function filter($to, $value, $apply = FALSE)
-{
-  static $set = array();
-
-
-  if (is_true($apply))
-  {
-    if ( ! empty($set[$to]))
-    {
-      foreach ($set[$to] as $test)
-      {
-        $value = call_user_func($test, $value);
-      }
-    }
-
-    return $value;
-  }
-
-
-  if (is_null($value))
-  {
-    $set[$to] = array();
-  }
-  elseif ( ! is_callable($value) OR is_num($to))
-  {
-    return FALSE;
-  }
-  else
-  {
-    $set[$to] []= $value;
-  }
-  
-  return TRUE;
-}
-
-/**
  * Benchmark ticker
  *
  * @param  float   Initial cue
@@ -599,8 +551,6 @@ function ticks($start = NULL, $end = FALSE, $round = 4)
 
   return round(max($end, $start) - min($end, $start), $round);
 }
-
-
 
 
 /**

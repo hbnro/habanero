@@ -21,8 +21,6 @@
     <?php dump($global, TRUE); } ?>
     <?php if (isset($headers)) { ?><h3>Headers</h3>
     <?php dump($headers, TRUE); } ?>
-    <?php if (isset($constants)) { ?><h3>Constants</h3>
-    <?php dump($constants, TRUE); } ?>
     <?php if (isset($backtrace)) { ?><h3>Backtrace</h3>
     <?php dump($backtrace, TRUE); } ?><h3>Includes</h3>
     <?php dump(get_included_files(), TRUE); ?>
