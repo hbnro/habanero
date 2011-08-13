@@ -157,18 +157,21 @@ function run(Closure $bootstrap, array $params = array())
   }
 
   $params = filter(__FUNCTION__, extend(array(
-    'bootstrap'  => 'raise',
-    'arguments'  => array(),
-    'middleware' => array(),
+    'bootstrap'   => 'raise',
+    'arguments'   => array(),
+    'middleware'  => array(),
+    'environment' => '',
   ), $params), TRUE);
   
   $callback = $params['bootstrap'];
+  
+  $params['environment'] = $params['environment'] ?: option('environment', 'testing');
   
   foreach ((array) $params['middleware'] as $one)
   {
     if (is_closure($one))
     {//FIX
-      $callback = call_user_func($one, $callback);
+      $callback = call_user_func($one, $callback, $params['environment']);
     }
   }
 
