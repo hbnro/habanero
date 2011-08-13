@@ -489,7 +489,7 @@ function fmtsize($of = 0, $text = '%d %s', $lower = FALSE)
     $key += 1;
   }
 
-  $unit  = str_replace('iB', 'Bi', "$test[$key]iB");// TODO: look at RFC?
+  $unit  = preg_replace('/^iB/', 'Bi', "$test[$key]iB");//FIX
   $unit  = is_true($lower) ? strtolower($unit) : $unit;
 
   $output = strtr($text, array(
