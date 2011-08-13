@@ -238,6 +238,10 @@ function is_assoc($set)
   {
     return FALSE;
   }
+  elseif (is_string(key($set)))
+  {//FIX
+    return TRUE;
+  }
 
   foreach (array_keys($set) as $key)
   {

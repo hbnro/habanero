@@ -51,7 +51,7 @@ class form extends prototype
     }
     
     
-    $params = extend($defs, $params);
+    $params += $defs;
     
     if ( ! is_closure($params['content']))
     {
@@ -85,13 +85,13 @@ class form extends prototype
     
     if (preg_match('/^(?:put|delete)$/', $params['method']))
     {
-      $params['method']  = 'post';
-      
       $input .= tag('input', array(
         'type' => 'hidden',
         'name' => '_method',
         'value' => $params['method'],
       ));
+      
+      $params['method']  = 'post';//FIX
     }
     
     $div = tag('div', array(
@@ -151,7 +151,7 @@ class form extends prototype
    {
       if (is_assoc($one))
       {
-        $one = extend($defs, $one);
+        $one += $defs;
         
         switch ($one['type'])
         {
@@ -240,7 +240,7 @@ class form extends prototype
     }
     
     
-    $params = extend($defs, $params);
+    $params += $defs;
     
     $key = form::index($params['name'], TRUE);
     
@@ -352,7 +352,7 @@ class form extends prototype
     
     unset($params['default']);
     
-    return tag('select', extend($params, $args), $out);
+    return tag('select', $params + $args, $out);
   }
   
   
@@ -393,7 +393,7 @@ class form extends prototype
     }
     
     
-    $params = extend($defs, $params);
+    $params += $defs;
     
     $out = '';
     $key = form::index($params['name'], TRUE);
@@ -497,7 +497,7 @@ class form extends prototype
       $args['name'] = $args['name'];
     }
    
-    $args  = extend($defs, $args);
+    $args  = $defs + $args;
     $value = ents($args['text'], TRUE);
     
     unset($args['text']);

@@ -164,7 +164,7 @@ function run(Closure $bootstrap, array $params = array())
     $params['bootstrap'] = $bootstrap;
   }
 
-  $params = extend($defs, $params);
+  $params += $defs;
   
   $callback = $params['bootstrap'];
   
@@ -353,28 +353,6 @@ function raise($message)
   $output = IS_CLI ? unents($output) : $output;
 
   render($output);
-}
-
-
-/**
- * Merge two ore more arrays
- *
- * @param  array Default array|...
- * @return array
- */
-function extend($base)
-{
-  $test = array_filter(array_slice(func_get_args(), 1), 'is_assoc');
-
-  foreach ($test as $set)
-  {
-    foreach ($set as $key => $val)
-    {
-      NULL !== $val && $base[$key] = $val;
-    }
-  }
-
-  return $base;
 }
 
 

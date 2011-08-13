@@ -65,9 +65,9 @@ cache::implement('check_item', function($key)
     {
       $test = memcache_get_extended_stats('cachedump', (int) $id);
       
-      foreach($test as $keys)
+      foreach ($test as $keys)
       {
-        foreach(array_keys($keys) as $one)
+        foreach (array_keys($keys) as $one)
         {
           if ($one === $key)
           {

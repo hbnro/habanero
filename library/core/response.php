@@ -74,7 +74,7 @@ function dispatch($route, $to = NULL, array $params = array())
     $params['matches'] = match($params['route'], URI, (array) $params['constraints']);
   }
 
-  $params = extend($defs, $params);
+  $params += $defs;
 
 
   if ( ! empty($params['matches']))
@@ -173,7 +173,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
   }
   
 
-  $params = extend($defs, $params);
+  $params += $defs;
 
 
   if ($params['to'] === 'back')
@@ -252,7 +252,7 @@ function render($content, array $params = array())
   }
   
   
-  $params = extend($defs, $params);
+  $params += $defs;
 
   $params['type'] = $params['type'] ?: ini_get('default_mimetype');
   

@@ -243,7 +243,7 @@ function link_to($route, array $params = array())
   }
   
   
-  $params = extend($defs, $params);
+  $params += $defs;
 
   if (is_url($params['to']) OR preg_match('/^[?#.]/', $params['to']))
   {
@@ -472,12 +472,12 @@ function route($match, $to = NULL, array $params = array())
     $params['match'] = 'GET ' . $params['match'];
   }
 
-  $params = extend(array(
+  $params += array(
     'constraints' => array(),
     'defaults'    => array(),
     'route'       => $params['match'],
     'to'          => 'raise',
-  ), $params);
+  );
 
 
   

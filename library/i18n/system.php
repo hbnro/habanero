@@ -90,7 +90,7 @@ function translate($string, $default = '', array $params = array())
   
   
   
-  $params = extend($defs, $params);
+  $params += $defs;
   
   $params['default'] = (array) $params['default'];
   

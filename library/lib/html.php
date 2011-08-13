@@ -242,7 +242,7 @@ function table($head, array $body, $foot = array(), $args = array(), $filter = F
   {
     $head = ! is_string($head) ? (array) $head : explode('|', $head);
 
-    foreach($head as $col)
+    foreach ($head as $col)
     {
       $thead .= tag('th', '', $col);
     }
@@ -318,7 +318,7 @@ function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 1
   
   ! $spread && $spread = 1;
   
-  foreach($from as $tag => $count)
+  foreach ($from as $tag => $count)
   {
     $size  = floor($min + ($count - $min_count) * ($max - $min) / $spread);
     $set []= a(sprintf($href, $tag), $tag, array(
@@ -519,9 +519,7 @@ function anchor($name, $text = '', $args = array())
   
   $attrs['id'] = preg_replace('/[^\w-]/', '', $name);
   
-  $attrs = extend($attrs, $args);
-  
-  return tag('a', $attrs, $text);
+  return tag('a', $attrs += (array) $args, $text);
 }
 
 

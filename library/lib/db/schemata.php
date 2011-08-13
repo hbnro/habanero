@@ -231,7 +231,7 @@ db::implement('field', function($type, $length = 0, $default = NULL)
   
   if (is_assoc($test))
   {
-    $test = extend($test, compact('length', 'default'));
+    $test += compact('length', 'default');
     
     $type    = ! empty($test['type']) ? $test['type'] : $type;
     $length  = ! empty($test['length']) ? $test['length'] : $length;

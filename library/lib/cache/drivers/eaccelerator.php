@@ -20,7 +20,7 @@ cache::implement('free_all', function()
 {
   eaccelerator_gc();
   
-  foreach(eaccelerator_list_keys() as $one)
+  foreach (eaccelerator_list_keys() as $one)
   {
     cache::delete_item(substr($one['name'], 1));
   }
