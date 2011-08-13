@@ -251,6 +251,26 @@ lambda(function()
       $_SERVER['REQUEST_METHOD'] = strtoupper($_method);
     }
     
+    
+    // PUT support
+    global $_PUT;
+    
+    $_PUT = array();
+    
+    $GLOBALS['_PUT'] =& $_PUT;
+    
+    
+    if (method() === PUT)
+    {
+      if (server('HTTP_CONTENT_TYPE') === 'application/x-www-form-urlencoded')
+      {
+        $input = (string) @file_get_contents('php://input');
+        parse_str($input, $_PUT);
+      }
+    }
+    
+    
+    
     $_SESSION['--csrf-token'] = sprintf('%d %s', time(), sha1(salt(13)));
     
     define('TOKEN', $_SESSION['--csrf-token']);
