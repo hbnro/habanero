@@ -305,10 +305,15 @@ function status($num = 200, array $headers = array())
     }
 
 
-    $protocol = server('SERVER_PROTOCOL');
-
-    header("$protocol $num {$set['reasons'][$num]}", TRUE, $num);
-    header("Status: $num {$set['reasons'][$num]}", TRUE);
+    if (substr(PHP_SAPI, 0, 3) === 'cgi')
+    {//FIX
+      header("Status: $num {$set['reasons'][$num]}", TRUE);
+    }
+    else
+    {
+      $protocol = server('SERVER_PROTOCOL');
+      header("$protocol $num {$set['reasons'][$num]}", TRUE, $num);
+    }
   }
 }
 
