@@ -255,22 +255,28 @@ function ents($text, $escape = FALSE)
  *
  * @param     string String
  * @staticvar array  Entities set
+ * @staticvar array  Replacements
  * @return    string
  */
 function unents($text)
 {
-  static $set = NULL;
+  static $set = NULL,
+         $expr = array(
+            '/&amp;([a-z]+|(#\d+)|(#x[\da-f]+));/i' => '&\\1;',
+            '/&#x([0-9a-f]+);/ei' => 'chr(hexdec("\\1"))',
+            '/&#([0-9]+);/e' => 'chr("\\1")',
+          );
 
   if (is_null($set))
   {
     $set = get_html_translation_table(HTML_ENTITIES);
     $set = array_flip($set);
+    
+    $set['&apos;'] = "'";
   }
 
-  $text = preg_replace('/&amp;([a-z]+|(#\d+)|(#x[\da-f]+));/i', '&\\1;', $text);
-  $text = preg_replace('/&#x([0-9a-f]+);/ei', 'chr(hexdec("\\1"))', $text);
-  $text = preg_replace('/&#([0-9]+);/e', 'chr("\\1")', $text);
-  $text = strtr(str_replace('&apos;', "'", $text), $set);
+  $text = preg_replace(array_keys($expr), $expr, $text);
+  $text = strtr($text, $set);
 
   return html_entity_decode($text);
 }
