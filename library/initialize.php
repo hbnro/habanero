@@ -58,7 +58,7 @@ class prototype
     {
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
-    return call_user_func_array(self::$public[get_called_class()][$method], $arguments);
+    return self::apply($method, $arguments);
   }
   
   /**#@-*/
@@ -89,6 +89,33 @@ class prototype
       return TRUE;
     }
     return method_exists(get_called_class(), $method);
+  }
+  
+  
+  /**
+   * Prototype methods
+   *
+   * @return array
+   */
+  final public static function methods()
+  {
+    return self::$public[get_called_class()];
+  }
+  
+  
+  /**
+   * Currying apply
+   *
+   * @param  string Method name
+   * @param  array  Arguments
+   * @return mixed
+   */
+  final public static function apply($method, array $args = array())
+  {
+    if (isset(self::$public[get_called_class()][$method]))
+    {
+      return call_user_func_array(self::$public[get_called_class()][$method], $args);
+    }
   }
   
 }
