@@ -288,10 +288,9 @@ function unents($text)
  * @param   string  Tag name
  * @param   mixed   Attributes
  * @param   mixed   Inner text value|Function callback
- * @param   boolean Self close tag?
  * @return  string
  */
-function tag($name, $args = array(), $text = '', $close = FALSE)
+function tag($name, $args = array(), $text = '')
 {
   static $set = NULL;
   
@@ -304,7 +303,7 @@ function tag($name, $args = array(), $text = '', $close = FALSE)
 
   $attrs = attrs($args);
   
-  if (is_true($close) OR in_array($name, $set))
+  if (in_array($name, $set))
   {
     return "<$name$attrs>";
   }
