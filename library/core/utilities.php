@@ -306,7 +306,7 @@ function tag($name, $args = array(), $text = '', $close = FALSE)
   
   if (is_true($close) OR in_array($name, $set))
   {
-    return "<$name$attrs/>";
+    return "<$name$attrs>";
   }
   
   
