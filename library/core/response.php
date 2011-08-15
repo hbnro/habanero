@@ -226,6 +226,12 @@ function render($content, array $params = array())
 
   if ( ! empty($params['partial']))
   {
+    if ( ! is_file($params['partial']))
+    {//FIX
+      raise(ln('file_not_exists', array('name' => $params['partial'])));
+    }
+    
+    
     ob_start();
 
     if ( ! empty($params['locals']))
