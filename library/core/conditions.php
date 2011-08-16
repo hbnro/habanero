@@ -1,5 +1,5 @@
 <?php
-//TODO: meta-organize
+
 /**
  * Conditional functions library
  */
@@ -13,6 +13,7 @@ function is_root()
 {
   return URI === '/';
 }
+
 
 /**
  * Is get available?
