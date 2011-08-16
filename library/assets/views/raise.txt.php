@@ -2,43 +2,36 @@
 
 ob_start();
 
-echo "\n\nIncluded files\n--------------\n";  
+printf("\n\n%s\n--------\n", ln('includes'));
 dump(get_included_files(), TRUE);
 
 
 if (isset($backtrace))
 {
-  echo "\n\nBacktrace\n---------\n";  
+  printf("\n\n%s\n---------\n", ln('backtrace'));
   dump($backtrace, TRUE);
-}
-
-
-if (isset($global))
-{
-  echo "\n\nGlobals\n-------\n";  
-  dump($global, TRUE);
 }
 
 
 if (isset($headers))
 {
-  echo "\n\nHeaders\n-------\n";  
+  printf("\n\n%s\n-------\n", ln('headers'));
   dump($headers, TRUE);
 }
 
 
-echo "\n\nConfig\n------\n";  
+printf("\n\n%s\n------\n", ln('config'));
 dump(config(), TRUE);
 
 
 if (isset($env))
 {
-  echo "\n\nEnvironment\n-----------\n";  
+  printf("\n\n%s\n-----------\n", ln('environment'));
   dump($env, TRUE);
 }
 
 
-echo "\n\nApplication\n-----------\n";  
+printf("\n\n%s\n-----------\n", ln('application'));
 dump(array(
   'user' => "$user@$host",
   'route' => $route,
@@ -46,9 +39,9 @@ dump(array(
   'bootstrap' => APP_LOADER,
 ), TRUE);
 
-echo "\n\nError\n-----\n", ents($message, TRUE);
+echo sprintf("\n\n%s\n-----\n", ln('error')), ents($message, TRUE);
 
 $content = preg_replace('/^/m', '  ', ob_get_clean());
 
-echo "\n Error => {\n", $content, "\n}";
+echo "\n => {\n", $content, "\n}";
 echo '(', ticks(defined('BEGIN') ? BEGIN : 0), ")\n\n";
