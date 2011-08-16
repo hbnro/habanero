@@ -287,7 +287,7 @@ function wildtok($text, $filter, $index = 0, $ord = 32)
 {
   foreach (gettok($text, 0, $ord, FALSE) as $key => $val)
   {
-    if (fnmatch($filter, $val))
+    if (match($filter, $val))
     {
       return $key += 1;
     }

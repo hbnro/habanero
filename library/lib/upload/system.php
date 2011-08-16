@@ -149,7 +149,7 @@ class upload extends prototype
       
       foreach ((array) upload::$defs['type'] as $one)
       {
-        if (fnmatch($one, $set['type'][$i]))
+        if (match($one, $set['type'][$i]))
         {
           $type = TRUE;
           break;
@@ -167,7 +167,7 @@ class upload extends prototype
       foreach ((array) upload::$defs['extension'] as $one)
       {
       
-        if (fnmatch($one, strtolower($set['name'][$i])))
+        if (match($one, strtolower($set['name'][$i])))
         {
           $ext = TRUE;
           break;

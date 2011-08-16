@@ -245,7 +245,7 @@ function freq($text)
   
   if (is_null($expr))
   {
-    $expr = match('%L|\s+');
+    $expr = match('%G|\s+');
   }
   
   $set  = array();
@@ -330,7 +330,7 @@ function search($text, $find, $repl = '<strong>%s</strong>', $ord = 32)
   
   if (is_null($latin))
   {
-    $latin = substr(match('%x'), 1, -1);
+    $latin = substr(match('%L'), 1, -1);
   }
   
   
