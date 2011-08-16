@@ -136,7 +136,7 @@ function dir2arr($from, $filter = '*', $options = FALSE)
       
       ! $map && ksort($items);
     }
-    elseif ( ! fnmatch($filter, $value))
+    elseif ( ! match($filter, $value))
     {
       unset($items[$old]);
     }

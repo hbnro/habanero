@@ -7,7 +7,7 @@
 call_user_func(function()
 {
   // common spec chars
-  define('RFC_CHARS', option('allowed_chars', "$\-_.+!*'(),"));
+  define('RFC_CHARS', option('allowed_chars', "$-_.+!*'(),"));
 
 
   // default charset

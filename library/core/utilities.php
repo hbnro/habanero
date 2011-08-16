@@ -125,7 +125,7 @@ function slug($text, $glue = '-', $options = NULL)
   $trim = ((int) $options & SLUG_TRIM) == 0 ? FALSE : TRUE;
  
   
-  $expr = $strict ? '\W+' : sprintf('[^%s\/]', substr(match('%X'), 1, -1));
+  $expr = $strict ? '\W+' : sprintf('[^%s\/]', substr(match('%l'), 1, -1));
   $text = preg_replace("/$expr/", $glue, plain(unents($text)));
   $text = $lower ? strtolower($text) : $text;
   
@@ -458,118 +458,6 @@ function args($text, $prefix = '')
     $out[$key] = $val;
   }
   
-  return $out;
-}
-
-
-/**
- * Variable debug
- *
- * @param     mixed   Expression
- * @param     boolean Print?
- * @param     integer Recursion limit
- * @staticvar array   Replace set
- * @return    mixed
- */
-function dump($var, $show = FALSE, $deep = 99)
-{
-  static $repl = array(
-            "\r" => '\r',
-            "\n" => '\n',
-            "\t" => '\t',
-          );
-
-
-  if ( ! $deep)
-  {
-    return FALSE;
-  }
-
-  $depth     = func_num_args() > 3 ? func_get_arg(3) : 0;
-  $tab       = str_repeat('  ', $depth);
-
-
-  $arrow     = is_true($show) ? ' ' : ' => ';
-  $separator = is_true($show) ? "\n" : ', ';
-  $newline   = is_true($show) ? "\n" : ' ';
-
-  $out       = array();
-
-
-  if (is_null($var))
-  {
-    $out []= 'NULL';
-  }
-  elseif (is_bool($var))
-  {
-    $out []= is_true($var) ? 'TRUE' : 'FALSE';
-  }
-  elseif (is_scalar($var))
-  {
-    $out []= strtr($var, $repl);
-  }
-  elseif (is_callable($var))
-  {
-    $args = array();
-    $code = reflection($var);
-
-    foreach ($code->getParameters() as $one)
-    {
-      $args []= "\${$one->name}";
-    }
-
-    $out []= 'Args[ ' . join(', ', $args) . ' ]';
-  }
-  elseif (is_iterable($var))
-  {
-    $width = 0;
-    $test  = (array) $var;
-    $max   = sizeof($test);
-
-    if (is_false($show))
-    {
-      $tab = '';
-    }
-    else
-    {
-      foreach (array_keys($test) as $key)
-      {
-        if (($cur = strlen($key)) > $width)
-        {
-          $width = $cur;
-        }
-      }
-    }
-
-    foreach ($test as $key => $val)
-    {
-      $old   = call_user_func(__FUNCTION__, $val, FALSE, $deep - 1, $depth + 1);
-      $pre   = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
-
-      $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;
-    }
-  }
-
-  $class = is_object($var) ? get_class($var) : '';
-  $type  = sprintf('#<%s%s!empty>', gettype($var), $class ? ":$class" : '');
-  $out   = sizeof($out) ? (($str = join($separator, $out)) === '' ? $type : $str) : (is_true($show) ? $type : '');
-
-  if (is_object($var) && is_false($show))
-  {
-    $out = sprintf("{{$newline}$out$newline}(%s)", get_class($var));
-  }
-  elseif (is_array($var) && is_false($show))
-  {
-    $out = "[$newline$out$newline]";
-  }
-  
-  
-  if (is_true($show) && $depth <= 0)
-  {
-    $out = IS_CLI ? $out : htmlspecialchars($out);
-    echo IS_CLI ? $out : "\n<pre>$out</pre>";
-    return TRUE;
-  }
   return $out;
 }
 
