@@ -160,7 +160,7 @@ db::implement('tables', function($filter = '*')
 
   foreach ($test as $one)
   {
-    if (fnmatch($filter, $one))
+    if (match($filter, $one))
     {
       $out []= $one;
     }

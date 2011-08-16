@@ -110,8 +110,8 @@ call_user_func(function()
   define('DB_VERSION', sql::version(sql::connect($parts)));
   
   if (sql::defined('encoding'))
-  {
-    sql::encoding(CHARSET);
+  {// TODO: sure dude?
+    sql::encoding(preg_replace('/\W/', '', CHARSET));
   }
 });
 
