@@ -177,7 +177,7 @@ function run(Closure $bootstrap, array $params = array())
     }
   }
 
-  return call_user_func_array($callback, $params['environment']);
+  return call_user_func_array($callback, (array) $params['environment']);
 }
 
 
