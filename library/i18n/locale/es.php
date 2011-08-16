@@ -17,6 +17,14 @@ $lang['exception_error'] = 'Excepción %{message} en %{file}, linea %{number}';
 
 $lang['headers_sent'] = 'Ya se enviaron las cabeceras en %{script}, linea %{number}';
 $lang['error_debug'] = '%{error} en %{file}, linea %{number}';
+
+$lang['error'] = 'Error';
 $lang['unknown'] = 'Desconocido';
+$lang['application'] = 'Aplicación';
+$lang['configuration'] = 'Configuración';
+$lang['environment'] = 'Variables de entorno';
+$lang['backtrace'] = 'Traza de ejecución';
+$lang['headers'] = 'Cabeceras enviadas';
+$lang['includes'] = 'Archivos cargados';
 
 /* EOF: ./i18n/locale/es.php */

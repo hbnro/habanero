@@ -17,6 +17,14 @@ $lang['exception_error'] = 'Exception %{message} on %{file}, line %{number}';
 
 $lang['headers_sent'] = 'Headers already sent on %{script}, line %{number}';
 $lang['error_debug'] = '%{error} on %{file}, line %{number}';
+
+$lang['error'] = 'Error';
 $lang['unknown'] = 'Unknown';
+$lang['application'] = 'Application';
+$lang['configuration'] = 'Configuration';
+$lang['environment'] = 'Environment vars';
+$lang['backtrace'] = 'Backtrace log';
+$lang['headers'] = 'Headers sent';
+$lang['includes'] = 'Included files';
 
 /* EOF: ./i18n/locale/en.php */
