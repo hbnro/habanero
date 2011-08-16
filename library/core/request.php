@@ -223,7 +223,7 @@ function link_to($route, array $params = array())
             'complete' => FALSE,
             'locals'   => array(),
             'host'     => FALSE,
-            'to'       => '.',
+            'to'       => '/',
           );
   
   
@@ -262,7 +262,7 @@ function link_to($route, array $params = array())
 
     if ( ! empty($params['to']))
     {
-      $link .= $params['to'];
+      $link .= ltrim($params['to'], '/');
     }
 
 
