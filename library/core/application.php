@@ -136,9 +136,8 @@ function run(Closure $bootstrap, array $params = array())
 {
   static $defs = array(
             'bootstrap'   => 'raise',
-            'arguments'   => array(),
             'middleware'  => array(),
-            'environment' => '',
+            'environment' => array(),
           );
   
   
@@ -172,13 +171,13 @@ function run(Closure $bootstrap, array $params = array())
   
   foreach ((array) $params['middleware'] as $one)
   {
-    if (is_closure($one))
-    {//FIX
-      $callback = call_user_func($one, $callback, $params['environment']);
+    if (is_callable($one))
+    {
+      $callback = call_user_func($one, $callback);
     }
   }
 
-  return call_user_func_array($callback, (array) $params['arguments']);
+  return call_user_func_array($callback, $params['environment']);
 }
 
 
@@ -369,6 +368,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 {
   static $tokens = NULL;
 
+  
   if (is_null($tokens))
   {
     $latin = '\pL';
@@ -381,17 +381,20 @@ function match($expr, $subject = NULL, array $constraints = array())
     }
 
 
+    // TODO: sure thing?
+    $chars  = preg_quote(RFC_CHARS, '/');
+    
     $tokens = array(
       '/\\\\\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.+?)',
       '/\\\:([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[^\/]+?)',
-      '/%s/' => '(?<=\W|^)(\w*[\d' . $latin . RFC_CHARS . ']+\w*)(?=\W|$)',
-      '/%r/' => '([\d' . $latin . RFC_CHARS . ']+?)',
-      '/%R/' => '[^\d' . $latin . RFC_CHARS . ']+',
+      '/%s/' => '(?<=\W|^)(\w*[\d' . $latin . $chars . ']+\w*)(?=\W|$)',
+      '/%r/' => '([\d' . $latin . $chars . ']+?)',
+      '/%R/' => '[^\d' . $latin . $chars . ']+',
       '/%d/' => '(?<=\D|^)(-?[0-9\.,]+?)(?=\D|$)',
-      '/%l/' => '([\d' . $latin . ']+?)',
-      '/%L/' => '[^\d' . $latin . ']+',
-      '/%X/' => '\d' . $latin . RFC_CHARS,
-      '/%x/' => '\d' . $latin,
+      '/%g/' => '([\d' . $latin . ']+?)',
+      '/%G/' => '[^\d' . $latin . ']+',
+      '/%l/' => '\d' . $latin . $chars,
+      '/%L/' => '\d' . $latin,
       '/\\\\([\^|bws+$?[\]])/i' => '\\1',
       '/\\\\\*/' => '(.+?|())',
       '/\\\\\)/' => '|())',
@@ -449,14 +452,10 @@ function value($from, $that = NULL, $or = FALSE)
   {
     return $or;
   }
-  elseif ($offset = strpos($that, '[]'))
-  {//FIX
-    return value($from, ($offset = strrpos($that, '[')) > 0 ? substr($that, 0, $offset) : '', $or);
-  }
-  elseif (preg_match_all('/\[([^\[\]]+)\]/U', $that, $matches) OR
+  elseif (preg_match_all('/\[([^\[\]]*)\]/U', $that, $matches) OR
          ($matches[1] = explode('.', $that)))
   {
-    $key = ($offset = strrpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
+    $key = ($offset = strpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
     
     if ( ! empty($key))
     {
@@ -540,76 +539,112 @@ function reflection($lambda)
 
 
 /**
- * Basic symbol tokenizer to deal with code
+ * Variable debug
  *
- * @param  string String
- * @return array
+ * @param     mixed   Expression
+ * @param     boolean Print?
+ * @param     integer Recursion limit
+ * @staticvar array   Replace set
+ * @return    mixed
  */
-function tokenize($code)
+function dump($var, $show = FALSE, $deep = 99)
 {
-  $sym = FALSE;
-  $out = array();
-  $set = token_get_all('<' . "?php $code");
+  static $repl = array(
+            "\r" => '\r',
+            "\n" => '\n',
+            "\t" => '\t',
+          );
 
 
-  foreach ($set as $val)
+  if ( ! $deep)
   {
-    if ( ! is_array($val))
+    return FALSE;
+  }
+
+  $depth     = func_num_args() > 3 ? func_get_arg(3) : 0;
+  $tab       = str_repeat('  ', $depth);
+
+
+  $arrow     = is_true($show) ? ' ' : ' => ';
+  $separator = is_true($show) ? "\n" : ', ';
+  $newline   = is_true($show) ? "\n" : ' ';
+
+  $out       = array();
+
+
+  if (is_null($var))
+  {
+    $out []= 'NULL';
+  }
+  elseif (is_bool($var))
+  {
+    $out []= is_true($var) ? 'TRUE' : 'FALSE';
+  }
+  elseif (is_scalar($var))
+  {
+    $out []= strtr($var, $repl);
+  }
+  elseif (is_callable($var))
+  {
+    $args = array();
+    $code = reflection($var);
+
+    foreach ($code->getParameters() as $one)
     {
-      $out []= $val;
+      $args []= "\${$one->name}";
+    }
+
+    $out []= 'Args[ ' . join(', ', $args) . ' ]';
+  }
+  elseif (is_iterable($var))
+  {
+    $width = 0;
+    $test  = (array) $var;
+    $max   = sizeof($test);
+
+    if (is_false($show))
+    {
+      $tab = '';
     }
     else
     {
-      switch ($val[0])
-      { // intentionally on cascade
-        case preg_match('/^(?:empty|array|list)$/', $val[1]) > 0;
-        case function_exists($val[1]);
-        case T_VARIABLE; // $var
-
-        case T_BOOLEAN_AND; // &&
-        case T_LOGICAL_AND; // and
-        case T_BOOLEAN_OR; // ||
-        case T_LOGICAL_OR; // or
-
-        case T_CONSTANT_ENCAPSED_STRING; // "foo" or 'bar'
-        case T_ENCAPSED_AND_WHITESPACE; // " $a "
-        case T_PAAMAYIM_NEKUDOTAYIM; // ::
-        case T_DOUBLE_COLON; // ::
-
-        case T_LIST; // list()
-        case T_ISSET; // isset()
-        case T_OBJECT_OPERATOR; // ->
-        case T_OBJECT_CAST; // (object)
-        case T_DOUBLE_ARROW; // =>
-        case T_ARRAY_CAST; // (array)
-        case T_ARRAY; // array()
-
-        case T_INT_CAST; // (int) or (integer)
-        case T_BOOL_CAST; // (bool) or (boolean)
-        case T_DOUBLE_CAST; // (real), (double), or (float)
-        case T_STRING_CAST; // (string)
-        case T_STRING; // "candy"
-
-        case T_DEC; // --
-        case T_INC; // ++
-        case T_DNUMBER; // 0.12, etc.
-        case T_LNUMBER; // 123, 012, 0x1ac, etc.
-        case T_NUM_STRING; // "$x[0]"
-
-        case T_IS_EQUAL; // ==
-        case T_IS_GREATER_OR_EQUAL; // >=
-        case T_IS_SMALLER_OR_EQUAL; // <=
-        case T_IS_NOT_IDENTICAL; // !==
-        case T_IS_IDENTICAL; // ===
-        case T_IS_NOT_EQUAL; // != or <>
-        
-          $out []= $val[1];
-        break;
-
-        default;
-        break;
+      foreach (array_keys($test) as $key)
+      {
+        if (($cur = strlen($key)) > $width)
+        {
+          $width = $cur;
+        }
       }
     }
+
+    foreach ($test as $key => $val)
+    {
+      $old   = call_user_func(__FUNCTION__, $val, FALSE, $deep - 1, $depth + 1);
+      $pre   = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
+
+      $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;
+    }
+  }
+
+  $class = is_object($var) ? get_class($var) : '';
+  $type  = sprintf('#<%s%s!empty>', gettype($var), $class ? ":$class" : '');
+  $out   = sizeof($out) ? (($str = join($separator, $out)) === '' ? $type : $str) : (is_true($show) ? $type : '');
+
+  if (is_object($var) && is_false($show))
+  {
+    $out = sprintf("{{$newline}$out$newline}(%s)", get_class($var));
+  }
+  elseif (is_array($var) && is_false($show))
+  {
+    $out = "[$newline$out$newline]";
+  }
+  
+  
+  if (is_true($show) && $depth <= 0)
+  {
+    $out = IS_CLI ? $out : htmlspecialchars($out);
+    echo IS_CLI ? $out : "\n<pre>$out</pre>";
+    return TRUE;
   }
   return $out;
 }
