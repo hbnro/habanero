@@ -290,9 +290,9 @@ function is_date($test, $type = 'Ymd')
 
   $tmp = array();
   
-  foreach (preg_split('//', $type) as $one)
+  foreach (array_filter(preg_split('//', $type)) as $one)
   {
-    if (array_key_exists($one, $set))
+    if ( ! array_key_exists($one, $set))
     {
       continue;
     }
@@ -354,8 +354,8 @@ function is_slug($test)
 function is_money($test, $left = FALSE)
 {
   static $regex = array(
-            '/^(?!0,?\d)(?:\d{1,3}(?:([\s,.])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u',
             '/^(?!\x{00a2})\p{Sc}?(?!0,?\d)(?:\d{1,3}(?:([\s,.])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?$/u',
+            '/^(?!0,?\d)(?:\d{1,3}(?:([\s,.])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u',
           );
 
   $expr = $regex[(int) is_true($left)];
