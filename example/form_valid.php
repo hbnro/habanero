@@ -4,10 +4,13 @@ require dirname(__DIR__).'/library/initialize.php';
 
 run(function()
 {
+
+  uses('router');
   
   route('POST /create', function()
   {
     uses('valid');
+    uses('session');
     
     valid::setup(array(
       'row[address]' => 'required is_email|is_url|is_ip',
