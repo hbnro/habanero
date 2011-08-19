@@ -186,4 +186,20 @@ function server($key = '', $default = FALSE, $complete = FALSE)
   return $default;
 }
 
+
+/**
+ * Try to avoid cache
+ *
+ * @return void
+ */
+function nocache()
+{
+  header('Cache-Control: no-store, no-cache, must-revalidate');
+  header('Cache-Control: post-check=0, pre-check=0', FALSE);
+  header('Pragma: no-cache');
+
+  header('Last-Modified: ' . date('D, m Y H:i:s \G\M\T', time()));
+  header('Expires: ' . date('D, m Y H:i:s \G\M\T', 0));
+}
+
 /* EOF: ./lib/server/functions.php */
