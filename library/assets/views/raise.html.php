@@ -11,7 +11,7 @@
     <?php dump(array(
       'user' => "$user@$host",
       'route' => $route,
-      'params' => params(),
+      'params' => function_exists('params') ? params() : array(),
       'bootstrap' => APP_LOADER,
     ), TRUE); ?>
     <h3><?= ln('configuration'); ?></h3>

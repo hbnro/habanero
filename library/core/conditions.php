@@ -16,31 +16,51 @@ function is_root()
 
 
 /**
- * Is get available?
+ * Is POST request?
  *
- * @param  string  Key or name
  * @return boolean
  */
-function is_get($key = NULL)
+function is_post()
 {
-  return $key ? (FALSE !== value($_GET, $key)) : ! empty($_GET);
+  return value($_SERVER, 'REQUEST_METHOD') === 'POST';
 }
 
 
 /**
- * Is post available?
+ * Is GET request?
  *
- * @param  string  Key or name
  * @return boolean
  */
-function is_post($key = NULL)
+function is_get()
 {
-  return $key ? (FALSE !== value($_POST, $key)) : ! empty($_POST);
+  return value($_SERVER, 'REQUEST_METHOD') === 'GET';
 }
 
 
 /**
- * Is files available?
+ * Is PUT request?
+ *
+ * @return boolean
+ */
+function is_put()
+{
+  return value($_SERVER, 'REQUEST_METHOD') === 'PUT';
+}
+
+
+/**
+ * Is DELETE request?
+ *
+ * @return boolean
+ */
+function is_delete()
+{
+  return value($_SERVER, 'REQUEST_METHOD') === 'DELETE';
+}
+
+
+/**
+ * There are files uploaded?
  *
  * @param  string  Key or name
  * @return boolean
@@ -52,6 +72,7 @@ function is_upload($key = NULL)
     return sizeof($_FILES) > 0;
   }
 
+  
   $test = value($_FILES, $key);
   
   if ( ! empty($test['name'][0]) && $test['error'][0] == 0)
@@ -64,18 +85,6 @@ function is_upload($key = NULL)
   }
   
   return FALSE;
-}
-
-
-/**
- * Is cookie available?
- *
- * @param  string  Key or name
- * @return boolean
- */
-function is_cookie($key = NULL)
-{
-  return $key ? (FALSE !== value($_COOKIE, $key)) : ! empty($_COOKIE);
 }
 
 
