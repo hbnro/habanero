@@ -82,7 +82,7 @@ class form extends prototype
       $params['action'] = $match[2];
     }
     
-    $params['action'] = pre_url($params['action']);
+    $params['action'] && $params['action'] = pre_url($params['action']);
     
     
     $input = tag('input', array(
