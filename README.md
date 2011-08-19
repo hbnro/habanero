@@ -15,3 +15,46 @@ Features
   * The helpers are function libraries or prototyped static classes.
   * Integrated i18n for most basic language operations.
   * Many more utilities, and so on.
+
+  
+Installation
+------------
+
+Just clone the repo from Github.
+
+    $ git clone git@github.com:pateketrueke/tetlphp.git ~/tetlphp
+  
+Then move or link the entire directory within php's **include_path**.
+
+    $ sudo mv ~/tetlphp /usr/share/php 
+
+or
+
+    $ sudo ln -s ~/tetlphp /usr/share/php
+    
+Or download the latest version and extract it wherever you want, remember include later it as is must be.
+
+Quick start
+-----------
+
+    require 'tetlphp/library/initialize';
+  
+    run(function()
+    {
+    
+      uses('tetl/server');
+      uses('tetl/router');
+    
+      route('*', function(
+        echo 'Hello world!';
+      ));
+    
+    });
+  
+
+Follow
+------------
+
+The developer ([@tetlphp](http://twitter.com/tetlphp))
+
+The human ([@pateketrueke](http://twitter.com/pateketrueke))
