@@ -163,6 +163,85 @@ function trigger($event, $bind, array $args = array())
 
 
 /**
+ * Load partial content
+ * 
+ * @param  mixed Content file|Options hash
+ * @param  mixed Partial?|Options hash
+ * @param  array Options hash
+ * @return mixed
+ */
+function render($content, $partial = FALSE, array $params = array())
+{
+  static $defs = array(
+            'content' => '',
+            'partial' => '',
+            'output'  => '',
+            'locals'  => array(),
+          );
+  
+  
+  if (is_assoc($content))
+  {
+    $params += $content;
+  }
+  elseif ( ! isset($params['content']))
+  {
+    $params['content'] = $content;
+  }
+  
+  if (is_assoc($partial))
+  {
+    $params += $partial;
+  }
+  elseif ( ! isset($params['partial']))
+  {
+    $params['partial'] = $partial;
+  }
+  
+  
+  $params += $defs;
+  
+  if ( ! is_bool($params['partial']))
+  {
+    $params['content'] = $params['partial'];
+    $params['partial'] = TRUE;
+  }
+  
+  
+  if ( ! empty($params['output']))
+  {
+    die($params['output']);
+  }
+  elseif ( ! is_file($params['content']))
+  {
+    raise(ln('file_not_exists', array('name' => $params['content'])));
+  }
+  
+  
+  $output = function()
+    use($params)
+  {
+    ob_start();
+  
+    if ( ! empty($params['locals']))
+    {
+      extract($params['locals'], EXTR_SKIP | EXTR_REFS);
+    }
+    
+    require func_get_arg(0);
+    
+    return ob_get_clean();
+  };
+  
+  if (is_true($params['content']))
+  {
+    return call_user_func($output, $params['content']);
+  }
+  echo call_user_func($output, $params['content']);
+}
+
+
+/**
  * Raise a user level exception
  *
  * @param  array Description or exception
