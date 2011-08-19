@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Basic routing/request functions
+ * Basic request/response functions
  */
 
 /**#@+
@@ -531,10 +531,12 @@ function dispatch($route, $to = NULL, array $params = array())
 
 
     ob_start();
-
+    
     if (is_closure($params['to']))
     {
-      if (is_true(call_user_func_array($params['to'], (array) $params)))
+      $output = call_user_func_array($params['to'], (array) $params);
+      
+      if (is_true($output))
       {//FIX
         return TRUE;
       }
@@ -547,7 +549,7 @@ function dispatch($route, $to = NULL, array $params = array())
     {
       if (ext($params['to'], TRUE) == EXT)
       {
-        include $params['to'];
+        $output = include $params['to'];
       }
       else
       {
@@ -565,9 +567,24 @@ function dispatch($route, $to = NULL, array $params = array())
       raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
     }
 
-    $params['output'] = ob_get_clean();
+    $content['output'] = ob_get_clean();
     
-    render($params);
+    if ( ! empty($output))
+    {
+      @list($content['status'], $content['headers']) = (array) $output;
+      
+      if ( ! empty($output['charset']))
+      {
+        $content['charset'] = $output['charset'];
+      }
+      
+      if ( ! empty($output['type']))
+      {
+        $content['type'] = $output['type'];
+      }
+    }
+    
+    response($content);
   }
 }
 
@@ -639,13 +656,13 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
 
 
 /**
- * Load partial content/response dinamically
+ * Print out final content
  * 
- * @param  mixed Output
+ * @param  mixed Output|Options Hash
  * @param  array Options hash
  * @return void
  */
-function render($content, array $params = array())
+function response($content, array $params = array())
 {
   static $defs = array(
             'type'    => 'text/html',
@@ -665,29 +682,6 @@ function render($content, array $params = array())
     $params['output'] = $content;
   }
 
-
-  if ( ! empty($params['partial']))
-  {
-    if ( ! is_file($params['partial']))
-    {//FIX
-      raise(ln('file_not_exists', array('name' => $params['partial'])));
-    }
-    
-    
-    ob_start();
-
-    if ( ! empty($params['locals']))
-    {
-      extract($params['locals'], EXTR_SKIP | EXTR_REFS);
-    }
-    
-    require $params['partial'];
-
-    $output = ob_get_clean();
-    
-    return $output;
-  }
-
   if ( ! empty($params['text']))
   {
     $params['output'] = $params['text'];
@@ -702,12 +696,15 @@ function render($content, array $params = array())
   
   $params += $defs;
 
-  $params['type'] = $params['type'] ?: ini_get('default_mimetype');
-  
-  if (is_mime($params['type']))
+  if (empty($params['headers']))
   {
-    $params['headers']['content-type'] = $params['type'] . ( ! empty($params['charset']) ? "; charset=$params[charset]" : '');
-    $params['headers']['content-length'] = strlen((string) $params['output']);
+    $params['type'] = $params['type'] ?: ini_get('default_mimetype');
+    
+    if (is_mime($params['type']))
+    {
+      $params['headers']['content-type'] = $params['type'] . ( ! empty($params['charset']) ? "; charset=$params[charset]" : '');
+      $params['headers']['content-length'] = strlen((string) $params['output']);
+    }
   }
 
   status($params['status'], $params['headers']);
@@ -858,22 +855,6 @@ function download($path, $name = '', $mime = '', $kbps = 24)
 
   fclose($tmp);
   exit;
-}
-
-
-/**
- * Try to avoid cache
- *
- * @return void
- */
-function nocache()
-{
-  header('Cache-Control: no-store, no-cache, must-revalidate');
-  header('Cache-Control: post-check=0, pre-check=0', FALSE);
-  header('Pragma: no-cache');
-
-  header('Last-Modified: ' . date('D, m Y H:i:s \G\M\T', time()));
-  header('Expires: ' . date('D, m Y H:i:s \G\M\T', 0));
 }
 
 /* EOF: ./lib/request.php */
