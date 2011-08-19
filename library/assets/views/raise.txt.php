@@ -2,44 +2,37 @@
 
 ob_start();
 
-printf("\n\n%s\n--------\n", ln('includes'));
+printf("\n%s\n--\n", ln('includes'));
 dump(get_included_files(), TRUE);
 
 
 if (isset($backtrace))
 {
-  printf("\n\n%s\n---------\n", ln('backtrace'));
+  printf("\n\n%s\n--\n", ln('backtrace'));
   dump($backtrace, TRUE);
 }
 
 
-if (isset($headers))
-{
-  printf("\n\n%s\n-------\n", ln('headers'));
-  dump($headers, TRUE);
-}
-
-
-printf("\n\n%s\n------\n", ln('config'));
+printf("\n\n%s\n--\n", ln('config'));
 dump(config(), TRUE);
 
 
 if (isset($env))
 {
-  printf("\n\n%s\n-----------\n", ln('environment'));
+  printf("\n\n%s\n--\n", ln('environment'));
   dump($env, TRUE);
 }
 
 
-printf("\n\n%s\n-----------\n", ln('application'));
+printf("\n\n%s\n--\n", ln('application'));
 dump(array(
   'user' => "$user@$host",
   'route' => $route,
-  'params' => params(),
+  'params' => function_exists('params') ? params() : array(),
   'bootstrap' => APP_LOADER,
 ), TRUE);
 
-echo sprintf("\n\n%s\n-----\n", ln('error')), ents($message, TRUE);
+echo sprintf("\n\n%s\n--\n", ln('error')), ents($message, TRUE);
 
 $content = preg_replace('/^/m', '  ', ob_get_clean());
 
