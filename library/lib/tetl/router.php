@@ -103,12 +103,6 @@ function link_to($route, array $params = array())
     }
 
 
-    $regex  = '/^(?<!:';
-    $regex .= strpos($link, server()) === 2 ? '|^' : '';
-    $regex .= ')\/+/';
-
-    $link = preg_replace($regex, '/', $link);
-
     if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
     {
       $link .= option('suffix');
