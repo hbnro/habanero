@@ -82,34 +82,33 @@ function link_to($route, array $params = array())
   
   $params += $defs;
 
-  if (is_url($params['to']) OR preg_match('/^[?#.]/', $params['to']))
+  $abs     = is_true($params['complete']);
+  $link    = is_true($params['host']) ? server(TRUE, ROOT, $abs) : ROOT;
+  $rewrite = (boolean) option('rewrite');
+  
+  if ( ! $rewrite)
   {
-    $link = $params['to'] === '.' ? ROOT : $params['to'];
+    $link .= INDEX . (option('query') ? '?' : '') . '/';
   }
-  else
+
+  $anchor =
+  $query  = '';
+
+  if ( ! empty($params['to']))
   {
-    $abs     = is_true($params['complete']);
-    $link    = is_true($params['host']) ? server(TRUE, ROOT, $abs) : ROOT;
-    $rewrite = (boolean) option('rewrite');
-
-    if ( ! $rewrite)
-    {
-      $link .= INDEX . (option('query') ? '?' : '') . '/';
-    }
-
-    if ( ! empty($params['to']))
-    {
-      $link .= ltrim($params['to'], '/');
-    }
-
-
-    if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
-    {
-      $link .= option('suffix');
-    }
+    @list($part, $anchor) = explode('#', $params['to']);
+    @list($part, $query)  = explode('?', $part);
+  
+    $link .= ltrim($part, '/');
   }
 
 
+  if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
+  {
+    $link .= option('suffix');
+  }
+  
+  
   if ( ! empty($params['locals']))
   {
     $hash  = uniqid('--query-prefix');
@@ -117,6 +116,9 @@ function link_to($route, array $params = array())
     $test  = preg_replace("/{$hash}\d+=/", '', $test);
     $link .= (option('query') ? '&' : '?') . $test;
   }
+  
+  $link .= $query ? "&$query" : '';
+  $link .= $anchor ? "#$anchor" : '';
 
   return $link;
 }
