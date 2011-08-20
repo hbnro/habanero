@@ -60,7 +60,7 @@ function link_to($route, array $params = array())
             'complete' => FALSE,
             'locals'   => array(),
             'host'     => FALSE,
-            'to'       => '/',
+            'to'       => '',
           );
   
   
@@ -144,7 +144,7 @@ function pre_url($text)
   {
     $text = 'mailto:' . rawurlencode($text);
   }
-  elseif (substr($text, 0, 1) == '/')
+  elseif (substr($text, 0, 1) === '/')
   {
     $text = link_to($text, array(
       'complete' => TRUE,
@@ -153,7 +153,7 @@ function pre_url($text)
   }
   elseif (substr($text, 0, 2) == './')
   {
-    $text = server(TRUE, ROOT) . substr($text, 2);
+    $text = server(TRUE, ROOT . substr($text, 2));
   }
   elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text))
   {
@@ -323,7 +323,7 @@ function route($match, $to = NULL, array $params = array())
   {
     if ($params['to'] === '.')
     {
-      $params['to'] = link_to('.');
+      $params['to'] = ROOT;
     }
     
     
