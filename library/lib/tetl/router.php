@@ -473,7 +473,6 @@ function dispatch($route, $to = NULL, array $params = array())
             'constraints' => array(),
             'defaults'    => array(),
             'matches'     => array(),
-            'locals'      => array(),
             'route'       => '',
             'type'        => '',
             'to'          => '',
@@ -547,7 +546,7 @@ function dispatch($route, $to = NULL, array $params = array())
     }
     elseif (is_file($params['to']))
     {
-      if (ext($params['to'], TRUE) == EXT)
+      if (ext($params['to'], TRUE) === EXT)
       {
         $output = include $params['to'];
       }
