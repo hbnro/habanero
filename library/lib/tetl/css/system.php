@@ -35,7 +35,8 @@ class css extends prototype
     '/;\s*(?=[#@\w\-]+\s*:?)/' => ";\n",
     '/;?[\s\r\n\t]*\}/s' => ";\n}",
     '/[\s\r\n\t]+\{/s' => ' {',
-    '/\{(?=\S)/' => "{\n"
+    '/\{(?=\S)/' => "{\n",
+    '/:\s+\{/' => ':{',
   );
   
   // compression
@@ -128,7 +129,7 @@ class css extends prototype
       $text = preg_replace(array_keys(css::$minify_expr), css::$minify_expr, $text);
     } 
 
-    $text = preg_replace('/\b(\w+)!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
+    $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
     
@@ -567,7 +568,7 @@ class css extends prototype
     
     $out  = css::apply($match[1], $args) ?: "$match[1]!({$match[2]})";
     
-    return ! empty($match[3]) ? (string) value($out, substr($match[3], 1)) : $out;
+    return ! empty($match[3]) ? (string) value($out, substr($match[3], 1)) : (string) $out;
   }
   
   // solve math operations
