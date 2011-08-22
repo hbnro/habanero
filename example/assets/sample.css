@@ -1,0 +1,28 @@
+@use css3
+
+h1 {
+  background: #white;
+  color: lighten(#teal,80); // 80%
+  @include box_textshadow; /* without args */
+}
+
+.foo {
+  a {
+    color: #red;
+    :hover {
+      font:
+      {
+        weight: bold;
+      }
+      color: #blue;
+      @include box_rotate(-3);
+    }
+  }
+}
+
+#box {
+  padding: [.3em * 2]; // [MATH]
+  @include box_round;
+  @include box_shadow;
+  @include box_gradient(#gray,#white);
+}
