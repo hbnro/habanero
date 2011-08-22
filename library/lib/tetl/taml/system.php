@@ -235,7 +235,7 @@ class taml extends prototype
         {
           $args   = array_shift($test);
           
-          $args = explode(' | ', join(' ', tokenize($args)));
+          $args = explode(' | ', join(' ', taml::tokenize($args)));
           $args = join(' , ', array_filter($args));
           
           return "<?= taml :: $method ( $args ); ?>$text";
@@ -252,7 +252,7 @@ class taml extends prototype
       case '-';
         // php
         $key   = stripslashes(substr($key, 1));
-        $key   = rtrim(join(' ', tokenize(substr($key, 1))), ';');
+        $key   = rtrim(join(' ', taml::tokenize(substr($key, 1))), ';');
         
         $close = preg_match('/^\s*(?:if|else(?:if)?|while|switch|for(?:each)?)/', $key) ? ':' : ';';
         
@@ -261,7 +261,7 @@ class taml extends prototype
       case '=';
         // print
         $key = stripslashes(trim(substr($key, 1)));
-        $key = rtrim(join(' ', tokenize($key)), ';');
+        $key = rtrim(join(' ', taml::tokenize($key)), ';');
         
         return preg_replace('/^/m', '  ', "<?= $key; ?>$text");
       break;
@@ -293,14 +293,14 @@ class taml extends prototype
         if ( ! empty($match[0]))
         {
           $key  = preg_replace('/\{([^{}]+)\}/', '', $key);
-          $hash = join('', tokenize($match[1]));
+          $hash = join('', taml::tokenize($match[1]));
           
           preg_match_all('/([\w:-]+)=>(.+?)(?=,|$)/', $hash, $matches);
           
           foreach (array_keys($matches[0]) as $i)
           {
             $attrs = stripslashes($matches[2][$i]);
-            $attrs = join(' ', tokenize($attrs));
+            $attrs = join(' ', taml::tokenize($attrs));
             
             $args[$matches[1][$i]] = "<?= $attrs; ?>";
           }
@@ -326,104 +326,104 @@ class taml extends prototype
       break;
     }
   }
-
-  /**#@-*/
-}
-
-
-
-/**
- * Basic symbol tokenizer to deal with code
- *
- * @param  string String
- * @return array
- */
-function tokenize($code)
-{
-  $sym = FALSE;
-  $out = array();
-  $set = token_get_all('<' . "?php $code");
-
-
-  foreach ($set as $val)
+  
+  // retrieve expression tokens
+  final private static function tokenize($code)
   {
-    if ( ! is_array($val))
+    static $expr = array(
+              'array',
+              'empty',
+              'list',
+            );
+    
+    
+    $sym = FALSE;
+    $out = array();
+    $set = token_get_all('<' . "?php $code");
+  
+  
+    foreach ($set as $val)
     {
-      $out []= $val;
-    }
-    else
-    {
-      switch ($val[0])
-      { // intentionally on cascade
-        case preg_match('/^(?:empty|array|list)$/', $val[1]) > 0;
-        case function_exists($val[1]);
-        case T_VARIABLE; // $var
-
-        case T_BOOLEAN_AND; // &&
-        case T_LOGICAL_AND; // and
-        case T_BOOLEAN_OR; // ||
-        case T_LOGICAL_OR; // or
-
-        case T_CONSTANT_ENCAPSED_STRING; // "foo" or 'bar'
-        case T_ENCAPSED_AND_WHITESPACE; // " $a "
-        case T_PAAMAYIM_NEKUDOTAYIM; // ::
-        case T_DOUBLE_COLON; // ::
-
-        case T_LIST; // list()
-        case T_ISSET; // isset()
-        case T_OBJECT_OPERATOR; // ->
-        case T_OBJECT_CAST; // (object)
-        case T_DOUBLE_ARROW; // =>
-        case T_ARRAY_CAST; // (array)
-        case T_ARRAY; // array()
-
-        case T_INT_CAST; // (int) or (integer)
-        case T_BOOL_CAST; // (bool) or (boolean)
-        case T_DOUBLE_CAST; // (real), (double), or (float)
-        case T_STRING_CAST; // (string)
-        case T_STRING; // "candy"
-
-        case T_DEC; // --
-        case T_INC; // ++
-        case T_DNUMBER; // 0.12, etc.
-        case T_LNUMBER; // 123, 012, 0x1ac, etc.
-        case T_NUM_STRING; // "$x[0]"
-
-        case T_IS_EQUAL; // ==
-        case T_IS_GREATER_OR_EQUAL; // >=
-        case T_IS_SMALLER_OR_EQUAL; // <=
-        case T_IS_NOT_IDENTICAL; // !==
-        case T_IS_IDENTICAL; // ===
-        case T_IS_NOT_EQUAL; // != or <>
-        case T_CONCAT_EQUAL; // .=
-        case T_DIV_EQUAL; // /=
-        case T_MUL_EQUAL; // *=
-        case T_MINUS_EQUAL; // -=
-        case T_PLUS_EQUAL; // +=
-        
-        case T_IF; // if
-        case T_AS; // as
-        case T_FOR; // for
-        case T_FOREACH; // foreach
-        case T_ELSE; // else
-        case T_ELSEIF; // elseif
-        case T_SWITCH; // switch
-        case T_WHILE; // while
-        case T_ENDFOR; // endfor
-        case T_ENDFOREACH; // endforeach
-        case T_ENDIF; // endif
-        case T_ENDSWITCH; // endswitch
-        case T_ENDWHILE; // endwhile
-        
-          $out []= $val[1];
-        break;
-
-        default;
-        break;
+      if ( ! is_array($val))
+      {
+        $out []= $val;
+      }
+      else
+      {
+        switch ($val[0])
+        { // intentionally on cascade
+          case function_exists($val[1]);
+          case in_array($val[1], $expr);
+          case T_VARIABLE; // $var
+  
+          case T_BOOLEAN_AND; // &&
+          case T_LOGICAL_AND; // and
+          case T_BOOLEAN_OR; // ||
+          case T_LOGICAL_OR; // or
+  
+          case T_CONSTANT_ENCAPSED_STRING; // "foo" or 'bar'
+          case T_ENCAPSED_AND_WHITESPACE; // " $a "
+          case T_PAAMAYIM_NEKUDOTAYIM; // ::
+          case T_DOUBLE_COLON; // ::
+  
+          case T_LIST; // list()
+          case T_ISSET; // isset()
+          case T_OBJECT_OPERATOR; // ->
+          case T_OBJECT_CAST; // (object)
+          case T_DOUBLE_ARROW; // =>
+          case T_ARRAY_CAST; // (array)
+          case T_ARRAY; // array()
+  
+          case T_INT_CAST; // (int) or (integer)
+          case T_BOOL_CAST; // (bool) or (boolean)
+          case T_DOUBLE_CAST; // (real), (double), or (float)
+          case T_STRING_CAST; // (string)
+          case T_STRING; // "candy"
+  
+          case T_DEC; // --
+          case T_INC; // ++
+          case T_DNUMBER; // 0.12, etc.
+          case T_LNUMBER; // 123, 012, 0x1ac, etc.
+          case T_NUM_STRING; // "$x[0]"
+  
+          case T_IS_EQUAL; // ==
+          case T_IS_GREATER_OR_EQUAL; // >=
+          case T_IS_SMALLER_OR_EQUAL; // <=
+          case T_IS_NOT_IDENTICAL; // !==
+          case T_IS_IDENTICAL; // ===
+          case T_IS_NOT_EQUAL; // != or <>
+          case T_CONCAT_EQUAL; // .=
+          case T_DIV_EQUAL; // /=
+          case T_MUL_EQUAL; // *=
+          case T_MINUS_EQUAL; // -=
+          case T_PLUS_EQUAL; // +=
+          
+          case T_IF; // if
+          case T_AS; // as
+          case T_FOR; // for
+          case T_FOREACH; // foreach
+          case T_ELSE; // else
+          case T_ELSEIF; // elseif
+          case T_SWITCH; // switch
+          case T_WHILE; // while
+          case T_ENDFOR; // endfor
+          case T_ENDFOREACH; // endforeach
+          case T_ENDIF; // endif
+          case T_ENDSWITCH; // endswitch
+          case T_ENDWHILE; // endwhile
+          
+            $out []= $val[1];
+          break;
+  
+          default;
+          break;
+        }
       }
     }
+    return $out;
   }
-  return $out;
+
+  /**#@-*/
 }
 
 /* EOF: ./lib/tetl/taml/system.php */
