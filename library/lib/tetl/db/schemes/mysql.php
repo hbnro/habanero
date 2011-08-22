@@ -162,4 +162,4 @@ sql::implement('quotes', function($test)
   return "`$test`";
 });
 
-/* EOF: ./lib/db/schemes/mysql.php */
+/* EOF: ./lib/tetl/db/schemes/mysql.php */

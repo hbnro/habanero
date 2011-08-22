@@ -169,4 +169,4 @@ function remove_index($from, $name)
   return (boolean) sql::remove_index($name);
 }
 
-/* EOF: ./lib/db/migration.php */
+/* EOF: ./lib/tetl/db/migration.php */

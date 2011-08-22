@@ -125,4 +125,4 @@ return array(
   ),
 );
 
-/* EOF: ./lib/xss/assets/scripts/clean_vars.php */
+/* EOF: ./lib/tetl/xss/assets/scripts/clean_vars.php */

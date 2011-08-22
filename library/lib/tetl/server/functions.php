@@ -202,4 +202,4 @@ function nocache()
   header('Expires: ' . date('D, m Y H:i:s \G\M\T', 0));
 }
 
-/* EOF: ./lib/server/functions.php */
+/* EOF: ./lib/tetl/server/functions.php */

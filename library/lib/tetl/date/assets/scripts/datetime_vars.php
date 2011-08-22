@@ -446,4 +446,4 @@ return array(
   ),
 );
 
-/* EOF: ./lib/date/assets/scripts/datetime_vars.php */
+/* EOF: ./lib/tetl/date/assets/scripts/datetime_vars.php */

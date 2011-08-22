@@ -577,4 +577,4 @@ PHP;
   }
 });
 
-/* EOF: ./lib/html.php */
+/* EOF: ./lib/tetl/html.php */

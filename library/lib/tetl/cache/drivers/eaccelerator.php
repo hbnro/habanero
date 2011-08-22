@@ -46,4 +46,4 @@ cache::implement('check_item', function($key)
   return in_array($key, eaccelerator_list_keys());
 });
 
-/* EOF: ./lib/cache/drivers/eaccelerator.php */
+/* EOF: ./lib/tetl/cache/drivers/eaccelerator.php */

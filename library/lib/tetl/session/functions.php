@@ -138,4 +138,4 @@ function flash($key = -1, $value = FALSE)
   ));
 }
 
-/* EOF: ./lib/session/functions.php */
+/* EOF: ./lib/tetl/session/functions.php */

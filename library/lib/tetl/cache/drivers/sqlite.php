@@ -105,4 +105,4 @@ cache::implement('check_item', function($key)
   return @array_shift($tmp->fetchArray(SQLITE3_NUM)) > 0;
 });
 
-/* EOF: ./lib/cache/drivers/sqlite.php */
+/* EOF: ./lib/tetl/cache/drivers/sqlite.php */

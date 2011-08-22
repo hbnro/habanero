@@ -70,4 +70,4 @@ call_user_func(function()
   }
 });
 
-/* EOF: ./lib/session/initialize.php */
+/* EOF: ./lib/tetl/session/initialize.php */

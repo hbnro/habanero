@@ -42,4 +42,4 @@ cache::implement('check_item', function($key)
   return apc_exists($key);
 });
 
-/* EOF: ./lib/cache/drivers/apc.php */
+/* EOF: ./lib/tetl/cache/drivers/apc.php */

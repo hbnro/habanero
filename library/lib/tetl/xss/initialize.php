@@ -10,4 +10,4 @@
 
 require __DIR__.DS.'system'.EXT;
 
-/* EOF: ./lib/xss/initialize.php */
+/* EOF: ./lib/tetl/xss/initialize.php */

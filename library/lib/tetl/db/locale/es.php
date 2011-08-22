@@ -9,4 +9,4 @@ $lang['database_query_error'] = 'Ocurrió un error en la base de datos: %{messag
 $lang['database_driver_missing'] = 'El adaptador de la base de datos no es válido: %{adapter}';
 $lang['database_scheme_missing'] = 'El esquema para la base de datos no existe: %{adapter}';
 
-/* EOF: ./lib/dn/locale/es.php */
+/* EOF: ./lib/tetl/db/locale/es.php */

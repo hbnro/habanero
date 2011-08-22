@@ -26,4 +26,4 @@ call_user_func(function()
   /**#@-*/
 });
 
-/* EOF: ./lib/cache/initialize.php */
+/* EOF: ./lib/tetl/cache/initialize.php */

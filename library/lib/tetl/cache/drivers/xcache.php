@@ -41,4 +41,4 @@ cache::implement('check_item', function($key)
   return xcache_isset($key);
 });
 
-/* EOF: ./lib/cache/drivers/xcache.php */
+/* EOF: ./lib/tetl/cache/drivers/xcache.php */

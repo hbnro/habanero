@@ -324,4 +324,4 @@ class upload extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/upload/system.php */
+/* EOF: ./lib/tetl/upload/system.php */

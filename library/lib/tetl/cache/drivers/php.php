@@ -61,4 +61,4 @@ cache::implement('check_item', function($key)
   return ! is_false(cache::fetch_item($key));
 });
 
-/* EOF: ./lib/cache/drivers/php.php */
+/* EOF: ./lib/tetl/cache/drivers/php.php */

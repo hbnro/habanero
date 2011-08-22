@@ -426,4 +426,4 @@ function tokenize($code)
   return $out;
 }
 
-/* EOF: ./lib/taml/system.php */
+/* EOF: ./lib/tetl/taml/system.php */
