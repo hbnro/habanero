@@ -287,4 +287,4 @@ class valid extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/valid.php */
+/* EOF: ./lib/tetl/valid.php */

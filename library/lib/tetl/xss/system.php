@@ -198,4 +198,4 @@ class xss extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/xss/system.php */
+/* EOF: ./lib/tetl/xss/system.php */

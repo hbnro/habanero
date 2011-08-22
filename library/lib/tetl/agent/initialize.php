@@ -10,4 +10,4 @@
 
 require __DIR__.DS.'functions'.EXT;
 
-/* EOF: ./lib/agent/initialize.php */
+/* EOF: ./lib/tetl/agent/initialize.php */

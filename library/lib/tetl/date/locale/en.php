@@ -73,4 +73,4 @@ $lang['oct'] = 'Oct';
 $lang['nov'] = 'Nov';
 $lang['dec'] = 'Dec';
 
-/* EOF: ./lib/date/locale/en.php */
+/* EOF: ./lib/tetl/date/locale/en.php */

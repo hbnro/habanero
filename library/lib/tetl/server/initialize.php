@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Server library initialization
+ */
+
 call_user_func(function()
 {
   require __DIR__.DS.'functions'.EXT;
@@ -123,3 +127,5 @@ call_user_func(function()
   
   ignore_user_abort(FALSE);
 });
+
+/* EOF: ./lib/tetl/server/initialize.php */

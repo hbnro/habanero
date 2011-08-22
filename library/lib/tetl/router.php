@@ -852,4 +852,4 @@ function download($path, $name = '', $mime = '', $kbps = 24)
   exit;
 }
 
-/* EOF: ./lib/request.php */
+/* EOF: ./lib/tetl/router.php */

@@ -9,4 +9,4 @@ $lang['database_query_error'] = 'There was an error in the database: %{message} 
 $lang['database_driver_missing'] = 'Invalid database driver: %{adapter}';
 $lang['database_scheme_missing'] = 'Database scheme unavailable: %{adapter}';
 
-/* EOF: ./lib/db/locale/en.php */
+/* EOF: ./lib/tetl/db/locale/en.php */
