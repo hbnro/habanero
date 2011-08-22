@@ -24,7 +24,7 @@ Just clone the repo from Github.
 
     $ git clone git@github.com:pateketrueke/tetlphp.git ~/tetlphp
   
-Then move or link the entire directory within php's **include_path**.
+Then move or link the entire directory within php **include_path**.
 
     $ sudo mv ~/tetlphp /usr/share/php 
 
@@ -32,7 +32,7 @@ or
 
     $ sudo ln -s ~/tetlphp /usr/share/php
     
-Or download the latest version and extract it wherever you want, remember include later it as is must be.
+Or download the latest version and extract it wherever you want, remember include always.
 
 Quick start
 -----------
@@ -53,7 +53,7 @@ Quick start
   
 
 Follow
-------------
+------
 
 The developer ([@tetlphp](http://twitter.com/tetlphp))
 
