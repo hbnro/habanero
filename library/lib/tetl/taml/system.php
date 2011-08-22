@@ -184,7 +184,8 @@ class taml extends prototype
               '/\s*(?=[\r\n])/s' => '',
               '/\?>\s*<\?php/' => "\n",
               '/\?>\s*<\?=/' => "\necho",
-              '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/' => '<\\1\\2>\\3</\\1>',
+              '/<(pre|a)([^<>]*)>\s*(.+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
+              '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
             );
    
     
@@ -210,7 +211,15 @@ class taml extends prototype
         continue;
       }
       
-      $out []= taml::line($key, is_array($value) ? taml::compile($value) : '');
+      if (is_array($value) && (substr($key, 0, 1) === '/'))
+      {//FIX
+        $value = @join("\n ", $value);
+        $out []= "<!--\n$value\n-->";
+      }
+      else
+      {
+        $out []= taml::line($key, is_array($value) ? taml::compile($value) : '');
+      }
     }
     
     $out = join("\n", array_filter($out));

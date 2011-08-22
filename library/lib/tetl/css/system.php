@@ -22,8 +22,8 @@ class css extends prototype
   
   // hackish conversion
   private static $fixate_array_expr = array(
-    '/\s*(@[\w\-]+)\s+([^\{\};]+);|\s*([^:\r\n]+)\s*:\s*([^\r\n;]+);/m' => "\ntrim('\\1\\3') . mt_rand() => '\\2\\4',",
-    '/\s*([^\r\n;]+)\s*(:?)\s*\{/m' => "\ntrim('\\1\\2') . mt_rand() => array(",
+    '/\s*(@[\w\-]+)\s+([^\{\};]+);|\s*([^:\r\n]+)\s*:\s*([^\r\n;]+);/m' => "\ntrim('\\1\\3!') . mt_rand() => '\\2\\4',",
+    '/\s*([^\r\n;]+)\s*(:?)\s*\{/m' => "\ntrim('\\1\\2!') . mt_rand() => array(",
     '/([^;]+);/m' => '\\1',
     '/(?<!\w)\}/' => '),',
     '/[\r\n]+/' => "\n",
@@ -130,6 +130,7 @@ class css extends prototype
 
     $text = preg_replace('/\b(\w+)!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
+    $text = preg_replace('/\b0+(?=\.)/', '', $text);
     
     return $text;
   }
@@ -282,7 +283,7 @@ class css extends prototype
           if ( ! empty($val))
           {              
             @list($key, $val) = explode(':', $val);
-            $args[$key] = $val;
+            $args[substr($key, 1)] = trim($val);
           }
         }
       }
@@ -314,10 +315,9 @@ class css extends prototype
   // parse entire buffer
   final private static function parse_buffer($text)
   {
-    $text = preg_replace('/\/\/(.+?)$/m', '', $text);
-    $text = preg_replace('/\/\*.+?\*\//s', '', $text);
+    $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace(array_keys(css::$fixate_css_expr), css::$fixate_css_expr, $text);
-    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+?)\\2;/s', array('css', 'fetch_externals'), $text);
+    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', array('css', 'fetch_externals'), $text);
     $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', array('css', 'fetch_properties'), $text);
     
     $depth  = 0;
@@ -363,7 +363,7 @@ class css extends prototype
   {
     foreach ($set as $key => $val)
     {
-      $key = preg_replace('/\d*$/', '', $key);
+      $key = preg_replace('/!\d*$/', '', $key);
       
       if (is_array($val)) 
       {//FIX
@@ -405,7 +405,7 @@ class css extends prototype
     
     foreach ($set as $key => $val)
     {
-      $key = preg_replace('/\d*(:|)$/', '\\1', $key);
+      $key = preg_replace('/!\d*(:|)$/', '\\1', $key);
 
       if (substr($key, -1) === ':') 
       {
@@ -455,7 +455,7 @@ class css extends prototype
     foreach ($test as $key => $val)
     {
       $val = trim($val);
-      $key = preg_replace('/\d*(:|)$/', '\\1', $key);
+      $key = preg_replace('/!\d*(:|)$/', '\\1', $key);
       
       if ( ! is_array($val))
       {
@@ -495,16 +495,16 @@ class css extends prototype
           
           foreach ($old as $key => $val) 
           {
-            $old[$key] = trim(preg_match('/^\s*([\'"])(.+?)\\1\s*$/', $val, $match) ? $match[2] : $val);
+            $old[substr($key, 1)] = trim(preg_match('/^\s*([\'"])(.+?)\\1\s*$/', $val, $match) ? $match[2] : $val);
           }
           
           
           $out = array();
-          
+
           array_walk_recursive(css::$mixins[$part]['props'], function($val, $key)
             use(&$out, $old)
           {//FIX
-            $out[$key] = preg_replace('/\$([a-z_]\w*)!?/i', 'isset($old["\\1"])?$old["\\1"]:"\\0"', $val);
+            $out[$key] = preg_replace('/\$([a-z_]\w*)!?/ei', 'isset($old["\\1"])?$old["\\1"]:NULL;', $val);
           });
         }
       }
@@ -539,11 +539,11 @@ class css extends prototype
     }
     else
     {//FIX
-      $props = taml::$props;
+      $props = css::$props;
       $repl  = function($match)
         use($props)
       {
-        return isset($props[$match[1]]) ? $props[$match[1]] : $match[0];
+        return isset($props[$match[1]]) ? $props[$match[1]] : NULL;
       };
       
       do
