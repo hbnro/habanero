@@ -551,9 +551,9 @@ class css extends prototype
       {
         $old  = strlen($text);
         
-        $text = preg_replace(array_keys($set), $set, $text);
-        $text = preg_replace_callback('/\$([a-z_]\w*)!?/i', $repl, css::do_math($text));
         $text = preg_replace_callback('/(?<![\-._])([\w-]+?)\(([^\(\)]+)\)(\.\w+)?/', array('css', 'do_helper'), $text);
+        $text = preg_replace_callback('/\$([a-z_]\w*)!?/i', $repl, css::do_math($text));
+        $text = preg_replace(array_keys($set), $set, $text);
         
       } while($old != strlen($text));
     }
