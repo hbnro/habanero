@@ -59,7 +59,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '')
 {
   static $repl = array(
             '/[^a-z0-9]|\s+/i' => ' ',
-            '/\s([a-z])/ie' => '$glue.ucfirst("\\1")',
+            '/\s([a-z])/ie' => '$glue.ucfirst("\\1");',
           );
 
   $text = preg_replace(array_keys($repl), $repl, underscore($text));
@@ -220,9 +220,9 @@ function ents($text, $escape = FALSE)
 {
   static $expr = array(
             '/(&#?[0-9a-z]{2,})([\x00-\x20])*;?/i' => '\\1;\\2',
-            '/&#x([0-9a-f]+);?/ei' => 'chr(hexdec("\\1"))',
+            '/&#x([0-9a-f]+);?/ei' => 'chr(hexdec("\\1"));',
             '/(&#x?)([0-9A-F]+);?/i' => '\\1\\2;',
-            '/&#(\d+);?/e' => 'chr("\\1")',
+            '/&#(\d+);?/e' => 'chr("\\1");',
           );
   
   
@@ -263,8 +263,8 @@ function unents($text)
   static $set = NULL,
          $expr = array(
             '/&amp;([a-z]+|(#\d+)|(#x[\da-f]+));/i' => '&\\1;',
-            '/&#x([0-9a-f]+);/ei' => 'chr(hexdec("\\1"))',
-            '/&#([0-9]+);/e' => 'chr("\\1")',
+            '/&#x([0-9a-f]+);/ei' => 'chr(hexdec("\\1"));',
+            '/&#([0-9]+);/e' => 'chr("\\1");',
           );
 
   if (is_null($set))
