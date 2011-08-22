@@ -1,0 +1,11 @@
+!
+:html
+  :head
+    :title CSS & TAML => Sass & Haml inspiration
+    :style = $css
+  :body
+    :h1 Hello world!
+    :p.foo
+      :a{ href => '#' } Lorem ipsum...
+    :pre#box = $css
+    = ticks(BEGIN), 's.'
