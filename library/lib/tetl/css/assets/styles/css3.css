@@ -1,0 +1,44 @@
+/**
+ * CSS3 please! basic mixins
+ */
+
+@mixin box_round($size: 5px) { 
+     -moz-border-radius: $size; 
+  -webkit-border-radius: $size; 
+          border-radius: $size; 
+  
+     -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box; 
+}
+
+@mixin box_shadow($left: 0px, $top: 0px, $blur: 5px, $color: black) { 
+     -moz-box-shadow: $left $top $blur $color; 
+  -webkit-box-shadow: $left $top $blur $color; 
+          box-shadow: $left $top $blur $color; 
+}
+
+@mixin box_gradient($from: gray, $to: silver) {
+  background-color: #444444;
+  background-image: -webkit-gradient(linear, left top, left bottom, from($from), to($to)); 
+  background-image: -webkit-linear-gradient(top, $from, $to); 
+  background-image:    -moz-linear-gradient(top, $from, $to); 
+  background-image:     -ms-linear-gradient(top, $from, $to); 
+  background-image:      -o-linear-gradient(top, $from, $to); 
+  background-image:         linear-gradient(top, $from, $to);
+}
+
+@mixin box_textshadow($left: 0px, $top: 0px, $blur: 5px, $color: black) {
+  text-shadow: $left $top $blur $color;
+}
+
+@mixin box_rotate($angle: 7.5) {
+     -moz-transform: rotate($angle!deg);
+       -o-transform: rotate($angle!deg);
+  -webkit-transform: rotate($angle!deg);
+      -ms-transform: rotate($angle!deg);
+          transform: rotate($angle!deg);  
+               zoom: 1;
+}
+
+/* EOF: ./lib/tetl/css/assets/styles/css3.css */
