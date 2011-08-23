@@ -81,9 +81,9 @@ function uses($lib)
 {
   static $set = array();
 
-  
+
   $lib = strtr($lib, '_./', DS);
-  
+
   if (in_array($lib, $set))
   {
     return FALSE;
@@ -139,8 +139,8 @@ function run(Closure $bootstrap, array $params = array())
             'middleware'  => array(),
             'environment' => array(),
           );
-  
-  
+
+
   if (defined('BEGIN'))
   {
     raise(ln('application_error'));
@@ -164,11 +164,11 @@ function run(Closure $bootstrap, array $params = array())
   }
 
   $params += $defs;
-  
+
   $callback = $params['bootstrap'];
-  
+
   $params['environment'] = $params['environment'] ?: option('environment', 'testing');
-  
+
   foreach ((array) $params['middleware'] as $one)
   {
     if (is_callable($one))
@@ -245,7 +245,7 @@ function raise($message)
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(), 1);
 
-  
+
   // finalize opened buffers
   while (ob_get_level())
   {
@@ -258,7 +258,7 @@ function raise($message)
     unset($GLOBALS['--raise-message']);
   }
 
-  
+
   foreach ($trace as $i => $on)
   {
     $type   = ! empty($on['type']) ? $on['type'] : '';
@@ -281,7 +281,7 @@ function raise($message)
   $var['message']   = dump($message);
   $var['backtrace'] = array_reverse($trace);
   $var['route']     = IS_CLI ? @array_shift($_SERVER['argv']) : server(TRUE, server('REQUEST_URI'));
-  
+
   // raw headers
   $var['headers']   = array();
 
@@ -319,7 +319,7 @@ function raise($message)
 
   foreach ((array) $var['env'] as $key => $val)
   {
-    if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key))
+    if (preg_match('/^(?:PHP|SCRIPT)/', $key))
     {
       unset($var['env'][$key]);
     }
@@ -327,7 +327,6 @@ function raise($message)
 
   // app globals
   global $GLOBALS;
-  $var['global'] = $GLOBALS;
 
   foreach ($missing = array('_SERVER', 'GLOBALS') as $one)
   {
@@ -336,8 +335,8 @@ function raise($message)
       unset($var['global'][$one]);
     }
   }
-  
-  
+
+
   // invoke custom handler
   trigger(__FUNCTION__, TRUE, $var);
 
@@ -348,7 +347,7 @@ function raise($message)
     'partial' => LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT,
     'locals' => $var,
   ));
-  
+
   $output = IS_CLI ? unents($output) : $output;
 
   render($output);
@@ -368,7 +367,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 {
   static $tokens = NULL;
 
-  
+
   if (is_null($tokens))
   {
     $latin = '\pL';
@@ -383,7 +382,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 
     // TODO: sure thing?
     $chars  = preg_quote(RFC_CHARS, '/');
-    
+
     $tokens = array(
       '/\\\\\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.+?)',
       '/\\\:([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[^\/]+?)',
@@ -424,7 +423,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 
 
   $regex = preg_replace(array_keys($tokens), $tokens, $expr);
-  
+
   if (func_num_args() === 1)
   {
     return "/$regex/";
@@ -456,12 +455,12 @@ function value($from, $that = NULL, $or = FALSE)
          ($matches[1] = explode('.', $that)))
   {
     $key = ($offset = strpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
-    
+
     if ( ! empty($key))
     {
       array_unshift($matches[1], $key);
     }
-    
+
     $key   = array_shift($matches[1]);
     $get   = join('.', $matches[1]);
     $depth = sizeof($matches[1]);
@@ -480,7 +479,7 @@ function value($from, $that = NULL, $or = FALSE)
     }
 
     $value = ! $depth ? $tmp : value($tmp, $get, $or);
-    
+
     return $value;
   }
 }
@@ -496,11 +495,11 @@ function value($from, $that = NULL, $or = FALSE)
  */
 function ticks($start = NULL, $end = FALSE, $round = 4)
 {
-  if (func_num_args() == 0) 
+  if (func_num_args() == 0)
   {
     return microtime(TRUE);
   }
-  elseif (func_num_args() == 1) 
+  elseif (func_num_args() == 1)
   {
     $end = microtime(TRUE);
   }
@@ -638,8 +637,8 @@ function dump($var, $show = FALSE, $deep = 99)
   {
     $out = "[$newline$out$newline]";
   }
-  
-  
+
+
   if (is_true($show) && $depth <= 0)
   {
     $out = IS_CLI ? $out : htmlspecialchars($out);
