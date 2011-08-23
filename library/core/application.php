@@ -329,8 +329,6 @@ function raise($message)
   }
 
   // app globals
-  global $GLOBALS;
-
   foreach ($missing = array('_SERVER', 'GLOBALS') as $one)
   {
     if (isset($var['global'][$one]))
