@@ -11,6 +11,7 @@
       font-family: Palatino, "Palatino Linotype", "Hoefler Text", Times, "Times New Roman", serif;
     }
     pre {
+      overflow: auto;
       font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
       font-size: .8em;
     }
