@@ -27,11 +27,21 @@ class valid extends prototype
   /**
    * Define rules
    *
-   * @param  array Validation ruleset
-   * @return void
+   * @param     array Validation ruleset
+   * @staticvar Replacements
+   * @return    void
    */
   final public static function setup(array $test = array())
   {
+    static $fix = array(
+              '=' => 'eq_',
+              '|' => '_or_',
+              '!' => 'not_',
+              '<' => 'lt_',
+              '>' => 'gt_',
+            );
+    
+    
     valid::$error = array();
     valid::$rules = array_fill_keys(array_keys($test), array());
     
@@ -43,8 +53,8 @@ class valid extends prototype
         {
           foreach (array_filter(explode(' ', $one)) as $one)
           {
-            $name = str_replace('|', '_or_', str_replace('!', 'not_', $one));
-            $name = ! is_num($key) ? $key : slug($name, '_', SLUG_STRICT | SLUG_TRIM);
+            $name = slug(strtr($one, $fix), '_', SLUG_STRICT | SLUG_TRIM);
+            $name = ! is_num($key) ? $key : $name;
             
             valid::$rules[$field][$name] = $one;
           }
@@ -73,13 +83,13 @@ class valid extends prototype
    */
   final public static function done(array $set = array())
   {
-    valid::$data = $set ?: $_POST;
+    valid::$data = $set;
     
     $ok = 0;
     
     foreach (valid::$rules as $key => $set)
     {
-      if ( ! valid::wrong($key, $set))
+      if ( ! valid::wrong($key, (array) $set))
       {
         $ok += 1;
       }
@@ -136,118 +146,118 @@ class valid extends prototype
     $fail = FALSE;
     $test = value(valid::$data, $name);
     
-    
-    foreach ($set as $error => $rule)
+    if ($key = array_search('required', $set))
     {
-      if ($rule === 'required')
-      {
-        if ( ! trim($test))
-        {
-          $fail = TRUE;
-          break;
-        }
+      unset($set[$key]);
+      
+      if ( ! trim($test))
+      {//FIX
+        $error = 'required';
+        $fail  = TRUE;
       }
-      elseif (is_callable($rule))
+    }
+    
+    
+    if (trim($test))
+    {
+      foreach ($set as $error => $rule)
       {
-        if ( ! call_user_func($rule, $test))
+        if (is_callable($rule))
         {
-          $fail = TRUE;
-          break;
-        }
-      }
-      elseif ( ! is_false(strpos($rule, '|')))
-      {
-        $set     = array_filter(explode('|', $rule));
-        $count   = 
-        $default = sizeof($set);
-        
-        
-        foreach ($set as $callback)
-        {
-          if (function_exists($callback) && call_user_func($callback, $test))
-          {
-            $count -= 1;
-          }
-        }
-        
-        
-        if ($count === sizeof($set))
-        {
-          $fail = TRUE;
-          break;
-        }
-      }
-      elseif (preg_match('/(?:<>|(?:<|>|!=|==)=?)\s*(.+?)$/', $rule, $match))
-      {
-        $operator = substr($rule, 0, - strlen($match[1]));
-        $value    = addslashes(array_shift(valid::vars($match[1])));
-  
-        $value    = ! is_num($value) ? "'$value'" : $value;
-        $test = ! is_num($test) ? "'$test'" : $test;
-  
-  
-        if ( ! @eval("return $value $operator $test ?: FALSE;"))
-        {
-          $fail = TRUE;
-          break;
-        }
-      }
-      elseif (preg_match('/^([^\[\]]+)\[([^\[\]]+)\]$/', $rule, $match))
-      {
-        $negate   = substr($match[1], 0, 1) === '!';
-        $callback = $negate ? substr($match[1], 1) : $match[1];
-        
-        if (function_exists($callback))
-        {
-          if ( ! isset($match[2]))
-          {
-            $match[2] = NULL;
-          }
-          
-          
-          $args = valid::vars($match[2]);
-  
-          if (substr($callback, 0, 3) === 'is_')
-          {
-            array_unshift($args, $test);
-          }
-          
-          
-          $value = call_user_func_array($callback, $args);
-          
-          if (( ! $value && ! $negate) OR ($value && $negate))
+          if ( ! call_user_func($rule, $test))
           {
             $fail = TRUE;
             break;
           }
         }
-      }
-      elseif (($rule[0] === '%') && (substr($rule, -1) === '%'))
-      {
-        $expr = sprintf('/%s/us', str_replace('/', '\/', substr($rule, 1, -1)));
-        
-        if ( ! @preg_match($expr, $test))
+        elseif ( ! is_false(strpos($rule, '|')))
+        {
+          $fail = TRUE;
+          
+          foreach (array_filter(explode('|', $rule)) as $callback)
+          {
+            if (function_exists($callback) && call_user_func($callback, $test))
+            {
+              $fail = FALSE;
+              break;
+            }
+          }
+          
+          if ($fail)
+          {
+            break;
+          }
+        }
+        elseif (preg_match('/^((?:[!=]=?|[<>])=?)(.+?)$/', $rule, $match))
+        {
+          $expr = array_shift(valid::vars($match[2]));
+          
+          $test = ! is_num($test) ? "'$test'" : addslashes($test);
+          $expr = ! is_num($expr) ? "'$expr'" : addslashes($expr);
+          
+          $operator = $match[1];
+          
+          if ( ! trim($match[1], '!='))
+          {
+            $operator .= '=';
+          }
+          
+          if ( ! @eval("return $expr $operator $test ?: FALSE;"))
+          {
+            $fail = TRUE;
+            break;
+          }
+        }
+        elseif (($rule[0] === '%') && (substr($rule, -1) === '%'))
+        {
+          $expr = sprintf('/%s/us', str_replace('/', '\/', substr($rule, 1, -1)));
+          
+          if ( ! @preg_match($expr, $test))
+          {
+            $fail = TRUE;
+            break;
+          }
+        }
+        elseif (preg_match('/^([^\[\]]+)\[([^\[\]]+)\]$/', $rule, $match))
+        {
+          $negate   = substr($match[1], 0, 1) === '!';
+          $callback = $negate ? substr($match[1], 1) : $match[1];
+          
+          if (function_exists($callback))
+          {
+            if ( ! isset($match[2]))
+            {
+              $match[2] = NULL;
+            }
+            
+            
+            $args = valid::vars($match[2]);
+            array_unshift($args, $test);
+    
+            $value = call_user_func_array($callback, $args);
+            
+            if (( ! $value && ! $negate) OR ($value && $negate))
+            {
+              $fail = TRUE;
+              break;
+            }
+          }
+        }
+        elseif ( ! in_array($test, valid::vars($rule)))
         {
           $fail = TRUE;
           break;
         }
       }
-      elseif ( ! in_array($test, valid::vars($rule)))
-      {
-        $fail = TRUE;
-        break;
-      }
     }
     
     
-    if (is_true($fail))
+    if ($fail && ! empty($error))
     {
-      valid::$error[$name] = is_string($error) ? $error : 'unknown';
-      
-      return FALSE;
+      valid::$error[$name] = (string) $error;
     }
     
-    return TRUE;
+    return $fail;
   }
   
   // dynamic values

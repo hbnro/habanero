@@ -13,10 +13,7 @@
  */
 function option($get, $or = FALSE)
 {
-  $from   = config();
-  $output = value($from, $get, $or);
-
-  return $output;
+  return value(config(), $get, $or);
 }
 
 
@@ -211,7 +208,7 @@ function trigger($event, $bind, array $args = array())
 
   if (is_true($bind))
   {
-    foreach ($set[$event] as $callback)
+    foreach (array_reverse($set[$event]) as $callback)
     {
       call_user_func_array($callback, $args);
     }
@@ -226,7 +223,7 @@ function trigger($event, $bind, array $args = array())
   }
   else
   {
-    array_unshift($set[$event], $bind);
+    $set[$event] []= $bind;
   }
 
   return TRUE;
@@ -241,6 +238,12 @@ function trigger($event, $bind, array $args = array())
  */
 function raise($message)
 {
+  if (is_closure($message))
+  {
+    return trigger(__FUNCTION__, $message);
+  }
+
+
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(), 1);
@@ -249,7 +252,7 @@ function raise($message)
   // finalize opened buffers
   while (ob_get_level())
   {
-     ob_end_clean();
+    ob_end_clean();
   }
 
   if ( ! empty($GLOBALS['--raise-message']))
@@ -342,7 +345,8 @@ function raise($message)
 
 
   // output
-  $type = IS_CLI ? 'txt' : 'html';
+  $type   = IS_CLI ? 'txt' : 'html';
+
   $output = render(array(
     'partial' => LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT,
     'locals' => $var,

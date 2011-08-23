@@ -76,6 +76,15 @@ class form extends prototype
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
     
     
+    if (preg_match('/^(put|get|post|delete)\s+(.+?)$/i', $params['action'], $match))
+    {
+      $params['method'] = strtolower($match[1]);
+      $params['action'] = $match[2];
+    }
+    
+    $params['action'] = pre_url($params['action']);
+    
+    
     $input = tag('input', array(
       'type' => 'hidden',
       'name' => '_token',
