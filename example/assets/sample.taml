@@ -1,4 +1,4 @@
-!
+!5
 :html
   :head
     :title CSS & TAML => Sass & Haml inspiration
@@ -8,4 +8,13 @@
     :p.foo
       :a{ href => '#' } Lorem ipsum...
     :pre#box = $css
+    /:pre
+      raw content
+      text
+        indented too
+          but all
+            within
+          pre
+        tag
+      !!!COOL
     = ticks(BEGIN), 's.'
