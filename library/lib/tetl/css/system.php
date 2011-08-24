@@ -22,8 +22,8 @@ class css extends prototype
 
   // hackish conversion
   private static $fixate_array_expr = array(
-    '/\s*(@[\w\-]+)\s+([^\{\};]+);|\s*([^:\r\n]+)\s*:\s*([^\r\n;]+);/m' => "\ntrim('\\1\\3!') . mt_rand() => '\\2\\4',",
-    '/\s*([^\r\n;]+)\s*(:?)\s*\{/m' => "\ntrim('\\1\\2!') . mt_rand() => array(",
+    '/\s*(@[\w\-]+)\s+([^\{\};]+);|\s*([^:\r\n]+)\s*:\s*([^\r\n;]+);/m' => "\ntrim('\\1\\3!').mt_rand()=>'\\2\\4',",
+    '/\s*([^\r\n;]+)\s*(:?)\s*\{/m' => "\ntrim('\\1\\2!').mt_rand()=>array(",
     '/([^;]+);/m' => '\\1',
     '/(?<!\w)\}/' => '),',
     '/[\r\n]+/' => "\n",
