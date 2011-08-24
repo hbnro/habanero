@@ -36,11 +36,11 @@ function underscore($text, $ucwords = FALSE)
 {
   $text = plain(unents($text));
 
-  if (is_true($ucwords)) 
+  if (is_true($ucwords))
   {
     $text = ucwords($text);
   }
-  
+
   $text = strtr($text, ' ', '_');
 
   return preg_replace('/(^|\W)([A-Z])/e', '"\\1_".strtolower("\\2");', $text);
@@ -64,7 +64,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '')
 
   $text = preg_replace(array_keys($repl), $repl, underscore($text));
 
-  if (is_true($ucfirst)) 
+  if (is_true($ucfirst))
   {
     $text = ucfirst($text);
   }
@@ -83,7 +83,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '')
 function salt($length = 8)
 {
   static $chars = '@ABCD,EFGH.IJKL-MNOP=QRST~UVWX$YZab/cdef*ghij;klmn:opqr_stuv(wxyz)0123!4567|89{}';
-  
+
 
   $length = (int) $length;
 
@@ -91,13 +91,11 @@ function salt($length = 8)
 
   $out = '';
 
-  mt_srand(ticks() * time());
-
   do
   {
     $index = substr($chars, mt_rand(0, 79), 1);
 
-    if ( ! strstr($out, $index)) 
+    if ( ! strstr($out, $index))
     {
       $out .= $index;
     }
@@ -123,19 +121,19 @@ function slug($text, $glue = '-', $options = NULL)
   $strict = ((int) $options & SLUG_STRICT) == 0 ? FALSE : TRUE;
   $lower = ((int) $options & SLUG_LOWER) == 0 ? FALSE : TRUE;
   $trim = ((int) $options & SLUG_TRIM) == 0 ? FALSE : TRUE;
- 
-  
+
+
   $expr = $strict ? '\W+' : sprintf('[^%s\/]', substr(match('%l'), 1, -1));
   $text = preg_replace("/$expr/", $glue, plain(unents($text)));
   $text = $lower ? strtolower($text) : $text;
-  
+
   if ($trim)
   {
     $char = preg_quote($glue, '/');
     $text = preg_replace("/$char+/", $glue, $text);
     $text = trim($text, $glue);
   }
-  
+
   return $text;
 }
 
@@ -152,13 +150,13 @@ function plain($text, $special = FALSE)
 {
   static $set = NULL,
          $rev = NULL;
-         
-         
+
+
   if (is_null($set))
   {
     $old  = $rev = array();
     $html = get_html_translation_table(HTML_ENTITIES);
-    
+
     foreach ($html as $char => $ord)
     {
       if (ord($char) >= 192)
@@ -177,17 +175,17 @@ function plain($text, $special = FALSE)
         $old[$key] []= $ord;
       }
     }
-    
+
     foreach ($old as $key => $val)
     {
       $rev[$key] = '(?:' . join('|', $val) . ')';
     }
   }
-  
-  
+
+
   $text = strtr($text, $set);
   $text = is_true($special) ? strtr($text, $rev) : $text;
-  
+
   return $text;
 }
 
@@ -203,7 +201,7 @@ function strips($text, $comments = FALSE)
 {
   $out = preg_replace('/[<\{\[]\/*[^<\{\[!\]\}>]*[\]\}>]/Us', '', $text);
   $out = is_false($comments) ? strip_tags($out) : $out;
-  
+
   return $out;
 }
 
@@ -224,8 +222,8 @@ function ents($text, $escape = FALSE)
             '/(&#x?)([0-9A-F]+);?/i' => '\\1\\2;',
             '/&#(\d+);?/e' => 'chr("\\1");',
           );
-  
-  
+
+
   $hash = uniqid('--entity-backup');
   $text = preg_replace('/&([a-z0-9;_]+)=([a-z0-9_]+)/i', "{$hash}\\1=\\2", $text);
 
@@ -245,7 +243,7 @@ function ents($text, $escape = FALSE)
 
   $text = preg_replace("/[\200-\237]|\240|[\241-\377]/", '\\0', $text);
   $text = preg_replace("/{$hash}(.+?);/", '&\\1;', $text);
-  
+
   return $text;
 }
 
@@ -271,7 +269,7 @@ function unents($text)
   {
     $set = get_html_translation_table(HTML_ENTITIES);
     $set = array_flip($set);
-    
+
     $set['&apos;'] = "'";
   }
 
@@ -293,8 +291,8 @@ function unents($text)
 function tag($name, $args = array(), $text = '')
 {
   static $set = NULL;
-  
-  
+
+
   if (is_null($set))
   {
     $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
@@ -302,20 +300,20 @@ function tag($name, $args = array(), $text = '')
   }
 
   $attrs = attrs($args);
-  
+
   if (in_array($name, $set))
   {
     return "<$name$attrs>";
   }
-  
-  
+
+
   if (is_closure($text))
   {//FIX
     ob_start();
     call_user_func($text);
     $text = ob_get_clean();
   }
-  
+
   return "<$name$attrs>$text</$name>";
 }
 
@@ -333,61 +331,61 @@ function attrs($args, $html = FALSE)
 {
   static $global = NULL,
          $regex = '/(?:#([a-z_][\da-z_-]*))?(?:[\.,]?([\s\d\.,a-z_-]+))?(?:@([^"]+))?/i';
-  
+
   if (is_null($global))
   {
     $test   = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
     $global = array_merge($test['global'], $test['events']);
-    
+
     unset($global['data-*']);
     unset($global['aria-*']);
   }
-  
-  
+
+
   if (is_string($args))
   {
     preg_match_all($regex, $args, $match);
 
 
     $args = array();
-    
+
     if ( ! empty($match[1][0]))
     {
       $args['id'] = $match[1][0];
     }
-    
+
     if ( ! empty($match[2][0]))
     {
       $args['class'] = strtr($match[2][0], ',.', ' ');
     }
-    
+
     if ( ! empty($match[3][0]))
     {
       foreach (explode('@', $match[3][0]) as $one)
       {
         $test = explode('=', $one);
-        
+
         $key  = ! empty($test[0]) ? $test[0] : $one;
         $val  = ! empty($test[1]) ? $test[1] : $key;
-        
+
         $args[$key] = $val;
       }
     }
   }
 
-  
+
   $out  = array('');
-  
+
   foreach ((array) $args as $key => $value)
   {
     $key = preg_replace('/\W/', '-', trim($key));
-    
+
     if (is_true($html) && ! in_array($key, $global))
     {
       continue;
     }
-    
-    
+
+
     if (is_bool($value))
     {
       if (is_true($value))
@@ -400,12 +398,12 @@ function attrs($args, $html = FALSE)
       if ($key === 'style')
       {//FIX
         $props = array();
-        
+
         foreach ($value as $key => $val)
         {//TODO: deep chained props?
           $props []= $key . ':' . trim($val);
         }
-        
+
         $out []= sprintf('style="%s"', join(';', $props));
       }
       else
@@ -421,9 +419,9 @@ function attrs($args, $html = FALSE)
       $out []= sprintf('%s="%s"', $key, ents($value, TRUE));
     }
   }
-  
+
   $out = join(' ', $out);
-  
+
   return $out;
 }
 
@@ -438,12 +436,12 @@ function attrs($args, $html = FALSE)
 function args($text, $prefix = '')
 {
   static $regex = '/(?:^|\s+)(?:([\w:-]+)\s*=\s*([\'"`]?)(.+?)\\2|[\w:-]+)(?=\s+|$)/';
-  
-  
+
+
   $out  = array();
-  
+
   preg_match_all($regex, $text, $match);
-  
+
   foreach ($match[1] as $i => $key)
   {
     if (empty($key))
@@ -451,13 +449,13 @@ function args($text, $prefix = '')
       $out []= trim($match[0][$i]);
       continue;
     }
-    
+
     $val = ents($match[3][$i], TRUE);
     $key = strtolower($key);
-    
+
     $out[$key] = $val;
   }
-  
+
   return $out;
 }
 
