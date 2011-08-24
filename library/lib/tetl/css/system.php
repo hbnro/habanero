@@ -102,7 +102,7 @@ class css extends prototype
    */
   final public static function render($path, $minify = FALSE)
   {
-    return taml::parse(taml::load_file($path), $minify);
+    return css::parse(css::load_file($path), $minify);
   }
 
 
@@ -512,7 +512,8 @@ class css extends prototype
           }
 
 
-          $out = array();
+          $out  = array();
+          $old += css::$props;
 
           array_walk_recursive(css::$mixins[$part]['props'], function($val, $key)
             use(&$out, $old)
