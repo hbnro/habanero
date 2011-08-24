@@ -11,7 +11,7 @@ run(function()
 
   css::setup('path', __DIR__);
 
-  $css = css::parse(__DIR__.DS.'assets'.DS.'sample.css');
+  $css = css::render(__DIR__.DS.'assets'.DS.'sample.css');
 
   taml::render(__DIR__.DS.'assets'.DS.'sample.taml', compact('css'));
 
