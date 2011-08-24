@@ -94,27 +94,34 @@ class css extends prototype
 
 
   /**
-   * Parse file
+   * Render file
    *
    * @param  string  Path
    * @param  boolean Minify output?
    * @return void
    */
-  final public static function parse($path, $minify = FALSE)
+  final public static function render($path, $minify = FALSE)
   {
-    if ( ! is_file($path))
-    {
-      return FALSE;
-    }
+    return taml::parse(taml::load_file($path), $minify);
+  }
 
 
+  /**
+   * Parse expression
+   *
+   * @param  string  CSS rules
+   * @param  boolean Minify output?
+   * @return void
+   */
+  final public static function parse($rules, $minify = FALSE)
+  {
     css::$css     =
     css::$sets    =
     css::$props   =
     css::$mixins  =
     css::$imports = array();
 
-    css::add_file($path, TRUE);
+    css::parse_buffer($rules);
     css::build_properties(css::$sets);
 
     foreach (css::$sets as $key => $set)
@@ -124,7 +131,7 @@ class css extends prototype
 
     $text = join("\n", css::$css);
 
-    if ($minify === TRUE)
+    if (is_true($minify))
     {
       $text = preg_replace(array_keys(css::$minify_expr), css::$minify_expr, $text);
     }
@@ -134,41 +141,6 @@ class css extends prototype
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
 
-    return $text;
-  }
-
-
-  /**
-   * Load file
-   *
-   * @param  string  Path
-   * @param  boolean Parse rules?
-   * @return string
-   */
-  final public static function load($path, $parse = FALSE)
-  {
-    if ( ! is_file($path))
-    {
-      $path = css::path($path);
-
-      if (strrpos(basename($path), '.') === FALSE)
-      {
-        $path .= css::$defs['extension'];
-      }
-    }
-
-
-    if ( ! is_file($path))
-    {
-      raise(ln('file_not_exists', array('name' => $path)));
-    }
-
-    $text = read($path);
-
-    if ($parse === TRUE)
-    {
-      css::parse_buffer($text);
-    }
     return $text;
   }
 
@@ -208,12 +180,40 @@ class css extends prototype
    * @ignore
    */
 
+  // load file
+  final private static function load_file($path, $parse = FALSE)
+  {
+    if ( ! is_file($path))
+    {
+      $path = css::path($path);
+
+      if (is_false(strrpos(basename($path), '.')))
+      {
+        $path .= css::$defs['extension'];
+      }
+    }
+
+
+    if ( ! is_file($path))
+    {
+      raise(ln('file_not_exists', array('name' => $path)));
+    }
+
+    $text = read($path);
+
+    if (is_true($parse))
+    {
+      css::parse_buffer($text);
+    }
+    return $text;
+  }
+
   // internal file append
   final private static function add_file($path, $parse = FALSE)
   {
-    $text = css::load($path, $parse);
+    $text = css::load_file($path, $parse);
 
-    if ($parse === FALSE)
+    if (is_false($parse))
     {
       css::$css []= $text;
     }
