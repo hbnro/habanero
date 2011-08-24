@@ -1,44 +1,94 @@
 /**
- * CSS3 please! basic mixins
+ * CSS3 basic ruleset
  */
 
-@mixin box_round($size: 5px) { 
-     -moz-border-radius: $size; 
-  -webkit-border-radius: $size; 
-          border-radius: $size; 
-  
-     -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-          background-clip: padding-box; 
+@mixin radius($size: 5px) {
+ -moz-border-radius: %('%dpx', $size);
+ -webkit-border-radius: %('%dpx', $size);
+ border-radius: %('%dpx', $size);
+
+ -moz-background-clip: padding;
+ -webkit-background-clip: padding-box;
+ background-clip: padding-box;
 }
 
-@mixin box_shadow($left: 0px, $top: 0px, $blur: 5px, $color: black) { 
-     -moz-box-shadow: $left $top $blur $color; 
-  -webkit-box-shadow: $left $top $blur $color; 
-          box-shadow: $left $top $blur $color; 
+@mixin shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
+ -moz-box-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
+ -webkit-box-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
+ box-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
 }
 
-@mixin box_gradient($from: gray, $to: silver) {
-  background-color: #444444;
-  background-image: -webkit-gradient(linear, left top, left bottom, from($from), to($to)); 
-  background-image: -webkit-linear-gradient(top, $from, $to); 
-  background-image:    -moz-linear-gradient(top, $from, $to); 
-  background-image:     -ms-linear-gradient(top, $from, $to); 
-  background-image:      -o-linear-gradient(top, $from, $to); 
-  background-image:         linear-gradient(top, $from, $to);
+@mixin textshadow($left: 0px, $top: 0px, $blur: 5px, $color: #333) {
+ text-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
 }
 
-@mixin box_textshadow($left: 0px, $top: 0px, $blur: 5px, $color: black) {
-  text-shadow: $left $top $blur $color;
+@mixin textcolumns($column_count, $column_gap: 20px) {
+ -webkit-column-count: %('%d', $column_count);
+ -webkit-column-gap: %('%d', $column_gap);
+ -moz-column-count: %('%d', $column_count);
+ -moz-column-gap: %('%d', $column_gap);
+ column-count: %('%d', $column_count);
+ column-gap: %('%d', $column_gap);
 }
 
-@mixin box_rotate($angle: 7.5) {
-     -moz-transform: rotate($angle!deg);
-       -o-transform: rotate($angle!deg);
-  -webkit-transform: rotate($angle!deg);
-      -ms-transform: rotate($angle!deg);
-          transform: rotate($angle!deg);  
-               zoom: 1;
+@mixin rotate($angle: 7.5deg) {
+ -moz-transform: rotate(%('%ddeg', $angle));
+ -o-transform: rotate(%('%ddeg', $angle));
+ -webkit-transform: rotate(%('%ddeg', $angle));
+ -ms-transform: rotate(%('%ddeg', $angle));
+ transform: rotate(%('%ddeg', $angle));
+ zoom: 1;
+}
+
+@mixin transition($transition) {
+ -webkit-transition: $transition;
+ -moz-transition: $transition;
+ transition: $transition;
+}
+
+@mixin horizontal_gradient($start: #555, $end: #333) {
+ background-color: $end;
+ background-repeat: repeat-x;
+ background-image: -khtml-gradient(linear, left top, right top, from($start), to($end));
+ background-image: -moz-linear-gradient(left, $start, $end);
+ background-image: -ms-linear-gradient(left, $start, $end);
+ background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, $start), color-stop(100%, $end));
+ background-image: -webkit-linear-gradient(left, $start, $end);
+ background-image: -o-linear-gradient(left, $start, $end);
+ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end', GradientType=1);
+ -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end', GradientType=1);
+ background-image: linear-gradient(left, $start, $end);
+}
+
+@mixin vertical_gradient($start: #555, $end: #333) {
+ background-color: $end;
+ background-repeat: repeat-x;
+ background-image: -khtml-gradient(linear, left top, left bottom, from($start), to($end));
+ background-image: -moz-linear-gradient($start, $end);
+ background-image: -ms-linear-gradient($start, $end);
+ background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $start), color-stop(100%, $end));
+ background-image: -webkit-linear-gradient($start, $end);
+ background-image: -o-linear-gradient($start, $end);
+ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end', GradientType=0);
+ -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end', GradientType=0);
+ background-image: linear-gradient($start, $end);
+}
+
+@mixin directional_gradient($start: #555, $end: #333, $deg: 45deg) {
+ background-color: $end;
+ background-repeat: repeat-x;
+ background-image: -moz-linear-gradient(%('%ddeg', $deg), $start, $end);
+ background-image: -ms-linear-gradient(%('%ddeg', $deg), $start, $end);
+ background-image: -webkit-linear-gradient(%('%ddeg', $deg), $start, $end);
+ background-image: -o-linear-gradient(%('%ddeg', $deg), $start, $end);
+ background-image: linear-gradient(%('%ddeg', $deg), $start, $end);
+}
+
+@mixin three_gradient($start: #00b3ee, $middle: #7a43b6, $end: #c3325f, $top: .2, $bottom: .8) {
+ background-color: $end;
+ background-repeat: no-repeat;
+ background-image: -webkit-gradient(linear, left bottom, left top, color-stop($top, $start), color-stop(0.50, $middle), color-stop($bottom, $end));
+ background-image: -moz-linear-gradient(center bottom, $start [$top * 100%], $middle 50%, $end [$bottom * 100%]);
 }
 
 /* EOF: ./lib/tetl/css/assets/styles/css3.css */

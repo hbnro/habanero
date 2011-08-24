@@ -13,14 +13,14 @@
 css::implement('hex', function($color)
 {
   $color = preg_replace('/[^a-fA-F\d]/', '', $color);
-  
+
   if (strlen($color) == 3)
   {
     $color = $color[0] . $color[0]
            . $color[1] . $color[1]
            . $color[2] . $color[2];
   }
-  
+
   return $color;
 });
 
@@ -61,7 +61,7 @@ css::implement('hsv', function()
 css::implement('rgba', function($red, $green = 0, $blue = 0, $alpha = 100)
 {
   $args = func_get_args();
-  
+
   if (is_hex($red))
   {
     $args  = css::hex2rgb($red);
@@ -76,12 +76,11 @@ css::implement('rgba', function($red, $green = 0, $blue = 0, $alpha = 100)
   {
     $alpha = array_pop($args);
   }
-  
-  
+
   $args  = css::rgb_safe($args);
   $alpha = $alpha > 1 ? ((int) $alpha / 100) : (float) $alpha;
-  
-  if ($alpha === 0)
+
+  if ((sizeof($args) < 3) OR ($alpha === 0))
   {
     return 'transparent';
   }
@@ -134,6 +133,34 @@ css::implement('lighten', function($test, $inc = 50)
 
 
 /**
+ *
+ */
+css::implement('saturate', function()
+{
+  function lib_saturate($args) {
+list($color, $delta) = $this->colorArgs($args);
+
+$hsl = $this->toHSL($color);
+$hsl[2] = $this->clamp($hsl[2] + $delta, 100);
+return $this->toRGB($hsl);
+}
+
+});
+
+css::implement('desaturate', function()
+{
+
+function lib_desaturate($args) {
+list($color, $delta) = $this->colorArgs($args);
+
+$hsl = $this->toHSL($color);
+$hsl[2] = $this->clamp($hsl[2] - $delta, 100);
+return $this->toRGB($hsl);
+}
+});
+
+
+/**
  * Apply light/dark mask
  *
  * @param  string Hex color
@@ -146,13 +173,14 @@ css::implement('mask', function($color, $new = 0, $level = 128)
   $new /= 100;
   $new  = $new > 1 ? 1 : ($new < 0 ? 0 : $new);
   $rgb  = css::hex2rgb($color);
-  
+
+
   for ($i = 0; $i < 3; $i += 1)
   {
     $old = round($rgb[$i] * $new) + round($level * (1 - $new));
     $rgb[$i] = $old > 255 ? 255 : ($old < 0 ? 0 : $old);
   }
-  
+
   return css::rgb2hex($rgb);
 });
 
@@ -208,7 +236,7 @@ css::implement('combine', function($color, $new)
 css::implement('inverse', function($color)
 {
   $old = css::hex2rgb($color);
-  
+
   return css::rgb2hex(array($old[0] ^ 255, $old[1] ^ 255, $old[2] ^ 255));
 });
 
@@ -222,7 +250,7 @@ css::implement('inverse', function($color)
 css::implement('red', function($color)
 {
   $old = css::hex2rgb($color);
-  
+
   return css::rgb2hex(array($old[0], 255, 255));
 });
 
@@ -236,7 +264,7 @@ css::implement('red', function($color)
 css::implement('green', function($color)
 {
   $old = css::hex2rgb($color);
-  
+
   return css::rgb2hex(array(255, $old[1], 255));
 });
 
@@ -250,7 +278,7 @@ css::implement('green', function($color)
 css::implement('blue', function($color)
 {
   $old = css::hex2rgb($color);
-  
+
   return css::rgb2hex(array(255, 255, $old[2]));
 });
 
@@ -265,7 +293,7 @@ css::implement('gray', function($color)
 {
   $old = css::hex2rgb($color);
   $new = (int) ($old[0] * .3 + $old[1] * .59 + $old[2] * .11);
-  
+
   return css::rgb2hex(array($new, $new, $new));
 });
 
@@ -283,8 +311,8 @@ css::implement('gray', function($color)
 css::implement('gradient', function($color, $to, $index = 0, $step = 10)
 {
   static $deg = NULL;
-  
-  
+
+
   if (is_null($deg))
   {
     $deg = function($from, $to, $step, $step)
@@ -293,12 +321,12 @@ css::implement('gradient', function($color, $to, $index = 0, $step = 10)
     };
   }
 
-  
+
   if (strpos($index, '%'))
   {
     $index *= ($step / 100);
   }
-  
+
   $old = css::hex2rgb($color);
   $new = css::hex2rgb($to);
 
@@ -320,8 +348,8 @@ css::implement('gradient', function($color, $to, $index = 0, $step = 10)
 css::implement('web_safe', function($color)
 {
   static $safe = NULL;
-  
-  
+
+
   if (is_null($safe))
   {
     $safe = function($key)
@@ -330,10 +358,11 @@ css::implement('web_safe', function($color)
              ($key < 0xb3 ? 0x99 : ($key < 0xe6 ? 0xcc : 0xff)))));
     };
   }
-  
+
+
   $color = array_map($safe, css::hex2rgb($color));
   $color = css::rgb2hex($color);
-  
+
   return $color;
 });
 
@@ -349,7 +378,7 @@ css::implement('web_safe', function($color)
 css::implement('rgb_safe', function($red, $green = -1, $blue = -1)
 {
   $color = func_get_args();
-  
+
   if (is_array($red))
   {
     $color = $red;
@@ -386,7 +415,7 @@ css::implement('rgb2hex', function($red, $green = -1, $blue = -1)
   {
     $color = $red;
   }
-  
+
   if (is_string($color))
   {
     $color = preg_split('/\D+/', $color);
@@ -394,6 +423,52 @@ css::implement('rgb2hex', function($red, $green = -1, $blue = -1)
   }
 
   return sprintf('#%02x%02x%02x', $color[0], $color[1], $color[2]);
+});
+
+
+/**
+ *
+ */
+css::implement('rgb2hsl', function($red, $green = -1, $blue = -1)
+{
+  $color = func_get_args();
+
+  if (is_array($red))
+  {
+    $color = $red;
+  }
+
+$r = $color[1] / 255;
+$g = $color[2] / 255;
+$b = $color[3] / 255;
+
+$min = min($r, $g, $b);
+$max = max($r, $g, $b);
+
+$L = ($min + $max) / 2;
+if ($min == $max) {
+$S = $H = 0;
+} else {
+if ($L < 0.5)
+$S = ($max - $min)/($max + $min);
+else
+$S = ($max - $min)/(2.0 - $max - $min);
+
+if ($r == $max) $H = ($g - $b)/($max - $min);
+elseif ($g == $max) $H = 2.0 + ($b - $r)/($max - $min);
+elseif ($b == $max) $H = 4.0 + ($r - $g)/($max - $min);
+
+}
+
+$out = array('hsl',
+($H < 0 ? $H + 6 : $H)*60,
+$S*100,
+$L*100,
+);
+
+if (count($color) > 4) $out[] = $color[4]; // copy alpha
+return $out;
+
 });
 
 
@@ -409,14 +484,14 @@ css::implement('rgb2hex', function($red, $green = -1, $blue = -1)
 css::implement('hsl2rgb', function($hue, $saturation = -1, $lightness = -1)
 {
   static $value = NULL;
-  
-  
+
+
   if (is_null($value))
   {
     $value = function($max, $val, $hue)
     {
       $hue = ($hue < 0 ? $hue + 1 : ($hue > 0 ? $hue - 1: $hue));
-      
+
       if (($hue * 6) < 1)
       {
         return $max + ($val - $max) * $hue * 6;
@@ -433,9 +508,9 @@ css::implement('hsl2rgb', function($hue, $saturation = -1, $lightness = -1)
     };
   }
 
-  
+
   $color = func_get_args();
-  
+
   if (is_array($hue))
   {
     $color = $hue;
@@ -449,7 +524,7 @@ css::implement('hsl2rgb', function($hue, $saturation = -1, $lightness = -1)
   {
     return array($color[2] * 255, $color[2] * 255, $color[2] * 255);
   }
-  
+
   $b = $color[2] <= 0.5 ? $color[2] * ($color[1] + 1) : ($color[2] + $color[1]) - ($color[2] * $color[1]);
   $a = $color[2] * 2 - $b;
 
@@ -472,7 +547,7 @@ css::implement('hsl2rgb', function($hue, $saturation = -1, $lightness = -1)
 css::implement('hsv2rgb', function($hue, $saturation = -1, $value = -1)
 {
   $color = func_get_args();
-  
+
   if (is_array($hue))
   {
     $color = $hue;
@@ -492,7 +567,7 @@ css::implement('hsv2rgb', function($hue, $saturation = -1, $value = -1)
     $f = $color[0] - $i;
 
     $color[2] *= 255;
-    
+
     $p = (int) ($color[2] * (1.0 - $color[1]));
     $q = (int) ($color[2] * (1.0 - $color[1] * $f));
     $t = (int) ($color[2] * (1.0 - $color[1] * (1.0 - $f)));
@@ -531,7 +606,7 @@ css::implement('hsv2rgb', function($hue, $saturation = -1, $value = -1)
 css::implement('hex2rgb', function($color)
 {
   $color = css::hex($color);
-  
+
   return array(
     hexdec(substr($color, 0, 2)),
     hexdec(substr($color, 2, 2)),

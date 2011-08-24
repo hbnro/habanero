@@ -1,28 +1,92 @@
-@use css3
+@use 'reset'
+@use 'base'
+@use 'css3'
+@use 'grid'
 
-h1 {
-  background: #white;
-  color: lighten(#teal,80); // 80%
-  @include box_textshadow; /* without args */
-}
+$body_background = image(assets/sample.gif).data
 
-.foo {
-  a {
-    color: #red;
-    :hover {
-      font:
-      {
-        weight: bold;
-      }
-      color: #blue;
-      @include box_rotate(-3);
-    }
+body {
+  // images
+  background: {
+    image: url($body_background);
+    position: right top;
+    repeat: no-repeat;
   }
 }
 
-#box {
-  padding: [.3em * 2]; // [MATH]
-  @include box_round;
-  @include box_shadow;
-  @include box_gradient(#gray,#white);
+h1 {
+  color: lighten(#teal,80); // 80%
+  @include textshadow; /* without args */
+}
+
+.test < h1 {
+  border-bottom: 1px solid #silver;
+  @include opacity(.3);
+}
+
+a {
+  @include square(20);
+  color: #red;
+  :hover {
+    font: {
+      weight: bold;
+    }
+    color: #blue;
+    @include rotate(-3);
+  }
+}
+
+
+
+code, pre {
+  background-color: rgba(0,0,0,.3);
+  text-shadow: 0 1px 1px rgba(0,0,0,.25);
+  @include shadow(0, 1px, 0, #black);
+  @include three_gradient;
+}
+code {
+  padding: 3px 6px;
+  @include radius(3px);
+}
+pre {
+  margin: 20px 0;
+  padding: 20px;
+  color: #fff;
+  @include radius(6px);
+  white-space: pre-wrap;
+}
+
+
+header,
+section,
+footer {
+  width: 640px;
+  margin: 0 auto;
+  display: block;
+}
+header,
+section {
+  padding-bottom: 40px;
+  margin-bottom: 50px;
+}
+header {
+  h2 {
+    font-weight: 200;
+    line-height: 35px;
+  }
+  p {
+    float: right;
+    margin: 15px 0 0;
+  }
+}
+footer {
+  text-shadow: 0 1px 1px rgba(0,0,0,.2);
+  p {
+    text-align: center;
+    margin-bottom: 0;
+    font-size: 13px;
+    span {
+      opacity: .5;
+    }
+  }
 }
