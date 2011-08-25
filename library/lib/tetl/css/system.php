@@ -482,12 +482,27 @@ class css extends prototype
     return $out;
   }
 
-  // compile mixin properties
-  final private function do_mixin($text)
+  // replace variables
+  final private static function do_vars($test, $set)
   {
-    $out = array();
+    if (is_array($test))
+    {
+      foreach ($test as $key => $val)
+      {
+        $test[$key] = css::do_vars($val, $set);
+      }
+      return $test;
+    }
+    return preg_replace('/\$([a-z_]\w*)!?/ei', 'isset($set["\\1"])?$set["\\1"]:NULL;', $test);
+  }
 
-    if (preg_match_all('/\s*([\w\-]+)(?:\((.+?)\))?\s*/', $text, $matches))
+  // compile mixin properties
+  final private static function do_mixin($text)
+  {
+    $out  = array();
+    $text = css::do_solve($text);
+
+    if (preg_match_all('/\s*([\w\-]+)!?(?:\((.+?)\))?\s*/', $text, $matches))
     {
       foreach ($matches[1] as $i => $part)
       {
@@ -512,14 +527,8 @@ class css extends prototype
           }
 
 
-          $out  = array();
           $old += css::$props;
-
-          array_walk_recursive(css::$mixins[$part]['props'], function($val, $key)
-            use(&$out, $old)
-          {//FIX
-            $out[$key] = preg_replace('/\$([a-z_]\w*)!?/ei', 'isset($old["\\1"])?$old["\\1"]:NULL;', $val);
-          });
+          $out  = css::do_vars(css::$mixins[$part]['props'], $old);
         }
       }
     }
@@ -553,19 +562,12 @@ class css extends prototype
     }
     else
     {//FIX
-      $props = css::$props;
-      $repl  = function($match)
-        use($props)
-      {
-        return isset($props[$match[1]]) ? $props[$match[1]] : NULL;
-      };
-
       do
       {
         $old  = strlen($text);
 
         $text = preg_replace_callback('/(?<![\-._])([\w-]+?)\(([^\(\)]+)\)(\.\w+)?/', array('css', 'do_helper'), $text);
-        $text = css::do_math(preg_replace_callback('/\$([a-z_]\w*)!?/i', $repl, $text));
+        $text = css::do_math(css::do_vars($text, css::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 
       } while($old != strlen($text));
@@ -577,9 +579,11 @@ class css extends prototype
   // css helper callback
   final private static function do_helper($match)
   {
-    $args = array_filter(explode(',', $match[2]), 'strlen');
+    $args = css::do_solve($match[2]);
+    $args = array_filter(explode(',', $args), 'strlen');
 
-    $out  = css::apply($match[1], $args) ?: "$match[1]!({$match[2]})";
+    $out  = css::apply($match[1], $args);
+    $out  = ! is_empty($out) ? $out : "$match[1]!({$match[2]})";
 
     return ! empty($match[3]) ? (string) value($out, substr($match[3], 1)) : (string) $out;
   }
