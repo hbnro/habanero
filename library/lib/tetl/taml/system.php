@@ -68,8 +68,8 @@ class taml extends prototype
 
 
     if ( ! is_file($php_file))
-    {
-      $out = taml::parse(read($file), TRUE, $file);
+    {// intentionally hidden
+      $out = taml::parse(read($file), $file);
       write($php_file, $out);
     }
 
@@ -105,7 +105,7 @@ class taml extends prototype
     $stack = array();
 
     $test  = array_filter(explode("\n", $text));
-    $file  = func_num_args() > 2 ? func_get_arg(2) : '';
+    $file  = func_num_args() > 1 ? func_get_arg(1) : '';
 
 
     foreach ($test as $i => $line)
