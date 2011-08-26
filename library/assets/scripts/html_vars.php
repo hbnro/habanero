@@ -7,6 +7,8 @@
 return array(
   // http://simon.html5.org/html5-elements
   'empty' => array(
+    'hr',
+    'br',
     'img',
     'base',
     'link',
