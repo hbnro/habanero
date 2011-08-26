@@ -23,12 +23,12 @@
 }
 
 @mixin textcolumns($column_count, $column_gap: 20px) {
- -webkit-column-count: %('%d', $column_count);
- -webkit-column-gap: %('%d', $column_gap);
- -moz-column-count: %('%d', $column_count);
- -moz-column-gap: %('%d', $column_gap);
- column-count: %('%d', $column_count);
- column-gap: %('%d', $column_gap);
+ -webkit-column-count: %('%dpx', $column_count);
+ -webkit-column-gap: %('%dpx', $column_gap);
+ -moz-column-count: %('%dpx', $column_count);
+ -moz-column-gap: %('%dpx', $column_gap);
+ column-count: %('%dpx', $column_count);
+ column-gap: %('%dpx', $column_gap);
 }
 
 @mixin rotate($angle: 7.5deg) {

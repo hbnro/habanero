@@ -2,43 +2,25 @@
  * Basic grid rules
  */
 
-$grid_columns = 11
-$grid_column_width = 40px
-$grid_gutter_width = 20px
+$width = 740px
+$columns = 5
+$separation = 10px
 
 
-@mixin container($width: 940px) {
-  width: $width;
-  margin: 0 auto;
-  @include clearfix;
+@mixin grid {
+  @include container($width);
+  &.show-grid {
+    background-image: url(?grid=ceil([$width / $columns]));
+  }
 }
 
 @mixin columns($span: 1) {
   display: inline;
   float: left;
-  width: [[$grid_column_width * $span] + [$grid_gutter_width * [$span - 1]]];
-  margin-left: $grid_gutter_width;
+  width: [[[$width / $columns] * $span] - $separation];
+  margin-left: $separation;
   &:first-child {
     margin-left: 0;
-  }
-}
-
-@mixin offset($col: 1) {
-  margin-left: [[$grid_column_width * $col] + [$grid_gutter_width * [$col - 1]]] !important;
-}
-
-
-@mixin grid {
-  @include container;
-  &.show-grid {
-    @include background(#black,.25);
-    height: 200px;
-    margin-bottom: 20px;
-    div {
-      @include background(#black,.25);
-      height: 200px;
-      text-align: center;
-    }
   }
 }
 
