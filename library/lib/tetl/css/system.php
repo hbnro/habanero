@@ -324,6 +324,7 @@ class css extends prototype
   final private static function parse_buffer($text)
   {
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
+    $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
     $text = preg_replace(array_keys(css::$fixate_css_expr), css::$fixate_css_expr, $text);
     $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', array('css', 'fetch_externals'), $text);
     $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', array('css', 'fetch_properties'), $text);
