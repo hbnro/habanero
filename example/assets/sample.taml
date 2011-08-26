@@ -1,20 +1,25 @@
-!5
+!doctype
 :html
   :head
-    :title CSS & TAML => Sass & Haml inspiration
+    :title Hello World!
     :style = $css
   :body
-    :h1 Hello world!
-    :p.foo
-      :a{ href => '#' } Lorem ipsum...
-    :pre#box = $css
-    /:pre
-      raw content
-      text
-        indented too
-          but all
-            within
-          pre
-        tag
-      !!!COOL
-    = ticks(BEGIN), 's.'
+    :header#top
+      Hello World
+    :div#container.show-grid
+      :section#main
+        :h3 Contenido
+        :ul
+          - for ($i = 0; $i < 10; $i += 1)
+          :li
+            Elemento %{$i + 1}
+            - if ($i == 3)
+            :ul
+              :li other
+            - endif
+          - endfor
+      :aside#menu
+        Menu
+          :a.button FTW!
+    :footer#bottom
+      &copy; Copyright %{date('Y')}

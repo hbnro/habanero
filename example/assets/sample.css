@@ -3,90 +3,57 @@
 @use 'css3'
 @use 'grid'
 
-$body_background = image(assets/sample.gif).data
+#container {
+  @include grid;
+  @include center_block;
+}
 
-body {
-  // images
+header#top {
+  background: #black;
+  color: #white;
+}
+
+#main {
+  @include columns(3);
   background: {
-    image: url($body_background);
-    position: right top;
+    image: url(image(assets/sample.gif).data);
+    position: right bottom;
     repeat: no-repeat;
   }
 }
 
-h1 {
-  color: lighten(#teal,80); // 80%
-  @include textshadow; /* without args */
+#menu {
+  @include columns(2);
 }
 
-.test < h1 {
-  border-bottom: 1px solid #silver;
-  @include opacity(.3);
+.button {
+  @include my_button;
 }
 
-a {
-  @include square(20);
-  color: #red;
-  :hover {
-    font: {
-      weight: bold;
-    }
-    color: #blue;
-    @include rotate(-3);
-  }
+footer#bottom {
+  color: #gray;
+  text-align: center;
+}
+
+ul {
+  margin-left: 20px;
 }
 
 
-
-code, pre {
-  background-color: rgba(0,0,0,.3);
-  text-shadow: 0 1px 1px rgba(0,0,0,.25);
-  @include shadow(0, 1px, 0, #black);
-  @include three_gradient;
-}
-code {
-  padding: 3px 6px;
-  @include radius(3px);
-}
-pre {
-  margin: 20px 0;
-  padding: 20px;
-  color: #fff;
-  @include radius(6px);
-  white-space: pre-wrap;
-}
-
-
-header,
-section,
-footer {
-  width: 640px;
-  margin: 0 auto;
-  display: block;
-}
-header,
-section {
-  padding-bottom: 40px;
-  margin-bottom: 50px;
-}
-header {
-  h2 {
-    font-weight: 200;
-    line-height: 35px;
-  }
-  p {
-    float: right;
-    margin: 15px 0 0;
-  }
-}
-footer {
-  text-shadow: 0 1px 1px rgba(0,0,0,.2);
-  p {
-    text-align: center;
-    margin-bottom: 0;
-    font-size: 13px;
-    span {
-      opacity: .5;
-    }
+@mixin my_button($color: #f5f5f5, $text_color: #333, $font_size: 13px, $padding: 9px 15px 10px, $radius: 6px) {
+  @include vertical_gradient($color,darken(saturate($color,10),10));
+  display: inline-block;
+  padding: $padding;
+  color: $text_color;
+  font-size: $font_size;
+  line-height: 1;
+  @include radius($radius);
+  @include shadow;
+  margin: $radius;
+  border: 0;
+  &:hover {
+	background-position: 0 -15px;
+    color: $text_color;
+    text-decoration: none;
   }
 }
