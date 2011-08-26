@@ -8,11 +8,11 @@
       Hello World
     :div#container.show-grid
       :section#main
-        :h3 Contenido
+        :h3 Content
         :ul
           - for ($i = 0; $i < 10; $i += 1)
           :li
-            Elemento %{$i + 1}
+            Element #%{$i + 1}
             - if ($i == 3)
             :ul
               :li other
