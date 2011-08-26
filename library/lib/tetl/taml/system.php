@@ -96,15 +96,15 @@ class taml extends prototype
               '/^\s*<!--#PRE#-->/m' => '',
               '/end(?:if|while|switch|for(?:each)?)\s*;?/m' => '}',
               '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
-              '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
-              '/<\?php\s*}\s*\?>/' => "\n\\0",
+              '/<\?php\s+(?!echo\s+@|\})/' => "\n<?php ",
+              '/><\?php/' => ">\n<?php",
             );
 
 
     $code  = '';
     $stack = array();
 
-    $test  = explode("\n", $text);
+    $test  = array_filter(explode("\n", $text));
     $file  = func_num_args() > 2 ? func_get_arg(2) : '';
 
 
@@ -179,7 +179,7 @@ class taml extends prototype
   // variable interpolation
   final private static function value($match)
   {
-    return sprintf('<?php echo @%s; ?>', join(' ', taml::tokenize($match[1])));
+    return sprintf('<?php echo @(%s); ?>', join(' ', taml::tokenize($match[1])));
   }
 
   // compile lines
@@ -251,20 +251,6 @@ class taml extends prototype
           break;
         }
       break;
-      case '@';
-        $test   = explode(' ', strtr($key, '-', '_'), 2);
-        $method = substr(array_shift($test), 1);
-
-        if ( ! empty($method))
-        {
-          $args   = array_shift($test);
-
-          $args = explode(' | ', join(' ', taml::tokenize($args)));
-          $args = join(' , ', array_filter($args));
-
-          return "<?php echo taml :: $method ( $args ); ?>$text";
-        }
-      break;
       case '/';
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
@@ -287,7 +273,7 @@ class taml extends prototype
         $key = stripslashes(trim(substr($key, 1)));
         $key = rtrim(join(' ', taml::tokenize($key)), ';');
 
-        return preg_replace('/^/m', '  ', "<?php echo $key; ?>$text");
+        return preg_replace('/^/m', '  ', "<?php echo @($key); ?>$text");
       break;
       default;
         $tag  = '';
@@ -336,7 +322,7 @@ class taml extends prototype
         if ( ! empty($match[0]))
         {
           $key  = stripslashes(trim(substr(trim($key), 1)));
-          $text = preg_replace('/^/m', '  ', "<?php echo $key; ?>$text");
+          $text = preg_replace('/^/m', '  ', "<?php echo @($key); ?>$text");
         }
         elseif ( ! is_numeric($key))
         {
