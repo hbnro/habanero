@@ -485,6 +485,9 @@ class css extends prototype
   // replace variables
   final private static function do_vars($test, $set)
   {
+    static $repl = 'isset($set["\\1"])?$set["\\1"]:NULL;';
+
+
     if (is_array($test))
     {
       foreach ($test as $key => $val)
@@ -493,7 +496,11 @@ class css extends prototype
       }
       return $test;
     }
-    return preg_replace('/\$([a-z_]\w*)!?/ei', 'isset($set["\\1"])?$set["\\1"]:NULL;', $test);
+
+    $test = preg_replace('/%\{(\$[a-z_]\w*)\}/ei', $repl, $test);
+    $test = preg_replace('/\$([a-z_]\w*)!?/ei', $repl, $test);
+
+    return $test;
   }
 
   // compile mixin properties
