@@ -611,7 +611,7 @@ class css extends prototype
 
         if (strpos($val, '#') !== FALSE)
         {
-          $out  = preg_replace('/#(\w+)(?=\b|$)/e', '"0x" . css::hex("\\1");', $expr);
+          $out  = preg_replace('/#(\w+)(?=\b|$)/e', '"0x".css::hex("\\1");', $expr);
           $out  = preg_replace('/[^\dxa-fA-F\s*\/.+-]/', '', $expr);
           $expr = "sprintf('#%06x', $out)";
           $ext  = '';
