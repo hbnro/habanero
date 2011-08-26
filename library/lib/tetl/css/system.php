@@ -140,6 +140,7 @@ class css extends prototype
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
+    $text = preg_replace('/ +/', ' ', $text);
 
     return $text;
   }
