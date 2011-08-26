@@ -179,7 +179,7 @@ class taml extends prototype
   // variable interpolation
   final private static function value($match)
   {
-    return sprintf('<?php echo %s; ?>', join(' ', taml::tokenize($match[1])));
+    return sprintf('<?php echo @%s; ?>', join(' ', taml::tokenize($match[1])));
   }
 
   // compile lines
