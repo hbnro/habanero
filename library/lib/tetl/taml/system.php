@@ -90,11 +90,14 @@ class taml extends prototype
   final public static function parse($text)
   {
     static $fix = array(
+              '/\s*<\?/' => '<?',
+              '/\?>\s*<\//' => '?></',
               '/\s*(?=[\r\n])/s' => '',
               '/^\s*<!--#PRE#-->/m' => '',
               '/end(?:if|while|switch|for(?:each)?)\s*;?/m' => '}',
-              '/<(pre|a)([^<>]*)>\s*(.+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
               '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
+              '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
+              '/<\?php\s*}\s*\?>/' => "\n\\0",
             );
 
 
@@ -240,9 +243,9 @@ class taml extends prototype
     {
       case '!';
         switch ($key)
-        {// TODO: other doctypes?
-          case '!5';
-            return '<!doctype html>';
+        {
+          case '!doctype';
+            return "<$key html>";
           break;
           default;
           break;
