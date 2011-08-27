@@ -11,13 +11,13 @@
  * @staticvar array  Helper bag
  * @return    void
  */
-function uses($lib)
+function import($lib)
 {
   static $set = array();
 
-  
-  $lib = strtr($lib, '_./', DS);
-  
+
+  $lib = strtr($lib, '\\/', DS.DS);
+
   if (in_array($lib, $set))
   {
     return FALSE;
@@ -47,11 +47,11 @@ function uses($lib)
   /**
     * @ignore
     */
-  require $helper_path;
+  $out = require $helper_path;
 
   $set []= $lib;
 
-  return TRUE;
+  return $out;
 }
 
 
@@ -62,17 +62,17 @@ function uses($lib)
  * @param     array   Options hash
  * @return    void
  */
-function run(Closure $bootstrap, array $params = array())
+function run($bootstrap, array $params = array())
 {
   static $defs = array(
             'bootstrap'   => 'raise',
             'middleware'  => array(),
             'environment' => array(),
           );
-  
-  
+
+
   require_once LIB.DS.'core'.DS.'initialize'.EXT;
-  
+
   if (defined('BEGIN'))
   {
     raise(ln('application_error'));
@@ -93,17 +93,15 @@ function run(Closure $bootstrap, array $params = array())
   }
 
   $params += $defs;
-  
+
   $callback = $params['bootstrap'];
-  
+
   $params['environment'] = $params['environment'] ?: option('environment', 'testing');
-  
+
   foreach ((array) $params['middleware'] as $one)
   {
-    if (is_callable($one))
-    {
-      $callback = call_user_func($one, $callback);
-    }
+    is_string($one) && $one = import($one);
+    is_closure($one) && $callback = call_user_func($one, $callback);
   }
 
   return call_user_func_array($callback, (array) $params['environment']);
@@ -164,7 +162,7 @@ function trigger($event, $bind, array $args = array())
 
 /**
  * Load partial content
- * 
+ *
  * @param  mixed Content file|Options hash
  * @param  mixed Partial?|Options hash
  * @param  array Options hash
@@ -178,8 +176,8 @@ function render($content, $partial = FALSE, array $params = array())
             'output'  => '',
             'locals'  => array(),
           );
-  
-  
+
+
   if (is_assoc($content))
   {
     $params += $content;
@@ -188,7 +186,7 @@ function render($content, $partial = FALSE, array $params = array())
   {
     $params['content'] = $content;
   }
-  
+
   if (is_assoc($partial))
   {
     $params += $partial;
@@ -197,17 +195,17 @@ function render($content, $partial = FALSE, array $params = array())
   {
     $params['partial'] = $partial;
   }
-  
-  
+
+
   $params += $defs;
-  
+
   if ( ! is_bool($params['partial']))
   {
     $params['content'] = $params['partial'];
     $params['partial'] = TRUE;
   }
-  
-  
+
+
   if ( ! empty($params['output']))
   {
     die($params['output']);
@@ -216,23 +214,23 @@ function render($content, $partial = FALSE, array $params = array())
   {
     raise(ln('file_not_exists', array('name' => $params['content'])));
   }
-  
-  
+
+
   $output = function()
     use($params)
   {
     ob_start();
-  
+
     if ( ! empty($params['locals']))
     {
       extract($params['locals'], EXTR_SKIP | EXTR_REFS);
     }
-    
+
     require func_get_arg(0);
-    
+
     return ob_get_clean();
   };
-  
+
   if (is_true($params['content']))
   {
     return call_user_func($output, $params['content']);
@@ -249,17 +247,11 @@ function render($content, $partial = FALSE, array $params = array())
  */
 function raise($message)
 {
-  if (is_closure($message))
-  {
-    return trigger(__FUNCTION__, $message);
-  }
-  
-  
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(), 1);
 
-  
+
   // finalize opened buffers
   while (ob_get_level())
   {
@@ -272,7 +264,7 @@ function raise($message)
     unset($GLOBALS['--raise-message']);
   }
 
-  
+
   foreach ($trace as $i => $on)
   {
     $type   = ! empty($on['type']) ? $on['type'] : '';
@@ -295,16 +287,16 @@ function raise($message)
   $var['message']   = dump($message);
   $var['backtrace'] = array_reverse($trace);
   $var['route']     = IS_CLI ? @array_shift($_SERVER['argv']) : value($_SERVER, 'REQUEST_URI');
-  
+
   if ( ! IS_CLI)
   {
     // raw headers
     $var['headers']   = array();
-  
+
     foreach (headers_list() as $one)
     {
       list($key, $val) = explode(':', $one);
-  
+
       $var['headers'][$key] = trim($val);
     }
   }
@@ -334,29 +326,36 @@ function raise($message)
     }
   }
 
+  // received headers
   foreach ((array) $var['env'] as $key => $val)
   {
     if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key))
     {
+      if (substr($key, 0, 5) === 'HTTP_')
+      {
+        $var['received'][camelcase(strtolower(substr($key, 5)), TRUE, '-')] = $val;
+      }
       unset($var['env'][$key]);
     }
   }
 
   // invoke custom handler
-  trigger(__FUNCTION__, TRUE, $var);
+  trigger('error', TRUE, $var);
 
 
   // output
   $type     = IS_CLI ? 'txt' : 'html';
   $inc_file = LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT;
-  
+
   $output = call_user_func(function()
     use($inc_file, $var)
   {
+    ob_start();
     extract($var);
     require $inc_file;
+    return ob_get_clean();
   }, $var);
-  
+
   die($output);
 }
 
@@ -437,7 +436,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 {
   static $tokens = NULL;
 
-  
+
   if (is_null($tokens))
   {
     $latin = '\pL';
@@ -452,7 +451,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 
     // TODO: sure thing?
     $chars  = preg_quote(RFC_CHARS, '/');
-    
+
     $tokens = array(
       '/\\\\\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.+?)',
       '/\\\:([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[^\/]+?)',
@@ -493,7 +492,7 @@ function match($expr, $subject = NULL, array $constraints = array())
 
 
   $regex = preg_replace(array_keys($tokens), $tokens, $expr);
-  
+
   if (func_num_args() === 1)
   {
     return "/$regex/";
@@ -529,12 +528,12 @@ function value($from, $that = NULL, $or = FALSE)
          ($matches[1] = explode('.', $that)))
   {
     $key = ($offset = strpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
-    
+
     if ( ! empty($key))
     {
       array_unshift($matches[1], $key);
     }
-    
+
     $key   = array_shift($matches[1]);
     $get   = join('.', $matches[1]);
     $depth = sizeof($matches[1]);
@@ -553,7 +552,7 @@ function value($from, $that = NULL, $or = FALSE)
     }
 
     $value = ! $depth ? $tmp : value($tmp, $get, $or);
-    
+
     return $value;
   }
 }
@@ -688,8 +687,8 @@ function dump($var, $show = FALSE, $deep = 99)
   {
     $out = "[$newline$out$newline]";
   }
-  
-  
+
+
   if (is_true($show) && $depth <= 0)
   {
     $out = IS_CLI ? $out : htmlspecialchars($out);
@@ -710,11 +709,11 @@ function dump($var, $show = FALSE, $deep = 99)
  */
 function ticks($start = NULL, $end = FALSE, $round = 4)
 {
-  if (func_num_args() == 0) 
+  if (func_num_args() == 0)
   {
     return microtime(TRUE);
   }
-  elseif (func_num_args() == 1) 
+  elseif (func_num_args() == 1)
   {
     $end = microtime(TRUE);
   }
