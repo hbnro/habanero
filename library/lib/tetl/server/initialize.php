@@ -7,11 +7,12 @@
 call_user_func(function()
 {
   require __DIR__.DS.'functions'.EXT;
-  
-  
+  require __DIR__.DS.'actions'.EXT;
+
+
   // root
   $url = array();
-  
+
   $url['ORIG_PATH_INFO'] = FALSE;
   $url['REQUEST_URI']    = FALSE;
   $url['SCRIPT_URL']     = TRUE;
@@ -24,19 +25,19 @@ call_user_func(function()
     {
       continue;
     }
-    
+
     if (strpos($_SERVER[$key], INDEX) && is_false($val))
     {
       continue;
     }
-    
+
     $url = $_SERVER[$key];
     break;
   }
 
 
   $base = array();
-  
+
   $base['ORIG_SCRIPT_NAME'] = TRUE;
   #$base['SCRIPT_FILENAME'] = TRUE;
   $base['SCRIPT_NAME']      = TRUE;
@@ -48,12 +49,12 @@ call_user_func(function()
     {
       continue;
     }
-    
+
     if (strpos($_SERVER[$key], INDEX) && is_false($val))
     {
       continue;
     }
-    
+
     $base = $_SERVER[$key];
     break;
   }
@@ -69,14 +70,14 @@ call_user_func(function()
   {
     $base = str_replace($root, '.', $base);
   }
-  
+
   define('ROOT', strtr(str_replace(INDEX, '', $base), '\\./', '/'));
 
 
   if (option('query'))
   {
     $parts = '';
-    
+
     // fallback
     foreach ($_GET as $key => $val)
     {
@@ -96,7 +97,7 @@ call_user_func(function()
     $suffix = option('rewrite') ? preg_quote(option('suffix'), '/') : '';
     $parts  = preg_replace("/^(?:$root(?:$index)?)?|$suffix$/", '', array_shift(explode('?', $url)));
   }
-  
+
   define('URI', '/' . trim($parts, '/'));
 
 
@@ -105,26 +106,26 @@ call_user_func(function()
     $_SERVER['REQUEST_URI']  = server('SCRIPT_NAME', server('PHP_SELF'));
     $_SERVER['REQUEST_URI'] .= $query = server('QUERY_STRING') ? "?$query" : '';
   }
-  
-  
+
+
   // huh stop!
   if (headers_sent($file, $line))
   {
     raise(ln('headers_sent', array('script' => $file, 'number' => $line)));
   }
 
-  
+
   // method override
   if ($_method = value($_POST, '_method'))
   {
     $_SERVER['REQUEST_METHOD'] = strtoupper($_method);
-    
+
     unset($_POST['_method']);
   }
-  
+
   // CRSF token
   define('TOKEN', sprintf('%d %s', time(), sha1(salt(13))));
-  
+
   ignore_user_abort(FALSE);
 });
 
