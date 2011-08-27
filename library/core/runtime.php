@@ -340,7 +340,7 @@ function raise($message)
   }
 
   // invoke custom handler
-  trigger('error', TRUE, $var);
+  trigger(__FUNCTION__, TRUE, $var);
 
 
   // output

@@ -62,8 +62,8 @@ function link_to($route, array $params = array())
             'host'     => FALSE,
             'to'       => '',
           );
-  
-  
+
+
   if (is_array($route))
   {
     $params += $route;
@@ -72,20 +72,20 @@ function link_to($route, array $params = array())
   {
     $params['to'] = $route;
   }
-  
-  
+
+
   if (empty($params['to']))
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
-  
-  
+
+
   $params += $defs;
 
   $abs     = is_true($params['complete']);
   $link    = is_true($params['host']) ? server(TRUE, ROOT, $abs) : ROOT;
   $rewrite = (boolean) option('rewrite');
-  
+
   if ( ! $rewrite)
   {
     $link .= INDEX . (option('query') ? '?' : '') . '/';
@@ -98,7 +98,7 @@ function link_to($route, array $params = array())
   {
     @list($part, $anchor) = explode('#', $params['to']);
     @list($part, $query)  = explode('?', $part);
-  
+
     $link .= ltrim($part, '/');
   }
 
@@ -107,8 +107,8 @@ function link_to($route, array $params = array())
   {
     $link .= option('suffix');
   }
-  
-  
+
+
   if ( ! empty($params['locals']))
   {
     $hash  = uniqid('--query-prefix');
@@ -116,7 +116,7 @@ function link_to($route, array $params = array())
     $test  = preg_replace("/{$hash}\d+=/", '', $test);
     $link .= (option('query') ? '&' : '?') . $test;
   }
-  
+
   $link .= $query ? "&$query" : '';
   $link .= $anchor ? "#$anchor" : '';
 
@@ -184,8 +184,8 @@ function submit_to($url, array $args = array(), array $files = array(), $method 
   {
     return FALSE;
   }
-  
-  
+
+
 
   $test  = @parse_url($url);
 
@@ -242,12 +242,12 @@ function submit_to($url, array $args = array(), array $files = array(), $method 
 
 
   $output = '';
-  
+
   while( ! feof($resource))
   {
     $output .= fgets($resource, 4096);
   }
-  
+
   return $output;
 }
 
@@ -290,14 +290,14 @@ function route($match, $to = NULL, array $params = array())
       $params['match'] = $method . ' ' . $params[$key];
     }
   }
-  
-  
+
+
   if (empty($params['match']))
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
   }
-  
-  
+
+
   $params['match'] = trim($params['match']);
 
   if (is_false(strpos($params['match'], ' ')))
@@ -313,10 +313,10 @@ function route($match, $to = NULL, array $params = array())
   );
 
 
-  
+
   $expr = "^$params[route]$";
   $test = method() . ' ' . URI;
-  
+
   $params['matches'] = match($expr, $test, (array) $params['constraints']);
 
   if ( ! empty($params['matches']))
@@ -325,10 +325,12 @@ function route($match, $to = NULL, array $params = array())
     {
       $params['to'] = ROOT;
     }
-    
-    
+
+
+    trigger(__FUNCTION__, TRUE, $params);
+
     if (empty($params['to']) OR
-     ! (is_closure($params['to']) OR
+     ! (is_callable($params['to']) OR
         is_file($params['to']) OR
         is_url($params['to'])))
     {
@@ -473,8 +475,8 @@ function dispatch($route, $to = NULL, array $params = array())
             'type'        => '',
             'to'          => '',
           );
-  
-  
+
+
   if (is_assoc($route))
   {
     $params += $route;
@@ -498,8 +500,8 @@ function dispatch($route, $to = NULL, array $params = array())
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'route')));
   }
-  
-  
+
+
   if ( ! isset($params['constraints']))
   {
     $params['constraints'] = array();
@@ -524,13 +526,15 @@ function dispatch($route, $to = NULL, array $params = array())
 
     params((array) $params['defaults'] + (array) $params['matches']);
 
+    $content['output']  = '';
+    $content['headers'] = array();
 
     ob_start();
-    
-    if (is_closure($params['to']))
+
+    if (is_callable($params['to']))
     {
       $output = call_user_func_array($params['to'], (array) $params);
-      
+
       if (is_true($output))
       {//FIX
         return TRUE;
@@ -551,8 +555,8 @@ function dispatch($route, $to = NULL, array $params = array())
         $type   = ! empty($params['type']) ? $params['type'] : mime($params['to']);
         $length = filesize($params['to']);
 
-        header("Content-Length: $length");
-        header("Content-Type: $type");
+        $content['headers']['content-length'] = $length;
+        $content['headers']['content-type'] = $type;
 
         readfile($params['to']);
       }
@@ -563,22 +567,22 @@ function dispatch($route, $to = NULL, array $params = array())
     }
 
     $content['output'] = ob_get_clean();
-    
+
     if ( ! empty($output))
     {
       @list($content['status'], $content['headers']) = (array) $output;
-      
+
       if ( ! empty($output['charset']))
       {
         $content['charset'] = $output['charset'];
       }
-      
+
       if ( ! empty($output['type']))
       {
         $content['type'] = $output['type'];
       }
     }
-    
+
     response($content);
   }
 }
@@ -600,8 +604,8 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
             'status'  => 200,
             'to'      => ROOT,
           );
-  
-  
+
+
   if (is_assoc($to))
   {
     $params += $to;
@@ -619,13 +623,13 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
   {
     $params['status'] = (int) $status;
   }
-  
-  
+
+
   if (empty($params['to']))
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
-  
+
 
   $params += $defs;
 
@@ -644,6 +648,8 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
   }
 
 
+  trigger(__FUNCTION__, TRUE, $params);
+
   status($params['status'], $params['headers']);
   header('Location: ' . str_replace('&amp;', '&', $params['to']), TRUE);
   exit;
@@ -652,7 +658,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
 
 /**
  * Print out final content
- * 
+ *
  * @param  mixed Output|Options Hash
  * @param  array Options hash
  * @return void
@@ -666,8 +672,8 @@ function response($content, array $params = array())
             'status'  => 200,
             'output'  => '',
           );
-  
-  
+
+
   if (is_assoc($content))
   {
     $params += $content;
@@ -682,25 +688,28 @@ function response($content, array $params = array())
     $params['output'] = $params['text'];
   }
 
-  
+
   if (empty($params['output']))
   {
     raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
   }
-  
-  
+
+
   $params += $defs;
 
   if (empty($params['headers']))
   {
     $params['type'] = $params['type'] ?: ini_get('default_mimetype');
-    
+
     if (is_mime($params['type']))
     {
       $params['headers']['content-type'] = $params['type'] . ( ! empty($params['charset']) ? "; charset=$params[charset]" : '');
       $params['headers']['content-length'] = strlen((string) $params['output']);
     }
   }
+
+
+  trigger(__FUNCTION__, TRUE, $params);
 
   status($params['status'], $params['headers']);
   echo $params['output'];
@@ -727,7 +736,7 @@ function status($num = 200, array $headers = array())
     $set = include LIB.DS.'assets'.DS.'scripts'.DS.'status_vars'.EXT;
   }
 
-  if (empty($set['reasons'][$num])) 
+  if (empty($set['reasons'][$num]))
   {
     return FALSE;
   }
@@ -781,8 +790,8 @@ function download($path, $name = '', $mime = '', $kbps = 24)
   $mime   = ! empty($mime) ? $mime : 'application/octet-stream';
   $name   = ! empty($name) ? $name : substr(md5(time()), 0, 7) . basename($path);
   $length = filesize($path);
-  
-  
+
+
   header(sprintf('Content-Disposition: attachment; filename="%s"', $name));
   header(sprintf('Content-Length: %d', $length));
   header(sprintf('Content-Type: %s', $mime));
