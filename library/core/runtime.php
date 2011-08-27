@@ -221,17 +221,13 @@ function render($content, $partial = FALSE, array $params = array())
   {
     ob_start();
 
-    if ( ! empty($params['locals']))
-    {
-      extract($params['locals'], EXTR_SKIP | EXTR_REFS);
-    }
-
+    extract($params['locals'], EXTR_SKIP | EXTR_REFS);
     require func_get_arg(0);
 
     return ob_get_clean();
   };
 
-  if (is_true($params['content']))
+  if (is_true($params['partial']))
   {
     return call_user_func($output, $params['content']);
   }
