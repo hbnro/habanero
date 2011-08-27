@@ -42,8 +42,8 @@ Quick start
     run(function()
     {
 
-      uses('tetl/server');
-      uses('tetl/router');
+      import('tetl/server');
+      import('tetl/router');
 
       route('*', function()
       {

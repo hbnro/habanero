@@ -5,13 +5,13 @@ require dirname(__DIR__).'/library/initialize.php';
 run(function()
 {
 
-  uses('tetl/server');
-  uses('tetl/router');
+  import('tetl/server');
+  import('tetl/router');
   
   route('POST /create', function()
   {
-    uses('tetl/valid');
-    uses('tetl/session');
+    import('tetl/valid');
+    import('tetl/session');
     
     valid::setup(array(
       'row[address]' => 'required is_email|is_url|is_ip',
@@ -40,7 +40,7 @@ run(function()
   
   route('*', function()
   {
-    uses('tetl/form');
+    import('tetl/form');
     
     echo form::to('POST /create', function()
     {

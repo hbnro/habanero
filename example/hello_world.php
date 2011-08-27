@@ -5,8 +5,8 @@ require dirname(__DIR__).'/library/initialize.php';
 run(function()
 {  
   
-  uses('tetl/server');
-  uses('tetl/router');
+  import('tetl/server');
+  import('tetl/router');
   
   route('/hi/:name', function()
   {

@@ -23,9 +23,9 @@ require dirname(__DIR__).'/library/initialize.php';
 run(function()
 {
 
-  uses('tetl/css');
-  uses('tetl/taml');
-  uses('tetl/router');
+  import('tetl/css');
+  import('tetl/taml');
+  import('tetl/router');
 
   css::setup('path', __DIR__);
 
