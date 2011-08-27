@@ -22,9 +22,10 @@ $lang['error'] = 'Error';
 $lang['unknown'] = 'Desconocido';
 $lang['application'] = 'Aplicación';
 $lang['configuration'] = 'Configuración';
+$lang['response_headers'] = 'Cabeceras enviadas';
+$lang['request_headers'] = 'Cabeceras recibidas';
 $lang['environment'] = 'Variables de entorno';
 $lang['backtrace'] = 'Traza de ejecución';
-$lang['headers'] = 'Cabeceras enviadas';
 $lang['includes'] = 'Archivos cargados';
 
 /* EOF: ./i18n/locale/es.php */

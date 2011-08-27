@@ -22,9 +22,10 @@ $lang['error'] = 'Error';
 $lang['unknown'] = 'Unknown';
 $lang['application'] = 'Application';
 $lang['configuration'] = 'Configuration';
+$lang['response_headers'] = 'Response headers';
+$lang['request_headers'] = 'Request headers';
 $lang['environment'] = 'Environment vars';
 $lang['backtrace'] = 'Backtrace log';
-$lang['headers'] = 'Headers sent';
 $lang['includes'] = 'Included files';
 
 /* EOF: ./i18n/locale/en.php */

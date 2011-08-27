@@ -35,8 +35,10 @@
     <?php dump(config(), TRUE); ?>
     <?php if (isset($env)) { ?><h3><?php echo ln('environment'); ?></h3>
     <?php dump($env, TRUE); } ?>
-    <?php if (isset($headers)) { ?><h3><?php echo ln('headers'); ?></h3>
+    <?php if (isset($headers)) { ?><h3><?php echo ln('response_headers'); ?></h3>
     <?php dump($headers, TRUE); } ?>
+    <?php if (isset($received)) { ?><h3><?php echo ln('request_headers'); ?></h3>
+    <?php dump($received, TRUE); } ?>
     <?php if (isset($backtrace)) { ?><h3><?php echo ln('backtrace'); ?></h3>
     <?php dump($backtrace, TRUE); } ?><h3><?php echo ln('includes'); ?></h3>
     <?php dump(get_included_files(), TRUE); ?>

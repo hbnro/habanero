@@ -287,8 +287,6 @@ function raise($message)
   if ( ! IS_CLI)
   {
     // raw headers
-    $var['headers']   = array();
-
     foreach (headers_list() as $one)
     {
       list($key, $val) = explode(':', $one);
@@ -327,7 +325,7 @@ function raise($message)
   {
     if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key))
     {
-      if (substr($key, 0, 5) === 'HTTP_')
+      if ( ! IS_CLI && (substr($key, 0, 5) === 'HTTP_'))
       {
         $var['received'][camelcase(strtolower(substr($key, 5)), TRUE, '-')] = $val;
       }
