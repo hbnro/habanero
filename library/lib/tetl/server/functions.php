@@ -13,10 +13,10 @@ function put()
   {
     return FALSE;
   }
-  
-  
+
+
   $out = (string) @file_get_contents('php://input');
-  
+
   if (server('HTTP_CONTENT_TYPE') === 'application/x-www-form-urlencoded')
   {
     parse_str($out, $out);
@@ -142,7 +142,7 @@ function remote($or = FALSE)
 function server($key = '', $default = FALSE, $complete = FALSE)
 {
   global $_SERVER;
-  
+
   if (func_num_args() == 0)
   {
     $test = explode('.', $_SERVER['SERVER_NAME']);
@@ -184,22 +184,6 @@ function server($key = '', $default = FALSE, $complete = FALSE)
   }
 
   return $default;
-}
-
-
-/**
- * Try to avoid cache
- *
- * @return void
- */
-function nocache()
-{
-  header('Cache-Control: no-store, no-cache, must-revalidate');
-  header('Cache-Control: post-check=0, pre-check=0', FALSE);
-  header('Pragma: no-cache');
-
-  header('Last-Modified: ' . date('D, m Y H:i:s \G\M\T', time()));
-  header('Expires: ' . date('D, m Y H:i:s \G\M\T', 0));
 }
 
 /* EOF: ./lib/tetl/server/functions.php */
