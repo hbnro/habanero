@@ -50,7 +50,7 @@ return function($app)
         die("Missing class: $class");
       }
 
-      if ( ! method_exists($class, $method))
+      if ( ! $class::defined($method))
       {
         die("Missing method: $class#$method");
       }
