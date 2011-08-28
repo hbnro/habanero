@@ -8,13 +8,8 @@
 }
 
 @mixin clearfix {
-  zoom: 1;
-  &:after {
-    display: block;
-    height: 0;
-    clear: both;
-    content: ".";
-  }
+  overflow: hidden;
+  width: 100%;
 }
 
 @mixin center_block {
