@@ -6,19 +6,19 @@
 
 class prototype
 {
-  
+
   /**#@+
    * @ignore
    */
-  
+
   // public function stack
   private static $public = array();
-  
+
   // avoid constructor
   private function __construct()
   {
   }
-  
+
   // public method callback
   final public static function __callStatic($method, $arguments = array())
   {
@@ -28,7 +28,7 @@ class prototype
     }
     return self::apply($method, $arguments);
   }
-  
+
   /**#@-*/
 
 
@@ -42,8 +42,8 @@ class prototype
   {
     self::$public[get_called_class()][$method] = $lambda;
   }
-  
-  
+
+
   /**
    * Is specified method defined?
    *
@@ -58,8 +58,8 @@ class prototype
     }
     return method_exists(get_called_class(), $method);
   }
-  
-  
+
+
   /**
    * Prototype methods
    *
@@ -69,8 +69,8 @@ class prototype
   {
     return self::$public[get_called_class()];
   }
-  
-  
+
+
   /**
    * Currying apply
    *
@@ -84,8 +84,9 @@ class prototype
     {
       return call_user_func_array(self::$public[get_called_class()][$method], $args);
     }
+    return call_user_func(array(get_called_class(), $method), $args);
   }
-  
+
 }
 
 /* EOF: ./core/prototype.php */
