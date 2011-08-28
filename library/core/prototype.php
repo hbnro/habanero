@@ -84,7 +84,7 @@ class prototype
     {
       return call_user_func_array(self::$public[get_called_class()][$method], $args);
     }
-    return call_user_func(array(get_called_class(), $method), $args);
+    return call_user_func_array(array(get_called_class(), $method), $args);
   }
 
 }
