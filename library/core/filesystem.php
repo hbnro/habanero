@@ -24,25 +24,22 @@ define('DIR_MAP', 8);
  */
 function unfile($path, $filter = '*', $options = FALSE)
 {
-  if ( ! is_dir($path))
+  if (is_dir($path))
   {
-    return FALSE;
+    $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
+    $test  = dir2arr($path, $filter, $options | DIR_MAP | DIR_SORT);
+
+    foreach ($test as $file)
+    {
+      is_file($file) && unlink($file);
+      is_dir($file) && rmdir($file);
+    }
+
+
+    $empty && rmdir($path);
+
+    return TRUE;
   }
-  
-  
-  $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
-  $test  = dir2arr($path, $filter, $options | DIR_MAP | DIR_SORT);
-
-  foreach ($test as $file)
-  {
-    is_file($file) && unlink($file);
-    is_dir($file) && rmdir($file);
-  }
-
-
-  $empty && rmdir($path);
-  
-  return TRUE;
 }
 
 
@@ -55,20 +52,18 @@ function unfile($path, $filter = '*', $options = FALSE)
  */
 function dirsize($of, $recursive = FALSE)
 {
-  if ( ! is_dir($of))
+  if (is_dir($of))
   {
-    return FALSE;
+    $length    = 0;
+    $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
+
+    foreach (dir2arr($of, '*', DIR_MAP | $recursive) as $old)
+    {
+      $length += is_file($old) ? filesize($old) : 0;
+    }
+
+    return $length;
   }
-
-  $length    = 0;
-  $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
-
-  foreach (dir2arr($of, '*', DIR_MAP | $recursive) as $old)
-  {
-    $length += is_file($old) ? filesize($old) : 0;
-  }
-
-  return $length;
 }
 
 
@@ -98,8 +93,8 @@ function dir2arr($from, $filter = '*', $options = FALSE)
       return $a_depth == $b_depth ? 0 : ($a_depth < $b_depth ? 1 : - 1 );
     };
   }
-  
-  
+
+
   $recursive = ((int) $options & DIR_RECURSIVE) == 0 ? FALSE : TRUE;
   $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
   $sort = ((int) $options & DIR_SORT) == 0 ? FALSE : TRUE;
@@ -114,53 +109,53 @@ function dir2arr($from, $filter = '*', $options = FALSE)
   }
 
   $items = glob(rtrim($from, DS).DS.'*') ?: array();
-  
+
   array_walk_recursive($items, function($value, $old)
     use(&$items, &$extra, $filter, $options, $recursive, $empty, $map)
   {
     if (is_dir($value) && $recursive)
     {
       $key = ! $map ? basename($value) : $value;
-      
+
       if ( ! in_array($key, $extra))
       {
         $extra []= $key;
       }
-      
+
       if (($test = dir2arr($value, $filter, $options, TRUE)) OR $empty)
       {
         $items[$key] = $test;
       }
-      
+
       unset($items[$old]);
-      
+
       ! $map && ksort($items);
     }
     elseif ( ! match($filter, $value))
     {
       unset($items[$old]);
     }
-    else 
+    else
     {
       $value = ! $map ? basename($value) : $value;
-    }	
+    }
   }, $items);
-    
-    
+
+
   if (func_num_args() < 4)
   {//FIX
     $items = array_merge($items, $extra);
     $extra = array();
   }
-    
-	
+
+
   if ($map)
   {
     $output = array();
 
     foreach ($items as $value)
     {
-      if (is_scalar($value)) 
+      if (is_scalar($value))
       {
         $output []= $value;
       }
@@ -169,12 +164,12 @@ function dir2arr($from, $filter = '*', $options = FALSE)
         $output = array_merge($output, $value);
       }
     }
-    
+
     $items = array_unique($output);
   }
-  
+
   $sort && usort($items, $lambda);
-  
+
   return $items;
 }
 
@@ -190,24 +185,22 @@ function dir2arr($from, $filter = '*', $options = FALSE)
  */
 function cpfiles($from, $to, $filter = '*', $recursive = FALSE)
 {
-  if ( ! is_dir($from))
+  if (is_dir($from))
   {
-    return FALSE;
-  }
-  
-  ! is_dir($to) && mkpath($to, PERMS);
-  
-  $options = (is_true($recursive) ? DIR_RECURSIVE : 0) | DIR_EMPTY;
-  $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
-  
-  foreach ($test as $file)
-  {
-    $new = str_replace(realpath($from), $to, $file);
-    
-    if ( ! file_exists($new))
+    ! is_dir($to) && mkpath($to, PERMS);
+
+    $options = (is_true($recursive) ? DIR_RECURSIVE : 0) | DIR_EMPTY;
+    $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
+
+    foreach ($test as $file)
     {
-      is_file($file) && copy($file, $new);
-      is_dir($file) && mkdir($new, PERMS);
+      $new = str_replace(realpath($from), $to, $file);
+
+      if ( ! file_exists($new))
+      {
+        is_file($file) && copy($file, $new);
+        is_dir($file) && mkdir($new, PERMS);
+      }
     }
   }
 }
@@ -258,23 +251,21 @@ function mkpath($dir, $perms = FALSE)
  */
 function findfile($path, $filter = '*', $recursive = FALSE, $index = 0)
 {
-  if ( ! is_dir($path))
+  if (is_dir($path))
   {
-    return FALSE;
+    $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
+    $output    = array_filter(dir2arr($path, $filter, $recursive | DIR_MAP), 'is_file');
+
+    sort($output);
+
+
+    if ($index > 0)
+    {
+      return isset($output[$index - 1]) ? $output[$index - 1] : FALSE;
+    }
+
+    return $output;
   }
-
-  $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
-  $output    = array_filter(dir2arr($path, $filter, $recursive | DIR_MAP), 'is_file');
-
-  sort($output);
-
-
-  if ($index > 0)
-  {
-    return isset($output[$index - 1]) ? $output[$index - 1] : FALSE;
-  }
-
-  return $output;
 }
 
 
@@ -456,7 +447,7 @@ function ext($from, $dot = FALSE)
 function extn($from, $base = FALSE)
 {
   $offset = strrpos($from, '.');
-  
+
   if ( ! is_false($offset))
   {
     $from = substr($from, 0, $offset);
@@ -532,9 +523,9 @@ function mime($of)
     {
       return mime_content_type($of);
     }
-    
+
     $data = read($of);
-    
+
     if ( ! strncmp($data, "\xff\xd8", 2))
     {
       return 'image/jpeg';
@@ -549,7 +540,7 @@ function mime($of)
     }
   }
 
-  
+
   $ext = ext($of);
 
   if ( ! array_key_exists($ext, $types))
