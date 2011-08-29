@@ -32,7 +32,7 @@ dump(array(
   'bootstrap' => APP_LOADER,
 ), TRUE);
 
-echo sprintf("\n\n%s\n--\n", ln('error')), ents($message, TRUE);
+echo sprintf("\n\n%s\n--\n", ln('error')), $message;
 
 $content = preg_replace('/^/m', '  ', ob_get_clean());
 
