@@ -27,7 +27,7 @@ sql::implement('type', function()
             'TINYBLOB' => 'binary',
             'BLOB' => 'binary',
           );
-  
+
   return $set;
 });
 
@@ -42,7 +42,7 @@ sql::implement('raw', function()
             'boolean' => array('type' => 'TINYINT', 'length' => 1),
             'binary' => array('type' => 'BLOB'),
           );
-  
+
   return $set;
 });
 
@@ -70,7 +70,7 @@ sql::implement('tables', function()
 {
   $out = array();
   $old = sql::execute('SHOW TABLES');
-  
+
   while ($row = sql::fetch_assoc($old))
   {
     $out []= array_pop($row);
@@ -83,11 +83,11 @@ sql::implement('columns', function($test)
 {
   $out = array();
   $old = sql::execute("DESCRIBE `$test`");
-  
+
   while ($row = sql::fetch_assoc($old))
   {
     preg_match('/^(\w+)(?:\((\d+)\))?.*?$/', strtoupper($row['Type']), $match);
-    
+
     $out[$row['Field']] = array(
         'type' => $row['Extra'] == 'auto_increment' ? 'PRIMARY_KEY' : $match[1],
         'length' => ! empty($match[2]) ? (int) $match[2] : 0,
@@ -95,7 +95,32 @@ sql::implement('columns', function($test)
         'not_null' => $row['Null'] <> 'YES',
     );
   }
-  
+
+  return $out;
+});
+
+sql::implement('indexes', function($test)
+{
+  $out = array();
+
+  $res = sql::execute("SHOW INDEXES FROM `$test`");
+
+  while ($one = sql::fetch_object($res))
+  {
+    if ($one->Key_name <> 'PRIMARY')
+    {
+      if ( ! isset($out[$one->Key_name]))
+      {
+        $out[$one->Key_name] = array(
+          'unique' => ! $one->Non_unique,
+          'column' => array(),
+        );
+      }
+
+      $out[$one->Key_name]['column'] []= $one->Column_name;
+    }
+  }
+
   return $out;
 });
 
@@ -125,18 +150,18 @@ sql::implement('rename_column', function($from, $name, $to)
             '/^VARCHAR$/' => 'VARCHAR(255)',
             '/^INT(?:EGER)$/' => 'INT(11)',
           );
-  
-  
+
+
   $set = db::columns($from);
-  
+
   $test = db::field($set[$name]['type'], $set[$name]['length']);
   $type = substr($test, 0, strpos($test, ' '));
-  
+
   foreach ($map as $key => $val)
   {
     $type = preg_replace($key, $val, $type);
   }
-  
+
   return sql::execute(sprintf('ALTER TABLE `%s` CHANGE `%s` `%s` %s', $from, $name, $to, $type));
 });
 
@@ -148,7 +173,7 @@ sql::implement('change_column', function($from, $name, $to)
 sql::implement('add_index', function($to, $name, $column, $unique = FALSE)
 {
   $query  = sprintf('CREATE%sINDEX `%s` ON `%s` (`%s`)', $unique ? ' UNIQUE ' : ' ', $name, $to, join('`, `', $column));
-  
+
   return sql::execute($query);
 });
 

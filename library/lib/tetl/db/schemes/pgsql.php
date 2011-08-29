@@ -21,7 +21,7 @@ sql::implement('type', function()
             'REAL' => 'float',
             'BLOB' => 'binary',
           );
-  
+
   return $set;
 });
 
@@ -31,7 +31,7 @@ sql::implement('raw', function()
             'primary_key' => 'SERIAL PRIMARY KEY',
             'string' => array('type' => 'CHARACTER varying', 'length' => 255),
           );
-  
+
   return $set;
 });
 
@@ -58,30 +58,30 @@ sql::implement('encoding', function($test)
 sql::implement('tables', function()
 {
   $out = array();
-  
+
   $sql = "SELECT tablename FROM pg_tables WHERE tablename "
        . "!~ '^pg_+' AND schemaname = 'public'";
-  
+
   $old = sql::execute($sql);
-  
+
   while ($row = sql::fetch_assoc($old))
   {
     $out []= $row['tablename'];
   }
-  
+
   return $out;
 });
 
 sql::implement('columns', function($test)
 {
   $out = array();
-  
+
   $sql = "SELECT DISTINCT "
        . "column_name, data_type AS t, character_maximum_length, column_default AS d,"
        . "is_nullable FROM information_schema.columns WHERE table_name='$test'";
-  
+
   $old = sql::execute($sql);
-  
+
   while ($row = sql::fetch_assoc($old))
   {
     if (preg_match('/^nextval\(.+$/', $row['d'], $id))
@@ -92,13 +92,13 @@ sql::implement('columns', function($test)
     {
       $row['d'] = trim(preg_replace('/::.+$/', '', $row['d']), "'");
     }
-    
+
     $test     = explode(' ', $row['t']);
     $row['t'] = $test[0];
 
     $key  = array_shift($row);
     $type = array_shift($row);
-    
+
     $out[$key] = array(
       'type' => $id ? 'PRIMARY_KEY' : strtoupper($type),
       'length' => (int) array_shift($row),
@@ -106,7 +106,28 @@ sql::implement('columns', function($test)
       'not_null' => ! array_shift($row),
     );
   }
-  
+
+  return $out;
+});
+
+sql::implement('indexes', function($test)
+{
+  $out = array();
+
+  $sql = "select pg_get_indexdef(indexrelid) AS sql from pg_index where indrelid = '$test'::regclass";
+  $res = sql::execute($sql);
+
+  while ($one = $res->fetchObject())
+  {
+    if (preg_match('/CREATE(\s+UNIQUE|)\s+INDEX\s+(\w+)\s+ON.+?\((.+?)\)/', $one->sql, $match))
+    {
+      $out[$match[2]] = array(
+        'unique' => ! empty($match[1]),
+        'column' => explode(',', preg_replace('/["\s]/', '', $match[3])),
+      );
+    }
+  }
+
   return $out;
 });
 

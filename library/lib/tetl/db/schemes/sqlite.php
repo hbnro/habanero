@@ -24,7 +24,7 @@ sql::implement('type', function()
             'DECIMAL' => 'numeric',
             'BLOB' => 'binary',
           );
-  
+
   return $set;
 });
 
@@ -36,7 +36,7 @@ sql::implement('raw', function()
             'timestamp' => array('type' => 'DATETIME'),
             'binary' => array('type' => 'BLOB'),
           );
-  
+
   return $set;
 });
 
@@ -65,7 +65,7 @@ sql::implement('tables', function()
   {
     $out []= $row['name'];
   }
-  
+
   return $out;
 });
 
@@ -74,11 +74,11 @@ sql::implement('columns', function($test)
   $out = array();
   $sql = "PRAGMA table_info('$test')";
   $old = sql::execute($sql);
-  
+
   while ($row = sql::fetch_assoc($old))
   {
     preg_match('/^(\w+)(?:\((\d+)\))?.*?$/', strtoupper($row['type']), $match);
-    
+
     $out[$row['name']] = array(
         'type' => $row['pk'] > 0 ? 'PRIMARY_KEY' : $match[1],
         'length' => ! empty($match[2]) ? (int) $match[2] : 0,
@@ -86,7 +86,28 @@ sql::implement('columns', function($test)
         'not_null' => $row['notnull'] > 0,
     );
   }
-  
+
+  return $out;
+});
+
+sql::implement('indexes', function($test)
+{
+  $res = sql::execute("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='$test'");
+
+  $out = array();
+
+  while ($one = sql::fetch_object($res))
+  {
+    if (preg_match('/\((.+?)\)/', $one->sql, $match))
+    {
+      $col = explode(',', preg_replace('/["\s]/', '', $match[1]));
+      $out[$one->name] = array(
+        'unique' => strpos($one->sql, 'UNIQUE ') !== FALSE,
+        'column' => $col,
+      );
+    }
+  }
+
   return $out;
 });
 
@@ -120,9 +141,9 @@ sql::implement('rename_column', function($from, $name, $to)
     $old['length'],
     $old['default'],
   ));
-  
+
   sql::execute(sprintf('UPDATE "%s" SET "%s" = "%s"', $from, $to, $name));
-  
+
   return sql::remove_column($from, $name);
 });
 

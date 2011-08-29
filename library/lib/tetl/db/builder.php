@@ -6,7 +6,7 @@
 
 class db extends prototype
 {
-  
+
   /**
    * Select
    *
@@ -21,16 +21,16 @@ class db extends prototype
   {
     $sql  = "SELECT\n" . sql::build_fields($fields);
     $sql .= "\nFROM\n" . sql::build_fields($table);
-  
+
     if ( ! empty($where))
     {
       $sql .= "\nWHERE\n" . sql::build_where($where);
     }
-    
+
     if ( ! empty($options['group']))
     {
       $sql .= "\nGROUP BY";
-      
+
       if (is_array($options['group']))
       {
         $sql .= "\n" . join(', ', array_map(array('sql', 'names'), $options['group']));
@@ -40,42 +40,42 @@ class db extends prototype
         $sql .= "\n" . sql::names($options['group']);
       }
     }
-  
+
     if ( ! empty($options['order']))
     {
       $inc  = 0;
       $sql .= "\nORDER BY";
-      
+
       foreach ($options['order'] as $one => $set)
       {
         if (($inc += 1) > 1)
         {
           $sql .= ', ';
         }
-        
+
         if (is_num($one))
         {//FIX
           $sql .= $set === RANDOM ? "\n$set" : "\n" . sql::names($set[0]) . " $set[1]";
           continue;
         }
-        
+
         $one  = sql::names($one);
         $sql .= "\n$one $set";
       }
     }
-  
+
     $limit  = ! empty($options['limit']) ? $options['limit'] : 0;
     $offset = ! empty($options['offset']) ? $options['offset'] : 0;
-    
+
     if ($limit > 0)
     {
       $sql .= "\nLIMIT " . ($offset > 0 ? "$offset," : '') . $limit;
     }
-    
+
     return is_true($return) ? $sql : db::query($sql);
   }
-  
-  
+
+
   /**
    * Insert
    *
@@ -89,21 +89,21 @@ class db extends prototype
   {
     $sql  = "INSERT INTO\n" . sql::build_fields($table);
     $sql .= sql::build_values($values, TRUE);
-  
+
     if (is_true($return))
     {
       return $sql;
     }
-    
+
     if (is_null($column))
     {// TODO: experimental support for pgsql, try to use db_columns() instead?
       $column = array_shift(array_keys($values));
     }
-  
+
     return db::inserted(db::query($sql), $table, $column);
   }
-  
-  
+
+
   /**
    * Delete
    *
@@ -116,17 +116,17 @@ class db extends prototype
   final public static function delete($table, array $where = array(), $limit = 0, $return = FALSE)
   {
     $sql = "DELETE FROM\n" . sql::build_fields($table);
-  
+
     if ( ! empty($where))
     {
       $sql .= "\nWHERE\n" . sql::build_where($where);
     }
     $sql .= $limit > 0 ? "\nLIMIT $limit" : '';
-  
+
     return is_true($return) ? $sql : db::affected(db::query($sql));
   }
-  
-  
+
+
   /**
    * Update
    *
@@ -143,11 +143,11 @@ class db extends prototype
     $sql .= "\nSET\n" . sql::build_values($fields, FALSE);
     $sql .= "\nWHERE\n" . sql::build_where($where);
     $sql .= $limit > 0 ? "\nLIMIT {$limit}" : '';
-    
+
     return is_true($return) ? $sql : db::affected(db::query($sql));
   }
-  
-  
+
+
   /**
    * Prepare SQL query
    *
@@ -165,12 +165,12 @@ class db extends prototype
     {
       $args = sql::fixate_string(array_slice(func_get_args(), 1), FALSE);
       $sql  = preg_replace('/((?<!\\\)\?)/e', 'array_shift($args);', $sql);
-    }  
-    
+    }
+
     return $sql;
   }
-  
-  
+
+
   /**
    * Automatic escape
    *
@@ -182,8 +182,8 @@ class db extends prototype
   final public static function escape($sql, $vars = array())
   {
     static $repl = NULL;
-    
-    
+
+
     if (is_null($repl))
     {
       $repl = function($type, $value = NULL)
@@ -205,10 +205,10 @@ class db extends prototype
         }
       };
     }
-    
-  
+
+
     $args = array_slice(func_get_args(), 1);
-  
+
     if (is_array($vars) && ! empty($vars))
     {
       $sql = strtr($sql, sql::fixate_string($vars, FALSE));
@@ -218,11 +218,11 @@ class db extends prototype
       $vars = sql::fixate_string($args, FALSE);
       $sql  = preg_replace('/\b%[dsnf]\b/e', '$repl("\\0", array_shift($vars));', $sql);
     }
-    
+
     return $sql;
   }
-  
-  
+
+
   /**
    * Execute raw query
    *
@@ -234,17 +234,17 @@ class db extends prototype
     $args     = func_get_args();
     $callback = array('db', strpos($sql, '?') > 0 ? 'prep' : 'escape');
     $sql      = sizeof($args) > 1 ? call_user_func_array($callback, $args) : $sql;
-    
+
     $out = sql::execute(sql::query_repare($sql));
-    
+
     if ($message = sql::error())
     {// FIX
-      raise(ln('db.database_query_error', array('message' => $message, 'sql' => htmlspecialchars($sql))));
+      raise(ln('db.database_query_error', array('message' => $message, 'sql' => $sql)));
     }
     return $out;
   }
-  
-  
+
+
   /**
    * Unique result
    *
@@ -258,15 +258,15 @@ class db extends prototype
     {
       $res = db::query($result);
     }
-    
-    if (db::numrows($result) > 0) 
+
+    if (db::numrows($result) > 0)
     {
       return sql::result($result) ?: $default;
     }
     return $default;
   }
-  
-  
+
+
   /**
    * Fetch all rows
    *
@@ -277,23 +277,23 @@ class db extends prototype
   final public static function fetch_all($result, $output = AS_ARRAY)
   {
     $out = array();
-    
+
     if (is_string($result))
     {
       $args     = func_get_args();
       $callback = array('db', strpos($result, ' ') ? 'query' : 'select');
       $result   = call_user_func_array($callback, $args);
     }
-    
-    
+
+
     while ($row = db::fetch($result, $output))
     {
       $out []= $row;
     }
     return $out;
   }
-  
-  
+
+
   /**
    * Fetch single row
    *
@@ -305,8 +305,8 @@ class db extends prototype
   {
     return $output === AS_OBJECT ? sql::fetch_object($result) : sql::fetch_assoc($result);
   }
-  
-  
+
+
   /**
    * Rows count
    *
@@ -317,8 +317,8 @@ class db extends prototype
   {
     return sql::count_rows($result);
   }
-  
-  
+
+
   /**
    * Affected rows
    *
@@ -329,8 +329,8 @@ class db extends prototype
   {
     return sql::affected_rows($result);
   }
-  
-  
+
+
   /**
    * Last inserted ID
    *
@@ -343,7 +343,7 @@ class db extends prototype
   {
     return sql::last_id($result, $table, $column);
   }
-  
+
 }
 
 /* EOF: ./lib/tetl/db/builder.php */

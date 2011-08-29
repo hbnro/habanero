@@ -13,11 +13,6 @@
  */
 function create_table($name, $columns)
 {
-  if (in_array($name, db::tables()))
-  {
-    return FALSE;
-  }
-  
   return (boolean) sql::execute(db::build($name, $columns));
 }
 
@@ -43,13 +38,6 @@ function drop_table($name)
  */
 function rename_table($from, $to)
 {
-  $set = db::tables();
-
-  if ( ! in_array($from, $set) OR in_array($to, $set))
-  {
-    return FALSE;
-  }
-
   return (boolean) sql::rename_table($from, $to);
 }
 
@@ -64,11 +52,6 @@ function rename_table($from, $to)
  */
 function add_column($to, $name, $type)
 {
-  if (in_array($name, array_keys(db::columns($to))))
-  {
-    return FALSE;
-  }
-
   return (boolean) sql::add_column($to, $name, $type);
 }
 
@@ -82,11 +65,6 @@ function add_column($to, $name, $type)
  */
 function remove_column($from, $name)
 {
-  if ( ! in_array($name, array_keys(db::columns($from))))
-  {
-    return FALSE;
-  }
-
   return (boolean) sql::remove_column($from, $name);
 }
 
@@ -101,13 +79,6 @@ function remove_column($from, $name)
  */
 function change_column($from, $name, $to)
 {
-  $set = db::columns($from);
-  
-  if ( ! array_key_exists($name, $set))
-  {
-    return FALSE;
-  }
-  
   return (boolean) sql::change_column($from, $name, $to);
 }
 
@@ -122,13 +93,6 @@ function change_column($from, $name, $to)
  */
 function rename_column($from, $name, $to)
 {
-  $set = db::columns($from);
-  
-  if ( ! array_key_exists($name, $set) OR array_key_exists($to, $set))
-  {
-    return FALSE;
-  }
-  
   return sql::rename_column($from, $name, $to);
 }
 
@@ -146,7 +110,7 @@ function add_index($to, $column, array $options = array())
   $column = (array) $column;
   $unique = isset($options['unique']) && is_true($options['unique']);
   $name   = ! empty($options['name']) ? $options['name'] : $to . '_' . join('_', $column);
-  
+
   return (boolean) sql::add_index($to, $name, $column, $unique);
 }
 
@@ -165,7 +129,7 @@ function remove_index($from, $name)
     $column = ! empty($name['column']) ? (array) $name['column'] : $name;
     $name   = ! empty($name['name']) ? $name['name'] : $from . '_' . join('_', $column);
   }
-  
+
   return (boolean) sql::remove_index($name);
 }
 

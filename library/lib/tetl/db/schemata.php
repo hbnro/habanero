@@ -39,7 +39,7 @@ db::implement('rollback', function()
 
 /**
  * Database import
- * 
+ *
  * @param  string  Filepath
  * @param  boolean Treat as plain SQL?
  * @return mixed
@@ -47,11 +47,11 @@ db::implement('rollback', function()
 db::implement('import', function($from, $raw = FALSE)
 {
   ob_start();
-  
+
   $old  = include $from;
   $test = ob_get_clean();
-  
-  
+
+
   if ( ! is_array($old))
   {
     if (is_true($raw))
@@ -91,7 +91,7 @@ db::implement('import', function($from, $raw = FALSE)
 db::implement('export', function($to, $mask = '*', $data = FALSE, $raw = FALSE)
 {
   $out = array();
-  
+
   foreach (db::tables($mask) as $one)
   {
     foreach (db::columns($one) as $key => $val)
@@ -188,15 +188,27 @@ db::implement('columns', function($of)
   }
 
   $test = sql::columns($of);
-  
+
   foreach ($test as $key => $val)
   {
     $default     = ! empty($set[$val['type']]) ? $set[$val['type']] : $val['type'];
     $val['type'] = strtolower($default);
     $test[$key]  = $val;
-    
+
   }
   return $test;
+});
+
+
+/**
+ * List all indexes from given table
+ *
+ * @param  string Table name
+ * @return array
+ */
+db::implement('indexes', function($of)
+{
+  return sql::indexes($of);
 });
 
 
@@ -227,12 +239,12 @@ db::implement('field', function($type, $length = 0, $default = NULL)
   {
     $test = is_string($type) && ! empty($set[$type]) ? $set[$type] : $type;
   }
-  
-  
+
+
   if (is_assoc($test))
   {
     $test += compact('length', 'default');
-    
+
     $type    = ! empty($test['type']) ? $test['type'] : $type;
     $length  = ! empty($test['length']) ? $test['length'] : $length;
     $default = ! empty($test['default']) ? $test['default'] : $default;
@@ -240,7 +252,7 @@ db::implement('field', function($type, $length = 0, $default = NULL)
   elseif (is_array($test))
   {
     @list($type, $length, $default) = $test;
-    
+
     if ( ! empty($set[$type]))
     {//FIX
       if (is_string($set[$type]))
@@ -254,17 +266,17 @@ db::implement('field', function($type, $length = 0, $default = NULL)
   {
     return $test;
   }
-  
+
   $type  = strtoupper($type);
   $type .= $length > 0 ? sprintf('(%d)', $length) : '';
-  
+
   if ( ! is_null($default))
   {
     $type .= ($default ? ' NOT' : '') . ' NULL';
   }
-  
+
   $type .= ' DEFAULT ' . (is_null($default) ? 'NULL' : sql::fixate_string($default));
-  
+
   return $type;
 });
 
