@@ -400,14 +400,13 @@ function config($set = NULL, $value = NULL)
     $config = array();
     $test   = include $set;
 
-
     if (is_array($config))
     {
       if (is_array($test))
       {
-        $config += $test;
+        $config = array_merge($config, $test);
       }
-      $bag += $config;
+      $bag = array_merge($bag, $config);
     }
   }
   elseif ( ! is_num($set))
