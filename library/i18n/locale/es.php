@@ -10,6 +10,7 @@ $lang['extension_missing'] = 'La extensión %{name} no existe y es necesaria';
 $lang['function_or_param_missing'] = 'Función %{name}() invalida o el parámetro %{input} hace falta';
 
 $lang['file_not_exists'] = 'El archivo %{name} no existe y es necesario';
+$lang['class_not_exists'] = 'La clase %{name} no existe y es necesaria';
 $lang['application_error'] = 'El sistema no ha iniciado ya?';
 
 $lang['failed_to_execute'] = 'No se pudo ejecutar: %{callback}';

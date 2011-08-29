@@ -10,6 +10,7 @@ $lang['extension_missing'] = 'The extension %{name} does not exists and it\'s re
 $lang['function_or_param_missing'] = 'Function %{name}() invalid or param %{input} missing';
 
 $lang['file_not_exists'] = 'The file %{name} not exists and is required';
+$lang['class_not_exists'] = 'The class %{name} not exists and is required';
 $lang['application_error'] = 'The system has not started yet?';
 
 $lang['failed_to_execute'] = 'Failed to execute lambda: %{callback}';
