@@ -24,6 +24,10 @@ class prototype
   {
     if ( ! isset(self::$public[get_called_class()][$method]))
     {
+      if (self::defined('missing'))
+      {
+        return self::missing($method, $arguments);
+      }
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
     return self::apply($method, $arguments);
