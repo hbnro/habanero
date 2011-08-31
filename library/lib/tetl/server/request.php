@@ -340,7 +340,7 @@ request::implement('dispatch', function(array $params = array())
       is_file($params['to']) OR
       is_url($params['to'])))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
 

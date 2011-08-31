@@ -47,7 +47,7 @@ class form extends prototype
 
     if (empty($params['action']))
     {
-      raise(ln('function_or_param_missing', array('name' => 'form::to', 'input' => 'action')));
+      raise(ln('function_param_missing', array('name' => 'form::to', 'input' => 'action')));
     }
 
 
@@ -243,7 +243,7 @@ class form extends prototype
 
     if (empty($params['type']))
     {
-      raise(ln('function_or_param_missing', array('name' => 'form::input', 'input' => 'type')));
+      raise(ln('function_param_missing', array('name' => 'form::input', 'input' => 'type')));
     }
 
 
@@ -302,7 +302,7 @@ class form extends prototype
 
     if (empty($params['name']))
     {
-      raise(ln('function_or_param_missing', array('name' => 'form::select', 'input' => 'name')));
+      raise(ln('function_param_missing', array('name' => 'form::select', 'input' => 'name')));
     }
 
 
@@ -396,7 +396,7 @@ class form extends prototype
 
     if (empty($params['name']))
     {
-      raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
+      raise(ln('function_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
 
 
@@ -493,7 +493,7 @@ class form extends prototype
 
     if (empty($args['name']))
     {
-      raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
+      raise(ln('function_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
 
 
@@ -549,7 +549,7 @@ class form extends prototype
 
     if (empty($args['text']))
     {
-      raise(ln('function_or_param_missing', array('name' => 'form::label', 'input' => 'text')));
+      raise(ln('function_param_missing', array('name' => 'form::label', 'input' => 'text')));
     }
 
     $text = $args['text'];

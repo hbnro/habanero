@@ -55,7 +55,7 @@ function route($match, $to = NULL, array $params = array())
 
   if (empty($params['match']))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
   }
 
 

@@ -25,7 +25,7 @@ function url_for($action, array $params = array())
 
   if (empty($params['action']))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'action')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'action')));
   }
 
 

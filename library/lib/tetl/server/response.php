@@ -26,7 +26,7 @@ function dispatch($to = NULL, array $params = array())
 
   if (empty($params['to']))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
 
@@ -74,7 +74,7 @@ function dispatch($to = NULL, array $params = array())
   }
   else
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
   $content['output'] = ob_get_clean();
@@ -124,7 +124,7 @@ function response($content, array $params = array())
 
   if (empty($params['output']))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
   }
 
   $params = array_merge(array(
@@ -196,7 +196,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
 
   if (empty($params['to']))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
   $params = array_merge(array(
