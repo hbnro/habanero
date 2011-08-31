@@ -9,7 +9,7 @@ The main idea here is expressiveness and simplicity, based on the most simple an
 Features
 --------
 
-  * By default the main core is extensible, configurable and hookable.
+  * By default the main core is extensible, configurable and hookable using middleware.
   * Primarly provides a routing system, request/response is are friendly-url based.
   * It has a bootstrap mechanism and a detailed error reporting behavior.
   * The helpers are function libraries or prototyped static classes.
@@ -43,7 +43,6 @@ Quick start
     {
 
       import('tetl/server');
-      import('tetl/router');
 
       route('*', function()
       {
@@ -53,9 +52,10 @@ Quick start
     });
 
 
-Follow
+Follow [@tetlphp](http://twitter.com/tetlphp)
 ------
 
-The developer ([@tetlphp](http://twitter.com/tetlphp))
+Our contributors:
 
-The human ([@pateketrueke](http://twitter.com/pateketrueke))
+  * [@Sourcegeek](http://twitter.com/Sourcegeek)
+  * [@pateketrueke](http://twitter.com/pateketrueke)
