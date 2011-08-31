@@ -1,9 +1,0 @@
-!doctype
-:html
-  :head
-    :title
-      Hi all...
-  :body
-    :a{ href => url_for('/page') } Link text
-    :br
-    = ticks(BEGIN)
