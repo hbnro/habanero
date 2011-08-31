@@ -21,8 +21,8 @@ function ranges($low, $high = '', $step = 1)
 
   $out  = array();
   $step = abs($step) ?: 1;
-  
-  
+
+
   foreach ($test as $one)
   {
     if (is_num($one) OR (strlen($one) === 1))
@@ -32,7 +32,7 @@ function ranges($low, $high = '', $step = 1)
     elseif (is_string($one))
     {
       $old = array_map('trim', explode('-', $one));
-      
+
       $i   = array_shift($old);
       $c   = array_shift($old);
       $x   = 0;
@@ -48,16 +48,16 @@ function ranges($low, $high = '', $step = 1)
         $x += 1;
       }
 
-      
+
       $y = $i <= $c ? 1 : -1;
-      
+
       for (; $i * $y <= $c * $y; $i += $step * $y)
       {
         $out []= $x ? chr($i) : $i;
       }
     }
   }
-  
+
   return $out;
 }
 
@@ -84,11 +84,11 @@ function tree($set, $sep = '. ', $key = 'id', $value = 'title', $items = 'childs
     if ( ! empty($item[$value]))
     {
       $out[$id] = $x . $sep . $item[$value];
-      
+
       if ( ! empty($item[$items]) && is_array($item[$items]))
       {
-        $test = call_user_func(__FUNCTION__, $item[$items], $sep, $key, $value, $items);
-        
+        $test = tree($item[$items], $sep, $key, $value, $items);
+
         foreach ($test as $k => $one)
         {
           $out[$k] = $x . $sep . $one;
@@ -128,12 +128,12 @@ function grid($set, $cols = 5, $rows = 0, $callback = '')
 
   foreach ($set as $val)
   {
-    $tmp []= is_callable($callback) ? call_user_func($callback, $val) : $val;
+    $tmp []= is_callable($callback) ? $callback($val) : $val;
 
     if (($inc += 1) >= $cols)
     {
       $out []= $tmp;
-      
+
       $tmp   = array();
       $max  += 1;
       $inc   = 0;
@@ -162,11 +162,11 @@ function wrap($set, $test = '%s', $recursive = FALSE)
   {
     if (is_array($val))
     {
-      $val = is_true($recursive) ? call_user_func(__FUNCTION__, $val, $test, $recursive) : $val;
+      $val = is_true($recursive) ? wrap($val, $test, $recursive) : $val;
     }
     else
     {
-      $val = is_callable($test) ? call_user_func($test, $val) : sprintf($test, (string) $val);
+      $val = is_callable($test) ? $test($val) : sprintf($test, (string) $val);
     }
     $set[$key] = $val;
   }
@@ -197,12 +197,12 @@ function map($set, Closure $callback)
 function kmap($set, Closure $callback)
 {
   $out = array();
-  
+
   foreach ($set as $key => $val)
   {
-    $out[$key] = call_user_func($callback, $val);
+    $out[$key] = $callback($val);
   }
-  
+
   return $out;
 }
 
@@ -230,24 +230,24 @@ function collect($set, Closure $callback)
 function kcollect($set, Closure $callback)
 {
   $out = array();
-  
+
   foreach ($set as $key => $val)
   {
     if (is_array($val))
     {
-      $test = call_user_func(__FUNCTION__, $val, $callback);
-      
+      $test = kcollect($val, $callback);
+
       if ( ! empty($test))
       {
         $out[$key] = $test;
       }
     }
-    elseif (call_user_func($callback, $val, $key))
+    elseif ($callback($val, $key))
     {
       $out[$key] = $val;
     }
   }
-  
+
   return $out;
 }
 
@@ -275,24 +275,24 @@ function reject($set, Closure $callback)
 function kreject($set, Closure $callback)
 {
   $out = array();
-  
+
   foreach ($set as $key => $val)
   {
     if (is_array($val))
     {
-      $test = call_user_func(__FUNCTION__, $val, $callback);
-      
+      $test = kreject($val, $callback);
+
       if ( ! empty($test))
       {
         $out[$key] = $test;
       }
     }
-    elseif ( ! call_user_func($callback, $val, $key))
+    elseif ( ! $callback($val, $key))
     {
       $out[$key] = $val;
     }
   }
-  
+
   return $out;
 }
 
@@ -310,7 +310,7 @@ function flatten($array, $return = array())
   {
     if (is_array($one))
     {
-      $return = call_user_func(__FUNCTION__, $one, $return);
+      $return = flatten($one, $return);
     }
     elseif($one)
     {
@@ -330,7 +330,7 @@ function flatten($array, $return = array())
 function swap($set)
 {
   $out = array();
-  
+
   foreach ($set as $key => $val)
   {
     if ( ! is_num($val) && is_string($val))
@@ -338,7 +338,7 @@ function swap($set)
       $out[$val] = $val;
     }
   }
-  
+
   return $out;
 }
 

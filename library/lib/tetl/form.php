@@ -108,9 +108,7 @@ class form extends prototype
     ), $input);
 
 
-    ob_start();
-
-    call_user_func($callback, $params);
+    ob_start() && $callback($params);
 
     $div .= ob_get_clean();
 
@@ -170,7 +168,7 @@ class form extends prototype
           case 'group';
           case 'select';
           case 'textarea';
-            $input = call_user_func(array('form', $one['type']), $one['name'], $one['value'], (array) $one['options']);
+            $input = form::$one['type']($one['name'], $one['value'], (array) $one['options']);
           break;
           default;
             $input = form::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
@@ -184,7 +182,7 @@ class form extends prototype
       }
       elseif (is_array($one))
       {
-        $out []= call_user_func_array('form::input', $one);
+        $out []= apply('form::input', $one);
       }
       elseif (is_scalar($one))
       {

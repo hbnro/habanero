@@ -6,17 +6,17 @@
 
 class cache extends prototype
 {
-  
+
   /**#@+
    * @ignore
    */
-  
+
   // dynamic depth indicator
   private static $last = array();
-  
+
   /**#@-*/
-   
-  
+
+
   /**
    * Starts buffering
    *
@@ -26,21 +26,21 @@ class cache extends prototype
   final public static function begin($key = NULL)
   {
     $key = ! func_num_args() ? '--n' . ob_get_level() : $key;
-    
+
     if (cache::exists($key))
     {
       echo cache::get($key);
       return FALSE;
     }
-    
+
     cache::$last []= $key;
-    
+
     ob_start();
-    
+
     return TRUE;
   }
-  
-  
+
+
   /**
    * Stops buffering
    *
@@ -55,24 +55,24 @@ class cache extends prototype
     {
       return FALSE;
     }
-    
+
     $out = ob_get_clean();
-    
+
     echo $out;
-  
+
     if ( ! ($key = array_pop(cache::$last)))
     {
       return FALSE;
     }
-    
+
     if ($max > 0)
     {
       return cache::set($key, $out, $max, $tags);
     }
     return TRUE;
   }
-  
-  
+
+
   /**
    * Store a functional block
    *
@@ -85,17 +85,17 @@ class cache extends prototype
   {
     if (is_false($old = cache::get($key)))
     {
-      ob_start();
-      call_user_func($lambda);
-      $old = ob_get_clean();
+      ob_start() && $lambda();
       
+      $old = ob_get_clean();
+
       cache::set($key, $old, $max);
     }
-    
+
     echo $old;
   }
-  
-  
+
+
   /**
    * Retrieve a item from cache
    *
@@ -111,8 +111,8 @@ class cache extends prototype
     }
     return $old;
   }
-  
-  
+
+
   /**
    * Assign a element to cache
    *
@@ -128,33 +128,33 @@ class cache extends prototype
     {
       return FALSE;
     }
-    
+
     if (is_string($tags))
     {
       $tags = explode(',', $tags);
     }
-  
+
     if ( ! empty($tags))
     {
       $old = cache::fetch_item('--cache-tags');
       $old = ! is_array($old) ? array() : $old;
-      
+
       $old[$key] = $tags;
-    
+
       cache::store_item('--cache-tags', $old, NEVER);
     }
-  
+
     if ($max > 0)
     {
       return cache::store_item($key, $value, $max);
     }
 
     cache::remove($key);
-    
+
     return FALSE;
   }
-  
-  
+
+
   /**
    * Delete a element from cache
    *
@@ -167,31 +167,31 @@ class cache extends prototype
     {
       $key = explode(',', $key);
     }
-  
-  
+
+
     if (is_array($key))
     {
       $old = cache::fetch_item('--cache-tags');
-      
+
       foreach ((array) $old as $i => $val)
       {
         $diff = array_intersect($key, $val);
-        
+
         if (empty($diff))
         {
           continue;
         }
-    
+
         cache::delete_item($i);
-        
+
         unset($old[$i]);
       }
       return cache::store_item('--cache-tags', $old, NEVER);
     }
     return cache::delete_item($key);
   }
-  
-  
+
+
   /**
    * Clear all cache entries
    *
@@ -201,8 +201,8 @@ class cache extends prototype
   {
     cache::free_all();
   }
-  
-  
+
+
   /**
    * Specific cache exists?
    *

@@ -13,21 +13,21 @@
 function ln($input)
 {
   $args  = func_get_args();
-  
+
   if (is_array($input))
   {
     foreach ($input as $key => $value)
     {
       $args[0]     = $value;
-      $input[$key] = call_user_func_array(__FUNCTION__, $args);
+      $input[$key] = apply(__FUNCTION__, $args);
     }
   }
   else
   {
     $callback = is_num($input) ? 'pluralize' : 'translate';
-    $input    = call_user_func_array(array('i18n', $callback), $args);
+    $input    = apply("i18n::$callback", $args);
   }
-  
+
   return $input;
 }
 

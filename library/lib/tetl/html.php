@@ -32,12 +32,12 @@ function cdata($text, $comment = FALSE)
 function data($text, $mime = 'text/plain', $chunk = FALSE)
 {
   $text = base64_encode($text);
-  
+
   if (is_true($chunk))
   {
     $text = chunk_split($text);
   }
-  
+
   return "data:$type;base64,$text";
 }
 
@@ -54,10 +54,10 @@ function script($url, $text = '', $force = FALSE)
 {
   $url  = ! is_url($url) ? '' : $url;
   $text = ! is_url($url) ? $url : $text;
-  
-  
+
+
   $attrs['type'] = 'text/javascript';
-  
+
   if ( ! empty($url))
   {
     $attrs['src'] = $url;
@@ -77,7 +77,7 @@ function script($url, $text = '', $force = FALSE)
 function style($text, $force = FALSE)
 {
   $attrs['type'] = 'text/css';
-  
+
   if (is_url($text))
   {
     $attrs['src'] = $text;
@@ -99,7 +99,7 @@ function style($text, $force = FALSE)
 function meta($name, $content, $http = FALSE)
 {
   $attrs = compact('content');
-  
+
   $attrs[is_true($http) ? 'http-equiv' : 'name'] = $name;
 
   return tag('meta', $attrs);
@@ -133,7 +133,7 @@ function block($text, $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote')
   {
     $args = args(attrs($args));
   }
-    
+
     if (is_scalar($text))
   {
     return tag($tag, $args, sprintf($wrap, $text));
@@ -162,18 +162,18 @@ function block($text, $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote')
         $cite = TRUE;
         $i   += 1;
       }
-  
+
       if (is_string($test[$i]))
       {
         $out []= tag($tag, $args, sprintf($wrap, $test[$i]));
-        
+
         if (is_true($cite))
         {
           $cite = FALSE;
         }
       }
     }
-    
+
     return join("\n", $out);
   }
 }
@@ -193,13 +193,13 @@ function fieldset($text, $title = '', $args = array())
   {
     $args = args(attrs($args));
   }
-  
+
   if (is_assoc($title))
   {
     $args  += $title;
     $title  = '';
   }
-  
+
   return tag('fieldset', $args, ($title ? tag('legend', '', $title) : '') . $text);
 }
 
@@ -232,12 +232,12 @@ function heading($text, $num = 1, $args = array())
  * @return string
  *
  */
-function table($head, array $body, $foot = array(), $args = array(), $filter = FALSE)
+function table($head, array $body, $foot = array(), $args = array(), Closure $filter = NULL)
 {
   $thead =
   $tbody =
   $tfoot = '';
-  
+
   if ( ! empty($head))
   {
     $head = ! is_string($head) ? (array) $head : explode('|', $head);
@@ -263,7 +263,7 @@ function table($head, array $body, $foot = array(), $args = array(), $filter = F
     $tfoot = tag('tfoot', '', tag('tr', '', $tfoot));
   }
 
-  
+
   foreach ((array) $body as $cols => $rows)
   {
     if ( ! is_array($rows))
@@ -279,9 +279,9 @@ function table($head, array $body, $foot = array(), $args = array(), $filter = F
     {
       if (is_callable($filter))
       {
-        $cell = call_user_func($filter, $cell);
+        $cell = $filter($cell);
       }
-      
+
       if (is_array($cell))
       {
         $cell = table('', $cell);
@@ -290,7 +290,7 @@ function table($head, array $body, $foot = array(), $args = array(), $filter = F
     }
     $tbody .= tag('tr', '', $row);
   }
-  
+
   return tag('table', $args, $thead . $tbody . $tfoot);
 }
 
@@ -311,13 +311,13 @@ function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 1
 {
   $min_count = min(array_values($set));
   $max_count = max(array_values($set));
-  
-    
+
+
   $set    = array();
   $spread = $max_count - $min_count;
-  
+
   ! $spread && $spread = 1;
-  
+
   foreach ($from as $tag => $count)
   {
     $size  = floor($min + ($count - $min_count) * ($max - $min) / $spread);
@@ -325,7 +325,7 @@ function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 1
       'style' => "font-size:$size$unit",
     ));
   }
-  
+
   return ulist($set, $args);
 }
 
@@ -345,22 +345,22 @@ function navlist($set, $args = array(), $default = URI, $class = 'here')
   {
     $args = args(attrs($args));
   }
-  
-  
+
+
   $out = array();
 
   foreach ($set as $key => $val)
   {
     $attrs = array();
-    
+
     if ($default === $key)
     {
       $attrs['class'] = $class;
     }
-    
+
     $out []= a($key, $val, $attrs);
   }
-  
+
   return ulist($out, $args);
 }
 
@@ -401,7 +401,7 @@ function olist($set, $args = array(), $filter = FALSE)
  * @param  mixed  Function callback
  * @return string
  */
-function ulist($set, $args = array(), $filter = FALSE)
+function ulist($set, $args = array(), Closure $filter = NULL)
 {
   $ol = func_num_args() == 4;
   $dl = func_num_args() == 5;
@@ -410,7 +410,7 @@ function ulist($set, $args = array(), $filter = FALSE)
   $tag   = 'ul';
   $el    = 'li';
   $out   = '';
-  
+
   if (is_true($dl))
   {
     $tag = 'dl';
@@ -420,12 +420,12 @@ function ulist($set, $args = array(), $filter = FALSE)
   {
     $tag = 'ol';
   }
-  
-  
+
+
 
   foreach ((array) $set as $item => $value)
   {
-    $test = is_callable($filter) ? call_user_func($filter, $item, $value) : array($item, $value);
+    $test = is_callable($filter) ? $filter($item, $value) : array($item, $value);
 
     if ( ! isset($test[1]))
     {
@@ -440,10 +440,10 @@ function ulist($set, $args = array(), $filter = FALSE)
     {
       $item = ! is_num($test[0]) ? $test[0] : '';
       $tmp  = array($test[1], $args, $filter);
-      
+
       if (is_callable($filter))
       {
-        $item = call_user_func($filter, -1, $item);
+        $item = $filter(-1, $item);
         $item = array_pop($item);
       }
 
@@ -451,10 +451,10 @@ function ulist($set, $args = array(), $filter = FALSE)
       {
         $tmp []= '';
       }
-      
+
       $tmp[1] = NULL;
 
-      $inner = call_user_func_array(__FUNCTION__, $tmp);
+      $inner = apply(__FUNCTION__, $tmp);
       $out  .= tag($el, '', $item . $inner);
       continue;
     }
@@ -480,9 +480,9 @@ function a($href, $text = '', $title = array())
     $href = ! empty($href) ? "?$href" : '';
   }
 
-  
+
   $attrs = array();
-  
+
   if ( ! empty($href))
   {
     $attrs['href'] = $href;
@@ -500,7 +500,7 @@ function a($href, $text = '', $title = array())
     }
     $attrs['title'] = $title;
   }
-  
+
   return tag('a', $attrs, $text ?: $href);
 }
 
@@ -516,9 +516,9 @@ function a($href, $text = '', $title = array())
 function anchor($name, $text = '', $args = array())
 {
   $attrs = array();
-  
+
   $attrs['id'] = preg_replace('/[^\w-]/', '', $name);
-  
+
   return tag('a', $attrs += (array) $args, $text);
 }
 
@@ -533,7 +533,7 @@ function anchor($name, $text = '', $args = array())
 function img($url, $alt = '')
 {
   $default = extn($url, TRUE);
-  
+
   if (is_assoc($alt))
   {
     $attrs = $alt;
@@ -558,17 +558,17 @@ function img($url, $alt = '')
 call_user_func(function()
 {
   $code = <<<'PHP'
-  
+
   function %s($text, $args = array())
   {
     if (is_string($args))
     {
       $args = args(attrs($args));
     }
-    
+
     return tag(__FUNCTION__, $args, $text);
   }
-  
+
 PHP;
 
   foreach (array('p', 'div', 'span') as $tag)

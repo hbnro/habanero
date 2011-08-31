@@ -68,58 +68,6 @@ function run(Closure $bootstrap)
 
 
 /**
- * Hook function utility
- *
- * @param     string  Identifier
- * @param     mixed   Function callback|Apply hook?
- * @param     mixed   Optional function arguments
- * @staticvar array   Hook bag
- * @return    boolean
- */
-function trigger($event, $bind, array $args = array())
-{
-  static $set = array();
-
-
-  $test = func_get_args();
-
-  if (sizeof($args) > 3)
-  {
-    $args = array_slice($test, 2);
-  }
-
-
-  if ( ! isset($set[$event]))
-  {
-    $set[$event] = array();
-  }
-
-
-  if (is_true($bind))
-  {
-    foreach (array_reverse($set[$event]) as $callback)
-    {
-      call_user_func_array($callback, $args);
-    }
-  }
-  elseif (is_null($bind))
-  {
-    $set[$event] = array();
-  }
-  elseif ( ! is_callable($bind))
-  {
-    return FALSE;
-  }
-  else
-  {
-    $set[$event] []= $bind;
-  }
-
-  return TRUE;
-}
-
-
-/**
  * Load partial content
  *
  * @param  mixed Content file|Options hash
@@ -293,7 +241,7 @@ function raise($message)
   }
 
   // invoke custom handler
-  trigger(__FUNCTION__, TRUE, $var);
+  bootstrap::defined('raise') && bootstrap::raise($var);
 
 
   // output
@@ -307,7 +255,7 @@ function raise($message)
     extract($var);
     require $inc_file;
     return ob_get_clean();
-  }, $var);
+  });
 
   die($output);
 }
@@ -620,7 +568,7 @@ function dump($var, $show = FALSE, $deep = 99)
 
     foreach ($test as $key => $val)
     {
-      $old   = call_user_func(__FUNCTION__, $val, FALSE, $deep - 1, $depth + 1);
+      $old   = dump($val, FALSE, $deep - 1, $depth + 1);
       $pre   = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
 
       $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;
@@ -671,6 +619,19 @@ function ticks($start = NULL, $end = FALSE, $round = 4)
   }
 
   return round(max($end, $start) - min($end, $start), $round);
+}
+
+
+/**
+ * Currying apply
+ *
+ * @param  mixed Function callback
+ * @param  array Arguments
+ * @return mixed
+ */
+function apply($lambda, array $args = array())
+{
+  return call_user_func_array($lambda, $args);
 }
 
 /* EOF: ./core/runtime.php */

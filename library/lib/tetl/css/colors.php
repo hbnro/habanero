@@ -333,9 +333,9 @@ css::implement('gradient', function($color, $to, $index = 0, $step = 10)
   $new = css::hex2rgb($to);
 
   return css::rgb2hex(array(
-    call_user_func($deg, $old[0], $new[0], $step, $index),
-    call_user_func($deg, $old[1], $new[1], $step, $index),
-    call_user_func($deg, $old[2], $new[2], $step, $index),
+    $deg($old[0], $new[0], $step, $index),
+    $deg($old[1], $new[1], $step, $index),
+    $deg($old[2], $new[2], $step, $index),
   ));
 });
 
@@ -603,9 +603,9 @@ css::implement('hsl2rgb', function($hue, $saturation = -1, $lightness = -1)
     $a = $color[2] * 2 - $b;
 
     $out = array(
-      round(call_user_func($value, $a, $b, - $color[0] + (1/3)) * 255),
-      round(call_user_func($value, $a, $b, - $color[0]) * 255),
-      round(call_user_func($value, $a, $b, - $color[0] - (1/3)) * 255),
+      round($value($a, $b, - $color[0] + (1/3)) * 255),
+      round($value($a, $b, - $color[0]) * 255),
+      round($value($a, $b, - $color[0] - (1/3)) * 255),
     );
   }
 

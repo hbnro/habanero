@@ -308,9 +308,9 @@ function tag($name, $args = array(), $text = '')
 
 
   if (is_closure($text))
-  {//FIX
-    ob_start();
-    call_user_func($text);
+  {
+    ob_start() && $text();
+
     $text = ob_get_clean();
   }
 

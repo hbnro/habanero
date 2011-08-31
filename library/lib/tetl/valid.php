@@ -3,27 +3,27 @@
 /**
  * Validation utilities library
  */
- 
+
 class valid extends prototype
 {
-  
+
   /**#@+
    * @ignore
    */
-  
+
   // custom input data
   private static $data = array();
-  
+
   // output errors
   private static $error = array();
-  
+
   // validations
   private static $rules = array();
-  
+
   /**#@-*/
-  
-  
-  
+
+
+
   /**
    * Define rules
    *
@@ -40,11 +40,11 @@ class valid extends prototype
               '<' => 'lt_',
               '>' => 'gt_',
             );
-    
-    
+
+
     valid::$error = array();
     valid::$rules = array_fill_keys(array_keys($test), array());
-    
+
     foreach ($test as $field => $rules)
     {
       foreach ((array) $rules as $key => $one)
@@ -55,7 +55,7 @@ class valid extends prototype
           {
             $name = slug(strtr($one, $fix), '_', SLUG_STRICT | SLUG_TRIM);
             $name = ! is_num($key) ? $key : $name;
-            
+
             valid::$rules[$field][$name] = $one;
           }
         }
@@ -84,9 +84,9 @@ class valid extends prototype
   final public static function done(array $set = array())
   {
     valid::$data = $set;
-    
+
     $ok = 0;
-    
+
     foreach (valid::$rules as $key => $set)
     {
       if ( ! valid::wrong($key, (array) $set))
@@ -94,7 +94,7 @@ class valid extends prototype
         $ok += 1;
       }
     }
-    
+
     return sizeof(valid::$rules) === $ok;
   }
 
@@ -112,11 +112,11 @@ class valid extends prototype
     {
       return valid::$error;
     }
-    
+
     return ! empty(valid::$error[$name]) ? valid::$error[$name] : $default;
   }
-  
-  
+
+
   /**
    * Retrieve field value
    *
@@ -130,41 +130,41 @@ class valid extends prototype
     {
       return valid::$data;
     }
-    
+
     return value(valid::$data, $name, $default);
   }
 
 
-  
+
   /**#@+
    * @ignore
    */
-  
+
   // dynamic validation
   final private static function wrong($name, array $set = array())
   {
     $fail = FALSE;
     $test = value(valid::$data, $name);
-    
+
     if ($key = array_search('required', $set))
     {
       unset($set[$key]);
-      
+
       if ( ! trim($test))
       {//FIX
         $error = 'required';
         $fail  = TRUE;
       }
     }
-    
-    
+
+
     if (trim($test))
     {
       foreach ($set as $error => $rule)
       {
         if (is_callable($rule))
         {
-          if ( ! call_user_func($rule, $test))
+          if ( ! $rule($test))
           {
             $fail = TRUE;
             break;
@@ -173,16 +173,16 @@ class valid extends prototype
         elseif ( ! is_false(strpos($rule, '|')))
         {
           $fail = TRUE;
-          
+
           foreach (array_filter(explode('|', $rule)) as $callback)
           {
-            if (function_exists($callback) && call_user_func($callback, $test))
+            if (function_exists($callback) && $callback($test))
             {
               $fail = FALSE;
               break;
             }
           }
-          
+
           if ($fail)
           {
             break;
@@ -191,17 +191,17 @@ class valid extends prototype
         elseif (preg_match('/^((?:[!=]=?|[<>])=?)(.+?)$/', $rule, $match))
         {
           $expr = array_shift(valid::vars($match[2]));
-          
+
           $test = ! is_num($test) ? "'$test'" : addslashes($test);
           $expr = ! is_num($expr) ? "'$expr'" : addslashes($expr);
-          
+
           $operator = $match[1];
-          
+
           if ( ! trim($match[1], '!='))
           {
             $operator .= '=';
           }
-          
+
           if ( ! @eval("return $expr $operator $test ?: FALSE;"))
           {
             $fail = TRUE;
@@ -211,7 +211,7 @@ class valid extends prototype
         elseif (($rule[0] === '%') && (substr($rule, -1) === '%'))
         {
           $expr = sprintf('/%s/us', str_replace('/', '\/', substr($rule, 1, -1)));
-          
+
           if ( ! @preg_match($expr, $test))
           {
             $fail = TRUE;
@@ -222,20 +222,20 @@ class valid extends prototype
         {
           $negate   = substr($match[1], 0, 1) === '!';
           $callback = $negate ? substr($match[1], 1) : $match[1];
-          
+
           if (function_exists($callback))
           {
             if ( ! isset($match[2]))
             {
               $match[2] = NULL;
             }
-            
-            
+
+
             $args = valid::vars($match[2]);
             array_unshift($args, $test);
-    
-            $value = call_user_func_array($callback, $args);
-            
+
+            $value = apply($callback, $args);
+
             if (( ! $value && ! $negate) OR ($value && $negate))
             {
               $fail = TRUE;
@@ -250,21 +250,21 @@ class valid extends prototype
         }
       }
     }
-    
-    
+
+
     if ($fail && ! empty($error))
     {
       valid::$error[$name] = (string) $error;
     }
-    
+
     return $fail;
   }
-  
+
   // dynamic values
   final private static function vars($test)
   {
     $test = array_filter(explode(',', $test));
-    
+
     foreach ($test as $key => $val)
     {
       if (preg_match('/^([\'"]).*\\1$/', $val))
@@ -280,10 +280,10 @@ class valid extends prototype
         $test[$key] = value(valid::$data, $val);
       }
     }
-    
+
     return $test;
   }
-  
+
   /**#@-*/
 }
 

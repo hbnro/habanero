@@ -77,7 +77,7 @@ css::implement('round', function($num)
 {
   $args = func_get_args();
 
-  return call_user_func_array('round', $args);
+  return apply('round', $args);
 });
 
 

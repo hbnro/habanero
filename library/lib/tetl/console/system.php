@@ -23,9 +23,6 @@ class cli extends prototype
   //
   private static $flags = NULL;
 
-  //
-  private static $args = array();
-
   /**#@-*/
 
 
@@ -124,7 +121,7 @@ class cli extends prototype
 
     while (cli::$loop)
     {
-      call_user_func($callback);
+      $callback();
     }
   }
 
@@ -739,7 +736,7 @@ class cli extends prototype
       }
       elseif ( ! empty($val['callback']) && is_callable($val['callback']))
       {
-        call_user_func_array($val['callback'], $args);
+        apply($val['callback'], $args);
       }
       break;
     }

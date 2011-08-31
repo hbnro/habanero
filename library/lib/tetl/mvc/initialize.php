@@ -66,9 +66,8 @@ bootstrap::bind(function($app)
 
 
       $class::defined('init') && $class::init();
-
-      call_user_func(array($class, $method));
-
+      $class::$method();
+      
 
       $view_file = findfile($views_path.DS.'scripts'.DS.$class, "$method.*", FALSE, 1);
 
