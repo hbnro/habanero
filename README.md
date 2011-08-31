@@ -37,7 +37,7 @@ Or download the latest version and extract it wherever you want, remember includ
 Quick start
 -----------
 
-    require 'tetlphp/library/initialize';
+    require 'tetlphp/library/initialize.php';
 
     run(function()
     {
