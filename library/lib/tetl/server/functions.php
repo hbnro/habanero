@@ -4,130 +4,184 @@
  * Basic server functions
  */
 
+/**#@+
+  * HTTP methods
+  */
+define('GET', 'GET');
+define('PUT', 'PUT');
+define('POST', 'POST');
+define('DELETE', 'DELETE');
+/**#@-*/
+
 /**
- * PUT variable access
+ * Register routes
+ *
+ * @param  mixed Expression|Function callback
+ * @param  mixed Function callback
+ * @param  array Options hash
+ * @return mixed
  */
-function put()
+function route($match, $to = NULL, array $params = array())
 {
-  if ( ! is_put())
+  if (is_assoc($match))
   {
-    return FALSE;
+    $params += $match;
+  }
+  elseif ( ! isset($params['match']))
+  {
+    $params['match'] = $match;
+  }
+
+  if (is_assoc($to))
+  {
+    $params += $to;
+  }
+  elseif ( ! isset($params['to']))
+  {
+    $params['to'] = $to;
   }
 
 
-  $out = (string) @file_get_contents('php://input');
-
-  if (server('HTTP_CONTENT_TYPE') === 'application/x-www-form-urlencoded')
+  foreach (array('GET', 'POST', 'PUT' , 'DELETE') as $method)
   {
-    parse_str($out, $out);
+    $key = strtolower($method);
+
+    if ( ! empty($params[$key]))
+    {
+      $params['match'] = $method . ' ' . $params[$key];
+    }
   }
-  return $out;
+
+
+  if (empty($params['match']))
+  {
+    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
+  }
+
+
+  $params['match'] = trim($params['match']);
+
+  if (is_false(strpos($params['match'], ' ')))
+  {
+    $params['match'] = 'GET ' . $params['match'];
+  }
+
+  routing::bind($params);
 }
 
 
 /**
- * GET variable access
+ * Function handler for global hash params
  *
- * @param  string Identifier
- * @param  mixed  Default value
+ * @param  mixed Identifier|Hash
+ * @param  mixed Default value
  * @return mixed
  */
-function get($key, $or = FALSE)
+function params($key = NULL, $default = FALSE)
 {
-  return value($_GET, $key, $or);
+  static $set = array();
+
+  if ( ! func_num_args())
+  {
+    return $set;
+  }
+  elseif (is_array($key))
+  {
+    foreach ($key as $a => $value)
+    {
+      if (is_num($a))
+      {
+        continue;
+      }
+
+      $set[trim($a)] = $value;
+    }
+
+    return TRUE;
+  }
+  elseif ( ! is_num($key))
+  {
+    return ! empty($set[$key]) ? $set[$key] : $default;
+  }
+
+  return FALSE;
 }
 
 
 /**
- * POST variable access
+ * Segments part
  *
- * @param  string Identifier
- * @param  mixed  Default value
- * @return mixed
+ * @staticvar array Parts bag
+ * @return    array
  */
-function post($key, $or = FALSE)
+function parts()
 {
-  return value($_POST, $key, $or);
+  static $test = NULL;
+
+  if ( ! is_array($test))
+  {
+    $test = explode('/', trim(URI, '/'));
+
+
+    foreach ($test as $key => $val)
+    {
+      $test[$key] = $val;
+    }
+  }
+  return $test;
 }
 
 
 /**
- * Upload variable access
+ * Associative segments
  *
- * @param  string Identifier
- * @return mixed
+ * @param  integer Index key
+ * @param  mixed   Default value
+ * @return array
  */
-function upload($key)
+function assoc($index = 1, $default = FALSE)
 {
-  return value($_FILES, $key, array());
+  $set    = parts();
+  $output = array();
+
+  $index  = $index - 1;
+  $length = sizeof($set);
+
+
+  for (; $index < $length; $index += 2)
+  {
+    $value = isset($set[$index + 1]) ? $set[$index + 1] : $default;
+    $output[$set[$index]] = $value;
+  }
+
+  return $output;
 }
 
 
 /**
- * Client address
+ * Single segment
  *
+ * @param  integer Index key
+ * @param  mixed   Default value
  * @return string
  */
-function addr()
+function segment($index = 1, $default = FALSE)
 {
-  return is_callable('gethostbyaddr') ? gethostbyaddr(remote()) : remote();
-}
+  $set = parts();
 
 
-/**
- * Remote port
- *
- * @return integer
- */
-function port()
-{
-  return (int) server('REMOTE_PORT');
-}
+  if ( ! $index)
+  {
+    return sizeof($set);
+  }
+  elseif ($index < 0)
+  {
+    $index = sizeof($set) + 1 + $index;
+  }
 
+  $output = ! empty($set[$index - 1]) ? $set[$index - 1] : $default;
 
-/**
- * User agent
- *
- * @return mixed
- */
-function agent()
-{
-  return server('HTTP_USER_AGENT');
-}
-
-
-/**
- * HTTP method
- *
- * @return string
- */
-function method()
-{
-  return server('REQUEST_METHOD');
-}
-
-
-/**
- * HTTP referer
- *
- * @param  string Valor por defecto
- * @return mixed
- */
-function referer($or = FALSE)
-{
-  return server('HTTP_REFERER', $or);
-}
-
-
-/**
- * Common client IP
- *
- * @param  string Default value
- * @return string
- */
-function remote($or = FALSE)
-{
-  return server('HTTP_X_FORWARDED_FOR', server('HTTP_CLIENT_IP', server('REMOTE_ADDR', $or)));
+  return $output;
 }
 
 
@@ -184,6 +238,104 @@ function server($key = '', $default = FALSE, $complete = FALSE)
   }
 
   return $default;
+}
+
+
+/**
+ * Force file download
+ *
+ * @link   http://php.net/manual/en/function.fread.php
+ * @param  string  Filepath
+ * @param  string  Filename
+ * @param  string  Mimetype
+ * @param  integer Size limit
+ * @return void
+ */
+function download($path, $name = '', $mime = '', $kbps = 24)
+{
+  if (headers_sent($file, $line))
+  {
+    raise(ln('headers_sent', array('script' => $file, 'number' => $line)));
+  }
+
+  if ( ! is_file($path))
+  {
+    raise(ln('file_not_exists', array('name' => $file)));
+  }
+
+
+  $mime   = ! empty($mime) ? $mime : 'application/octet-stream';
+  $name   = ! empty($name) ? $name : substr(md5(time()), 0, 7) . basename($path);
+  $length = filesize($path);
+
+
+  header(sprintf('Content-Disposition: attachment; filename="%s"', $name));
+  header(sprintf('Content-Length: %d', $length));
+  header(sprintf('Content-Type: %s', $mime));
+
+  header('Content-Transfer-Encoding: binary');
+  header('Pragma: no-cache');
+  header('Expires: 0');
+
+  if (func_num_args() <= 3)
+  {
+    readfile($path);
+    exit;
+  }
+
+
+  $range  = 0;
+
+  if ($test = server('HTTP_RANGE'))
+  {
+    list($unit, $orig) = @explode('=', $test, 2);
+
+    if ($unit == 'bytes')
+    {
+      list($range, $extra) = @explode(',', $orig, 2);
+    }
+    else
+    {
+      $range = 0;
+    }
+  }
+
+
+  list($start, $end) = @explode('-', $range, 2);
+
+  $end   = empty($end) ? $length - 1 : min(abs((int) $end), $length - 1);
+  $start = empty($start) || ($end < abs((int) $start)) ? 0 : max(abs((int) $start), 0);
+
+  if ($start > 0 || $end < ($length - 1))
+  {
+    status(206);
+  }
+
+  header('Accept-Ranges: bytes');
+  header("Content-Range: bytes $start-$end/$length");
+
+  $tmp = fopen($path, 'rb');
+  fseek($tmp, $start);
+
+  while ( ! feof($tmp))
+  {
+    if ($start >= $end)
+    {
+      break;
+    }
+
+    set_time_limit(0);
+
+    $bytes  = 1024 * 8;
+    $start += $bytes;
+
+    echo fread($tmp, $bytes);
+
+    flush();
+  }
+
+  fclose($tmp);
+  exit;
 }
 
 /* EOF: ./lib/tetl/server/functions.php */

@@ -24,8 +24,8 @@ class form extends prototype
               'content'   => 'raise',
               'multipart' => FALSE,
             );
-    
-    
+
+
     if (is_assoc($action))
     {
       $params += $action;
@@ -34,7 +34,7 @@ class form extends prototype
     {
       $params['action'] = $action;
     }
-    
+
     if (is_assoc($content))
     {
       $params += $content;
@@ -43,22 +43,22 @@ class form extends prototype
     {
       $params['content'] = $content;
     }
-    
-    
+
+
     if (empty($params['action']))
     {
       raise(ln('function_or_param_missing', array('name' => 'form::to', 'input' => 'action')));
     }
-    
-    
+
+
     $params += $defs;
-    
+
     if ( ! is_closure($params['content']))
     {
       raise(ln('failed_to_execute', array('callback' => $params['content'])));
     }
-    
-    
+
+
     if ( ! empty($params['method']) && ($params['method'] <> GET))
     {
       if (is_true($params['multipart']))
@@ -66,32 +66,32 @@ class form extends prototype
         $params['enctype'] = 'multipart/form-data';
       }
     }
-    
-    
+
+
     $callback = $params['content'];
-    
+
     unset($params['multipart'], $params['content']);
-    
+
     $params['method'] = strtolower($params['method'] ?: GET);
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
-    
-    
+
+
     if (preg_match('/^(put|get|post|delete)\s+(.+?)$/i', $params['action'], $match))
     {
       $params['method'] = strtolower($match[1]);
       $params['action'] = $match[2];
     }
-    
+
     $params['action'] && $params['action'] = pre_url($params['action']);
-    
-    
+
+
     $input = tag('input', array(
       'type' => 'hidden',
       'name' => '_token',
       'value' => TOKEN,
     ));
-    
-    
+
+
     if (preg_match('/^(?:put|delete)$/', $params['method']))
     {
       $input .= tag('input', array(
@@ -99,25 +99,25 @@ class form extends prototype
         'name' => '_method',
         'value' => $params['method'],
       ));
-      
+
       $params['method']  = 'post';//FIX
     }
-    
+
     $div = tag('div', array(
       'style' => 'display:none',
     ), $input);
-    
-    
+
+
     ob_start();
-    
+
     call_user_func($callback, $params);
-    
+
     $div .= ob_get_clean();
-    
+
     return tag('form', $params, $div);
   }
-  
-  
+
+
   /**
   * Input type file
   *
@@ -129,8 +129,8 @@ class form extends prototype
   {
    return form::input('file', $name, '', $args);
   }
-  
-  
+
+
   /**
   * Dynamic form fields
   *
@@ -145,23 +145,23 @@ class form extends prototype
               'name'    => '',
               'value'   => '',
               'label'   => '',
-              'options' => array(), 
+              'options' => array(),
               'before'  => '',
               'after'   => '',
               'div'     => '',
             );
-    
-    
+
+
    $out  = array();
    $args = func_get_args();
-   
-   
+
+
    foreach ($args as $one)
    {
       if (is_assoc($one))
       {
         $one += $defs;
-        
+
         switch ($one['type'])
         {
           case 'file';
@@ -176,10 +176,10 @@ class form extends prototype
             $input = form::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
           break;
         }
-        
+
         $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
         $label  = ! empty($one['label']) ? form::label($one['name'], $one['label']) : '';
-        
+
         $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
       }
       elseif (is_array($one))
@@ -191,11 +191,11 @@ class form extends prototype
         $out []= $one;
       }
     }
-    
+
     return tag('div', '', join('', $out));
   }
-  
-  
+
+
   /**
   * Generic input tag
   *
@@ -213,8 +213,8 @@ class form extends prototype
               'name'  => '',
               'value' => '',
             );
-    
-    
+
+
     if (is_assoc($type))
     {
       $params += $type;
@@ -223,7 +223,7 @@ class form extends prototype
     {
       $params['type'] = $type;
     }
-    
+
     if (is_assoc($name))
     {
       $params += $name;
@@ -232,7 +232,7 @@ class form extends prototype
     {
       $params['name'] = $name;
     }
-    
+
     if (is_assoc($value))
     {
       $params += $value;
@@ -241,19 +241,19 @@ class form extends prototype
     {
       $params['value'] = $value;
     }
-    
-    
+
+
     if (empty($params['type']))
     {
       raise(ln('function_or_param_missing', array('name' => 'form::input', 'input' => 'type')));
     }
-    
-    
+
+
     $params += $defs;
-    
+
     $key = form::index($params['name'], TRUE);
-    
-    
+
+
     if ( ! preg_match('/^(?:radio|checkbox)$/', $params['type']))
     {
       $params['value'] = form::value($key, $params['value']);
@@ -261,15 +261,15 @@ class form extends prototype
     else
     {
       $default = form::value($params['name'], form::value($key));
-      
+
       $params['checked'] = is_array($default) ? in_array($params['value'], $default) : $default === $params['value'];
     }
-    
+
     if (empty($params['id']))
     {
       $params['id'] = strtr($key, '.', '_');
     }
-    
+
     foreach (array_keys($params) as $key)
     {
       if (is_empty($params[$key]))
@@ -277,11 +277,11 @@ class form extends prototype
         unset($params[$key]);
       }
     }
-    
+
     return tag('input', $params);
   }
-  
-  
+
+
   /**
   * Form select dropdown
   *
@@ -300,32 +300,32 @@ class form extends prototype
     {
       $params['name'] = $name;
     }
-    
-    
+
+
     if (empty($params['name']))
     {
       raise(ln('function_or_param_missing', array('name' => 'form::select', 'input' => 'name')));
     }
-    
-    
+
+
     if ( ! isset($params['default']))
     {
       $params['default'] = key($options);
     }
-    
-    
+
+
     $out     = '';
     $args    = array();
-    
+
     $key     = form::index($params['name'], TRUE);
     $default = form::value($key, $params['default']);
-    
+
     foreach ($options as $key => $value)
     {
       if (is_array($value))
       {
         $sub = '';
-        
+
         foreach ($value as $key => $val)
         {
           $sub .= tag('option', array(
@@ -333,38 +333,38 @@ class form extends prototype
             'selected' => is_array($default) ? in_array($key, $default) : ! strcmp($key, $default),
           ), ents($val, TRUE));
         }
-        
+
         $out .= tag('optgroup', array(
           'label' => ents($key, TRUE),
         ), $sub);
-        
+
         continue;
       }
-      
+
       $out  .= tag('option', array(
         'value' => $key,
         'selected' => is_array($default) ? in_array($key, $default) : ! strcmp($key, $default),
       ), ents($value, TRUE));
     }
-    
-    
+
+
     if ( ! empty($params['multiple']) && (substr($params['name'], -2) <> '[]'))
     {
       $params['name'] .= is_true($params['multiple']) ? '[]' : '';
     }
-    
+
     if (empty($params['id']))
     {
       $args['id']   = strtr($key, '.', '_');
     }
     $args['name'] = $params['name'];
-    
+
     unset($params['default']);
-    
+
     return tag('select', $params + $args, $out);
   }
-  
-  
+
+
   /**
   * Form checkbox/radio group
   *
@@ -384,8 +384,8 @@ class form extends prototype
               'wrapper'   => '<div><h3>%s</h3>%s</div>',
               'break'     => '<br/>',
             );
-    
-    
+
+
     if (is_assoc($name))
     {
       $params += $name;
@@ -394,32 +394,32 @@ class form extends prototype
     {
       $params['name'] = $name;
     }
-    
-    
+
+
     if (empty($params['name']))
     {
       raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
-    
-    
+
+
     $params += $defs;
-    
+
     $out = '';
     $key = form::index($params['name'], TRUE);
-    
+
     $default = (array) form::value($params['name'], form::value($key));
     $index   = strtr($key, '.', '_');
     $name    = $params['name'];
     $old     = $params;
-    
+
     unset($old['name']);
-    
+
     if (is_true($params['multiple']) && (substr($params['name'], -2) <> '[]'))
     {
       $params['name'] .= '[]';
     }
-    
-    
+
+
     foreach ($options as $key => $value)
     {
       if (is_array($value))
@@ -427,7 +427,7 @@ class form extends prototype
         $out .= sprintf($params['wrapper'], ents($key, TRUE), form::group($name, $value, $params));
         continue;
       }
-      
+
       $input = tag('input', array(
         'type' => $params['multiple'] ? 'checkbox' : 'radio',
         'name' => $params['name'],
@@ -436,23 +436,23 @@ class form extends prototype
         'title' => $value,
         'id' => $index . '_' . $key,
       ));
-      
-      
+
+
       $text = ($params['placement'] === 'before' ? $input : '')
             . ents($value, TRUE)
             . ($params['placement'] === 'after' ? $input : '');
-      
+
       $label = tag('label', array(
         'for' => $index . '_' . $key,
       ), $text);
-      
+
       $out .= $label . $params['break'];
     }
-    
+
     return $out;
   }
-  
-  
+
+
   /**
   * Form textarea
   *
@@ -467,13 +467,13 @@ class form extends prototype
              'cols' => 40,
              'rows' => 6,
            );
-    
-    
+
+
     if (is_string($args))
     {
       $args = args(attrs($args));
     }
-    
+
     if (is_assoc($name))
     {
       $args += $name;
@@ -482,7 +482,7 @@ class form extends prototype
     {
       $args['name'] = $name;
     }
-    
+
     if (is_assoc($value))
     {
       $args += $value;
@@ -491,30 +491,30 @@ class form extends prototype
     {
       $args['text'] = $value;
     }
-    
-    
+
+
     if (empty($args['name']))
     {
       raise(ln('function_or_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
-    
-    
+
+
     if ($id = form::index($args['name'], TRUE))
     {
       $args['text'] = form::value($id, $value);
       $args['id']   = strtr($id, '.', '_');
       $args['name'] = $args['name'];
     }
-   
+
     $args  = $defs + $args;
     $value = ents($args['text'], TRUE);
-    
+
     unset($args['text']);
-    
+
     return tag('textarea', $args, $value);
   }
-  
-  
+
+
   /**
   * Form labels
   *
@@ -529,7 +529,7 @@ class form extends prototype
     {
       $args = args(attrs($args));
     }
-    
+
     if (is_assoc($for))
     {
       $args += $for;
@@ -538,7 +538,7 @@ class form extends prototype
     {
       $args['for'] = $for;
     }
-    
+
     if (is_assoc($text))
     {
       $args += $text;
@@ -547,25 +547,25 @@ class form extends prototype
     {
       $args['text'] = $text;
     }
-    
-    
+
+
     if (empty($args['text']))
     {
       raise(ln('function_or_param_missing', array('name' => 'form::label', 'input' => 'text')));
     }
-    
+
     $text = $args['text'];
     unset($args['text']);
-    
+
     if ($id = form::index($for, TRUE))
     {
       $args['for'] = strtr($id, '.', '_');
     }
-    
+
     return tag('label', $args, $text);
   }
-  
-  
+
+
   /**
   * Default field value
   *
@@ -575,24 +575,24 @@ class form extends prototype
   */
   final public static function value($from, $or = FALSE)
   {
-    $set   = method() <> 'GET' ? $_POST : $_GET;
+    $set   = $_SERVER['REQUEST_METHOD'] <> 'GET' ? $_POST : $_GET;
     $value = value($set, $from, $or);
-    
+
     return $value;
   }
-  
-  
-  
+
+
+
   /**#@+
    * @ignore
    */
-   
+
   // dynamic input identifier
   final private static function index($name = '', $inc = FALSE)
   {
     static $num = 0;
-  
-    
+
+
     if ( ! empty($name))
     {
       $name = preg_replace('/\[([^\[\]]+)\]/', '.\\1', $name);
@@ -602,7 +602,7 @@ class form extends prototype
         return sprintf('.%d', is_true($inc) ? $num++ : $num);
       }, $name);
     }
-    
+
     return $name;
   }
 
@@ -614,7 +614,7 @@ class form extends prototype
 call_user_func(function()
 {
   $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
-  
+
   foreach ($test['types'] as $type)
   {
     if ( ! form::defined(strtr($type, '-', '_')))

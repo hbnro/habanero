@@ -4,6 +4,6 @@
     :title
       Hi all...
   :body
-    :a{ href => link_to('/page') } Link text
+    :a{ href => url_for('/page') } Link text
     :br
     = ticks(BEGIN)

@@ -25,12 +25,18 @@ define('DS', DIRECTORY_SEPARATOR);
 
 
 // core libraries
+/**#@+
+ * @ignore
+ */
 require LIB.DS.'core'.DS.'runtime'.EXT;
 require LIB.DS.'core'.DS.'utilities'.EXT;
+
 require LIB.DS.'core'.DS.'prototype'.EXT;
+require LIB.DS.'core'.DS.'bootstrap'.EXT;
 
 require LIB.DS.'core'.DS.'filesystem'.EXT;
 require LIB.DS.'core'.DS.'conditions'.EXT;
+/**#@-*/
 
 
 

@@ -5,106 +5,6 @@
  */
 
 /**
- * Is application root?
- *
- * @return boolean
- */
-function is_root()
-{
-  return URI === '/';
-}
-
-
-/**
- * Is POST request?
- *
- * @return boolean
- */
-function is_post()
-{
-  return value($_SERVER, 'REQUEST_METHOD') === 'POST';
-}
-
-
-/**
- * Is GET request?
- *
- * @return boolean
- */
-function is_get()
-{
-  return value($_SERVER, 'REQUEST_METHOD') === 'GET';
-}
-
-
-/**
- * Is PUT request?
- *
- * @return boolean
- */
-function is_put()
-{
-  return value($_SERVER, 'REQUEST_METHOD') === 'PUT';
-}
-
-
-/**
- * Is DELETE request?
- *
- * @return boolean
- */
-function is_delete()
-{
-  return value($_SERVER, 'REQUEST_METHOD') === 'DELETE';
-}
-
-
-/**
- * There are files uploaded?
- *
- * @param  string  Key or name
- * @return boolean
- */
-function is_upload($key = NULL)
-{
-  if (func_num_args() == 0)
-  {
-    return sizeof($_FILES) > 0;
-  }
-
-  
-  $test = value($_FILES, $key);
-  
-  if ( ! empty($test['name'][0]) && $test['error'][0] == 0)
-  {
-    return TRUE;
-  }
-  elseif (is_array($test) && $test['error'] == 0)
-  {
-    return TRUE;
-  }
-  
-  return FALSE;
-}
-
-
-/**
- * Is ajax maded request?
- *
- * @return boolean
- */
-function is_ajax()
-{
-  if (empty($_SERVER['HTTP_X_REQUESTED_WITH']))
-  {
-    return FALSE;
-  }
-  
-  return $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-}
-
-
-/**
  * Is odd number?
  *
  * @param  scalar  Number
@@ -162,7 +62,7 @@ function is_num($test, $min = NULL, $max = NULL)
   {
     return ! is_false(strpos($min, $test));
   }
-  
+
   return ($test >= $min) && ($test <= $max);
 }
 
@@ -217,7 +117,7 @@ function is_upper($test, $offset = 0, $length = 0)
   {
     $test = substr($test, $offset, $length);
   }
-  
+
   return preg_match('/^[A-Z]+$/', $test) > 0;
 }
 
@@ -260,7 +160,7 @@ function is_assoc($set)
       return FALSE;
     }
   }
-  
+
   return TRUE;
 }
 
@@ -298,14 +198,14 @@ function is_date($test, $type = 'Ymd')
 
 
   $tmp = array();
-  
+
   foreach (array_filter(preg_split('//', $type)) as $one)
   {
     if ( ! array_key_exists($one, $set))
     {
       continue;
     }
-    
+
     $tmp []= '(?:' . $set[$one] . ')';
   }
 
@@ -324,7 +224,7 @@ function is_date($test, $type = 'Ymd')
 function is_datetime($test)
 {
   $set = explode(' ', $test);
-  
+
   return is_time(array_pop($set)) && is_date(join(' ', $set));
 }
 
@@ -368,7 +268,7 @@ function is_money($test, $left = FALSE)
           );
 
   $expr = $regex[(int) is_true($left)];
-  
+
   if ( ! IS_UNICODE)
   {
     $expr = str_replace('\p{Sc}', '(?:£|¥|€|¢|\$)', $expr);
@@ -400,14 +300,14 @@ function is_phone($test)
 function is_uuid($test)
 {
   static $regex = NULL;
-  
-  
+
+
   if (is_null($regex))
   {
     $alnum = '[A-Fa-f0-9]';
     $regex = "/{$alnum}{8}-{$alnum}{4}-{$alnum}{4}-{$alnum}{4}-{$alnum}{12}/";
   }
-  
+
   return preg_match($regex, $test) > 0;
 }
 
@@ -435,7 +335,7 @@ function is_word($test)
 function is_password($test, $min = 8, $max = 15)
 {
   $length = ((int) $min) . ',' . ((int) $max);
-  
+
   return preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{' . $length .'}$/', $test) > 0;
 }
 
@@ -455,7 +355,7 @@ function is_email($test, $multi = FALSE, $check = FALSE)
 
 
   $test = preg_split('/[,;\|]+/', (string) $test);
-  
+
   if ( ! $multi && (sizeof($test) > 1))
   {
     return FALSE;
@@ -477,7 +377,7 @@ function is_email($test, $multi = FALSE, $check = FALSE)
       return FALSE;
     }
   }
-  
+
   return TRUE;
 }
 
@@ -492,7 +392,7 @@ function is_email($test, $multi = FALSE, $check = FALSE)
 function is_url($test)
 {
   static $regex = '/^((?:[a-z]{2,7}:)?\/\/)([a-z0-9\-]{1,16}\.?)+([a-z]{2,6})?(:[0-9]{2,4})?\/?(\??.+)?$/i';
-  
+
   return (strpos($test, 'data:') === 0) OR preg_match($regex, $test) > 0;
 }
 
@@ -507,19 +407,19 @@ function is_url($test)
 function is_local($test = NULL)
 {
   static $regex = '/^(::|127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|localhost)/';
-  
+
   if (is_url($test))
   {
     $host = server('HTTP_HOST');
     $test = parse_url($test);
-    
+
     if (isset($test['host']) && ($test['host'] !== $host))
     {
       return FALSE;
     }
     return TRUE;
   }
-  
+
   return preg_match($regex, $test ?: remote()) > 0;
 }
 
@@ -534,7 +434,7 @@ function is_local($test = NULL)
 function is_ipv4($test)
 {
   static $regex = '/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
-  
+
   return preg_match($regex, $test) > 0;
 }
 
@@ -549,8 +449,8 @@ function is_ipv4($test)
 function is_ipv6($test)
 {
   static $regex = NULL;
-  
-  
+
+
   if (is_null($regex))
   {
     $regex = '/^([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}$|'
@@ -561,7 +461,7 @@ function is_ipv6($test)
            . '^([A-Fa-f0-9]{1,4}:){5}:([A-Fa-f0-9]{1,4}:){0,1}[A-Fa-f0-9]{1,4}$|'
            . '^([A-Fa-f0-9]{1,4}:){6}:[A-Fa-f0-9]{1,4}$/';
   }
-  
+
   return preg_match($regex, $test) > 0;
 }
 
@@ -591,12 +491,12 @@ function is_range($test, array $ranges = array())
   {
     return FALSE;
   }
-  
-  
+
+
   $tmp = array();
   $set = (array) $ranges;
   $par = explode('.', $test);
-  
+
   foreach ($set as $test)
   {
     $check = 0;
@@ -635,12 +535,12 @@ function is_range($test, array $ranges = array())
     $check = $check === 4 ?: FALSE;
     $tmp[$test] = $check;
   }
-  
+
   if (sizeof($tmp) === array_sum($tmp))
   {
-    return TRUE;  
+    return TRUE;
   }
-  
+
   return FALSE;
 }
 
@@ -719,7 +619,7 @@ function is_serialized($test)
     break;
     default: break;
   }
-  
+
   return FALSE;
 }
 
@@ -746,12 +646,12 @@ function is_json($test)
 function is_today($test)
 {
   $time = is_timestamp($test) ? strtotime($test) : $test;
-  
+
   if (date('Ymd') === date('Ymd', (int) $time))
   {
     return TRUE;
   }
-  
+
   return FALSE;
 }
 
@@ -779,20 +679,20 @@ function is_timestamp($test)
 function is_utf8($test)
 {
   static $regex = NULL;
-  
-  
+
+
   if (is_null($regex))
   {
     $regex = "/^([\x01-\x7F]+|([\xC2-\xDF][\x80-\xBF])|([\xE0-\xEF][\x80-\xBF][\x80-\xBF])"
            . "|([\xF0-\xF4][\x80-\xBF][\x80-\xBF][\x80-\xBF]))*\$/";
   }
-  
-  
+
+
   if (function_exists('mb_check_encoding'))
   {
     return mb_check_encoding($test, 'UTF-8');
   }
-  
+
   return preg_match($regex, $string);
 }
 
@@ -816,7 +716,7 @@ function is_naked_day($offset = 0)
   {
     return TRUE;
   }
-  
+
   return FALSE;
 }
 
@@ -843,7 +743,7 @@ function is_ssl()
   {
     return TRUE;
   }
-  
+
   return FALSE;
 }
 
@@ -887,7 +787,7 @@ function is_notnull($test)
       return FALSE;
     }
   }
-  
+
   return TRUE;
 }
 
@@ -907,7 +807,7 @@ function is_empty($test)
       return TRUE;
     }
   }
-  
+
   return FALSE;
 }
 
@@ -926,7 +826,7 @@ function is_true($test)
   }
 
   $args = func_get_args();
-  
+
   foreach ($args as $one)
   {
     if (TRUE === $one)
@@ -934,7 +834,7 @@ function is_true($test)
       return TRUE;
     }
   }
-  
+
   return FALSE;
 }
 
@@ -953,7 +853,7 @@ function is_false($test)
   }
 
   $args = func_get_args();
-  
+
   foreach ($args as $one)
   {
     if (FALSE === $one)
@@ -961,46 +861,7 @@ function is_false($test)
       return TRUE;
     }
   }
-  
-  return FALSE;
-}
 
-
-/**
- * Is CSRF-free request valid?
- *
- * @staticvar string  Token
- * @return    boolean
- */
-function is_safe()
-{
-  static $check = NULL,
-         $_token = NULL;
-  
-  
-  if (is_null($check))
-  {
-    global $_PUT; //FIX
-    
-    
-    $check = ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : FALSE;
-    
-    if ($_token = value($_POST, '_token', value($_PUT, '_token')))
-    {//FIX
-      unset($_POST['_token']);
-    }
-  }
-  
-  
-  global $_PUT;//FIX
-  
-  @list($old_time, $old_token) = explode(' ', $check);
-  @list($new_time, $new_token) = explode(' ', $_token);
-  
-  if (((time() - $old_time) < 720) && ($old_token === $new_token))
-  {// TODO: must be configurable?
-    return TRUE;
-  }
   return FALSE;
 }
 
@@ -1015,8 +876,8 @@ function is_safe()
 function is_locale($code)
 {
   static $set = NULL;
-  
-  
+
+
   if (is_null($set))
   {
     $test = include  LIB.DS.'assets'.DS.'scripts'.DS.'locale_vars'.EXT;

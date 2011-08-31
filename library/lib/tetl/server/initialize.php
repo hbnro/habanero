@@ -4,12 +4,19 @@
  * Server library initialization
  */
 
-call_user_func(function()
+/**#@+
+ * @ignore
+ */
+require __DIR__.DS.'routing'.EXT;
+require __DIR__.DS.'request'.EXT;
+require __DIR__.DS.'response'.EXT;
+
+require __DIR__.DS.'actions'.EXT;
+require __DIR__.DS.'functions'.EXT;
+/**#@-*/
+
+bootstrap::bind(function($app)
 {
-  require __DIR__.DS.'functions'.EXT;
-  require __DIR__.DS.'actions'.EXT;
-
-
   // root
   $url = array();
 
@@ -127,6 +134,13 @@ call_user_func(function()
   define('TOKEN', sprintf('%d %s', time(), sha1(salt(13))));
 
   ignore_user_abort(FALSE);
+
+
+  return function()
+    use($app)
+  {
+    routing::execute($app());
+  };
 });
 
 /* EOF: ./lib/tetl/server/initialize.php */

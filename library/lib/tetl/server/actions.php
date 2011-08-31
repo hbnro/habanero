@@ -5,73 +5,36 @@
  */
 
 /**
- * Resolve server-based urls
- *
- * @param     string  File or directory
- * @param     boolean Prefix host?
- * @staticvar string  Root
- * @return    string
- */
-function url_to($path = '.', $host = FALSE)
-{
-  static $root = NULL;
-
-
-  if (is_null($root))
-  {
-    $root = realpath($_SERVER['DOCUMENT_ROOT']);
-  }
-
-
-  if ($path = realpath($path))
-  {
-    if ($root <> '/')
-    {
-      $path = str_replace($root, '', $path);
-    }
-
-    $path = strtr($path, '\\', '/');
-    $path = is_true($host) ? server(TRUE, $path) : $path;
-  }
-
-  return $path;
-}
-
-
-/**
  * Creation of internal links
  *
- * @param  mixed  Path
+ * @param  mixed  Action path
  * @param  array  Options hash
  * @return string
  */
-function link_to($route, array $params = array())
+function url_for($action, array $params = array())
 {
-  static $defs = array(
-            'complete' => FALSE,
-            'locals'   => array(),
-            'host'     => FALSE,
-            'to'       => '',
-          );
-
-
-  if (is_array($route))
+  if (is_array($action))
   {
-    $params += $route;
+    $params += $action;
   }
-  elseif ( ! isset($params['to']))
+  elseif ( ! isset($params['action']))
   {
-    $params['to'] = $route;
+    $params['action'] = $action;
   }
 
 
-  if (empty($params['to']))
+  if (empty($params['action']))
   {
-    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+    raise(ln('function_or_param_missing', array('name' => __FUNCTION__, 'input' => 'action')));
   }
 
 
-  $params += $defs;
+  $params  = array_merge(array(
+    'action'   => '',
+    'locals'   => array(),
+    'host'     => FALSE,
+    'complete' => FALSE,
+  ), $params);
 
   $abs     = is_true($params['complete']);
   $link    = is_true($params['host']) ? server(TRUE, ROOT, $abs) : ROOT;
@@ -85,15 +48,14 @@ function link_to($route, array $params = array())
   $anchor =
   $query  = '';
 
-  if ( ! empty($params['to']))
+  if ( ! empty($params['action']))
   {
-    @list($part, $anchor) = explode('#', $params['to']);
+    @list($part, $anchor) = explode('#', $params['action']);
     @list($part, $query)  = explode('?', $part);
 
-    $part = ltrim($part, '/');//FIX
-    $part && $link .= '/' . $part;
+    $part = ltrim($part, '/');
+    $part && $link .= $part;
   }
-
 
   if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
   {
@@ -138,7 +100,7 @@ function pre_url($text)
   }
   elseif (substr($text, 0, 1) === '/')
   {
-    $text = link_to($text, array(
+    $text = url_for($text, array(
       'complete' => TRUE,
       'host' => TRUE,
     ));
@@ -157,90 +119,254 @@ function pre_url($text)
 
 
 /**
- * Make other requests
+ * Resolve server-based urls
  *
- * @link   http://www.php.net/manual/en/function.fsockopen.php#39868
- * @param  string Request location
- * @param  string Request params
- * @param  string Upload files
- * @param  mixed  GET|PUT|POST|DELETE
- * @return mixed
+ * @param     string  File or directory
+ * @param     boolean Prefix host?
+ * @staticvar string  Root
+ * @return    string
  */
-function submit_to($url, array $args = array(), array $files = array(), $method = POST)
+function link_to($text, $url = NULL, $args = array())
 {
-  if ( ! is_callable('fsockopen'))
+  $attrs  =
+  $params = array();
+
+  if (is_assoc($text))
   {
-    raise(ln('extension_missing', array('name' => 'Sockets')));
+    $params += $text;
   }
-  elseif ( ! is_url($url))
+  elseif (is_assoc($url))
   {
-    return FALSE;
+    $params['action'] = (string) $text;
   }
-
-
-
-  $test  = @parse_url($url);
-
-  $path  = ! empty($test['path']) ? $test['path'] : '/';
-  $path .= ! empty($test['query']) ? '?' . $test['query'] : '';
-  $port  = ! empty($test['port']) ? $test['port'] : 80;
-
-  $resource = fsockopen($test['host'], $test['scheme'] !== 'https' ? $port : 433);
-
-  if ( ! is_resource($resource))
+  elseif (is_closure($url))
   {
-    return FALSE;
+    $params['action'] = $text;
+
+    $args = $url;
+  }
+  elseif ( ! isset($params['text']))
+  {
+    $params['text'] = $text;
   }
 
-  $bound  = uniqid('--post-boundary');
-  $output = "--$bound";
-
-  if ( ! empty($args))
+  if (is_assoc($url))
   {
-    foreach ($args as $name => $value)
+    $attrs += $url;
+  }
+  elseif ( ! isset($params['action']))
+  {
+    $params['action'] = $url;
+  }
+
+
+  if (is_closure($args))
+  {
+    ob_start() && $args();
+
+    $params['text'] = trim(ob_get_clean());
+  }
+  else
+  {
+    $attrs = array_merge($attrs, (array) $args);
+  }
+
+
+  $params = array_merge(array(
+    'action' => slug($params['text']),
+    'method' => GET,
+    'confirm' => FALSE,
+  ), $params);
+
+  return tag('a', array_merge(array(
+    'href' => url_for($params),
+    'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
+    'data-confirm' => $params['confirm'] ?: FALSE,
+  ), $attrs), $params['text']);
+}
+
+
+/**
+ * Resolve server-based urls
+ *
+ * @param     string  File or directory
+ * @param     boolean Prefix host?
+ * @staticvar string  Root
+ * @return    string
+ */
+function mail_to($address, $text = NULL, array $args = array())
+{
+  $vars   =
+  $params = array();
+
+  if (is_array($address))
+  {
+    $params += $address;
+  }
+  elseif ( ! isset($params['address']))
+  {
+    $params['address'] = $address;
+  }
+
+  if (is_array($text))
+  {
+    $params += $text;
+  }
+  elseif ( ! isset($params['text']))
+  {
+    $params['text'] = $text;
+  }
+
+
+  $params = array_merge(array(
+    'text'        => '',
+    'address'     => '',
+    'encode'      => FALSE,
+    'replace_at'  => '&#64;',
+    'replace_dot' => '&#46;',
+    'subject'     => '',
+    'body'        => '',
+    'bcc'         => '',
+    'cc'          => '',
+  ), $params);
+
+  foreach (array('subject', 'body', 'bcc', 'cc') as $key)
+  {
+    if ( ! empty($params[$key]))
     {
-      $output .= "\r\nContent-Disposition: form-data; name=\"" . slug($name) . '"';
-      $output .= "\r\n\r\n$value\r\n--$bound";
+      $vars[$key] = $params[$key];
     }
   }
 
-  // upload
-  if ( ! empty($files))
+  $params['text'] = $params['text'] ?: $params['address'];
+  $params['text'] = str_replace('@', $params['replace_at'], $params['text']);
+  $params['text'] = str_replace('.', $params['replace_dot'], $params['text']);
+
+  $vars = $vars ? '?' . http_build_query($vars) : '';
+
+  if ($params['encode'] === 'hex')
   {
-    foreach ((array) $files as $name => $set)
+    $test   = '';
+    $length = strlen($params['address']);
+
+    for ($i = 0; $i < $length; $i += 1)
     {
-      if ( ! is_file($set[0]) && ! is_url($set[0]))
-      {
-        continue;
-      }
-
-      $data = read($set[0]);
-      $name = preg_replace('/[^\w.]/', '', is_num($name) ? $set[0] : $name);
-
-      $output .= "\r\nContent-Disposition: form-data; name=\"" . $name . '"; filename="' . $set[0] . '"';
-      $output .= "\r\nContent-Type: " . $set[1];
-      $output .= "\r\n\r\n$data\r\n--$bound";
+      $char  = substr($params['address'], $i, 1);
+      $test .= ! in_array($char, array('@', '.')) ? '%' . base_convert(ord($char), 10, 16) : $char;
     }
+
+    $params['address'] = $test;
   }
-
-  $output .= "--\r\n\r\n";
-
-  fputs($resource, "$method $path HTTP/1.0\r\n");
-
-  fputs($resource, "Content-Type: multipart/form-data; boundary=$bound\r\n");
-  fputs($resource, 'Content-Length: ' . strlen($output) . "\r\n");
-  fputs($resource, "Connection: close\r\n\r\n");
-  fputs($resource, "$output\r\n");
-
-
-  $output = '';
-
-  while( ! feof($resource))
+  elseif ($params['encode'] === 'javascript')
   {
-    $output .= fgets($resource, 4096);
+    return tag('script', array(
+      'type' => 'text/javascript',
+    ), sprintf('document.write("%s")', preg_replace_callback('/./', function($match)
+    {
+      return '\x' . base_convert(ord($match[0]), 10, 16);
+    }, tag('a', array(
+      'href' => "mailto:$params[address]$vars"
+    ), $params['text']))));
   }
 
-  return $output;
+  return tag('a', array_merge(array(
+    'href' => "mailto:$params[address]$vars",
+  ), $args), $params['text']);
+}
+
+
+/**
+ * Resolve server-based urls
+ *
+ * @param     string  File or directory
+ * @param     boolean Prefix host?
+ * @staticvar string  Root
+ * @return    string
+ */
+function path_to($path = '.', $host = FALSE)
+{
+  static $root = NULL;
+
+
+  if (is_null($root))
+  {
+    $root = realpath($_SERVER['DOCUMENT_ROOT']);
+  }
+
+
+  if ($path = realpath($path))
+  {
+    if ($root <> '/')
+    {
+      $path = str_replace($root, '', $path);
+    }
+
+    $path = strtr($path, '\\', '/');
+    $path = is_true($host) ? server(TRUE, $path) : $path;
+  }
+
+  return $path;
+}
+
+
+/**
+ * Resolve server-based urls
+ *
+ * @param     string  File or directory
+ * @param     boolean Prefix host?
+ * @staticvar string  Root
+ * @return    string
+ */
+function button_to($name, $url = NULL, array $args = array())
+{
+  $params = array();
+
+  if (is_array($url))
+  {
+    $params += $url;
+  }
+  elseif ( ! isset($params['action']))
+  {
+    $params['action'] = $url;
+  }
+
+
+  $params = array_merge(array(
+    'action'       => slug($name),
+    'method'       => POST,
+    'remote'       => FALSE,
+    'confirm'      => FALSE,
+    'disabled'     => FALSE,
+    'disable_with' => '',
+  ), $params);
+
+  $button = tag('input', array_merge(array(
+    'type' => 'submit',
+    'value' => $name,
+    'disabled' => is_true($params['disabled']),
+    'data-confirm' => $params['confirm'] ?: FALSE,
+    'data-disabled' => $params['disable_with'] ?: FALSE,
+  ), $args));
+
+
+  $extra = '';
+
+  if ($params['method'] <> POST)
+  {
+    $extra = tag('input', array(
+      'type' => 'hidden',
+      'name' => '_method',
+      'value' => strtolower($params['method']),
+    ));
+  }
+
+
+  return tag('form', array(
+    'class' => 'button_to',
+    'action' => url_for($params['action']),
+    'method' => 'post',
+    'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
+  ), "<div>$extra$button</div>");
 }
 
 /* EOF: ./lib/tetl/server/actions.php */

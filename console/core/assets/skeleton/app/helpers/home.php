@@ -2,5 +2,5 @@
 
 function home_path(array $vars = array(), $abs = FALSE)
 {
-  return link_to('/home', $vars, $abs);
+  return url_for('/home', $vars, $abs);
 }

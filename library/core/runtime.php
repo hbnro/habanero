@@ -58,53 +58,12 @@ function import($lib)
 /**
  * Application bootstrap wrapper
  *
- * @param     mixed   Function callback
- * @param     array   Options hash
- * @return    void
+ * @param  mixed Function callback
+ * @return void
  */
-function run($bootstrap, array $params = array())
+function run(Closure $bootstrap)
 {
-  static $defs = array(
-            'bootstrap'   => 'raise',
-            'middleware'  => array(),
-            'environment' => array(),
-          );
-
-
-  require_once LIB.DS.'core'.DS.'initialize'.EXT;
-
-  if (defined('BEGIN'))
-  {
-    raise(ln('application_error'));
-  }
-
-
-  // start
-  define('BEGIN', ticks());
-
-
-  if (is_assoc($bootstrap))
-  {
-    $params += $bootstrap;
-  }
-  elseif ( ! isset($params['bootstrap']))
-  {
-    $params['bootstrap'] = $bootstrap;
-  }
-
-  $params += $defs;
-
-  $callback = $params['bootstrap'];
-
-  $params['environment'] = $params['environment'] ?: option('environment', 'testing');
-
-  foreach ((array) $params['middleware'] as $one)
-  {
-    is_string($one) && $one = import($one);
-    is_closure($one) && $callback = call_user_func($one, $callback);
-  }
-
-  return call_user_func_array($callback, (array) $params['environment']);
+  bootstrap::execute($bootstrap);
 }
 
 

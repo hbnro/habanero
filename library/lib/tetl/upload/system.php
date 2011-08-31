@@ -3,7 +3,7 @@
 /**
  * Basic upload library
  */
- 
+
 /**#@+
  * Upload error constants
  */
@@ -18,20 +18,20 @@ define('UPLOAD_ERR_EXT', 14);
 
 class upload extends prototype
 {
-  
+
   /**#@+
    * @ignore
    */
-   
+
   // files pointer
   private static $handle = NULL;
-  
+
   // files stack
   private static $files = array();
-  
+
   // error stack
   private static $error = array();
-  
+
   // error messages
   private static $status = array(
                     UPLOAD_ERR_OK => 'without_errors',
@@ -49,7 +49,7 @@ class upload extends prototype
                     UPLOAD_ERR_TYPE => 'filetype_error',
                     UPLOAD_ERR_EXT => 'extension_error',
                   );
-  
+
   // defaults
   private static $defs = array(
                     'path' => TMP,
@@ -62,11 +62,11 @@ class upload extends prototype
                     'multiple' => FALSE,
                     'unique' => FALSE,
                   );
-  
+
   /**#@-*/
-  
-  
-  
+
+
+
   /**
    * Set configuration
    *
@@ -85,8 +85,8 @@ class upload extends prototype
       upload::$defs[$key] = $value;
     }
   }
-  
-  
+
+
   /**
    * Execute upload
    *
@@ -99,30 +99,30 @@ class upload extends prototype
     upload::$handle = NULL;
     upload::$files  = array();
     upload::$error  = array();
-    
-    
-    if ( ! is_upload(upload::$defs['name']))
+
+
+    if ( ! request::is_upload(upload::$defs['name']))
     {
       return upload::set_error(UPLOAD_ERR_NO_FILE);
     }
-    
+
     $out = FALSE;
-    
-      
+
+
     if ( ! is_dir(upload::$defs['path']))
     {
       return upload::set_error(UPLOAD_ERR_PATH);
     }
-  
-    
-    $set = upload::fix_files(upload(upload::$defs['name']));
-    
+
+
+    $set = upload::fix_files(request::upload(upload::$defs['name']));
+
     if (is_false(upload::$defs['multiple']) && (sizeof($set['name']) > 1))
     {
       return upload::set_error(UPLOAD_ERR_MULTI);
     }
-    
-    
+
+
     foreach ($set['error'] as $i => $val)
     {
       if ($val > 0)
@@ -133,8 +133,8 @@ class upload extends prototype
         }
         continue;
       }
-  
-  
+
+
       if ($set['size'][$i] > upload::$defs['max_size'])
       {
         return upload::set_error(UPLOAD_ERR_MAX_SIZE);
@@ -143,10 +143,10 @@ class upload extends prototype
       {
         return upload::set_error(UPLOAD_ERR_MIN_SIZE);
       }
-      
-      
+
+
       $type = FALSE;
-      
+
       foreach ((array) upload::$defs['type'] as $one)
       {
         if (match($one, $set['type'][$i]))
@@ -155,39 +155,39 @@ class upload extends prototype
           break;
         }
       }
-      
+
       if (is_false($type))
       {
         return upload::set_error(UPLOAD_ERR_TYPE);
       }
-      
-      
+
+
       $ext = FALSE;
-      
+
       foreach ((array) upload::$defs['extension'] as $one)
       {
-      
+
         if (match($one, strtolower($set['name'][$i])))
         {
           $ext = TRUE;
           break;
         }
       }
-      
+
       if (is_false($ext))
       {
         return upload::set_error(UPLOAD_ERR_EXT);
       }
-      
-  
+
+
       $name = slug($set['name'][$i], '_');
       $file = upload::$defs['path'].DS.$name;
-  
+
       if ( ! is_true(upload::$defs['unique']))
       {
         $new = ext($name, TRUE);
         $old = basename($name, $new);
-    
+
         while (is_file($file))
         {
           $file  = upload::$defs['path'].DS;
@@ -195,8 +195,8 @@ class upload extends prototype
           $file .= $new;
         }
       }
-      
-  
+
+
       if (move_uploaded_file($tmp = $set['tmp_name'][$i], $file) OR copy($tmp, $file)) //FIX
       {
         upload::$files []= array(
@@ -205,15 +205,15 @@ class upload extends prototype
           'size' => $set['size'][$i],
           'name' => basename($file),
         );
-        
+
         $out = TRUE;
       }
     }
-    
+
     return $out;
   }
-  
-  
+
+
   /**
    * Login pointer check
    *
@@ -227,8 +227,8 @@ class upload extends prototype
     }
     return FALSE;
   }
-  
-  
+
+
   /**
    * Retrieve error stack
    *
@@ -237,12 +237,12 @@ class upload extends prototype
   final public static function error_list()
   {
     $out = array();
-    
+
     foreach (self::$error as $one)
     {
       $out []= ln(sprintf('upload.%s', upload::$status[$one]));
     }
-    
+
     return $out;
   }
 
@@ -289,13 +289,13 @@ class upload extends prototype
   {
     return upload::$handle['name'];
   }
-  
-  
-  
+
+
+
   /**#@+
    * @ignore
    */
-  
+
   // append error code to stack
   final private static function set_error($code)
   {
@@ -306,21 +306,21 @@ class upload extends prototype
   final private static function fix_files($set)
   {
     $out = (array) $set;
-    
+
     if (isset($out['name']) && ! is_array($out['name']))
     {
       $test = $out;
       $out  = array();
-      
+
       foreach ($test as $key => $val)
       {
         $out[$key] []= $val;
       }
     }
-    
+
     return $out;
   }
-  
+
   /**#@-*/
 }
 
