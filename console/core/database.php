@@ -57,7 +57,7 @@ HELP;
   {
     database::init();
     
-    blue(ln('tetl.veryfing_tables'));
+    blue(ln('tetl.verifying_tables'));
     
     
     if ( ! $table)
@@ -78,7 +78,7 @@ HELP;
   {
     database::init();
 
-    blue(ln('tetl.veryfing_database'));
+    blue(ln('tetl.verifying_database'));
 
 
     green(DB_DSN);
@@ -102,7 +102,7 @@ HELP;
 
   function query($args = array())
   {
-    blue(ln('tetl.veryfing_query'));
+    blue(ln('tetl.verifying_query'));
     
     @list($sql) = $args;
     
@@ -257,7 +257,7 @@ HELP;
   {
     database::init();
 
-    blue(ln('tetl.veryfing_structure'));
+    blue(ln('tetl.verifying_structure'));
 
     @list($table) = $args;
     
@@ -624,7 +624,7 @@ HELP;
   {
     @list($name) = $args;
     
-    blue(ln('tetl.veryfing_import'));
+    blue(ln('tetl.verifying_import'));
     
     if ( ! $name)
     {

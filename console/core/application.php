@@ -24,7 +24,7 @@ HELP;
 
   function status()
   {
-    blue(ln('tetl.veryfing_installation'));
+    blue(ln('tetl.verifying_installation'));
 
     if ( ! is_file(CWD.DS.'app'.DS.'initialize'.EXT))
     {
@@ -50,25 +50,26 @@ HELP;
 
   function generate($args = array())
   {
-    blue(ln('tetl.verifyng_installation'));
+    blue(ln('tetl.verifying_installation'));
 
     @list($name) = $args;
 
     if ( ! $name)
     {
-      red(ln('tetl.directory_name_missing'));
+      $name = basename(CWD);
     }
-    elseif (is_dir(CWD.DS.$name))
+
+    if (dirsize(CWD, TRUE))
     {
-      red(ln('tetl.directory_already_exists', array('path' => CWD.DS.$name)));
+      red(ln('tetl.directory_must_be_empty'));
     }
     else
     {
-      blue(ln('tetl.copying_skeleton', array('path' => CWD.DS.$name)));
+      blue(ln('tetl.copying_skeleton', array('path' => CWD)));
 
       $skel_dir = __DIR__.DS.'assets'.DS.'skeleton';
 
-      cpfiles($skel_dir, CWD.DS.$name, '*', TRUE);
+      cpfiles($skel_dir, CWD, '*', TRUE);
     }
 
     white(ln('tetl.done'));
@@ -87,7 +88,7 @@ HELP;
     }
     else
     {
-      blue(ln('tetl.veryfing_generator'));
+      blue(ln('tetl.verifying_generator'));
 
       if ( ! $name)
       {
