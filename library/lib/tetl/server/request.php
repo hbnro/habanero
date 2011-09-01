@@ -19,10 +19,9 @@ class request extends prototype
 
 
   /**
+   * Retrieve the headers
    *
-   *
-   *
-   * @return void
+   * @return array
    */
   final public static function all_headers()
   {
@@ -44,10 +43,11 @@ class request extends prototype
 
 
   /**
+   * Single header value
    *
-   *
-   *
-   * @return void
+   * @param  string Header
+   * @param  mixed  Default value
+   * @return mixed
    */
   final public static function header($name, $default = FALSE)
   {
@@ -60,6 +60,8 @@ class request extends prototype
 
   /**
    * PUT variable access
+   *
+   * @return mixed
    */
   function put()
   {
@@ -277,7 +279,7 @@ class request extends prototype
   function is_ajax()
   {
     if (empty($_SERVER['HTTP_X_REQUESTED_WITH']))
-    {
+    {// intentionally native
       return FALSE;
     }
 
@@ -299,25 +301,20 @@ class request extends prototype
 
     if (is_null($check))
     {
-      global $_PUT; //FIX
-
-
       $check = ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : FALSE;
 
-      if ($_token = value($_POST, '_token', value($_PUT, '_token')))
-      {//FIX
+      if ($_token = value($_POST, '_token'))
+      {
         unset($_POST['_token']);
       }
     }
 
 
-    global $_PUT;//FIX
-
     @list($old_time, $old_token) = explode(' ', $check);
     @list($new_time, $new_token) = explode(' ', $_token);
 
-    if (((time() - $old_time) < 720) && ($old_token === $new_token))
-    {// TODO: must be configurable?
+    if (((time() - $old_time) < option('csrf', 300)) && ($old_token === $new_token))
+    {
       return TRUE;
     }
     return FALSE;
@@ -334,7 +331,7 @@ request::implement('dispatch', function(array $params = array())
       is_file($params['to']) OR
       is_url($params['to'])))
   {
-    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+    raise(ln('function_param_missing', array('name' => 'dispatch', 'input' => 'to')));
   }
 
 
