@@ -156,7 +156,7 @@ class i18n extends prototype
       ) as $one)
       {
         if (is_file($one))
-        {
+        {// do not use lambda here
           $lang = call_user_func($callback, $one);
           i18n::load_locale($lang, $scope);
           break;

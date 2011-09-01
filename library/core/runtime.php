@@ -136,9 +136,9 @@ function render($content, $partial = FALSE, array $params = array())
 
   if (is_true($params['partial']))
   {
-    return call_user_func($output, $params['content']);
+    return $output($params['content']);
   }
-  echo call_user_func($output, $params['content']);
+  echo $output($params['content']);
 }
 
 
