@@ -60,14 +60,16 @@ bootstrap::bind(function($app)
        * @ignore
        */
 
+      require __DIR__.DS.'model'.EXT;
       require $helpers_path.DS.$class.EXT;
 
       /**#@-*/
 
 
+
       $class::defined('init') && $class::init();
       $class::$method();
-      
+
 
       $view_file = findfile($views_path.DS.'scripts'.DS.$class, "$method.*", FALSE, 1);
 
