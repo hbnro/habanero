@@ -243,7 +243,7 @@ db::implement('field', function($type, $length = 0, $default = NULL)
 
   if (is_assoc($test))
   {
-    $test += compact('length', 'default');
+    $test = array_merge(compact('length', 'default'), $test);
 
     $type    = ! empty($test['type']) ? $test['type'] : $type;
     $length  = ! empty($test['length']) ? $test['length'] : $length;

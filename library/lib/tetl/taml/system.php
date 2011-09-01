@@ -32,7 +32,7 @@ class taml extends prototype
   {
     if (is_assoc($key))
     {
-      taml::$defs += $key;
+      taml::$defs = array_merge($key, taml::$defs);
     }
     elseif (array_key_exists($key, taml::$defs))
     {

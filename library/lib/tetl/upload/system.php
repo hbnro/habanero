@@ -78,7 +78,7 @@ class upload extends prototype
   {
     if (is_assoc($key))
     {
-      upload::$defs += $key;
+      upload::$defs = array_merge($key, upload::$defs);
     }
     elseif (array_key_exists($key, upload::$defs))
     {

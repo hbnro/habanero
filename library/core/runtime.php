@@ -39,17 +39,9 @@ function run(Closure $bootstrap)
  */
 function render($content, $partial = FALSE, array $params = array())
 {
-  static $defs = array(
-            'content' => '',
-            'partial' => '',
-            'output'  => '',
-            'locals'  => array(),
-          );
-
-
   if (is_assoc($content))
   {
-    $params += $content;
+    $params = array_merge($content, $params);
   }
   elseif ( ! isset($params['content']))
   {
@@ -58,7 +50,7 @@ function render($content, $partial = FALSE, array $params = array())
 
   if (is_assoc($partial))
   {
-    $params += $partial;
+    $params = array_merge($partial, $params);
   }
   elseif ( ! isset($params['partial']))
   {
@@ -66,7 +58,12 @@ function render($content, $partial = FALSE, array $params = array())
   }
 
 
-  $params += $defs;
+  $params = array_merge(array(
+    'content' => '',
+    'partial' => '',
+    'output'  => '',
+    'locals'  => array(),
+  ), $params);
 
   if ( ! is_bool($params['partial']))
   {

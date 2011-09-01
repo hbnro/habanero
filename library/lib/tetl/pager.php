@@ -6,17 +6,17 @@
 
 class pager extends prototype
 {
-  
+
   /**#@+
    * @ignore
    */
-  
+
   // number of pages
   private static $count = 0;
-  
+
   // number of current page
   private static $current = 0;
-  
+
   // defaults
   private static $defs = array(
                     'link_text' => '%d',
@@ -25,11 +25,11 @@ class pager extends prototype
                     'count_max' => 13,
                     'count_page' => 20,
                   );
-  
+
   /**#@-*/
-  
-  
-  
+
+
+
   /**
    * Set configuration
    *
@@ -41,15 +41,15 @@ class pager extends prototype
   {
     if (is_assoc($key))
     {
-      pager::$defs += $key;
+      pager::$defs = array_merge($key, pager::$defs);
     }
     elseif (array_key_exists($key, pager::$defs))
     {
       pager::$defs[$key] = $value;
     }
   }
-  
-  
+
+
   /**
    * Paginate array values
    *
@@ -60,11 +60,11 @@ class pager extends prototype
   {
     $index = pager::offset(sizeof($set));
     $set   = array_slice($set, $index, pager::count_page());
-    
+
     return $set;
   }
-  
-  
+
+
   /**
    * Retrieve total items
    *
@@ -85,8 +85,8 @@ class pager extends prototype
   {
     return ceil(pager::$count / pager::$defs['count_page']);
   }
-  
-  
+
+
   /**
    * Items per page
    *
@@ -96,8 +96,8 @@ class pager extends prototype
   {
     return (int) pager::$defs['count_page'];
   }
-  
-  
+
+
   /**
    * Maximum visible pages
    *
@@ -118,8 +118,8 @@ class pager extends prototype
   {
     return pager::$current ?  (int) pager::$current : 1;
   }
-  
-  
+
+
   /**
    * Set the current page
    *
@@ -129,8 +129,8 @@ class pager extends prototype
   {
     pager::$current = (int) $num;
   }
-  
-  
+
+
   /**
    * Calculate offset
    *
@@ -141,19 +141,19 @@ class pager extends prototype
   final public static function offset($count, $current = FALSE)
   {
     pager::$count = (int) $count;
-    
+
     if ( ! is_false($current))
     {
       pager::$current = (int) $current;
     }
-    
+
     $index = pager::$current ? pager::$current - 1 : pager::$current;
     $index = floor($index * pager::$defs['count_page']);
 
     return $index;
   }
-  
-  
+
+
   /**
    * All links pager
    *
@@ -165,21 +165,21 @@ class pager extends prototype
     $out = array();
     $end = pager::pages();
     $cur = pager::current();
-    
+
     for ($i = 1; $i <= $end; $i += 1)
     {
       $link = pager::page_link($i, pager::$defs['link_text']);
-      
+
       if ($cur === $i)
       {
         $link = sprintf($wrap, $link);
       }
       $out []= $link;
-    } 
+    }
     return $out;
   }
-  
-  
+
+
   /**
    * Generate page link
    *
@@ -194,15 +194,15 @@ class pager extends prototype
     {
       $args = args(attrs($args));
     }
-    
+
     $text = $text ? sprintf(pager::$defs['link_text'], number_format($num)) : number_format($num);
-    
+
     $args['href'] = sprintf($num <= 1 ? pager::$defs['link_root'] : str_replace('%25d', '%d', pager::$defs['link_href']), $num);//FIX
-    
+
     return tag('a', $args, $text);
   }
-  
-  
+
+
   /**
    * Calculate page step
    *
@@ -213,7 +213,7 @@ class pager extends prototype
     $out = 0;
     $max = pager::count_max();
     $end = pager::current() + $from;
-    
+
     for ($i = 0; $i < $end; $i += 1)
     {
       if (($i % $max) === 1)
@@ -221,15 +221,15 @@ class pager extends prototype
         $out += 1;
       }
     }
-    
+
     if ($out > 0)
     {
       $out -= 1;
     }
-    
+
     return $out;
   }
-  
+
 }
 
 
@@ -240,15 +240,15 @@ if (class_exists('db'))
   {
     return db::paginate(db::select($table, $fields, $where, $options, TRUE));
   });
-  
+
   db::implement('paginate', function($sql, $offset = 0, $limit = 10)
   {
     $sql  = sql::query_repare(preg_replace('/\bLIMIT\s+[\d,]+\s*$/s', '', $sql));
     $tmp  = sql::execute("SELECT COUNT(*) FROM ($sql) AS c");
-    
+
     $sql .= "\nLIMIT " . pager::offset(sql::result($tmp));
     $sql .= ',' . pager::count_page();
-    
+
     return db::query($sql);
   });
 }

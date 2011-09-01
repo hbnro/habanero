@@ -490,7 +490,7 @@ function a($href, $text = '', $title = array())
 
   if (is_assoc($title))
   {
-    $attrs += $title;
+    $attrs = array_merge($title, $attrs);
   }
   elseif ( ! empty($title))
   {
@@ -519,7 +519,7 @@ function anchor($name, $text = '', $args = array())
 
   $attrs['id'] = preg_replace('/[^\w-]/', '', $name);
 
-  return tag('a', $attrs += (array) $args, $text);
+  return tag('a', $attrs = array_merge((array) $args, $attrs), $text);
 }
 
 

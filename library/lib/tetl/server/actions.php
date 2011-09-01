@@ -15,7 +15,7 @@ function url_for($action, array $params = array())
 {
   if (is_array($action))
   {
-    $params += $action;
+    $params = array_merge($action, $params);
   }
   elseif ( ! isset($params['action']))
   {
@@ -133,7 +133,7 @@ function link_to($text, $url = NULL, $args = array())
 
   if (is_assoc($text))
   {
-    $params += $text;
+    $params = $text;
   }
   elseif (is_assoc($url))
   {
@@ -152,7 +152,7 @@ function link_to($text, $url = NULL, $args = array())
 
   if (is_assoc($url))
   {
-    $attrs += $url;
+    $attrs = array_merge($url, $attrs);
   }
   elseif ( ! isset($params['action']))
   {
@@ -201,7 +201,7 @@ function mail_to($address, $text = NULL, array $args = array())
 
   if (is_array($address))
   {
-    $params += $address;
+    $params = $address;
   }
   elseif ( ! isset($params['address']))
   {
@@ -210,7 +210,7 @@ function mail_to($address, $text = NULL, array $args = array())
 
   if (is_array($text))
   {
-    $params += $text;
+    $params = array_merge($text, $params);
   }
   elseif ( ! isset($params['text']))
   {
@@ -323,7 +323,7 @@ function button_to($name, $url = NULL, array $args = array())
 
   if (is_array($url))
   {
-    $params += $url;
+    $params = $url;
   }
   elseif ( ! isset($params['action']))
   {

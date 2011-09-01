@@ -18,17 +18,9 @@ class form extends prototype
    */
   final public static function to($action, $content, array $params = array())
   {
-    static $defs = array(
-              'action'    => '.',
-              'method'    => GET,
-              'content'   => 'raise',
-              'multipart' => FALSE,
-            );
-
-
     if (is_assoc($action))
     {
-      $params += $action;
+      $params = array_merge($action, $params);
     }
     elseif ( ! isset($params['action']))
     {
@@ -37,7 +29,7 @@ class form extends prototype
 
     if (is_assoc($content))
     {
-      $params += $content;
+      $params = array_merge($content, $params);
     }
     elseif ( ! isset($params['content']))
     {
@@ -51,7 +43,12 @@ class form extends prototype
     }
 
 
-    $params += $defs;
+    $params = array_merge(array(
+      'action'    => '.',
+      'method'    => GET,
+      'content'   => 'raise',
+      'multipart' => FALSE,
+    ), $defs);
 
     if ( ! is_closure($params['content']))
     {
@@ -125,7 +122,7 @@ class form extends prototype
   */
   final public static function file($name, $args = array())
   {
-   return form::input('file', $name, '', $args);
+    return form::input('file', $name, '', $args);
   }
 
 
@@ -138,59 +135,56 @@ class form extends prototype
   */
   final public static function field($params)
   {
-    static $defs = array(
-              'type'    => '',
-              'name'    => '',
-              'value'   => '',
-              'label'   => '',
-              'options' => array(),
-              'before'  => '',
-              'after'   => '',
-              'div'     => '',
-            );
+    $out  = array();
+    $args = func_get_args();
 
 
-   $out  = array();
-   $args = func_get_args();
+    foreach ($args as $one)
+    {
+       if (is_assoc($one))
+       {
+         $one = array_merge(array(
+            'type'    => '',
+            'name'    => '',
+            'value'   => '',
+            'label'   => '',
+            'options' => array(),
+            'before'  => '',
+            'after'   => '',
+            'div'     => '',
+          ), $one);
 
+         switch ($one['type'])
+         {
+           case 'file';
+             $input = form::file($one['name'], (array) $one['options']);
+           break;
+           case 'group';
+           case 'select';
+           case 'textarea';
+             $input = form::$one['type']($one['name'], $one['value'], (array) $one['options']);
+           break;
+           default;
+             $input = form::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
+           break;
+         }
 
-   foreach ($args as $one)
-   {
-      if (is_assoc($one))
-      {
-        $one += $defs;
+         $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
+         $label  = ! empty($one['label']) ? form::label($one['name'], $one['label']) : '';
 
-        switch ($one['type'])
-        {
-          case 'file';
-            $input = form::file($one['name'], (array) $one['options']);
-          break;
-          case 'group';
-          case 'select';
-          case 'textarea';
-            $input = form::$one['type']($one['name'], $one['value'], (array) $one['options']);
-          break;
-          default;
-            $input = form::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
-          break;
-        }
+         $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
+       }
+       elseif (is_array($one))
+       {
+         $out []= apply('form::input', $one);
+       }
+       elseif (is_scalar($one))
+       {
+         $out []= $one;
+       }
+     }
 
-        $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
-        $label  = ! empty($one['label']) ? form::label($one['name'], $one['label']) : '';
-
-        $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
-      }
-      elseif (is_array($one))
-      {
-        $out []= apply('form::input', $one);
-      }
-      elseif (is_scalar($one))
-      {
-        $out []= $one;
-      }
-    }
-
-    return tag('div', '', join('', $out));
+     return tag('div', '', join('', $out));
   }
 
 
@@ -206,16 +200,9 @@ class form extends prototype
   */
   final public static function input($type, $name, $value = '', array $params = array())
   {
-    static $defs = array(
-              'type'  => '',
-              'name'  => '',
-              'value' => '',
-            );
-
-
     if (is_assoc($type))
     {
-      $params += $type;
+      $params = array_merge($type, $params);
     }
     elseif ( ! isset($params['type']))
     {
@@ -224,7 +211,7 @@ class form extends prototype
 
     if (is_assoc($name))
     {
-      $params += $name;
+      $params = array_merge($name, $params);
     }
     elseif ( ! isset($params['name']))
     {
@@ -233,7 +220,7 @@ class form extends prototype
 
     if (is_assoc($value))
     {
-      $params += $value;
+      $params = array_merge($value, $params);
     }
     elseif ( ! isset($params['value']))
     {
@@ -247,7 +234,11 @@ class form extends prototype
     }
 
 
-    $params += $defs;
+    $params = array_merge(array(
+      'type'  => '',
+      'name'  => '',
+      'value' => '',
+    ), $params);
 
     $key = form::index($params['name'], TRUE);
 
@@ -292,7 +283,7 @@ class form extends prototype
   {
     if (is_assoc($name))
     {
-      $params += $name;
+      $params = array_merge($name, $params);
     }
     elseif ( ! isset($params['name']))
     {
@@ -359,7 +350,7 @@ class form extends prototype
 
     unset($params['default']);
 
-    return tag('select', $params + $args, $out);
+    return tag('select', array_merge($params, $args), $out);
   }
 
 
@@ -374,19 +365,9 @@ class form extends prototype
   */
   final public static function group($name, array $options, array $params = array())
   {
-    static $defs = array(
-              'name'      => '',
-              'default'   => '',
-              'multiple'  => FALSE,
-              'placement' => 'before',
-              'wrapper'   => '<div><h3>%s</h3>%s</div>',
-              'break'     => '<br/>',
-            );
-
-
     if (is_assoc($name))
     {
-      $params += $name;
+      $params = array_merge($name, $params);
     }
     elseif ( ! isset($params['name']))
     {
@@ -400,7 +381,14 @@ class form extends prototype
     }
 
 
-    $params += $defs;
+    $params = array_merge(array(
+      'name'      => '',
+      'default'   => '',
+      'multiple'  => FALSE,
+      'placement' => 'before',
+      'wrapper'   => '<div><h3>%s</h3>%s</div>',
+      'break'     => '<br/>',
+    ), $params);
 
     $out = '';
     $key = form::index($params['name'], TRUE);
@@ -461,12 +449,6 @@ class form extends prototype
   */
   final public static function textarea($name, $value = '', $args = array())
   {
-    static $defs = array(
-             'cols' => 40,
-             'rows' => 6,
-           );
-
-
     if (is_string($args))
     {
       $args = args(attrs($args));
@@ -474,7 +456,7 @@ class form extends prototype
 
     if (is_assoc($name))
     {
-      $args += $name;
+      $args = array_merge($name, $args);
     }
     elseif ( ! isset($args['name']))
     {
@@ -483,7 +465,7 @@ class form extends prototype
 
     if (is_assoc($value))
     {
-      $args += $value;
+      $args = array_merge($value, $args);
     }
     elseif ( ! isset($params['text']))
     {
@@ -504,7 +486,11 @@ class form extends prototype
       $args['name'] = $args['name'];
     }
 
-    $args  = $defs + $args;
+    $args  = array_merge(array(
+      'cols' => 40,
+      'rows' => 6,
+    ), $args);
+
     $value = ents($args['text'], TRUE);
 
     unset($args['text']);
@@ -530,7 +516,7 @@ class form extends prototype
 
     if (is_assoc($for))
     {
-      $args += $for;
+      $args = array_merge($for, $args);
     }
     elseif ( ! isset($args['for']))
     {
@@ -539,7 +525,7 @@ class form extends prototype
 
     if (is_assoc($text))
     {
-      $args += $text;
+      $args = array_merge($text, $args);
     }
     elseif ( ! isset($args['text']))
     {

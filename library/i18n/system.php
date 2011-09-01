@@ -38,16 +38,9 @@ class i18n extends prototype
    */
   final public static function translate($string, $default = '', array $params = array())
   {
-    static $defs = array(
-              'scope'   => '',
-              'string'  => '',
-              'default' => '',
-            );
-
-
     if (is_assoc($string))
     {
-      $params += $string;
+      $params = array_merge($params, $string);
     }
     elseif ( ! isset($params['string']))
     {
@@ -56,7 +49,7 @@ class i18n extends prototype
 
     if (is_assoc($default))
     {
-      $params += $default;
+      $params = array_merge($default, $params);
     }
     elseif ( ! isset($params['default']))
     {
@@ -65,7 +58,11 @@ class i18n extends prototype
 
 
 
-    $params += $defs;
+    $params = array_merge(array(
+      'scope'   => '',
+      'string'  => '',
+      'default' => '',
+    ), $params);
 
     $params['default'] = (array) $params['default'];
 
@@ -184,7 +181,7 @@ class i18n extends prototype
       {
         $set = array($scope => (array) $set);
       }
-      $tree += (array) $set;
+      $tree = array_merge((array) $set, $tree);
     }
     return $tree;
   }

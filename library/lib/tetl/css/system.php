@@ -69,7 +69,7 @@ class css extends prototype
   {
     if (is_assoc($key))
     {
-      css::$defs += $key;
+      css::$defs = array_merge($key, css::$defs);
     }
     elseif (array_key_exists($key, css::$defs))
     {
@@ -536,8 +536,8 @@ class css extends prototype
           }
 
 
-          $old += css::$props;
-          $out  = css::do_vars(css::$mixins[$part]['props'], $old);
+          $old = array_merge(css::$props, $old);
+          $out = css::do_vars(css::$mixins[$part]['props'], $old);
         }
       }
     }

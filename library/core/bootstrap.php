@@ -103,6 +103,7 @@ final class bootstrap extends prototype
 }
 
 
+
 // basic output
 bootstrap::implement('raise', function()
 {
@@ -120,6 +121,5 @@ bootstrap::implement('raise', function()
 
   die($output);
 });
-
 
 /* EOF: ./core/application.php */

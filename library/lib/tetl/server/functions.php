@@ -25,7 +25,7 @@ function route($match, $to = NULL, array $params = array())
 {
   if (is_assoc($match))
   {
-    $params += $match;
+    $params = array_merge($match, $params);
   }
   elseif ( ! isset($params['match']))
   {
@@ -34,7 +34,7 @@ function route($match, $to = NULL, array $params = array())
 
   if (is_assoc($to))
   {
-    $params += $to;
+    $params = array_merge($to, $params);
   }
   elseif ( ! isset($params['to']))
   {

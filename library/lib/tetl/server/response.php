@@ -16,7 +16,7 @@ function dispatch($to = NULL, array $params = array())
 {
   if (is_assoc($to))
   {
-    $params += $to;
+    $params = array_merge($to, $params);
   }
   elseif ( ! isset($params['to']))
   {
@@ -109,7 +109,7 @@ function response($content, array $params = array())
 {
   if (is_assoc($content))
   {
-    $params += $content;
+    $params = array_merge($content, $params);
   }
   elseif ( ! isset($params['output']))
   {
@@ -177,7 +177,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
 {
   if (is_assoc($to))
   {
-    $params += $to;
+    $params = array_merge($to, $params);
   }
   elseif ( ! isset($params['to']))
   {
@@ -186,7 +186,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
 
   if (is_assoc($status))
   {
-    $params += $status;
+    $params = array_merge($status, $params);
   }
   elseif ( ! isset($params['status']))
   {
