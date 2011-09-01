@@ -17,17 +17,17 @@ function client($ua = '')
             'is_mobile' => FALSE,
             'is_robot' => FALSE,
           );
-         
+
 
   if (is_null($set))
   {
     $set = include __DIR__.DS.'assets'.DS.'scripts'.DS.'user_agents'.EXT;
   }
-  
+
   $out = $defs;
-  $ua  = $ua ?: agent();
-  
-  
+  $ua  = $ua ?: value($_SERVER, 'HTTP_USER_AGENT');
+
+
   // platform
   foreach ($set['platforms'] as $key => $val)
   {
@@ -37,7 +37,7 @@ function client($ua = '')
       break;
     }
   }
-  
+
 
   // browser
   foreach ($set['browsers'] as $key => $val)
@@ -56,11 +56,11 @@ function client($ua = '')
   {
     $out['browser'] = preg_replace('/^([\w\s]+(?=\W)).*?$/', '\\1', $ua);
   }
-  
+
   if (empty($out['version']))
   {//FIX
     $regex = sprintf('/%s.*?([0-9\.]+)/i', preg_quote($out['browser'], '/'));
-    
+
     if (preg_match($regex, $test, $match))
     {
       $out['version'] = $match[1];
@@ -79,7 +79,7 @@ function client($ua = '')
       break;
     }
   }
-  
+
 
   // robot
   foreach ($set['robots'] as $key => $val)
@@ -93,7 +93,7 @@ function client($ua = '')
       break;
     }
   }
-  
+
   return $out;
 }
 
