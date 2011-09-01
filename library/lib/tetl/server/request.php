@@ -326,13 +326,7 @@ class request extends prototype
 }
 
 
-
-/**
-   *
-   *
-   *
-   * @return void
-   */
+// default output
 request::implement('dispatch', function(array $params = array())
 {
   if (empty($params['to']) OR
