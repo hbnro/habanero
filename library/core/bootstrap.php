@@ -103,7 +103,6 @@ final class bootstrap extends prototype
 }
 
 
-
 // basic output
 bootstrap::implement('raise', function()
 {
