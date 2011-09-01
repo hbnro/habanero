@@ -13,6 +13,7 @@ $config['suffix'] = '';
 $config['cache'] = 'php';
 $config['perms'] = 0777;
 $config['query'] = FALSE;
+$config['csrf'] = 300;
 $config['pdo'] = FALSE;
 
 /* EOF: ./config.php */
