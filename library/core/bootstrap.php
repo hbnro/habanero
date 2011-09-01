@@ -104,7 +104,7 @@ final class bootstrap extends prototype
 
 
 // basic output
-bootstrap::implement('raise', function()
+bootstrap::implement('raise', function($var)
 {
   $type     = IS_CLI ? 'txt' : 'html';
   $inc_file = LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT;
