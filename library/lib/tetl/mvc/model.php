@@ -4,27 +4,54 @@ class model extends prototype
 {
 
   private static $pk = NULL;
-
-  private static $name = NULL;
+  private static $new = FALSE;
 
   public static $table = NULL;
+
+  public static $attr_reader = array();
+  public static $attr_writer = array();
 
 
   final public static function find($id, $what = ALL, $type = AS_ARRAY)
   {
 
-    $res = db::select(self::$name, $what, array(self::$pk => $id));
+    $res = db::select(self::$table, $what, array(self::$pk => $id));
 
     return db::fetch($res, $type);
 
   }
 
 
+  /*
+  TODO: implement
+
+  find_by_?
+  count_by_?
+  find_or_create_by_?
+
+  all?
+  count?
+  exists?
+
+  first?
+  last?
+
+  callbacks*
+  update*
+  delete*
+  insert*
+  create*
+  save*
+
+
+  */
+
+
   final public static function init()
   {
-    if ( ! self::$name)
+    if ( ! self::$pk)
     {
-      self::$name = ! empty(self::$table) ? self::$table : get_called_class();
+      self::$table = self::$table ?: get_called_class();
 
       foreach (db::columns(self::$name) as $key => $one)
       {
