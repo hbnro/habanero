@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Hyperlinks action library
+ * Action library
  */
 
 /**
@@ -13,7 +13,7 @@
  */
 function url_for($action, array $params = array())
 {
-  if (is_array($action))
+  if (is_assoc($action))
   {
     $params = array_merge($action, $params);
   }
@@ -119,12 +119,12 @@ function pre_url($text)
 
 
 /**
- * Resolve server-based urls
+ * HTML tag link builder
  *
- * @param     string  File or directory
- * @param     boolean Prefix host?
- * @staticvar string  Root
- * @return    string
+ * @param  mixed  Link text|Options hash|Path
+ * @param  mixed  Options hash|Path|Function callback
+ * @param  mixed  Options hash|Function callback
+ * @return string
  */
 function link_to($text, $url = NULL, $args = array())
 {
@@ -160,6 +160,12 @@ function link_to($text, $url = NULL, $args = array())
   }
 
 
+  if (empty($params['text']))
+  {
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'text')));
+  }
+
+
   if (is_closure($args))
   {
     ob_start() && $args();
@@ -187,19 +193,19 @@ function link_to($text, $url = NULL, $args = array())
 
 
 /**
- * Resolve server-based urls
+ * HTML tag email link builder
  *
- * @param     string  File or directory
- * @param     boolean Prefix host?
- * @staticvar string  Root
- * @return    string
+ * @param  mixed  Email address|Options hash
+ * @param  mixed  Link text|Options hash
+ * @param  array  Options hash
+ * @return string
  */
 function mail_to($address, $text = NULL, array $args = array())
 {
   $vars   =
   $params = array();
 
-  if (is_array($address))
+  if (is_assoc($address))
   {
     $params = $address;
   }
@@ -208,7 +214,7 @@ function mail_to($address, $text = NULL, array $args = array())
     $params['address'] = $address;
   }
 
-  if (is_array($text))
+  if (is_assoc($text))
   {
     $params = array_merge($text, $params);
   }
@@ -218,8 +224,13 @@ function mail_to($address, $text = NULL, array $args = array())
   }
 
 
+  if (empty($params['text']))
+  {
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'text')));
+  }
+
+
   $params = array_merge(array(
-    'text'        => '',
     'address'     => '',
     'encode'      => FALSE,
     'replace_at'  => '&#64;',
@@ -289,7 +300,7 @@ function path_to($path = '.', $host = FALSE)
 
 
   if (is_null($root))
-  {
+  {// only apply on real root-based files
     $root = realpath($_SERVER['DOCUMENT_ROOT']);
   }
 
@@ -310,20 +321,33 @@ function path_to($path = '.', $host = FALSE)
 
 
 /**
- * Resolve server-based urls
+ * HTML tag action button builder
  *
- * @param     string  File or directory
- * @param     boolean Prefix host?
- * @staticvar string  Root
- * @return    string
+ * @param  mixed  Button text|Path|Options hash
+ * @param  mixed  Path|Options hash
+ * @param  array  Option hash
+ * @return string
  */
 function button_to($name, $url = NULL, array $args = array())
 {
   $params = array();
 
-  if (is_array($url))
+  if (is_assoc($name))
   {
-    $params = $url;
+    $params = $name;
+  }
+  elseif (is_assoc($url))
+  {
+    $params['action'] = (string) $name;
+  }
+  elseif ( ! isset($params['text']))
+  {
+    $params['text'] = $name;
+  }
+
+  if (is_string($name) && is_assoc($url))
+  {
+    $params = array_merge($url, $params);
   }
   elseif ( ! isset($params['action']))
   {
@@ -331,8 +355,14 @@ function button_to($name, $url = NULL, array $args = array())
   }
 
 
+  if (empty($params['text']))
+  {
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'text')));
+  }
+
+
   $params = array_merge(array(
-    'action'       => slug($name),
+    'action'       => slug($params['text']),
     'method'       => POST,
     'remote'       => FALSE,
     'confirm'      => FALSE,
