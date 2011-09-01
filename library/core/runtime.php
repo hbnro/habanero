@@ -13,45 +13,7 @@
  */
 function import($lib)
 {
-  static $set = array();
-
-
-  $lib = strtr($lib, '\\/', DS.DS);
-
-  if (in_array($lib, $set))
-  {
-    return FALSE;
-  }
-
-  $test   = (array) option('import_path', array());
-  $test []= LIB.DS.'lib'.DS;
-
-
-  foreach ($test as $dir)
-  {
-    $helper_path  = $dir.$lib;
-    $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
-
-    if (is_file($helper_path))
-    {
-      break;
-    }
-  }
-
-  // fallback, do not use i18n...
-  if (is_loaded($helper_path))
-  {
-    return FALSE;
-  }
-
-  /**
-    * @ignore
-    */
-  $out = require $helper_path;
-
-  $set []= $lib;
-
-  return $out;
+  bootstrap::enhance($lib);
 }
 
 
@@ -114,7 +76,7 @@ function render($content, $partial = FALSE, array $params = array())
 
 
   if ( ! empty($params['output']))
-  {
+  {// intentionally plain response
     die($params['output']);
   }
   elseif ( ! is_file($params['content']))
@@ -162,7 +124,7 @@ function raise($message)
   }
 
   if ( ! empty($GLOBALS['--raise-message']))
-  {
+  {// this could be used in fatal error scenarios
     $message = $GLOBALS['--raise-message'];
     unset($GLOBALS['--raise-message']);
   }
@@ -233,7 +195,7 @@ function raise($message)
     if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key))
     {
       if ( ! IS_CLI && (substr($key, 0, 5) === 'HTTP_'))
-      {
+      {// there is no need to use request object since are not required
         $var['received'][camelcase(strtolower(substr($key, 5)), TRUE, '-')] = $val;
       }
       unset($var['env'][$key]);
@@ -241,23 +203,7 @@ function raise($message)
   }
 
   // invoke custom handler
-  bootstrap::defined('raise') && bootstrap::raise($var);
-
-
-  // output
-  $type     = IS_CLI ? 'txt' : 'html';
-  $inc_file = LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT;
-
-  $output = call_user_func(function()
-    use($inc_file, $var)
-  {
-    ob_start();
-    extract($var);
-    require $inc_file;
-    return ob_get_clean();
-  });
-
-  die($output);
+  bootstrap::raise($var);
 }
 
 
