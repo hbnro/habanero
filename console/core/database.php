@@ -28,7 +28,6 @@ class database extends prototype
   $db_title:
 
   \bgreen(db:status)\b
-  \bgreen(db:query)\b \bwhite(sql)\b
   \bgreen(db:show)\b \bblue(table)\b
   \bgreen(db:drop)\b \bblue(table)\b
   \bgreen(db:rename)\b \bblue(table)\b \bwhite(new)\b
@@ -52,14 +51,14 @@ HELP;
     config(CWD.DS.'config'.DS.'database'.EXT);
     import('tetl/db');
   }
-  
+
   private function check_table($table)
   {
     database::init();
-    
+
     blue(ln('tetl.verifying_tables'));
-    
-    
+
+
     if ( ! $table)
     {
       red(ln('tetl.table_name_missing'));
@@ -100,104 +99,37 @@ HELP;
     white(ln('tetl.done'));
   }
 
-  function query($args = array())
-  {
-    blue(ln('tetl.verifying_query'));
-    
-    @list($sql) = $args;
-    
-    if ( ! $sql)
-    {
-      red(ln('tetl.query_missing'));
-    }
-    else
-    {
-      database::init();
-      yellow($sql);
-
-      $res = db::query($sql);
-
-      if ( ! $res)
-      {
-        red(ln('tetl.without_results'));
-      }
-      else
-      {
-        $what = trim(substr($sql, 0, strpos($sql, ' ')));
-        $what = strtolower($what);
-
-        switch ($what)
-        {
-          case 'show';
-          case 'describe';
-          case 'select';
-            $count = db::numrows($res);
-            $all = db::fetch_all($res, AS_ARRAY);
-
-            if ($count)
-            {
-              cli::table($all, array_keys($all[0]));
-            }
-
-            $count ? green(ln('tetl.selected_rows', array('count' => $count))) : red(ln('tetl.without_results'));
-          break;
-          case 'insert';
-            $count = db::inserted($res);
-            $count ? green(ln('tetl.inserted_rows', array('count' => $count))) : red(ln('tetl.without_changes'));
-          break;
-          case 'delete';
-          case 'update';
-            $count = db::affected($res);
-            $count ? green(ln("tetl.{$what}d_rows", array('count' => $count))) : red(ln('tetl.without_changes'));
-          break;
-          default;
-            if ($res)
-            {
-              green(ln('tetl.query_success'));
-            }
-            else
-            {
-              red(ln('tetl.unknown_result'));
-            }
-          break;
-        }
-      }
-    }
-
-    white(ln('tetl.done'));
-  }
-
   function show($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       green(ln('tetl.table_show_columns', array('name' => $table)));
-      
+
       $set =
       $heads = array();
-      
+
       foreach (db::columns($table) as $name => $one)
       {
         if (empty($heads))
         {
           $heads = array_keys($one);
         }
-        
+
         $set[$name] = array($name);
         $set[$name] += $one;
       }
-      
+
       array_unshift($heads, 'name');
       cli::table($set, $heads);
-      
-      
+
+
       yellow(ln('tetl.table_show_indexes', array('name' => $table)));
-      
+
       $idx = array();
       $all = db::indexes($table);
-      
+
       if ( ! $all)
       {
         red(ln('tetl.table_without_indexes', array('name' => $table)));
@@ -205,7 +137,7 @@ HELP;
       else
       {
         $idx = array();
-        
+
         foreach ($all as $name => $one)
         {
           $idx []= array($name, join(', ', $one['column']), $one['unique']);
@@ -213,14 +145,14 @@ HELP;
         cli::table($idx, array('name', 'columns', 'unique'));
       }
     }
-    
+
     white(ln('tetl.done'));
   }
-  
+
   function drop($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       green(ln('tetl.table_dropping', array('name' => $table)));
@@ -229,13 +161,13 @@ HELP;
 
     white(ln('tetl.done'));
   }
-  
+
   function rename($args = array())
   {
     @list($table, $to) = $args;
-    
+
     database::check_table($table);
-    
+
     if ( ! $to)
     {
       red(ln('tetl.table_name_missing'));
@@ -249,7 +181,7 @@ HELP;
       green(ln('tetl.renaming_table_to', array('from' => $table, 'to' => $to)));
       rename_table($table, $to);
     }
-    
+
     white(ln('tetl.done'));
   }
 
@@ -260,9 +192,9 @@ HELP;
     blue(ln('tetl.verifying_structure'));
 
     @list($table) = $args;
-    
+
     $args = array_slice($args, 1);
-    
+
     if ( ! $table)
     {
       red(ln('tetl.table_name_missing'));
@@ -334,12 +266,12 @@ HELP;
   function add_column($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       $fields = array_keys(db::columns($table));
       $args = array_slice($args, 1);
-      
+
       if ( ! $args)
       {
         red(ln('tetl.table_fields_missing', array('name' => $table)));
@@ -349,11 +281,11 @@ HELP;
         foreach ($args as $one)
         {
           @list($name, $type, $length) = explode(':', $one);
-          
+
           $col = array($type);
-          
+
           $length && $col []= $length;
-          
+
           if ( ! in_array($type, database::$types))
           {
             red(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $name)));
@@ -370,19 +302,19 @@ HELP;
         }
       }
     }
-    
+
     white(ln('tetl.done'));
   }
 
   function remove_column($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       $fields = array_keys(db::columns($table));
       $args = array_slice($args, 1);
-      
+
       if ( ! $args)
       {
         red(ln('tetl.table_fields_missing', array('name' => $table)));
@@ -403,19 +335,19 @@ HELP;
         }
       }
     }
-    
+
     white(ln('tetl.done'));
   }
 
   function rename_column($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       $fields = array_keys(db::columns($table));
       $args = array_slice($args, 1);
-      
+
       if ( ! $args)
       {
         red(ln('tetl.table_fields_missing', array('name' => $table)));
@@ -423,12 +355,12 @@ HELP;
       else
       {
         $c = sizeof($args);
-        
+
         for ($i = 0; $i < $c; $i += 2)
         {
           $one = $args[$i];
           $next = isset($args[$i + 1]) ? $args[$i + 1] : NULL;
-          
+
           if ( ! in_array($one, $fields))
           {
             red(ln('tetl.column_not_exists', array('name' => $one)));
@@ -445,19 +377,19 @@ HELP;
         }
       }
     }
-    
+
     white(ln('tetl.done'));
   }
 
   function change_column($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       $fields = db::columns($table);
       $args = array_slice($args, 1);
-      
+
       if ( ! $args)
       {
         red(ln('tetl.table_fields_missing', array('name' => $table)));
@@ -465,12 +397,12 @@ HELP;
       else
       {
         $c = sizeof($args);
-        
+
         for ($i = 0; $i < $c; $i += 2)
         {
           $one = $args[$i];
           $next = isset($args[$i + 1]) ? $args[$i + 1] : NULL;
-          
+
           if ( ! array_key_exists($one, $fields))
           {
             red(ln('tetl.column_not_exists', array('name' => $one)));
@@ -482,11 +414,11 @@ HELP;
           else
           {
             @list($type, $length) = explode(':', $next);
-            
+
             $col = array($type);
-          
+
             $length && $col []= $length;
-            
+
             if ( ! in_array($type, database::$types))
             {
               red(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $one)));
@@ -504,14 +436,14 @@ HELP;
         }
       }
     }
-    
+
     white(ln('tetl.done'));
   }
 
   function add_index($args = array(), $params = array())
   {
     @list($table, $name) = $args;
-    
+
     if (database::check_table($table))
     {
       if ( ! $name)
@@ -523,7 +455,7 @@ HELP;
         $unique = isset($params['unique']);
         $args = array_slice($args, 2);
         $idx = db::indexes($table);
-        
+
         if ( ! $args)
         {
           red(ln('tetl.index_columns_missing', array('name' => $table)));
@@ -536,7 +468,7 @@ HELP;
         {
           $col = array();
           $fields = array_keys(db::columns($table));
-          
+
           foreach ($args as $one)
           {
             if ( ! in_array($one, $fields))
@@ -546,11 +478,11 @@ HELP;
             else
             {
               yellow(ln('tetl.success_column_index', array('name' => $one)));
-              
+
               $col []= $one;
             }
           }
-          
+
           if (sizeof($col) === sizeof($args))
           {
             green(ln('tetl.table_column_indexing', array('name' => $table)));
@@ -562,18 +494,18 @@ HELP;
         }
       }
     }
-    
+
     white(ln('tetl.done'));
   }
 
   function remove_index($args = array())
   {
     @list($table) = $args;
-    
+
     if (database::check_table($table))
     {
       $args = array_slice(func_get_args(), 1);
-      
+
       if ( ! $args)
       {
         red(ln('tetl.index_names_missing', array('name' => $table)));
@@ -581,7 +513,7 @@ HELP;
       else
       {
         $idx = db::indexes($table);
-        
+
         foreach ($args as $one)
         {
           if ( ! array_key_exists($one, $idx))
@@ -596,36 +528,36 @@ HELP;
         }
       }
     }
-    
+
     white(ln('tetl.done'));
   }
-  
+
   function export($args = array(), $params = array())
   {
     @list($table, $name) = $args;
-    
+
     if (database::check_table($table))
     {
       green(ln('tetl.table_exporting', array('name' => $table)));
-      
+
       $name = preg_replace('/\W/', '_', $name) ?: $table;
       $data = isset($params['data']);
       $raw = isset($params['raw']);
       $ext = $raw ? '.sql' : EXT;
-      
+
       $out_file = CWD.DS.'db'.DS.$name.$ext;
       db::export($out_file, $table, $data, $raw);
     }
-    
+
     white(ln('tetl.done'));
   }
-  
+
   function import($args = array(), $params = array())
   {
     @list($name) = $args;
-    
+
     blue(ln('tetl.verifying_import'));
-    
+
     if ( ! $name)
     {
       red(ln('tetl.import_name_missing'));
@@ -634,9 +566,9 @@ HELP;
     {
       $raw = isset($params['raw']);
       $ext = $raw ? '.sql' : EXT;
-      
+
       $inc_file = CWD.DS.'db'.DS.$name.$ext;
-      
+
       if ( ! is_file($inc_file))
       {
         red(ln('tetl.import_file_missing', array('name' => $name)));
@@ -644,12 +576,12 @@ HELP;
       else
       {
         yellow(ln('tetl.structure_importing', array('name' => $name)));
-        
+
         database::init();
         db::import($inc_file, $raw);
       }
     }
-  
+
     white(ln('tetl.done'));
   }
 }
