@@ -36,9 +36,9 @@ class cli extends prototype
    */
   final public static function args()
   {
-    if (is_null(cli::$flags))
+    if (is_null(self::$flags))
     {
-      cli::$flags = array();
+      self::$flags = array();
 
       $test   = $_SERVER['argv'];
       $length = sizeof($test);
@@ -53,29 +53,29 @@ class cli extends prototype
           $str   = substr($str, 2);
           $parts = explode('=', $str);
 
-          cli::$flags[$parts[0]] = TRUE;
+          self::$flags[$parts[0]] = TRUE;
 
           if ((sizeof($parts) === 1) && isset($test[$i + 1]))
           {// --foo bar
             if ( ! preg_match('/^--?.+/', $test[$i + 1]))
             {
-              cli::$flags[$parts[0]] = $test[$i + 1];
+              self::$flags[$parts[0]] = $test[$i + 1];
             }
           }
           else
           {
-            cli::$flags[$parts[0]] = isset($parts[1]) ? $parts[1] : TRUE;
+            self::$flags[$parts[0]] = isset($parts[1]) ? $parts[1] : TRUE;
           }
         }
         elseif ((strlen($str) === 2) && ($str[0] === '-'))
         {// -a
-          cli::$flags[$str[1]] = TRUE;
+          self::$flags[$str[1]] = TRUE;
 
           if (isset($test[$i + 1]))
           {
             if ( ! preg_match('/^--?.+/', $test[$i + 1]))
             {
-              cli::$flags[$str[1]] = $test[$i + 1];
+              self::$flags[$str[1]] = $test[$i + 1];
             }
           }
         }
@@ -85,7 +85,7 @@ class cli extends prototype
 
           for ($j = 1; $j < $k; $j += 1)
           {
-            cli::$flags[$str[$j]] = TRUE;
+            self::$flags[$str[$j]] = TRUE;
           }
         }
       }
@@ -97,11 +97,11 @@ class cli extends prototype
           continue;
         }
 
-        array_unshift(cli::$flags, $val);
+        array_unshift(self::$flags, $val);
       }
     }
 
-    return cli::$flags;
+    return self::$flags;
   }
 
 
@@ -117,9 +117,9 @@ class cli extends prototype
     // TODO: echo start
 
 
-    cli::$loop = TRUE;
+    self::$loop = TRUE;
 
-    while (cli::$loop)
+    while (self::$loop)
     {
       $callback();
     }
@@ -135,7 +135,7 @@ class cli extends prototype
    */
   final public static function quit()
   {
-    cli::$loop = FALSE;
+    self::$loop = FALSE;
   }
 
 
@@ -158,16 +158,16 @@ class cli extends prototype
           break;
         }
 
-        cli::write($len = strlen("$text..."));
-        cli::back($len);
+        self::write($len = strlen("$text..."));
+        self::back($len);
 
         pause(1);
       }
     }
     else
     {
-      cli::writeln(cli::ln($text));
-      cli::readln();
+      self::writeln(self::ln($text));
+      self::readln();
     }
   }
 
@@ -180,7 +180,7 @@ class cli extends prototype
    */
   final public static function printf($text)
   {
-    fwrite(STDOUT, vsprintf(cli::format($text), array_slice(func_get_args(), 1)));
+    fwrite(STDOUT, vsprintf(self::format($text), array_slice(func_get_args(), 1)));
   }
 
 
@@ -194,7 +194,7 @@ class cli extends prototype
   {
     $args = func_get_args();
 
-    cli::printf(join('', $args));
+    self::printf(join('', $args));
 
     return trim(fgets(STDIN, 128));
   }
@@ -210,8 +210,8 @@ class cli extends prototype
   {
     $args = func_get_args();
 
-    cli::printf(trim(join('', $args)) . "\n");
-    cli::flush();
+    self::printf(trim(join('', $args)) . "\n");
+    self::flush();
   }
 
 
@@ -225,7 +225,7 @@ class cli extends prototype
   final public static function write($text = '')
   {
     fwrite(STDOUT, $text);
-    cli::flush();
+    self::flush();
   }
 
 
@@ -240,9 +240,9 @@ class cli extends prototype
   {
     $text = is_true($plain) ? $text : "\n\bred(Error)\b $text\n";
 
-    fwrite(STDERR, cli::format($text));
+    fwrite(STDERR, self::format($text));
 
-    cli::flush();
+    self::flush();
   }
 
 
@@ -255,22 +255,22 @@ class cli extends prototype
   {
     if ($num)
     {
-      return cli::write(str_repeat("\x08", $num));
+      return self::write(str_repeat("\x08", $num));
     }
     elseif ( ! IS_WIN)
     {
-      cli::write("\033[H\033[2J");
+      self::write("\033[H\033[2J");
     }
     else
     {
       $c = 20;
       while($c -= 1)
       {//FIX
-        cli::writeln();
+        self::writeln();
       }
     }
 
-    cli::flush();
+    self::flush();
   }
 
 
@@ -373,7 +373,7 @@ class cli extends prototype
    */
   function flag($name)
   {
-    $set  = cli::args();
+    $set  = self::args();
 
     $args = func_get_args();
     $test = is_array($name) ? $name : $args;
@@ -401,7 +401,7 @@ class cli extends prototype
   {
     $default && $text .= " [$default]";
 
-    return ($out = cli::readln($text, ': ')) ? $out : $default;
+    return ($out = self::readln($text, ': ')) ? $out : $default;
   }
 
 
@@ -418,7 +418,7 @@ class cli extends prototype
     $value = strtolower(str_replace($default, '', $value)) . strtoupper($default);
     $value = str_replace('\\', '/', trim(addcslashes($value, $value), '\\'));
 
-    $out   = strtolower(cli::readln(sprintf('%s [%s]: ', $text, $value)));
+    $out   = strtolower(self::readln(sprintf('%s [%s]: ', $text, $value)));
 
     return ($out && strstr($value, $out)) ? $out : $default;
   }
@@ -442,19 +442,19 @@ class cli extends prototype
     {
       $test = array_search($val, $set) == $default ? ' [*]' : '';
 
-      cli::writeln("\n", str_pad($i + 1, $pad, ' ', STR_PAD_LEFT), '. ', $val, $test);
+      self::writeln("\n", str_pad($i + 1, $pad, ' ', STR_PAD_LEFT), '. ', $val, $test);
     }
 
 
     while (1)
     {
-      $val = cli::readln("\n", cli::ln($title), ': ');
+      $val = self::readln("\n", self::ln($title), ': ');
 
       if ( ! is_numeric($val)) return $default;
       else
       {
       if (isset($old[$val -= 1])) return array_search($old[$val], $set);
-      elseif ($val < 0 OR $val >= sizeof($old)) cli::error(cli::ln($warn));
+      elseif ($val < 0 OR $val >= sizeof($old)) self::error(self::ln($warn));
       }
     }
   }
@@ -475,7 +475,7 @@ class cli extends prototype
   function wrap($text, $width = -1, $align = 1, $margin = 2, $separator = ' ')
   {//--
   if (is_array($text)) $text = join("\n", $text);
-  $max = $width > 0? $width: cli::$width +$width;
+  $max = $width > 0? $width: self::$width +$width;
   $max -= $margin *2;
   $out = array();
   $cur = '';
@@ -508,7 +508,7 @@ class cli extends prototype
   if ( ! empty($cur)) $out []= $cur;
 
   $test = join("\n$left", $out);
-  cli::writeln("\n", "$left$test");
+  self::writeln("\n", "$left$test");
   }
 
 
@@ -521,7 +521,7 @@ class cli extends prototype
    */
   function help($title, $set = array())
   {// --
-  cli::_print("\n$title");
+  self::_print("\n$title");
 
   $max = 0;
   foreach (array_keys($set) as $one)
@@ -533,12 +533,12 @@ class cli extends prototype
 
   foreach ($set as $key => $val)
   {
-    cli::_print(sprintf("\n  %-{$max}s %s%s",
+    self::_print(sprintf("\n  %-{$max}s %s%s",
         $key . ( ! empty($val['args'])? ' <' . join('> <', $val['args']) . '>': ''),
         ! empty($val['flag'])? "-$val[flag]  ": '',
         $val['title']));
   }
-  cli::_flush(1);
+  self::_flush(1);
   }
 
 
@@ -564,33 +564,33 @@ class cli extends prototype
   $diff = $current > 0? round((($now -$start) /$current) *($total -$current)): 0;
   $perc = min(100, str_pad(round(($current /$total) *100), 4, ' ', STR_PAD_LEFT) +  1);
 
-  $title = str_replace('{elapsed}', cli::_time(round($now -$start)), $title);
-  $title = str_replace('{remaining}', cli::_time($diff), $title); //--
-  $dummy = cli::_strip($title = cli::format($title));
-  $length = cli::$width -(strlen($dummy) +7);
+  $title = str_replace('{elapsed}', self::_time(round($now -$start)), $title);
+  $title = str_replace('{remaining}', self::_time($diff), $title); //--
+  $dummy = self::_strip($title = self::format($title));
+  $length = self::$width -(strlen($dummy) +7);
 
-  if ($current > 0) cli::back(cli::$width);
-  if ( ! empty($title)) cli::_print("$title ");
-  cli::_print($current == $total? "\n": '');
+  if ($current > 0) self::back(self::$width);
+  if ( ! empty($title)) self::_print("$title ");
+  self::_print($current == $total? "\n": '');
 
   $inc = 0;
   for ($i = 0; $i <= $length; $i += 1)
   {
     if ($i <= ($current /$total *$length))
     {
-      $char = $i === 0 ? '[' : ($i == $length ? ']' : cli::__progress_char);
-      cli::_print(cli::format("\c{cli::__progress}{$char}\c"));
+      $char = $i === 0 ? '[' : ($i == $length ? ']' : self::__progress_char);
+      self::_print(self::format("\c{self::__progress}{$char}\c"));
     }
     else
     {//--
-      $background = $perc > 99 ? cli::__progress : cli::__background;
-    $char = ($inc += 1) == 0? cli::__progress_mark: ' ';
-    cli::_print(cli::format("\c{$background}" . ($i == $length? ']': $char) . '\c'));
+      $background = $perc > 99 ? self::__progress : self::__background;
+    $char = ($inc += 1) == 0? self::__progress_mark: ' ';
+    self::_print(self::format("\c{$background}" . ($i == $length? ']': $char) . '\c'));
     }
   }
 
-  cli::_print(' %3d%%', $perc);
-  cli::_flush($perc > 99);
+  self::_print(' %3d%%', $perc);
+  self::_flush($perc > 99);
   }
 
 
@@ -604,7 +604,7 @@ class cli extends prototype
   function table(array $set, array $heads = array())
   {
     $set  = array_values($set);
-    $max  = cli::$width / sizeof($set[0]);
+    $max  = self::$width / sizeof($set[0]);
     $max -= sizeof($set[0]);
 
     $head =
@@ -654,12 +654,12 @@ class cli extends prototype
     $sep    = preg_replace('/[^|\s]/', ' ', $sep);
     $sep    = strtr($sep, '| ', '+-');
 
-    cli::write("$sep\n");
+    self::write("$sep\n");
 
     if ( ! empty($heads))
     {
-      cli::write(trim(join(' | ', $head)));
-      cli::write("\n$sep");
+      self::write(trim(join(' | ', $head)));
+      self::write("\n$sep");
     }
 
 
@@ -680,9 +680,9 @@ class cli extends prototype
       $out []= trim(join(' | ', $row));
     }
 
-    cli::write("\n" . join("\n", $out));
-    cli::write("\n$sep\n");
-    cli::flush();
+    self::write("\n" . join("\n", $out));
+    self::write("\n$sep\n");
+    self::flush();
   }
 
 
@@ -696,7 +696,7 @@ class cli extends prototype
   {
     if ($test > 0)
     {
-      cli::write(str_repeat("\n", $test));
+      self::write(str_repeat("\n", $test));
     }
 
     ob_get_level() && ob_flush();
@@ -721,7 +721,7 @@ class cli extends prototype
   //
   function call($command, $args = array())
   {
-    foreach (cli::$stack as $key => $val)
+    foreach (self::$stack as $key => $val)
     {
       $test = array($key);
 

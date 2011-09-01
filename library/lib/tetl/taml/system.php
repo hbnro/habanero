@@ -32,11 +32,11 @@ class taml extends prototype
   {
     if (is_assoc($key))
     {
-      taml::$defs = array_merge($key, taml::$defs);
+      self::$defs = array_merge($key, self::$defs);
     }
-    elseif (array_key_exists($key, taml::$defs))
+    elseif (array_key_exists($key, self::$defs))
     {
-      taml::$defs[$key] = $value;
+      self::$defs[$key] = $value;
     }
   }
 
@@ -56,7 +56,7 @@ class taml extends prototype
     }
 
 
-    $php_file = taml::$defs['path'].DS.md5($file).EXT;
+    $php_file = self::$defs['path'].DS.md5($file).EXT;
 
     if (is_file($php_file))
     {
@@ -69,7 +69,7 @@ class taml extends prototype
 
     if ( ! is_file($php_file))
     {// intentionally hidden
-      $out = taml::parse(read($file), $file);
+      $out = self::parse(read($file), $file);
       write($php_file, $out);
     }
 
@@ -119,9 +119,9 @@ class taml extends prototype
       {
         continue;
       }
-      elseif ($tab && ($tab % taml::$defs['indent']))
+      elseif ($tab && ($tab % self::$defs['indent']))
       {
-        return taml::error($i, $line, 'bad_space', $file);
+        return self::error($i, $line, 'bad_space', $file);
       }
 
 
@@ -142,7 +142,7 @@ class taml extends prototype
         while ($dec > 0)
         {
           array_pop($stack);
-          $dec -= taml::$defs['indent'];
+          $dec -= self::$defs['indent'];
         }
       }
 
@@ -162,7 +162,7 @@ class taml extends prototype
       return FALSE;
     }
 
-    $out = ents(taml::compile($out));
+    $out = ents(self::compile($out));
     $out = str_replace('<!--#PRE#-->', '', $out);
     $out = preg_replace(array_keys($fix), $fix, $out);
     $out = preg_replace_callback('/%\{([^{}]+?)\}/', array('taml', 'value'), $out);
@@ -179,7 +179,7 @@ class taml extends prototype
   // variable interpolation
   final private static function value($match)
   {
-    return sprintf('<?php echo @(%s); ?>', join(' ', taml::tokenize($match[1])));
+    return sprintf('<?php echo @(%s); ?>', join(' ', self::tokenize($match[1])));
   }
 
   // compile lines
@@ -189,7 +189,7 @@ class taml extends prototype
 
     if ( ! empty($tree[-1]))
     {// TODO: auto-close blocks?
-      $out []= trim(taml::compile(array(
+      $out []= trim(self::compile(array(
         $tree[-1] => array_slice($tree, 1),
       )));
     }
@@ -199,14 +199,14 @@ class taml extends prototype
       {
         if (is_string($value))
         {
-          $out []= taml::line(trim($value));
+          $out []= self::line(trim($value));
           continue;
         }
 
 
         if (preg_match('/^\s*(:pre|\/)/', $key, $match))
         {
-          $value = join("\n", taml::flatten($value));
+          $value = join("\n", self::flatten($value));
 
           if ($match[1] === '/')
           {
@@ -225,8 +225,8 @@ class taml extends prototype
           continue;
         }
 
-        $value = is_array($value) ? taml::compile($value) : $value;
-        $out []= taml::line(trim($key), $value);
+        $value = is_array($value) ? self::compile($value) : $value;
+        $out []= self::line(trim($key), $value);
       }
     }
 
@@ -260,7 +260,7 @@ class taml extends prototype
       case '-';
         // php
         $key   = stripslashes(substr($key, 1));
-        $key   = rtrim(join(' ', taml::tokenize(substr($key, 1))), ';');
+        $key   = rtrim(join(' ', self::tokenize(substr($key, 1))), ';');
 
         $open  = substr(trim($key), 0, 4) === 'else' ? '} ' : '';
         $close = preg_match('/^\s*(?:if|else(?:if)?|while|switch|for(?:each)?)/', $key) ? ' {' : ';';
@@ -271,7 +271,7 @@ class taml extends prototype
       case '=';
         // print
         $key = stripslashes(trim(substr($key, 1)));
-        $key = rtrim(join(' ', taml::tokenize($key)), ';');
+        $key = rtrim(join(' ', self::tokenize($key)), ';');
 
         return preg_replace('/^/m', '  ', "<?php echo @($key); ?>$text");
       break;
@@ -303,14 +303,14 @@ class taml extends prototype
         if ( ! empty($match[0]))
         {
           $key  = preg_replace('/\{([^{}]+)\}/', '', $key);
-          $hash = join('', taml::tokenize($match[1]));
+          $hash = join('', self::tokenize($match[1]));
 
           preg_match_all('/([\w:-]+)=>(.+?)(?=,|$)/', $hash, $matches);
 
           foreach (array_keys($matches[0]) as $i)
           {
             $attrs = stripslashes($matches[2][$i]);
-            $attrs = join(' ', taml::tokenize($attrs));
+            $attrs = join(' ', self::tokenize($attrs));
 
             $args[$matches[1][$i]] = "%{ $attrs }";
           }
@@ -331,7 +331,7 @@ class taml extends prototype
 
 
         $out = $tag ? tag($tag, $args, "\n$text\n") : $text;
-        $out = preg_replace('/^/m', str_repeat(' ', taml::$defs['indent']), $out);
+        $out = preg_replace('/^/m', str_repeat(' ', self::$defs['indent']), $out);
 
         return $out;
       break;
@@ -442,7 +442,7 @@ class taml extends prototype
   {
     foreach ($set as $one)
     {
-      is_array($one) ? $out = taml::flatten($one, $out) : $out []= $one;
+      is_array($one) ? $out = self::flatten($one, $out) : $out []= $one;
     }
     return $out;
   }

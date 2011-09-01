@@ -72,7 +72,7 @@ class db extends prototype
       $sql .= "\nLIMIT " . ($offset > 0 ? "$offset," : '') . $limit;
     }
 
-    return is_true($return) ? $sql : db::query($sql);
+    return is_true($return) ? $sql : self::query($sql);
   }
 
 
@@ -100,7 +100,7 @@ class db extends prototype
       $column = array_shift(array_keys($values));
     }
 
-    return db::inserted(db::query($sql), $table, $column);
+    return self::inserted(self::query($sql), $table, $column);
   }
 
 
@@ -123,7 +123,7 @@ class db extends prototype
     }
     $sql .= $limit > 0 ? "\nLIMIT $limit" : '';
 
-    return is_true($return) ? $sql : db::affected(db::query($sql));
+    return is_true($return) ? $sql : self::affected(self::query($sql));
   }
 
 
@@ -144,7 +144,7 @@ class db extends prototype
     $sql .= "\nWHERE\n" . sql::build_where($where);
     $sql .= $limit > 0 ? "\nLIMIT {$limit}" : '';
 
-    return is_true($return) ? $sql : db::affected(db::query($sql));
+    return is_true($return) ? $sql : self::affected(self::query($sql));
   }
 
 
@@ -256,10 +256,10 @@ class db extends prototype
   {
     if (is_string($result))
     {
-      $res = db::query($result);
+      $res = self::query($result);
     }
 
-    if (db::numrows($result) > 0)
+    if (self::numrows($result) > 0)
     {
       return sql::result($result) ?: $default;
     }
@@ -282,11 +282,11 @@ class db extends prototype
     {
       $args     = func_get_args();
       $callback = strpos($result, ' ') ? 'query' : 'select';
-      $result   = apply("db::$callback", $args);
+      $result   = apply("self::$callback", $args);
     }
 
 
-    while ($row = db::fetch($result, $output))
+    while ($row = self::fetch($result, $output))
     {
       $out []= $row;
     }

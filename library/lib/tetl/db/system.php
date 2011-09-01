@@ -10,11 +10,11 @@
 
 class sql extends prototype
 {
-  
+
   final public static function names($test)
   {
     static $callback = NULL;
-    
+
     if (is_null($callback))
     {
       $callback = function($str)
@@ -22,21 +22,21 @@ class sql extends prototype
         return trim($str, "`\" \n\/'´");
       };
     }
-    
+
     $set = array_map($callback, explode(',', $test));
-    
+
     foreach ($set as $i => $val)
     {
       $test = array_map($callback, explode('.', $val));
-      $char = substr(sql::quotes('x'), 0, 1);
-  
+      $char = substr(self::quotes('x'), 0, 1);
+
       foreach ($test as $key => $val)
       {
         if (preg_match('/^[\sa-zA-Z0-9_-]+$/', $val))
         {
           $val = trim($val, $char);//FIX
           $val = $char . $val . $char;
-    
+
           $test[$key] = $val;
         }
       }
@@ -44,35 +44,35 @@ class sql extends prototype
     }
     return join(', ', $set);
   }
-  
+
   final public static function mix_columns($test, $value)
   {
     $set    = explode('_', $test);
     $length = sizeof($set);
     $output = array();
-  
-    $output []= "\n" . sql::build_where(array(
+
+    $output []= "\n" . self::build_where(array(
       $set[0] => $value,
     ));
-    
+
     for ($i = 1; $i < $length; $i += 1)
     {
       $one  = $set[$i];
       $next = isset($set[$i + 1]) ? $set[$i + 1] : '';
-      
+
       if ( ! is_keyword($one))
       {
         continue;
       }
-  
+
       $output []= strtoupper($one) . "\n";
-      $output []= sql::build_where(array(
+      $output []= self::build_where(array(
         $next => $value,
       ));
     }
     return " (" . join('', $output) . " )\n";
   }
-  
+
   final public static function fixate_string($test, $alone = FALSE)
   {
     if (is_array($test))
@@ -81,14 +81,14 @@ class sql extends prototype
       {
         $col = key($test);
         $val = $test[$col];
-  
+
         if ( ! is_num($col))
         {
-          return sql::names("$val.$col");
+          return self::names("$val.$col");
         }
         else
         {
-          return sql::fixate_string($val, TRUE);
+          return self::fixate_string($val, TRUE);
         }
       }
       else
@@ -98,15 +98,15 @@ class sql extends prototype
     }
     elseif (is_string($test))
     {
-      $test = "'" . sql::escape($test) . "'";
+      $test = "'" . self::escape($test) . "'";
     }
     return $test;
   }
-  
+
   final public static function build_fields($values)
   {
     $sql = array();
-    
+
     foreach ((array) $values as $key => $val)
     {
       if (strlen(trim($val)) == 0)
@@ -115,36 +115,36 @@ class sql extends prototype
       }
       elseif (is_num($key))
       {
-        $sql []= ' ' . sql::names($val);
+        $sql []= ' ' . self::names($val);
         continue;
       }
-      $sql []= ' ' . sql::names($key) . ' AS ' . sql::names($val);
+      $sql []= ' ' . self::names($key) . ' AS ' . self::names($val);
     }
     return join(",\n", $sql);
   }
-  
+
   final public static function build_values($fields, $insert = FALSE)
   {
     $sql    = array();
     $fields = (array) $fields;
-  
+
     if (is_true($insert))
     {
       $cols = array();
-      
+
       foreach (array_keys($fields) as $one)
       {
-        $cols []= sql::names($one);
+        $cols []= self::names($one);
       }
-  
+
       $sql []= '(' . join(', ', $cols) . ')';
       $sql []= "\nVALUES(";
     }
-  
-    
+
+
     $count = 0;
     $total = sizeof($fields);
-    
+
     foreach ($fields as $key => $val)
     {
       if (is_num($key))
@@ -153,27 +153,27 @@ class sql extends prototype
       }
       else
       {
-        $val = sql::fixate_string($val, TRUE);
-        
+        $val = self::fixate_string($val, TRUE);
+
         if (is_true($insert))
         {
           $sql []= $val ?: 'NULL';
         }
         elseif ( ! empty($val))
         {
-          $sql []= sprintf('%s = %s', sql::names($key), $val ?: "''");
+          $sql []= sprintf('%s = %s', self::names($key), $val ?: "''");
         }
       }
       $sql []= (($count += 1) < $total ? ",\n" : '');
     }
-  
+
     if (is_true($insert))
     {
       $sql []= ')';
     }
     return join('', $sql);
   }
-  
+
   final public static function build_where($test, $operator = 'AND')
   {
     if ( ! empty($test))
@@ -181,24 +181,24 @@ class sql extends prototype
       $operator = strtoupper($operator);
       $test     = (array) $test;
       $length   = sizeof($test);
-  
+
       $inc = $count = $sql = '';
-  
+
       foreach ($test as $key => $val)
       {
         if (preg_match('/_(?:or|and)_/', $key))
         {
           $sql .= "$operator\n";
-          $sql .= sql::mix_columns($key, $val);
-  
+          $sql .= self::mix_columns($key, $val);
+
           $count += 1;
           continue;
         }
         elseif (is_keyword($key))
         {
-          $out  = sql::build_where($val, $key);
+          $out  = self::build_where($val, $key);
           $sql .= strtoupper($key) . "\n$out";
-  
+
           $count += 1;
           continue;
         }
@@ -206,7 +206,7 @@ class sql extends prototype
         {
           $sql .= "$operator\n";
         }
-  
+
         if (is_num($key))
         {
           if (is_string($val))
@@ -215,76 +215,76 @@ class sql extends prototype
           }
           else
           {
-            $sql .= sql::build_where($val, $operator);
+            $sql .= self::build_where($val, $operator);
           }
         }
         elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match))
         {
           $oper = '';
-          $key  = sql::names($match[1]);
-  
+          $key  = self::names($match[1]);
+
           if (is_null($val))
           {
             $oper = 'IS NULL';
           }
           else
           {
-            $val = sql::fixate_string($val, FALSE);
+            $val = self::fixate_string($val, FALSE);
             $oper = ! empty($match[2]) ? ($match[2] == '!' ? '!=' : $match[2]) : '=';
           }
-          
-          if ( ! empty($sql)) 
+
+          if ( ! empty($sql))
           {
             $sql .= "$operator\n";
           }
-  
+
           if (is_array($val))
           {
             $key .= in_array($oper, array('!=', '<>')) ? ' NOT' : '';
             $sql .= " $key IN(" . join(', ', $val) . ")\n";
           }
-          else 
+          else
           {
             $sql .= " $key $oper $val\n";
           }
         }
       }
-      
+
       $sql = $count > 0 ? " (\n$sql )\n" : $sql;
-      
+
       $sql = preg_replace('/(AND|OR)\s*(AND|OR)/s', '\\1', $sql);
       $sql = preg_replace('/(?<=\()\s*AND|OR\s*(?=\))/s', '', $sql);
-      
-      $sql = sql::query_repare($sql);
-      
+
+      $sql = self::query_repare($sql);
+
       return $sql;
     }
   }
-  
+
   final public static function query_repare($test)
   {
     static $rand_expr = '/RAND(?:OM)?\s*\(([^\(\)]*)\)/i',
            $delete_expr = '/^\s*DELETE\s+FROM\s+(\S+)\s*$/is';
-  
+
     if (function_exists('sql_limit'))
     {
       $limit_expr = '/\s+LIMIT\s+(\d+)(?:\s*(?:,|\s+TO\s+)\s*(\d+))?\s*$/i';
       $test       = preg_replace_callback($limit_expr, function($match)
       {
-        return sql::limit($match[1], $match[2]);
+        return self::limit($match[1], $match[2]);
       }, $test);
     }
-  
+
     $test = preg_replace($delete_expr, 'DELETE FROM \\1 WHERE 1=1', $test);
     $test = preg_replace($rand_expr, RANDOM, $test);
-  
+
     return $test;
   }
-  
+
   final public static function query_parse($test, $separator = 59)
   {
     $last = substr($separator, 0, 2);
-    
+
     if ($last === '\t')
     {
       $separator = "\t";
@@ -297,26 +297,26 @@ class sql extends prototype
     {
       $separator = char($last);
     }
-  
+
     $hash = uniqid('--sql-quote');
     $exep = preg_quote($separator, '/');
-    
+
     $test = trim($test, $separator) . $separator;
-    
+
     $test = str_replace("\\'", $hash, $test);
     $test = preg_replace("/{$exep}+/", $separator, $test);
     $test = preg_replace("/{$exep}\s*{$exep}/", $separator, $test);
-  
+
     $query  = '';
     $length = strlen($test);
-    
+
     $str = FALSE;
     $out = array();
-    
+
     for ($i = 0; $i < $length; $i += 1)
     {
       $char = substr($test, $i, 1);
-      
+
       switch ($char)
       {
         case $separator:
@@ -347,7 +347,7 @@ class sql extends prototype
     }
     return $out;
   }
-  
+
 }
 
 /**#@-*/

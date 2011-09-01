@@ -27,13 +27,13 @@ class cache extends prototype
   {
     $key = ! func_num_args() ? '--n' . ob_get_level() : $key;
 
-    if (cache::exists($key))
+    if (self::exists($key))
     {
-      echo cache::get($key);
+      echo self::get($key);
       return FALSE;
     }
 
-    cache::$last []= $key;
+    self::$last []= $key;
 
     ob_start();
 
@@ -60,14 +60,14 @@ class cache extends prototype
 
     echo $out;
 
-    if ( ! ($key = array_pop(cache::$last)))
+    if ( ! ($key = array_pop(self::$last)))
     {
       return FALSE;
     }
 
     if ($max > 0)
     {
-      return cache::set($key, $out, $max, $tags);
+      return self::set($key, $out, $max, $tags);
     }
     return TRUE;
   }
@@ -83,13 +83,13 @@ class cache extends prototype
    */
   final public static function block($key, Closure $lambda, $max = 0)
   {
-    if (is_false($old = cache::get($key)))
+    if (is_false($old = self::get($key)))
     {
       ob_start() && $lambda();
-      
+
       $old = ob_get_clean();
 
-      cache::set($key, $old, $max);
+      self::set($key, $old, $max);
     }
 
     echo $old;
@@ -105,7 +105,7 @@ class cache extends prototype
    */
   final public static function get($key, $default = FALSE)
   {
-    if (is_num($key) OR is_false($old = cache::fetch_item($key)))
+    if (is_num($key) OR is_false($old = self::fetch_item($key)))
     {
       return $default;
     }
@@ -136,20 +136,20 @@ class cache extends prototype
 
     if ( ! empty($tags))
     {
-      $old = cache::fetch_item('--cache-tags');
+      $old = self::fetch_item('--cache-tags');
       $old = ! is_array($old) ? array() : $old;
 
       $old[$key] = $tags;
 
-      cache::store_item('--cache-tags', $old, NEVER);
+      self::store_item('--cache-tags', $old, NEVER);
     }
 
     if ($max > 0)
     {
-      return cache::store_item($key, $value, $max);
+      return self::store_item($key, $value, $max);
     }
 
-    cache::remove($key);
+    self::remove($key);
 
     return FALSE;
   }
@@ -171,7 +171,7 @@ class cache extends prototype
 
     if (is_array($key))
     {
-      $old = cache::fetch_item('--cache-tags');
+      $old = self::fetch_item('--cache-tags');
 
       foreach ((array) $old as $i => $val)
       {
@@ -182,13 +182,13 @@ class cache extends prototype
           continue;
         }
 
-        cache::delete_item($i);
+        self::delete_item($i);
 
         unset($old[$i]);
       }
-      return cache::store_item('--cache-tags', $old, NEVER);
+      return self::store_item('--cache-tags', $old, NEVER);
     }
-    return cache::delete_item($key);
+    return self::delete_item($key);
   }
 
 
@@ -199,7 +199,7 @@ class cache extends prototype
    */
   final public static function clear()
   {
-    cache::free_all();
+    self::free_all();
   }
 
 
@@ -211,7 +211,7 @@ class cache extends prototype
    */
   final public static function exists($key)
   {
-    return ! is_num($key) && cache::check_item($key);
+    return ! is_num($key) && self::check_item($key);
   }
 
 }
