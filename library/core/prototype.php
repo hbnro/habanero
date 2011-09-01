@@ -71,7 +71,7 @@ class prototype
    */
   final public static function methods()
   {
-    return self::$public[get_called_class()];
+    return ! empty(self::$public[get_called_class()]) ? self::$public[get_called_class()] : array();
   }
 
 
