@@ -28,12 +28,20 @@ function char($text)
 /**
  * Make a string lowercase and non alphabetic charater to underscore
  *
- * @param  string  String
- * @param  boolean Use ucwords()?
- * @return string
+ * @param     string  String
+ * @param     boolean Use ucwords()?
+ * @param     boolean Strict mode?
+ * @staticvar array   Replacements
+ * @return    string
  */
-function underscore($text, $ucwords = FALSE)
+function underscore($text, $ucwords = FALSE, $strict = FALSE)
 {
+  static $repl = array(
+    '/(^|\W)([A-Z])/e' => '"\\1_".strtolower("\\2");',
+    '/[A-Z](?=\w)/' => '_\\0',
+  );
+
+
   $text = plain(unents($text));
 
   if (is_true($ucwords))
@@ -41,9 +49,11 @@ function underscore($text, $ucwords = FALSE)
     $text = ucwords($text);
   }
 
-  $text = strtr($text, ' ', '_');
+  $text = preg_replace(array_keys($repl), $repl, $text);
+  $text = trim(strtr($text, ' ', '_'), '_');
+  $text = strtolower($text);
 
-  return preg_replace('/(^|\W)([A-Z])/e', '"\\1_".strtolower("\\2");', $text);
+  return $text;
 }
 
 
@@ -61,6 +71,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '')
             '/[^a-z0-9]|\s+/i' => ' ',
             '/\s([a-z])/ie' => '$glue.ucfirst("\\1");',
           );
+
 
   $text = preg_replace(array_keys($repl), $repl, underscore($text));
 
