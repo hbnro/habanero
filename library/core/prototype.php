@@ -26,7 +26,9 @@ class prototype
     {
       if (self::defined('missing'))
       {
-        return self::missing($method, $arguments);
+        $class = get_called_class();
+
+        return $class::missing($method, $arguments);
       }
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
