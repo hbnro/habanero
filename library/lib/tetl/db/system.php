@@ -47,7 +47,7 @@ class sql extends prototype
 
   final public static function mix_columns($test, $value)
   {
-    $set    = explode('_', $test);
+    $set    = preg_split('/_(?:or|and)_/', $test);
     $length = sizeof($set);
     $output = array();
 
