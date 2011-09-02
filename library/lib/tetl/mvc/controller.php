@@ -4,7 +4,7 @@
  * MVC controller
  */
 
-class controller extends prototype
+class Controller extends prototype
 {
 
   /**#@+
@@ -13,6 +13,12 @@ class controller extends prototype
 
   // view instance vars
   public static $view = array();
+
+  // default title
+  public static $title = 'untitled';
+
+  // default layout
+  public static $layout = 'default';
 
   // output response
   public static $response = array(

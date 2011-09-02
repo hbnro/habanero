@@ -27,13 +27,13 @@ bootstrap::bind(function($app)
     }
     else
     {
-      list($class, $method) = explode('#', (string) $params['to']);
+      list($controller, $action) = explode('#', (string) $params['to']);
 
-      $controller_file = $controllers_path.DS.$class.EXT;
+      $controller_file = $controllers_path.DS.$controller.EXT;
 
       if ( ! is_file($controller_file))
       {
-        die("File not found: $controller_file");
+        raise(ln('mvc.controller_missing', array('name' => $controller_file)));
       }
 
 
@@ -42,76 +42,102 @@ bootstrap::bind(function($app)
        */
 
       require __DIR__.DS.'controller'.EXT;
-
       require $controller_file;
 
       /**#@-*/
 
-      if ( ! class_exists($class))
+      $class_name  = camelcase($controller, TRUE);
+      $class_name .= 'Controller';
+
+
+      if ( ! class_exists($class_name))
       {
-        die("Missing class: $class");
+        raise(ln('mvc.class_missing', array('class' => $class_name)));
       }
-      elseif ( ! $class::defined($method))
+      elseif ( ! $class_name::defined($action))
       {
-        die("Missing method: $class#$method");
+        raise(ln('mvc.action_missing', array('class' => $class_name, 'action' => $action)));
       }
 
 
-      /**#@+
+      $helper_file = $helpers_path.DS.$controller.EXT;
+
+      if ( ! is_file($helper_file))
+      {
+        raise(ln('mvc.helper_missing', array('name' => $helper_file)));
+      }
+
+
+      /**
        * @ignore
        */
+      require $helper_file;
 
-      require __DIR__.DS.'model'.EXT;
-      require $helpers_path.DS.$class.EXT;
 
-      /**#@-*/
-
-      spl_autoload_register(function($class)
+      spl_autoload_register(function($model_name)
         use($models_path)
       {
-        $model_file = $models_path.DS.$class.EXT;
+        $model_file = $models_path.DS.underscore($model_name).EXT;
 
         if (is_file($model_file))
         {
-          ! class_exists('db') && import('tetl/db');
+          /**#@+
+            * @ignore
+            */
+
+          if ( ! class_exists('db'))
+          {
+            import('tetl/db');
+
+            require __DIR__.DS.'model'.EXT;
+          }
 
           require $model_file;
+
+          /**#@-*/
         }
       });
 
 
-      $class::defined('init') && $class::init();
-      $class::$method();
+      $class_name::defined('init') && $class_name::init();
+      $class_name::$action();
 
 
-      $view_file = findfile($views_path.DS.'scripts'.DS.$class, "$method.*", FALSE, 1);
+      $view_file = findfile($views_path.DS.'scripts'.DS.$controller, "$action.*", FALSE, 1);
 
       if ( ! is_file($view_file))
       {
-        die("File not exists: $view_file");
+        raise(ln('mvc.view_missing', array('name' => $controller, 'action' => $action)));
       }
 
 
-      $output = $class::$response;
-      $extension = ext($view_file);
+      /**
+       * @ignore
+       */
+      require __DIR__.DS.'view'.EXT;
 
-      switch ($extension)
+      $view = View::load($view_file, (array) $class_name::$view);
+
+      if ( ! is_false($class_name::$layout))
       {
-        case 'taml';
-          import('tetl/taml');
-          $output['output'] = taml::render($view_file, (array) $class::$view);
-        break;
-        case 'php';
-        case 'phtml';
-          $output['output'] = render(array(
-            'partial' => $view_file,
-            'locals' => (array) $class::$view,
-          ));
-        break;
-        default;
-          die("Unknown extension: $extension");
-        break;
+        $layout_file = $views_path.DS.'layouts'.DS.$class_name::$layout.EXT;
+
+        if ( ! is_file($layout_file))
+        {
+          raise(ln('mvc.layout_missing', array('name' => $layout_file)));
+        }
+
+        $view = render($layout_file, TRUE, array(
+          'locals' => array(
+            'yield' => $view,
+            'title' => $class_name::$title,
+          ),
+        ));
       }
+
+      $output = $class_name::$response;
+
+      $output['output'] = $view;
 
       response($output);
     }
