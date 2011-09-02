@@ -12,21 +12,40 @@ class model extends prototype
   public static $attr_writer = array();
 
 
-  final public static function find($id, $what = ALL, $type = AS_ARRAY)
+
+  /*
+  instanced object: row
+  */
+
+  final public function save()
   {
-
-    $res = db::select(self::$table, $what, array(self::$pk => $id));
-
-    return db::fetch($res, $type);
-
   }
+
+  final public function update()
+  {
+  }
+
+  final public function delete()
+  {
+  }
+
+  final public function is_new()
+  {
+  }
+
+  /*
+  static object: builder
+  */
 
 
   /*
-  TODO: implement
+  TODO: implement validation?
+
+  is_valid?
 
   find_by_?
   count_by_?
+  find all_by_?
   find_or_create_by_?
 
   all?
@@ -36,18 +55,28 @@ class model extends prototype
   first?
   last?
 
-  callbacks*
-  update*
-  delete*
-  insert*
-  create*
-  save*
+  after_find!
 
+  before_save!
+  before_create!
+  before_update!
+
+  after_update!
+  after_create!
+  after_save!
+
+  before_delete!
+  after_delete!
 
   */
 
 
-  final public static function init()
+
+  /**#@+
+   * @ignore
+   */
+
+  final private static function pk()
   {
     if ( ! self::$pk)
     {
@@ -62,7 +91,24 @@ class model extends prototype
           break;
         }
       }
+
+      if ( ! self::$pk)
+      {
+        die('missing primary_key');
+      }
     }
+
+    return self::$pk;
   }
 
+  final private static function find_by_pk($id, $what = ALL, $type = AS_ARRAY)
+  {
+
+    $res = db::select(self::$table, $what, array(self::$pk => $id));
+
+    return db::fetch($res, $type);
+
+  }
+
+  /**#@-*/
 }
