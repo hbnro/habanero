@@ -238,13 +238,14 @@ class sql extends prototype
             $sql .= "$operator\n";
           }
 
-          if (is_array($val))
+          if (is_array($val) && (sizeof($val) > 1))
           {
             $key .= in_array($oper, array('!=', '<>')) ? ' NOT' : '';
             $sql .= " $key IN(" . join(', ', $val) . ")\n";
           }
           else
           {
+            $val = is_array($val) ? array_shift($val) : $val;
             $sql .= " $key $oper $val\n";
           }
         }
