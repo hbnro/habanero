@@ -415,8 +415,18 @@ function dump($var, $show = FALSE, $deep = 99)
     }
     else
     {
-      foreach (array_keys($test) as $key)
+      foreach ($test as $key => $val)
       {
+        if (is_object($var))
+        {
+          unset($test[$key]);
+
+          $key = substr($key, strlen(get_class($var)) + 1);
+          $key = sprintf('%s#%s', get_class($var), $key);
+
+          $test[$key] = $val;
+        }
+
         if (($cur = strlen($key)) > $width)
         {
           $width = $cur;
