@@ -12,13 +12,14 @@ bootstrap::bind(function($app)
 
   $controllers_path = realpath(option('mvc.controllers_path'));
   $helpers_path = realpath(option('mvc.helpers_path'));
+  $models_path = realpath(option('mvc.models_path'));
   $views_path = realpath(option('mvc.views_path'));
 
 
   $request = request::methods();
 
   request::implement('dispatch', function(array $params = array())
-    use($request, $controllers_path, $helpers_path, $views_path)
+    use(&$request, $controllers_path, $helpers_path, $models_path, $views_path)
   {
     if (is_callable($params['to']))
     {
@@ -65,6 +66,18 @@ bootstrap::bind(function($app)
 
       /**#@-*/
 
+      spl_autoload_register(function($class)
+        use($models_path)
+      {
+        $model_file = $models_path.DS.$class.EXT;
+
+        if (is_file($model_file))
+        {
+          ! class_exists('db') && import('tetl/db');
+
+          require $model_file;
+        }
+      });
 
 
       $class::defined('init') && $class::init();
