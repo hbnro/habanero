@@ -421,8 +421,7 @@ function dump($var, $show = FALSE, $deep = 99)
         {
           unset($test[$key]);
 
-          $key = substr($key, strlen(get_class($var)) + 1);
-          $key = sprintf('%s#%s', get_class($var), $key);
+          $key = preg_replace(sprintf('/\b%s/', get_class($var)), '@', $key);
 
           $test[$key] = $val;
         }
@@ -436,6 +435,11 @@ function dump($var, $show = FALSE, $deep = 99)
 
     foreach ($test as $key => $val)
     {
+      if (is_object($var))
+      {
+        $key = preg_replace(sprintf('/\b%s/', get_class($var)), '@', $key);
+      }
+
       $old   = dump($val, FALSE, $deep - 1, $depth + 1);
       $pre   = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
 
