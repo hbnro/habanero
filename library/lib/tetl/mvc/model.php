@@ -82,7 +82,11 @@ class model extends prototype
 
     if ($this->is_new())
     {
-      $this->props[$class::pk($class)] = db::insert($class::table($class), $this->props);
+      $fields = $this->props;
+
+      unset($fields[$class::pk($class)]);
+
+      $this->props[$class::pk($class)] = db::insert($class::table($class), $fields);
     }
     else
     {
@@ -108,6 +112,15 @@ class model extends prototype
 
     $class::callback($this, $class, 'before_update');
 
+
+    $fields = $this->props;
+
+    unset($fields[$class::pk($class)]);
+
+    db::update($class::table($class), $fields, array(
+      $class::pk($class) => $this->props[$class::pk($class)],
+    ));
+
     $class::callback($this, $class, 'after_update');
 
     return $this;
@@ -124,6 +137,10 @@ class model extends prototype
     $class = get_called_class();
 
     $class::callback($this, $class, 'before_delete');
+
+    db::delete($class::table($class), array(
+      $class::pk($class) => $this->props[$class::pk($class)],
+    ));
 
     $class::callback($this, $class, 'after_delete');
 
