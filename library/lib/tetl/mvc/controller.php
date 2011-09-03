@@ -4,7 +4,7 @@
  * MVC controller
  */
 
-class Controller extends prototype
+class controller extends prototype
 {
 
   /**#@+

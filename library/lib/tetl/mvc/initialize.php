@@ -46,8 +46,7 @@ bootstrap::bind(function($app)
 
       /**#@-*/
 
-      $class_name  = camelcase($controller, TRUE);
-      $class_name .= 'Controller';
+      $class_name  = $controller . '_controller';
 
 
       if ( ! class_exists($class_name))
@@ -77,7 +76,7 @@ bootstrap::bind(function($app)
       spl_autoload_register(function($model_name)
         use($models_path)
       {
-        $model_file = $models_path.DS.underscore($model_name).EXT;
+        $model_file = $models_path.DS.$model_name.EXT;
 
         if (is_file($model_file))
         {
@@ -116,7 +115,7 @@ bootstrap::bind(function($app)
        */
       require __DIR__.DS.'view'.EXT;
 
-      $view = View::load($view_file, (array) $class_name::$view);
+      $view = view::load($view_file, (array) $class_name::$view);
 
       if ( ! is_false($class_name::$layout))
       {

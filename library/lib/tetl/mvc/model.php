@@ -4,7 +4,7 @@
  * MVC model
  */
 
-class Model extends prototype
+class model extends prototype
 {
 
   /**#@+
@@ -331,7 +331,7 @@ class Model extends prototype
   // retrive table name
   final private static function table($class)
   {
-    return $class::$table ?: underscore($class);
+    return $class::$table ?: $class;
   }
 
   // retrieve primary key

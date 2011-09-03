@@ -1,6 +1,6 @@
 <?php
 
-class View extends prototype
+class view extends prototype
 {
  // TODO: huh?
 
