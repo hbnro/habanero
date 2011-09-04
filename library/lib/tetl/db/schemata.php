@@ -253,6 +253,8 @@ db::implement('field', function($type, $length = 0, $default = NULL)
   {
     @list($type, $length, $default) = $test;
 
+    ! $length && ! empty($set[$type]['length']) && $length = $set[$type]['length'];
+
     if ( ! empty($set[$type]))
     {//FIX
       if (is_string($set[$type]))
