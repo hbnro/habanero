@@ -16,6 +16,38 @@ bootstrap::bind(function($app)
   $views_path = realpath(option('mvc.views_path'));
 
 
+  resolve(function($class)
+    use($models_path)
+  {
+    /**
+      * @ignore
+      */
+
+    switch ($class)
+    {
+      case 'model';
+        import('tetl/db');
+
+        require __DIR__.DS.'model'.EXT;
+      break;
+      case 'controller';
+        require __DIR__.DS.'controller'.EXT;
+      break;
+      default;
+      break;
+    }
+
+
+    $model_file = $models_path.DS.$class.EXT;
+
+    if (is_file($model_file))
+    {
+      require $model_file;
+    }
+
+    /**#@-*/
+  });
+
   $request = request::methods();
 
   request::implement('dispatch', function(array $params = array())
@@ -41,7 +73,6 @@ bootstrap::bind(function($app)
        * @ignore
        */
 
-      require __DIR__.DS.'controller'.EXT;
       require $controller_file;
 
       /**#@-*/
@@ -51,11 +82,11 @@ bootstrap::bind(function($app)
 
       if ( ! class_exists($class_name))
       {
-        raise(ln('mvc.class_missing', array('class' => $class_name)));
+        raise(ln('mvc.class_missing', array('controller' => $class_name)));
       }
       elseif ( ! $class_name::defined($action))
       {
-        raise(ln('mvc.action_missing', array('class' => $class_name, 'action' => $action)));
+        raise(ln('mvc.action_missing', array('controller' => $class_name, 'action' => $action)));
       }
 
 
@@ -72,31 +103,16 @@ bootstrap::bind(function($app)
        */
       require $helper_file;
 
+      $model_file = $models_path.DS.$class_name.EXT;
 
-      spl_autoload_register(function($model_name)
-        use($models_path)
+      if (is_file($model_file))
       {
-        $model_file = $models_path.DS.$model_name.EXT;
+        /**
+          * @ignore
+          */
 
-        if (is_file($model_file))
-        {
-          /**#@+
-            * @ignore
-            */
-
-          if ( ! class_exists('db'))
-          {
-            import('tetl/db');
-
-            require __DIR__.DS.'model'.EXT;
-          }
-
-          require $model_file;
-
-          /**#@-*/
-        }
-      });
-
+        require $model_file;
+      }
 
       $class_name::defined('init') && $class_name::init();
       $class_name::$action();
@@ -106,7 +122,7 @@ bootstrap::bind(function($app)
 
       if ( ! is_file($view_file))
       {
-        raise(ln('mvc.view_missing', array('name' => $controller, 'action' => $action)));
+        raise(ln('mvc.view_missing', array('controller' => $controller, 'action' => $action)));
       }
 
 
