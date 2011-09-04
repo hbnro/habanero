@@ -97,16 +97,14 @@ bootstrap::bind(function($app)
 
       $helper_file = $helpers_path.DS.$controller.EXT;
 
-      if ( ! is_file($helper_file))
+      if (is_file($helper_file))
       {
-        raise(ln('mvc.helper_missing', array('name' => $helper_file)));
+        /**
+         * @ignore
+         */
+        require $helper_file;
       }
 
-
-      /**
-       * @ignore
-       */
-      require $helper_file;
 
       $model_file = $models_path.DS.$class_name.EXT;
 

@@ -128,9 +128,6 @@ HELP;
 
               $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
               write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$name).DS.'index'.$ext, $text);
-
-              success(ln('tetl.controller_helper_building', array('name' => $name)));
-              write(option('mvc.helpers_path').DS.$name.EXT, "<?php\n");
             }
           break;
           case 'action';
