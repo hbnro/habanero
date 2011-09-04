@@ -17,17 +17,15 @@ class database extends prototype
             'time',
           );
 
-  function help()
+  final public static function help()
   {
-    $db_introduction = ln('tetl.db_generator_intro');
-    $db_title = ln('tetl.db_generator');
+    $db_introduction = ln('tetl.db_generator');
     $str = <<<HELP
 
   $db_introduction
 
-  $db_title:
-
   \bgreen(db:st)\b
+  \bgreen(db:make)\b
   \bgreen(db:show)\b \bblue(table)\b
   \bgreen(db:drop)\b \bblue(table)\b
   \bgreen(db:rename)\b \bblue(table)\b \bwhite(new)\b
@@ -46,7 +44,7 @@ HELP;
     cli::write(cli::format("$str\n"));
   }
 
-  private function init()
+  final private static function init()
   {
     $config_file = CWD.DS.'config'.DS.'database'.EXT;
 
@@ -55,20 +53,20 @@ HELP;
     import('tetl/db');
   }
 
-  private function check_table($table)
+  final private static function check_table($table)
   {
-    database::init();
+    self::init();
 
-    blue(ln('tetl.verifying_tables'));
+    info(ln('tetl.verifying_tables'));
 
 
     if ( ! $table)
     {
-      red(ln('tetl.table_name_missing'));
+      error(ln('tetl.table_name_missing'));
     }
     elseif ( ! in_array($table, db::tables()))
     {
-      red(ln('tetl.table_not_exists', array('name' => $table)));
+      error(ln('tetl.table_not_exists', array('name' => $table)));
     }
     else
     {
@@ -76,39 +74,121 @@ HELP;
     }
   }
 
-  function status()
+  final private static function migrate($name)
   {
-    database::init();
+    $args = array_slice(func_get_args(), 1);
+    $time = time();
 
-    blue(ln('tetl.verifying_database'));
+    $migration_name = date('YmdHis_', $time).$args[0].'_'.$name;
+    $migration_path = mkpath(CWD.DS.'db'.DS.'migrate');
+    $migration_file = $migration_path.DS.$migration_name.EXT;
 
 
-    green(DB_DSN);
+    foreach ($args as $i => $one)
+    {
+      if (is_array($one))
+      {
+        $text = var_export($one, TRUE);
+
+        $text = preg_replace('/ \d+\s+=>/', '', $text);
+        $text = preg_replace('/array\s+\(/', 'array(', $text);
+        $text = preg_replace('/[\'"](\d+)[\'"]/', '\\1', $text);
+        $text = preg_replace('/([\'"]\w+[\'"])\s+=>\s+(?=\w+)/s', '\\1 => ', $text);
+
+        $text = str_replace('( ', '(', $text);
+        $text = str_replace(',)', ')', $text);
+
+        $args[$i] = $text;
+      }
+      else
+      {
+        $args[$i] = "'$one'";
+      }
+    }
+
+    $date = date('Y-m-d H:i:s', $time);
+
+    $code = "<?php\n/* $date */\n$name(";
+    $code .= join(', ', $args);
+    $code .= ");\n";
+
+    write($migration_file, $code);
+
+    require $migration_file;
+  }
+
+  function st()
+  {
+    self::init();
+
+    info(ln('tetl.verifying_database'));
+
+
+    success(DB_DSN);
 
     $test = db::tables();
 
     if (empty($test))
     {
-      red(ln('tetl.without_tables'));
+      error(ln('tetl.without_tables'));
     }
     else
     {
       foreach ($test as $one)
       {
-        yellow($one);
+        $count = db::result(db::select($one, 'COUNT(*)'));
+
+        notice(ln('tetl.table_status', array('name' => $one, 'count' => $count)));
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function show($args = array())
+  final public static function make($args = array(), $params = array())
+  {
+    self::init();
+
+    info(ln('tetl.verifying_database'));
+
+    if ( ! empty($params['drop']))
+    {
+      notice(ln('tetl.drop_tables'));
+
+      foreach (db::tables(is_true($params['drop']) ? '*' : $params['drop']) as $one)
+      {
+        success(ln('tetl.table_dropping', array('name' => $one)));
+        drop_table($one);
+      }
+    }
+
+    info(ln('tetl.migrating_database'));
+
+    if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
+    {
+      sort($test);
+
+      foreach ($test as $migration_file)
+      {
+        success(ln('tetl.run_migration', array('name' => $migration_file)));
+        require $migration_file;
+      }
+    }
+    else
+    {
+      error(ln('tetl.without_migrations'));
+    }
+
+    bold(ln('tetl.bold'));
+  }
+
+  final public static function show($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
-      green(ln('tetl.table_show_columns', array('name' => $table)));
+      success(ln('tetl.table_show_columns', array('name' => $table)));
 
       $set =
       $heads = array();
@@ -120,7 +200,7 @@ HELP;
           $heads = array_keys($one);
         }
 
-        $set[$name] = array($name);
+        $set[$name]  = array($name);
         $set[$name] += $one;
       }
 
@@ -128,14 +208,14 @@ HELP;
       cli::table($set, $heads);
 
 
-      yellow(ln('tetl.table_show_indexes', array('name' => $table)));
+      notice(ln('tetl.table_show_indexes', array('name' => $table)));
 
       $idx = array();
       $all = db::indexes($table);
 
       if ( ! $all)
       {
-        red(ln('tetl.table_without_indexes', array('name' => $table)));
+        error(ln('tetl.table_without_indexes', array('name' => $table)));
       }
       else
       {
@@ -149,50 +229,50 @@ HELP;
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function drop($args = array())
+  final public static function drop($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
-      green(ln('tetl.table_dropping', array('name' => $table)));
-      drop_table($table);
+      success(ln('tetl.table_dropping', array('name' => $table)));
+      self::migrate('drop_table', $table);
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function rename($args = array())
+  final public static function rename($args = array())
   {
     @list($table, $to) = $args;
 
-    database::check_table($table);
+    self::check_table($table);
 
     if ( ! $to)
     {
-      red(ln('tetl.table_name_missing'));
+      error(ln('tetl.table_name_missing'));
     }
     elseif (in_array($to, db::tables()))
     {
-      red(ln('tetl.table_already_exists', array('name' => $to)));
+      error(ln('tetl.table_already_exists', array('name' => $to)));
     }
     else
     {
-      green(ln('tetl.renaming_table_to', array('from' => $table, 'to' => $to)));
-      rename_table($table, $to);
+      success(ln('tetl.renaming_table_to', array('from' => $table, 'to' => $to)));
+      self::migrate('rename_table', $table, $to);
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function create($args = array())
+  final public static function create($args = array())
   {
-    database::init();
+    self::init();
 
-    blue(ln('tetl.verifying_structure'));
+    info(ln('tetl.verifying_structure'));
 
     @list($table) = $args;
 
@@ -200,17 +280,17 @@ HELP;
 
     if ( ! $table)
     {
-      red(ln('tetl.table_name_missing'));
+      error(ln('tetl.table_name_missing'));
     }
     elseif (in_array($table, db::tables()))
     {
-      red(ln('tetl.table_already_exists', array('name' => $table)));
+      error(ln('tetl.table_already_exists', array('name' => $table)));
     }
     else
     {
       if ( ! $args)
       {
-        red(ln('tetl.table_missing_fields', array('name' => $table)));
+        error(ln('tetl.table_missing_fields', array('name' => $table)));
       }
       else
       {
@@ -222,15 +302,15 @@ HELP;
         {
           @list($name, $type, $length) = explode(':', $one);
 
-          if ( ! in_array($type, database::$types))
+          if ( ! in_array($type, self::$types))
           {
-            red(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $name)));
+            error(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $name)));
 
             $fail = TRUE;
           }
           else
           {
-            yellow(ln('tetl.success_field_type', array('type' => $type, 'name' => $name)));
+            notice(ln('tetl.success_field_type', array('type' => $type, 'name' => $name)));
 
             $fields[$name] = array();
             $fields[$name] []= $type;
@@ -249,35 +329,35 @@ HELP;
 
         if ( ! $pk)
         {
-          red(ln('tetl.table_pk_missing', array('name' => $table)));
+          error(ln('tetl.table_pk_missing', array('name' => $table)));
         }
         elseif ($fail)
         {
-          red(ln('tetl.table_def_incomplete', array('name' => $table)));
+          error(ln('tetl.table_def_incomplete', array('name' => $table)));
         }
         else
         {
-          green(ln('tetl.table_def_building', array('name' => $table)));
-          db::query(db::build($table, $fields));
+          success(ln('tetl.table_def_building', array('name' => $table)));
+          self::migrate('create_table', $table, $fields);
         }
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function add_column($args = array())
+  final public static function add_column($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
       $fields = array_keys(db::columns($table));
       $args = array_slice($args, 1);
 
       if ( ! $args)
       {
-        red(ln('tetl.table_fields_missing', array('name' => $table)));
+        error(ln('tetl.table_fields_missing', array('name' => $table)));
       }
       else
       {
@@ -289,38 +369,38 @@ HELP;
 
           $length && $col []= $length;
 
-          if ( ! in_array($type, database::$types))
+          if ( ! in_array($type, self::$types))
           {
-            red(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $name)));
+            error(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $name)));
           }
           elseif (in_array($name, $fields))
           {
-            red(ln('tetl.column_already_exists', array('name' => $name)));
+            error(ln('tetl.column_already_exists', array('name' => $name)));
           }
           else
           {
-            green(ln('tetl.column_building', array('type' => $type, 'name' => $name)));
-            add_column($table, $name, $col);
+            success(ln('tetl.column_building', array('type' => $type, 'name' => $name)));
+            self::migrate('add_column', $table, $name, $col);
           }
         }
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function remove_column($args = array())
+  final public static function remove_column($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
       $fields = array_keys(db::columns($table));
       $args = array_slice($args, 1);
 
       if ( ! $args)
       {
-        red(ln('tetl.table_fields_missing', array('name' => $table)));
+        error(ln('tetl.table_fields_missing', array('name' => $table)));
       }
       else
       {
@@ -328,32 +408,32 @@ HELP;
         {
           if ( ! in_array($one, $fields))
           {
-            red(ln('tetl.column_not_exists', array('name' => $one)));
+            error(ln('tetl.column_not_exists', array('name' => $one)));
           }
           else
           {
-            green(ln('tetl.column_dropping', array('name' => $one)));
-            remove_column($table, $one);
+            success(ln('tetl.column_dropping', array('name' => $one)));
+            self::migrate('remove_column', $table, $one);
           }
         }
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function rename_column($args = array())
+  final public static function rename_column($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
       $fields = array_keys(db::columns($table));
       $args = array_slice($args, 1);
 
       if ( ! $args)
       {
-        red(ln('tetl.table_fields_missing', array('name' => $table)));
+        error(ln('tetl.table_fields_missing', array('name' => $table)));
       }
       else
       {
@@ -366,36 +446,36 @@ HELP;
 
           if ( ! in_array($one, $fields))
           {
-            red(ln('tetl.column_not_exists', array('name' => $one)));
+            error(ln('tetl.column_not_exists', array('name' => $one)));
           }
           elseif ( ! $next)
           {
-            red(ln('tetl.column_name_missing'));
+            error(ln('tetl.column_name_missing'));
           }
           else
           {
-            green(ln('tetl.column_renaming', array('from' => $one, 'to' => $next)));
-            rename_column($table, $one, $next);
+            success(ln('tetl.column_renaming', array('from' => $one, 'to' => $next)));
+            self::migrate('rename_column', $table, $one, $next);
           }
         }
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function change_column($args = array())
+  final public static function change_column($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
       $fields = db::columns($table);
       $args = array_slice($args, 1);
 
       if ( ! $args)
       {
-        red(ln('tetl.table_fields_missing', array('name' => $table)));
+        error(ln('tetl.table_fields_missing', array('name' => $table)));
       }
       else
       {
@@ -408,11 +488,11 @@ HELP;
 
           if ( ! array_key_exists($one, $fields))
           {
-            red(ln('tetl.column_not_exists', array('name' => $one)));
+            error(ln('tetl.column_not_exists', array('name' => $one)));
           }
           elseif ( ! $next)
           {
-            red(ln('tetl.column_type_missing'));
+            error(ln('tetl.column_type_missing'));
           }
           else
           {
@@ -422,36 +502,36 @@ HELP;
 
             $length && $col []= $length;
 
-            if ( ! in_array($type, database::$types))
+            if ( ! in_array($type, self::$types))
             {
-              red(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $one)));
+              error(ln('tetl.unknown_field_type', array('type' => $type, 'name' => $one)));
             }
             elseif ($fields[$one]['type'] === $type)
             {
-              red(ln('tetl.column_already_exists', array('type' => $type, 'name' => $one)));
+              error(ln('tetl.column_already_exists', array('type' => $type, 'name' => $one)));
             }
             else
             {
-              green(ln('tetl.column_changing', array('type' => $type, 'name' => $one)));
-              change_column($table, $one, $col);
+              success(ln('tetl.column_changing', array('type' => $type, 'name' => $one)));
+              self::migrate('change_column', $table, $one, $col);
             }
           }
         }
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function add_index($args = array(), $params = array())
+  final public static function add_index($args = array(), $params = array())
   {
     @list($table, $name) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
       if ( ! $name)
       {
-        red(ln('tetl.index_name_missing', array('name' => $table)));
+        error(ln('tetl.index_name_missing', array('name' => $table)));
       }
       else
       {
@@ -461,11 +541,11 @@ HELP;
 
         if ( ! $args)
         {
-          red(ln('tetl.index_columns_missing', array('name' => $table)));
+          error(ln('tetl.index_columns_missing', array('name' => $table)));
         }
         elseif (array_key_exists($name, $idx))
         {
-          red(ln('tetl.index_already_exists', array('name' => $name)));
+          error(ln('tetl.index_already_exists', array('name' => $name)));
         }
         else
         {
@@ -476,11 +556,11 @@ HELP;
           {
             if ( ! in_array($one, $fields))
             {
-              red(ln('tetl.column_not_exists', array('name' => $one)));
+              error(ln('tetl.column_not_exists', array('name' => $one)));
             }
             else
             {
-              yellow(ln('tetl.success_column_index', array('name' => $one)));
+              notice(ln('tetl.success_column_index', array('name' => $one)));
 
               $col []= $one;
             }
@@ -488,8 +568,8 @@ HELP;
 
           if (sizeof($col) === sizeof($args))
           {
-            green(ln('tetl.table_column_indexing', array('name' => $table)));
-            add_index($table, $col, array(
+            success(ln('tetl.table_column_indexing', array('name' => $table)));
+            self::migrate('add_index', $table, $col, array(
               'name' => $name,
               'unique' => $unique === 'unique',
             ));
@@ -498,20 +578,20 @@ HELP;
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function remove_index($args = array())
+  final public static function remove_index($args = array())
   {
     @list($table) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
       $args = array_slice(func_get_args(), 1);
 
       if ( ! $args)
       {
-        red(ln('tetl.index_names_missing', array('name' => $table)));
+        error(ln('tetl.index_names_missing', array('name' => $table)));
       }
       else
       {
@@ -521,29 +601,30 @@ HELP;
         {
           if ( ! array_key_exists($one, $idx))
           {
-            red(ln('tetl.index_not_exists', array('name' => $one)));
+            error(ln('tetl.index_not_exists', array('name' => $one)));
           }
           else
           {
-            green(ln('tetl.index_dropping', array('name' => $one)));
-            remove_index($table, $one);
+            success(ln('tetl.index_dropping', array('name' => $one)));
+            self::migrate('remove_index', $table, $one);
           }
         }
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function export($args = array(), $params = array())
+  final public static function export($args = array(), $params = array())
   {
     @list($table, $name) = $args;
 
-    if (database::check_table($table))
+    if (self::check_table($table))
     {
-      green(ln('tetl.table_exporting', array('name' => $table)));
+      success(ln('tetl.table_exporting', array('name' => $table)));
 
       $name = preg_replace('/\W/', '_', $name) ?: $table;
+
       $data = isset($params['data']);
       $raw = isset($params['raw']);
       $ext = $raw ? '.sql' : EXT;
@@ -552,18 +633,18 @@ HELP;
       db::export($out_file, $table, $data, $raw);
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 
-  function import($args = array(), $params = array())
+  final public static function import($args = array(), $params = array())
   {
     @list($name) = $args;
 
-    blue(ln('tetl.verifying_import'));
+    info(ln('tetl.verifying_import'));
 
     if ( ! $name)
     {
-      red(ln('tetl.import_name_missing'));
+      error(ln('tetl.import_name_missing'));
     }
     else
     {
@@ -574,17 +655,17 @@ HELP;
 
       if ( ! is_file($inc_file))
       {
-        red(ln('tetl.import_file_missing', array('name' => $name)));
+        error(ln('tetl.import_file_missing', array('name' => $name)));
       }
       else
       {
-        yellow(ln('tetl.structure_importing', array('name' => $name)));
+        notice(ln('tetl.structure_importing', array('name' => $name)));
 
-        database::init();
+        self::init();
         db::import($inc_file, $raw);
       }
     }
 
-    white(ln('tetl.done'));
+    bold(ln('tetl.done'));
   }
 }
