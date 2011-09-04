@@ -19,9 +19,9 @@ class routing extends prototype
 
 
   /**
+   * Register hooks
    *
-   *
-   *
+   * @param  array Options hash
    * @return void
    */
   final public static function bind(array $params = array())
@@ -38,8 +38,7 @@ class routing extends prototype
 
 
   /**
-   *
-   *
+   * Run matched routes
    *
    * @return void
    */
@@ -63,7 +62,7 @@ class routing extends prototype
       }
     }
 
-    raise('Route not found: '.request::method().' '.URI);
+    raise(ln('not_found', array('method' => request::method(), 'reoute' => URI)));
   }
 
 }
