@@ -7,8 +7,9 @@
 /**
  * Add classy patch
  *
- * @param  mixed Function callback
- * @return void
+ * @param     mixed Function callback
+ * @staticvar array Patch stack
+ * @return    void
  */
 function resolve(Closure $with = NULL)
 {
@@ -33,10 +34,10 @@ function resolve(Closure $with = NULL)
  */
 function rescue($class)
 {
- foreach (resolve() as $callback)
- {
-   $callback($class);
- }
+  foreach (resolve() as $callback)
+  {
+    $callback($class);
+  }
 }
 
 
