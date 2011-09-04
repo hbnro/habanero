@@ -1,3 +1,0 @@
-  static public function $action()
-  {
-  }

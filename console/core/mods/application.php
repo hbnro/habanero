@@ -77,7 +77,7 @@ HELP;
     $config_file = CWD.DS.'config'.DS.'application'.EXT;
 
     is_file($config_file) && config($config_file);
-    
+
 
     @list($what, $name, $parent) = $args;
 
@@ -132,8 +132,7 @@ HELP;
           break;
           case 'action';
             $out_file = option('mvc.controllers_path').DS.$parent.EXT;
-            dump(config(), TRUE);
-echo $out_file;
+
             if ( ! $parent)
             {
               error(ln('tetl.controller_missing'));
@@ -161,7 +160,7 @@ echo $out_file;
                 success(ln('tetl.action_route_building', array('name' => $name, 'module' => $parent)));
 
                 $route_file = CWD.DS.'app'.DS.'routes'.EXT;
-                write($route_file, preg_replace('/;[^;]*?$/', ";\nroute('/$parent/$name', '$parent#$name')\\0", read($route_file)));
+                write($route_file, preg_replace('/;[^;]*?$/', ";\nroute('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0", read($route_file)));
 
 
                 success(ln('tetl.action_view_building', array('name' => $name, 'module' => $parent)));
