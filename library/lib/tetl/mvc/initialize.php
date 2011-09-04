@@ -56,7 +56,7 @@ bootstrap::bind(function($app)
   $request = request::methods();
 
   request::implement('dispatch', function(array $params = array())
-    use(&$request, $controllers_path, $helpers_path, $models_path, $views_path)
+    use($request, $controllers_path, $helpers_path, $models_path, $views_path)
   {
     if (is_callable($params['to']))
     {
