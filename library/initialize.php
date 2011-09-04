@@ -38,6 +38,12 @@ require LIB.DS.'core'.DS.'filesystem'.EXT;
 require LIB.DS.'core'.DS.'conditions'.EXT;
 /**#@-*/
 
+// classy patch
+spl_autoload_register(function($class)
+{
+  rescue($class);
+});
+
 
 
 // do!

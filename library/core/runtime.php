@@ -5,6 +5,42 @@
  */
 
 /**
+ * Add classy patch
+ *
+ * @param  mixed Function callback
+ * @return void
+ */
+function resolve(Closure $with = NULL)
+{
+  static $patch = array();
+
+
+  if (func_num_args() === 0)
+  {
+    return $patch;
+  }
+
+  $patch []= $with;
+}
+
+
+/**
+ * Lazy loading
+ *
+ * @param  string Class name
+ * @param  mixed  Function callback
+ * @return void
+ */
+function rescue($class)
+{
+ foreach (resolve() as $callback)
+ {
+   $callback($class);
+ }
+}
+
+
+/**
  * Load a single library file
  *
  * @param     string Identifier
