@@ -62,7 +62,7 @@ class routing extends prototype
       }
     }
 
-    raise(ln('not_found', array('method' => request::method(), 'reoute' => URI)));
+    raise(request::method() . ' ' . URI);
   }
 
 }
