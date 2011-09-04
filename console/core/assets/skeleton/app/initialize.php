@@ -9,5 +9,5 @@ import('tetl/mvc');
 
 run(function()
 {
-  require dirname(__DIR__).DS.'app'.DS.'routes'.EXT;
+  require __DIR__.DS.'routes'.EXT;
 });

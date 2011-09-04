@@ -7,7 +7,7 @@
 # RewriteEngine On
 # RewriteBase /
 
-# - Canonic URLs
+# - Canonical URLs
 # RewriteCond %{HTTP_HOST} !^www\.domain\.tld$
 # RewriteRule ^(.*)$ http://www.domain.tld/$1 [L,R=301]
 
