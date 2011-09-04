@@ -5,6 +5,39 @@
  */
 
 /**
+ * Magic routes?
+ */
+class url_for extends prototype
+{
+  /**
+   * Create path with some hocus-pocus
+   *
+   * @return string
+   */
+  public function missing($method, $arguments)
+  {
+    $params = array();
+
+    $test = array_pop($arguments);
+
+    if (is_assoc($test))
+    {
+      $params = $test;
+    }
+    else
+    {
+      $arguments []= $test;
+    }
+
+    $route = strtr($method, '_', '/');
+    $extra = $arguments ? '/' . join('/', $arguments) : '';
+
+    return url_for($route . $extra, $params);
+  }
+}
+
+
+/**
  * Creation of internal links
  *
  * @param  mixed  Action path
@@ -31,6 +64,7 @@ function url_for($action, array $params = array())
 
   $params  = array_merge(array(
     'action'   => '',
+    'anchor'   => '',
     'locals'   => array(),
     'host'     => FALSE,
     'complete' => FALSE,
@@ -53,8 +87,7 @@ function url_for($action, array $params = array())
     @list($part, $anchor) = explode('#', $params['action']);
     @list($part, $query)  = explode('?', $part);
 
-    $part = ltrim($part, '/');
-    $part && $link .= $part;
+    $link .= '/' . ltrim($part, '/');
   }
 
   if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
@@ -70,6 +103,8 @@ function url_for($action, array $params = array())
     $test  = preg_replace("/{$hash}\d+=/", '', $test);
     $link .= (option('query') ? '&' : '?') . $test;
   }
+
+  $params['anchor'] && $anchor = $params['anchor'];
 
   $link .= $query ? "&$query" : '';
   $link .= $anchor ? "#$anchor" : '';
