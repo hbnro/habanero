@@ -12,14 +12,17 @@ class model extends prototype
    */
 
   // model properties
-  private $props = array();
+  private $_props = array();
 
   // new record?
-  private $new_record = NULL;
+  private $_new_record = NULL;
+
+  // columns definition
+  private static $defs = array();
 
   /**#@-*/
 
-
+//TODO: validations, relations?
 
   // table name
   public static $table = NULL;
@@ -34,35 +37,37 @@ class model extends prototype
    */
 
   // model constructor
-  public function __construct(array $params = array(), $create = FALSE, $class = NULL, $method = NULL)
+  public function __construct(array $params = array(), $create = FALSE, $method = NULL)
   {
-    $this->new_record = (bool) $create;
+    $class = get_called_class();
 
-    foreach (array_keys($class::columns($class)) as $key)
+    $this->_new_record = (bool) $create;
+
+    foreach (array_keys($class::columns()) as $key)
     {
-      $this->props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
+      $this->_props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
     }
-    $class::callback($this, $class, $method);
+    $class::callback($this, $method);
   }
 
   // properties getter
   public function __get($key)
   {
-    if ( ! array_key_exists($key, $this->props))
+    if ( ! array_key_exists($key, $this->_props))
     {
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
-    return $this->props[$key];
+    return $this->_props[$key];
   }
 
   // properties setter
   public function __set($key, $value)
   {
-    if ( ! array_key_exists($key, $this->props))
+    if ( ! array_key_exists($key, $this->_props))
     {
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
-    $this->props[$key] = $value;
+    $this->_props[$key] = $value;
   }
 
   /**#@-*/
@@ -74,28 +79,28 @@ class model extends prototype
    *
    * @return model
    */
-  final public function save($class = NULL)
+  final public function save()
   {
     $class = get_called_class();
 
-    $class::callback($this, $class, 'before_save');
+    $class::callback($this, 'before_save');
 
     if ($this->is_new())
     {
-      $fields = $this->props;
+      $fields = $this->_props;
 
-      unset($fields[$class::pk($class)]);
+      unset($fields[$class::pk()]);
 
-      $this->props[$class::pk($class)] = db::insert($class::table($class), $fields);
+      $this->_props[$class::pk()] = db::insert($class::table(), $fields);
     }
     else
     {
-      db::update($class::table($class), $this->props, array(
-        $class::pk($class) => $this->props[$class::pk($class)],
+      db::update($class::table(), $this->_props, array(
+        $class::pk() => $this->_props[$class::pk()],
       ));
     }
 
-    $class::callback($this, $class, 'after_save');
+    $class::callback($this, 'after_save');
 
     return $this;
   }
@@ -110,18 +115,18 @@ class model extends prototype
   {
     $class = get_called_class();
 
-    $class::callback($this, $class, 'before_update');
+    $class::callback($this, 'before_update');
 
 
-    $fields = $this->props;
+    $fields = $this->_props;
 
-    unset($fields[$class::pk($class)]);
+    unset($fields[$class::pk()]);
 
-    db::update($class::table($class), $fields, array(
-      $class::pk($class) => $this->props[$class::pk($class)],
+    db::update($class::table(), $fields, array(
+      $class::pk() => $this->_props[$class::pk()],
     ));
 
-    $class::callback($this, $class, 'after_update');
+    $class::callback($this, 'after_update');
 
     return $this;
   }
@@ -136,13 +141,13 @@ class model extends prototype
   {
     $class = get_called_class();
 
-    $class::callback($this, $class, 'before_delete');
+    $class::callback($this, 'before_delete');
 
-    db::delete($class::table($class), array(
-      $class::pk($class) => $this->props[$class::pk($class)],
+    db::delete($class::table(), array(
+      $class::pk() => $this->_props[$class::pk()],
     ));
 
-    $class::callback($this, $class, 'after_delete');
+    $class::callback($this, 'after_delete');
 
     return $this;
   }
@@ -155,7 +160,7 @@ class model extends prototype
    */
   final public function is_new()
   {
-    return $this->new_record;
+    return $this->_new_record;
   }
 
 
@@ -170,9 +175,9 @@ class model extends prototype
     $row   = (object) $params;
     $class = get_called_class();
 
-    $class::callback($row, $class, 'before_create');
+    $class::callback($row, 'before_create');
 
-    return new $class((array) $row, TRUE, $class, 'after_create');
+    return new $class((array) $row, TRUE, 'after_create');
   }
 
 
@@ -239,20 +244,20 @@ class model extends prototype
       case 'last';
         $options['limit'] = 1;
         $options['order'] = array(
-          $class::pk($class) => $wich === 'first' ? ASC : DESC,
+          $class::pk() => $wich === 'first' ? ASC : DESC,
         );
 
-        $row = db::fetch(db::select($class::table($class), $what, $where, $options), AS_ARRAY);
+        $row = db::fetch(db::select($class::table(), $what, $where, $options), AS_ARRAY);
 
-        return $row ? new $class($row, FALSE, $class, 'after_find') : FALSE;
+        return $row ? new $class($row, FALSE, 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
-        $res = db::select($class::table($class), $what, $where, $options);
+        $res = db::select($class::table(), $what, $where, $options);
 
         while ($row = db::fetch($res, AS_ARRAY))
         {
-          $out []= new $class($row, FALSE, $class, 'after_find');
+          $out []= new $class($row, FALSE, 'after_find');
         }
         return $out;
       break;
@@ -261,11 +266,11 @@ class model extends prototype
       break;
     }
 
-    $row = db::fetch(db::select($class::table($class), $what, array(
-      $class::pk($class) => $args,
+    $row = db::fetch(db::select($class::table(), $what, array(
+      $class::pk() => $args,
     )), AS_ARRAY);
 
-    return $row ? new $class($row, FALSE, $class, 'after_find') : FALSE;
+    return $row ? new $class($row, FALSE, 'after_find') : FALSE;
   }
 
 
@@ -282,11 +287,11 @@ class model extends prototype
 
     if (strpos($method, 'find_by_') === 0)
     {
-      $row = db::fetch(db::select($class::table($class), ALL, array(
+      $row = db::fetch(db::select($class::table(), ALL, array(
         substr($method, 8) => $arguments,
       )), AS_ARRAY);
 
-      return $row ? new $class($row, FALSE, $class, 'after_find') : FALSE;
+      return $row ? new $class($row, FALSE, 'after_find') : FALSE;
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
@@ -296,13 +301,13 @@ class model extends prototype
     }
     elseif (strpos($method, 'find_or_create_by_') === 0)
     {
-      $res = db::select($class::table($class), ALL, array(
+      $res = db::select($class::table(), ALL, array(
         substr($method, 18) => $arguments,
       ));
 
       if (db::numrows($res))
       {
-        return new $class(db::fetch($res, AS_ARRAY), FALSE, $class, 'after_find');
+        return new $class(db::fetch($res, AS_ARRAY), FALSE, 'after_find');
       }
 
       $test = preg_split('/_(?:or|and)_/', substr($method, 18));
@@ -328,51 +333,70 @@ class model extends prototype
   }
 
 
+  /**
+   * Retrieve columns
+   *
+   * @return array
+   */
+  final public static function columns()
+  {
+    if (empty(self::$defs[self::table()]))
+    {// TODO: hackish, I guess
+      self::$defs[self::table()] = db::columns(self::table());
+    }
+    return self::$defs[self::table()];
+  }
+
+
+  /**
+   * Retrieve table name
+   *
+   * @return array
+   */
+  final public static function table()
+  {
+    return self::$table ?: get_called_class();
+  }
+
+
+  /**
+   * Retrieve primary key
+   *
+   * @return array
+   */
+  final public static function pk()
+  {
+    if ( ! self::$primary_key)
+    {
+      foreach (self::columns() as $key => $one)
+      {
+        if ($one['type'] === 'primary_key')
+        {
+          self::$primary_key = $key;
+
+          break;
+        }
+      }
+
+      if ( ! self::$primary_key)
+      {
+        raise(ln('mvc.primary_key_missing', array('model' => get_called_class())));
+      }
+    }
+
+    return self::$primary_key;
+  }
+
+
 
   /**#@+
    * @ignore
    */
 
   // execute callbacks
-  final private static function callback($row, $class, $method)
+  final private static function callback($row, $method)
   {
-    $class::defined($method) && $class::$method($row);
-  }
-
-  // retrieve columns definition
-  final private static function columns($class)
-  {
-    return db::columns($class::table($class));
-  }
-
-  // retrive table name
-  final private static function table($class)
-  {
-    return $class::$table ?: $class;
-  }
-
-  // retrieve primary key
-  final private static function pk($class)
-  {
-    if ( ! $class::$primary_key)
-    {
-      foreach ($class::columns($class) as $key => $one)
-      {
-        if ($one['type'] === 'primary_key')
-        {
-          $class::$primary_key = $key;
-
-          break;
-        }
-      }
-
-      if ( ! $class::$primary_key)
-      {
-        raise(ln('mvc.primary_key_missing', array('model' => $class)));
-      }
-    }
-
-    return $class::$primary_key;
+    self::defined($method) && self::$method($row);
   }
 
   /**#@-*/
