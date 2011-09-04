@@ -66,6 +66,11 @@ function route($match, $to = NULL, array $params = array())
     $params['match'] = 'GET ' . $params['match'];
   }
 
+  if ( ! empty($params['path']))
+  {
+    url_for::register($params['path'], end(explode(' ', $params['match'])));
+  }
+
   routing::bind($params);
 }
 

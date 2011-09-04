@@ -11,6 +11,7 @@ require __DIR__.DS.'routing'.EXT;
 require __DIR__.DS.'request'.EXT;
 require __DIR__.DS.'response'.EXT;
 
+require __DIR__.DS.'paths'.EXT;
 require __DIR__.DS.'actions'.EXT;
 require __DIR__.DS.'functions'.EXT;
 /**#@-*/
