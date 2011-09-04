@@ -3,48 +3,45 @@
 function help()
 {
   $introduction = ln('tetl.generator_intro');
-  $available = ln('tetl.available_mods');
 
-  $app_title = ln('tetl.app_generator');
-  $db_title = ln('tetl.db_generator');
-  $c_title = ln('tetl.interactive');
+  $app_title = ln('tetl.application_generator');
+  $db_title = ln('tetl.database_generator');
+  $s_title = ln('tetl.interactive_mode');
 
   $str = <<<HELP
 
   $introduction
 
-  $available:
-
-  \bred(app)\b $app_title
-  \bred(db)\b $db_title
-  \bred(s)\b $c_title
+  \bdark_gray(tetl)\b \bred(app|application)\b $app_title
+  \bdark_gray(tetl)\b \bred(db|database)\b $db_title
+  \bdark_gray(tetl)\b \bred(s|console)\b $s_title
 
 HELP;
 
   cli::write(cli::format("$str\n"));
 }
 
-function red($text)
+function error($text)
 {
   cli::writeln(cli::format("\bred($text)\b"));
 }
 
-function blue($text)
+function info($text)
 {
   cli::writeln(cli::format("\bblue($text)\b"));
 }
 
-function white($text)
+function bold($text)
 {
   cli::writeln(cli::format("\bwhite($text)\b"));
 }
 
-function yellow($text)
+function notice($text)
 {
   cli::writeln(cli::format("\byellow($text)\b"));
 }
 
-function green($text)
+function success($text)
 {
   cli::writeln(cli::format("\bgreen($text)\b"));
 }
