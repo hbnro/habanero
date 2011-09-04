@@ -2,7 +2,7 @@
 
 class application extends prototype
 {
-  public static function help()
+  final public static function help()
   {
     $app_introduction = ln('tetl.app_generator');
     $str = <<<HELP
@@ -19,7 +19,7 @@ HELP;
     cli::write(cli::format("$str\n"));
   }
 
-  public static function st()
+  final public static function st()
   {
     info(ln('tetl.verifying_installation'));
 
@@ -45,7 +45,7 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  public static function gen($args = array())
+  final public static function gen($args = array())
   {
     info(ln('tetl.verifying_installation'));
 
@@ -72,7 +72,7 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  public static function make($args = array(), $params = array())
+  final public static function make($args = array(), $params = array())
   {
     $config_file = CWD.DS.'config'.DS.'application'.EXT;
 
@@ -86,7 +86,7 @@ HELP;
       'action',
     )))
     {
-      application::help();
+      self::help();
     }
     else
     {
