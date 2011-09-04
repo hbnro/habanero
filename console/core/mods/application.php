@@ -11,8 +11,8 @@ class application extends prototype
 
   \bgreen(app:st)\b
   \bgreen(app:gen)\b
-  \bgreen(app:make)\b \bblue(controller)\b \bwhite(name)\b
-  \bgreen(app:make)\b \bblue(action)\b \bwhite(name)\b \byellow(controller)\b
+  \bgreen(app:make)\b \bblue(controller)\b \byellow(name)\b
+  \bgreen(app:make)\b \bblue(action)\b \byellow(name)\b \bwhite(controller)\b
 
 HELP;
 
@@ -128,6 +128,9 @@ HELP;
 
               $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
               write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$name).DS.'index'.$ext, $text);
+
+              success(ln('tetl.controller_helper_building', array('name' => $name)));
+              write(option('mvc.helpers_path').DS.$name.EXT, "<?php\n");
             }
           break;
           case 'action';
@@ -167,8 +170,6 @@ HELP;
 
                 $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
                 write(mkpath(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
-
-                write(option('mvc.helpers_path').DS.$parent.EXT, "<?php\n");
               }
             }
           break;

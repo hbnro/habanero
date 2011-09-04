@@ -1,6 +1,7 @@
 <?php
 
-blue(ln('tetl.interactive_mode'));
+info(ln('tetl.interactive_mode'));
+cli::writeln();
 
 cli::main(function()
 {
@@ -16,6 +17,7 @@ cli::main(function()
 
 });
 
-white(ln('tetl.done'));
+cli::writeln();
+bold(ln('tetl.done'));
 
 exit;

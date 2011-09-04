@@ -27,7 +27,7 @@ class database extends prototype
 
   $db_title:
 
-  \bgreen(db:status)\b
+  \bgreen(db:st)\b
   \bgreen(db:show)\b \bblue(table)\b
   \bgreen(db:drop)\b \bblue(table)\b
   \bgreen(db:rename)\b \bblue(table)\b \bwhite(new)\b
@@ -48,7 +48,10 @@ HELP;
 
   private function init()
   {
-    config(CWD.DS.'config'.DS.'database'.EXT);
+    $config_file = CWD.DS.'config'.DS.'database'.EXT;
+
+    is_file($config_file) && config($config_file);
+
     import('tetl/db');
   }
 
