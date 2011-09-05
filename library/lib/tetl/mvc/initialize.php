@@ -16,7 +16,7 @@ bootstrap::bind(function($app)
   $views_path = realpath(option('mvc.views_path'));
 
 
-  resolve(function($class)
+  rescue(function($class)
     use($models_path)
   {
     /**
@@ -51,7 +51,7 @@ bootstrap::bind(function($app)
   $request = request::methods();
 
   request::implement('dispatch', function(array $params = array())
-    use($request, $controllers_path, $helpers_path, $models_path, $views_path)
+    use($request, $controllers_path, $helpers_path, $views_path)
   {
     if (is_callable($params['to']))
     {
@@ -98,18 +98,6 @@ bootstrap::bind(function($app)
          * @ignore
          */
         require $helper_file;
-      }
-
-
-      $model_file = $models_path.DS.$class_name.EXT;
-
-      if (is_file($model_file))
-      {
-        /**
-          * @ignore
-          */
-
-        require $model_file;
       }
 
       $class_name::defined('init') && $class_name::init();

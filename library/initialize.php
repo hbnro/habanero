@@ -8,7 +8,7 @@
  */
 
 // framework version
-define('VER', '1.0.0');
+define('VER', '1.0.20');
 
 
 // filename extension
@@ -37,12 +37,6 @@ require LIB.DS.'core'.DS.'bootstrap'.EXT;
 require LIB.DS.'core'.DS.'filesystem'.EXT;
 require LIB.DS.'core'.DS.'conditions'.EXT;
 /**#@-*/
-
-// classy patch
-spl_autoload_register(function($class)
-{
-  rescue($class);
-});
 
 
 
@@ -102,6 +96,18 @@ call_user_func(function()
   {
     config($GLOBALS['config']);
   }
+
+
+  // lazy loading
+  spl_autoload_register(function($class)
+  {
+    foreach (rescue() as $callback)
+    {
+      $callback($class);
+    }
+
+    ! class_exists($class) && raise(ln('class_not_exists', array('name' => $class)));
+  }, TRUE, TRUE);
 });
 
 /* EOF: ./initialize.php */

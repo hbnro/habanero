@@ -11,7 +11,7 @@
  * @staticvar array Patch stack
  * @return    void
  */
-function resolve(Closure $with = NULL)
+function rescue(Closure $with = NULL)
 {
   static $patch = array();
 
@@ -22,24 +22,6 @@ function resolve(Closure $with = NULL)
   }
 
   $patch []= $with;
-}
-
-
-/**
- * Lazy loading
- *
- * @param  string Class name
- * @param  mixed  Function callback
- * @return void
- */
-function rescue($class)
-{
-  foreach (resolve() as $callback)
-  {
-    $callback($class);
-  }
-
-  ! class_exists($class) && raise(ln('class_not_exists', array('name' => $class)));
 }
 
 
