@@ -79,9 +79,7 @@ HELP;
     $args = array_slice(func_get_args(), 1);
     $time = time();
 
-    $migration_name  = date('YmdHis_', $time).$args[0].'_'.$name;
-    $migration_name .= '_' . substr(sha1(uniqid($name)), 0, 6);
-
+    $migration_name = date('YmdHis_', $time).$args[0].'_'.$name;
     $migration_path = mkpath(CWD.DS.'db'.DS.'migrate');
     $migration_file = $migration_path.DS.$migration_name.EXT;
 
@@ -108,15 +106,21 @@ HELP;
       }
     }
 
-    $date = date('Y-m-d H:i:s', $time);
 
-    $code = "<?php\n/* $date */\n$name(";
-    $code .= join(', ', $args);
-    $code .= ");\n";
+    $callback = sprintf("$name(%s);\n", join(', ', $args));
 
-    write($migration_file, $code);
+    if ( ! is_file($migration_file))
+    {
+      $date = date('Y-m-d H:i:s', $time);
 
-    require $migration_file;
+      write($migration_file, "<?php\n/* $date */\n$callback");
+    }
+    else
+    {
+      write($migration_file, $callback, 1);
+    }
+
+    @eval($callback);
   }
 
   function st()

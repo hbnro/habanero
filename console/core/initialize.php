@@ -41,8 +41,11 @@ run(function()
 
     is_file($mod_file) && require $mod_file;
 
-
-    if (empty($action))
+    if ( ! class_exists($module))
+    {
+      help();
+    }
+    elseif (empty($action) OR ! $module::defined($action))
     {
       $module::help();
     }
