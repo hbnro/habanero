@@ -38,6 +38,8 @@ function rescue($class)
   {
     $callback($class);
   }
+
+  ! class_exists($class) && raise(ln('class_not_exists', array('name' => $class)));
 }
 
 
