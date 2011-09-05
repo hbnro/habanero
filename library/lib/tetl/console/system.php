@@ -194,6 +194,11 @@ class cli extends prototype
   {
     $args = func_get_args();
 
+    if (function_exists('readline'))
+    {
+      return readline(join('', $args));
+    }
+
     self::printf(join('', $args));
 
     return trim(fgets(STDIN, 128));
@@ -649,17 +654,17 @@ class cli extends prototype
 
 
     $head []= '';
-    $glue   = '+';
-    $sep    = trim(join(' | ', $head));
-    $sep    = preg_replace('/[^|\s]/', ' ', $sep);
-    $sep    = strtr($sep, '| ', '+-');
+    $glue   = '';
 
-    self::write("$sep\n");
+    self::writeln();
 
     if ( ! empty($heads))
     {
-      self::write(trim(join(' | ', $head)));
-      self::write("\n$sep");
+      $heads = trim(join(' ', $head));
+      $heads = preg_replace('/\b\w+\b/', '\bwhite(\\0)\b', $heads);
+
+      self::write(cli::format(" $heads"));
+      self::writeln();
     }
 
 
@@ -677,11 +682,11 @@ class cli extends prototype
       }
 
       $row []= '';
-      $out []= trim(join(' | ', $row));
+      $out []= ' ' . trim(join(' ', $row));
     }
 
     self::write("\n" . join("\n", $out));
-    self::write("\n$sep\n");
+    self::write("\n\n");
     self::flush();
   }
 
