@@ -14,6 +14,75 @@ define('DELETE', 'DELETE');
 /**#@-*/
 
 /**
+ * GET method shortcut
+ *
+ * @param  string Expression
+ * @param  mixed  Function callback
+ * @param  array  Options hash
+ * @return void
+ */
+function get($path, $to, array $params = array())
+{
+  route("GET $path", $to, $params);
+}
+
+
+/**
+ * PUT method shortcut
+ *
+ * @param  string Expression
+ * @param  mixed  Function callback
+ * @param  array  Options hash
+ * @return void
+ */
+function put($path, $to, array $params = array())
+{
+  route("PUT $path", $to, $params);
+}
+
+
+/**
+ * POST method shortcut
+ *
+ * @param  string Expression
+ * @param  mixed  Function callback
+ * @param  array  Options hash
+ * @return void
+ */
+function post($path, $to, array $params = array())
+{
+  route("POST $path", $to, $params);
+}
+
+
+/**
+ * DELETE method shortcut
+ *
+ * @param  string Expression
+ * @param  mixed  Function callback
+ * @param  array  Options hash
+ * @return void
+ */
+function delete($path, $to, array $params = array())
+{
+  route("DELETE $path", $to, $params);
+}
+
+
+/**
+ * Root shortcut
+ *
+ * @param  mixed  Function callback
+ * @param  array  Options hash
+ * @return void
+ */
+function root($to, array $params = array())
+{
+  route('/', $to, $params);
+}
+
+
+/**
  * Register routes
  *
  * @param  mixed Expression|Function callback
