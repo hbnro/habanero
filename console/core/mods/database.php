@@ -150,13 +150,10 @@ HELP;
 
     info(ln('tetl.verifying_database'));
 
-    if ( ! empty($params['drop']))
+    foreach (db::tables() as $one)
     {
-      foreach (db::tables(is_true($params['drop']) ? '*' : $params['drop']) as $one)
-      {
-        success(ln('tetl.table_dropping', array('name' => $one)));
-        drop_table($one);
-      }
+      notice(ln('tetl.table_dropping', array('name' => $one)));
+      drop_table($one);
     }
 
     info(ln('tetl.migrating_database'));
@@ -167,13 +164,29 @@ HELP;
 
       foreach ($test as $migration_file)
       {
-        success(ln('tetl.run_migration', array('path' => $migration_file)));
+        $path = str_replace(CWD.DS, '', $migration_file);
+        success(ln('tetl.run_migration', array('path' => $path)));
         require $migration_file;
       }
     }
     else
     {
       error(ln('tetl.without_migrations'));
+    }
+
+    info(ln('tetl.verifying_seed'));
+
+    $seed_file = CWD.DS.'db'.DS.'seed'.EXT;
+
+    if ( ! is_file($seed_file))
+    {
+      error(ln('tetl.without_seed'));
+    }
+    else
+    {
+      $path = str_replace(CWD.DS, '', $seed_file);
+      success(ln('tetl.loading_seed', array('path' => $path)));
+      require $seed_file;
     }
 
     bold(ln('tetl.done'));
@@ -405,7 +418,7 @@ HELP;
         {
           if ( ! in_array($one, $fields))
           {
-            error(ln('tetl.column_not_exists', array('name' => $one)));
+            error(ln('tetl.column_not_exists', array('name' => $one, 'table' => $table)));
           }
           else
           {
@@ -443,7 +456,7 @@ HELP;
 
           if ( ! in_array($one, $fields))
           {
-            error(ln('tetl.column_not_exists', array('name' => $one)));
+            error(ln('tetl.column_not_exists', array('name' => $one, 'table' => $table)));
           }
           elseif ( ! $next)
           {
@@ -485,7 +498,7 @@ HELP;
 
           if ( ! array_key_exists($one, $fields))
           {
-            error(ln('tetl.column_not_exists', array('name' => $one)));
+            error(ln('tetl.column_not_exists', array('name' => $one, 'table' => $table)));
           }
           elseif ( ! $next)
           {
@@ -632,8 +645,10 @@ HELP;
       $raw = isset($params['raw']);
       $ext = $raw ? '.sql' : EXT;
 
-      $out_file = CWD.DS.'db'.DS.date('YmdHis_').$name.$ext;
-      success(ln('tetl.exporting', array('path' => $out_file)));
+      $out_file = mkpath(CWD.DS.'db'.DS.'backup').DS.date('YmdHis_').$name.$ext;
+      $path = str_replace(CWD.DS, '', $out_file);
+
+      success(ln('tetl.exporting', array('path' => $path)));
       db::export($out_file, '*', $data, $raw);
     }
 
@@ -661,7 +676,8 @@ HELP;
       }
       else
       {
-        success(ln('tetl.importing', array('path' => $inc_file)));
+        $path = str_replace(CWD.DS, '', $inc_file);
+        success(ln('tetl.importing', array('path' => $path)));
 
         self::init();
         db::import($inc_file, $raw);
