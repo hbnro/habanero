@@ -4,7 +4,7 @@ class application extends prototype
 {
   final public static function help()
   {
-    $app_introduction = ln('tetl.app_generator');
+    $app_introduction = ln('tetl.application_generator');
     $str = <<<HELP
 
   $app_introduction
@@ -13,6 +13,7 @@ class application extends prototype
   \bgreen(app:gen)\b
   \bgreen(app:make)\b \bblue(controller)\b \byellow(name)\b
   \bgreen(app:make)\b \bblue(action)\b \byellow(name)\b \bwhite(controller)\b
+  \bgreen(app:make)\b \bblue(model)\b \byellow(name)\b [table]
 
 HELP;
 
@@ -38,8 +39,8 @@ HELP;
         $size += filesize($file);
       }
 
-      notice(ln('tetl.counting_files', array('length' => $count)));
-      notice(ln('tetl.sizing_files', array('size' => $size)));
+      success(ln('tetl.counting_files', array('length' => number_format($count))));
+      success(ln('tetl.sizing_files', array('size' => fmtsize($size))));
     }
 
     bold(ln('tetl.done'));
@@ -84,6 +85,7 @@ HELP;
     if ( ! in_array($what, array(
       'controller',
       'action',
+      'model',
     )))
     {
       self::help();
@@ -157,17 +159,35 @@ HELP;
                 write($out_file, preg_replace('/\}[^{}]*?$/s', "$action_tpl\\0", read($out_file)));
 
 
-                success(ln('tetl.action_route_building', array('name' => $name, 'module' => $parent)));
+                success(ln('tetl.action_route_building', array('name' => $name, 'controller' => $parent)));
 
                 $route_file = CWD.DS.'app'.DS.'routes'.EXT;
                 write($route_file, preg_replace('/;[^;]*?$/', ";\nroute('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0", read($route_file)));
 
 
-                success(ln('tetl.action_view_building', array('name' => $name, 'module' => $parent)));
+                success(ln('tetl.action_view_building', array('name' => $name, 'controller' => $parent)));
 
                 $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
                 write(mkpath(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
               }
+            }
+          break;
+          case 'model';
+            $out_file = option('mvc.models_path').DS.$name.EXT;
+
+            if (is_file($out_file))
+            {
+              error(ln('tetl.model_already_exists', array('name' => $name)));
+            }
+            else
+            {
+              success(ln('tetl.model_class_building', array('name' => $name)));
+
+              $parent = $parent ? "\n  public static \$table = '$parent';" : '';
+              $code   = "<?php\n\nclass $name extends model"
+                      . "\n{{$parent}\n}\n";
+
+              write($out_file, $code);
             }
           break;
           default;
