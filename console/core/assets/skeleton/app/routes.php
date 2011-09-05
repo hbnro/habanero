@@ -1,3 +1,3 @@
 <?php
 
-route('/', 'home#index');
+route('/', 'home#index', array('path' => 'home'));
