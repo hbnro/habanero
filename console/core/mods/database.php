@@ -79,7 +79,9 @@ HELP;
     $args = array_slice(func_get_args(), 1);
     $time = time();
 
-    $migration_name = date('YmdHis_', $time).$args[0].'_'.$name;
+    $migration_name  = date('YmdHis_', $time).$args[0].'_'.$name;
+    $migration_name .= '_' . substr(sha1(uniqid($name)), 0, 6);
+
     $migration_path = mkpath(CWD.DS.'db'.DS.'migrate');
     $migration_file = $migration_path.DS.$migration_name.EXT;
 

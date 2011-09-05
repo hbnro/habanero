@@ -63,10 +63,9 @@ HELP;
     }
     else
     {
-      info(ln('tetl.copying_skeleton', array('path' => CWD)));
+      success(ln('tetl.copying_skeleton', array('path' => CWD)));
 
-      $skel_dir = APP_PATH.DS.'assets'.DS.'skeleton';
-
+      $skel_dir = APP_PATH.DS.'core'.DS.'assets'.DS.'skeleton';
       cpfiles($skel_dir, CWD, '*', TRUE);
     }
 
