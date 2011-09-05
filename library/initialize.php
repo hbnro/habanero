@@ -105,9 +105,7 @@ call_user_func(function()
     {
       $callback($class);
     }
-
-    ! class_exists($class) && raise(ln('class_not_exists', array('name' => $class)));
-  }, TRUE, TRUE);
+  });
 });
 
 /* EOF: ./initialize.php */
