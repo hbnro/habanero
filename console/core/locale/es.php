@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Spanish generator strings
+ */
+
+$lang['application_generator'] = 'Aplicación';
+$lang['database_generator'] = 'Base de datos';
+$lang['generator_intro'] = '¡Bienvenido a la utilidad de consola!';
+$lang['done'] = 'Hecho';
+$lang['missing_model_name'] = 'Hace falta el nombre del modelo';
+$lang['missing_action_name'] = 'Hace falta el nombre de la acción';
+$lang['missing_controller_name'] = 'Hace falta el nombre del controlador';
+$lang['action_already_exists'] = 'La acción %{controller}#%{name} ya existe';
+$lang['controller_already_exists'] = 'El controlador %{name} ya existe';
+$lang['controller_missing'] = 'Hace falta un controlador';
+$lang['controller_not_exists'] = 'El controlador %{name} no existe';
+$lang['directory_must_be_ampty'] = 'La carpeta de destino debe estar vacía';
+$lang['not_installed'] = 'No se ha instalado';
+$lang['unknown_generator'] = 'Generador %{name} desconocido';
+$lang['copying_skeleton'] = 'Copiando base a %{path}';
+$lang['migrating_database'] = 'Migrando base de datos';
+$lang['verifying_import'] = 'Comprobando importación';
+$lang['verifying_export'] = 'Comprobando exportación';
+$lang['verifying_database'] = 'Comprobando base de datos';
+$lang['verifying_structure'] = 'Comprobando estructura';
+$lang['verifying_generator'] = 'Comprobando generador';
+$lang['verifying_installation'] = 'Comprobando instalación';
+$lang['counting_files'] = 'Cantidad de archivos: %{length}';
+$lang['sizing_files'] = 'Peso total: %{size}';
+$lang['action_method_building'] = 'Generando acción para %{controller}#%{name}';
+$lang['action_route_building'] = 'Generando ruta para %{controller}#%{name}';
+$lang['action_view_building'] = 'Generando vista para %{controller}#%{name}';
+$lang['controller_class_building'] = 'Generando clase por defecto del controlador %{name}';
+$lang['controller_route_building'] = 'Generando ruta por defecto del controlador %{name}';
+$lang['controller_view_building'] = 'Generando vista por defecto del controlador %{name}';
+$lang['model_already_exists'] = 'El modelo %{name} ya existe';
+$lang['model_class_building'] = 'Generando clase del modelo %{name}';
+$lang['column_already_exists'] = 'La columna %{name} ya existe';
+$lang['column_name_missing'] = 'Hace falta el nombre de la columna';
+$lang['column_not_exists'] = 'La columna %{table}.%{name} no existe';
+$lang['success_column_index'] = 'El índice %{table}.%{name} es correcto';
+$lang['success_field_type'] = 'El tipo de columna %{name}:%{type} es correcto';
+$lang['indexing_table'] = 'Agregando indice %{name} a la tabla %{table}';
+$lang['column_type_missing'] = 'Hace falta el tipo de columna';
+$lang['import_file_missing'] = 'El archivo %{path} no existe';
+$lang['import_name_missing'] = 'Hace falta el nombre de la importación';
+$lang['index_already_exists'] = 'El índice %{name} ya existe';
+$lang['index_columns_missing'] = 'Hace falta una columna';
+$lang['index_name_missing'] = 'Hace falta el nombre del índice';
+$lang['index_not_exists'] = 'El índice %{name} de la tabla %{table} no existe';
+$lang['table_show_indexes'] = 'Mostrando indices de %{name}';
+$lang['table_already_exists'] = 'La tabla %{name} ya existe';
+$lang['renaming_table_to'] = 'Renombrando tabla de %{from} a %{to}';
+$lang['table_fields_missing'] = 'Hacen falta las columnas para %{name}';
+$lang['table_name_missing'] = 'Hace falta el nombre de la tabla';
+$lang['table_not_exists'] = 'La tabla %{name} no existe';
+$lang['table_pk_missing'] = 'Falta la clave primaria de %{name}';
+$lang['without_indexes'] = 'La tabla %{name} no tiene indices';
+$lang['without_migrations'] = 'Sin migraciones';
+$lang['without_tables'] = 'Sin tablas';
+$lang['unknown_field'] = 'No se conoce el tipo %{type} de la columna %{name}';
+$lang['table_status'] = '%{name} (%{count})';
+$lang['column_building'] = 'Creando columna %{name}:%{type}';
+$lang['column_changing'] = 'Cambiando columna %{name}:%{type}';
+$lang['column_dropping'] = 'Eliminando columna %{name}';
+$lang['column_renaming'] = 'Renombrando columna de %{from} a %{to}';
+$lang['index_dropping'] = 'Borrando índice %{name}';
+$lang['run_migration'] = 'Ejecutando migración %{path}';
+$lang['table_column_indexing'] = 'Creando indices en %{name}';
+$lang['table_building'] = 'Creando tabla %{name}';
+$lang['table_dropping'] = 'Eliminando tabla %{name}';
+$lang['table_show_columns'] = 'Mostrando columnas de %{name}';
+$lang['export_name_missing'] = 'Hace falta un nombre para exportar';
+$lang['exporting'] = 'Exportando %{path}';
+$lang['importing'] = 'Importando %{path}';

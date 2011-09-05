@@ -7,7 +7,7 @@ run(function()
 {
   import('tetl/console');
 
-  i18n::load_path(__DIR__.DS.'locale');
+  i18n::load_path(__DIR__.DS.'locale', 'tetl');
 
 
   $path = getcwd();
@@ -21,9 +21,8 @@ run(function()
   if ( ! empty($module))
   {
     $mod_list = array(
-      'a:app' => 'application',
-      'd:db' => 'database',
-      'i:s' => 'console',
+      'app' => 'application',
+      'db' => 'database',
     );
 
 
@@ -40,7 +39,7 @@ run(function()
 
     $mod_file = __DIR__.DS.'mods'.DS.$module.EXT;
 
-    require $mod_file;
+    is_file($mod_file) && require $mod_file;
 
 
     if (empty($action))

@@ -6,15 +6,13 @@ function help()
 
   $app_title = ln('tetl.application_generator');
   $db_title = ln('tetl.database_generator');
-  $s_title = ln('tetl.interactive_mode');
 
   $str = <<<HELP
 
   $introduction
 
-  \bdark_gray(tetl)\b \bred(app|application)\b $app_title
-  \bdark_gray(tetl)\b \bred(db|database)\b $db_title
-  \bdark_gray(tetl)\b \bred(s|console)\b $s_title
+  \bdark_gray(tetl)\b \bred(app)\b $app_title
+  \bdark_gray(tetl)\b \bred(db)\b $db_title
 
 HELP;
 
