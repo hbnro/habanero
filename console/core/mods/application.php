@@ -9,11 +9,11 @@ class application extends prototype
 
   $app_introduction
 
-  \bgreen(app:st)\b
-  \bgreen(app:gen)\b
-  \bgreen(app:make)\b \bblue(controller)\b \byellow(name)\b
-  \bgreen(app:make)\b \bblue(action)\b \byellow(name)\b \bwhite(controller)\b
-  \bgreen(app:make)\b \bblue(model)\b \byellow(name)\b [table]
+  \bgreen(app.st)\b
+  \bgreen(app.gen)\b
+  \bgreen(app.make)\b \bblue(controller)\b \byellow(name)\b
+  \bgreen(app.make)\b \bblue(action)\b \byellow(controller:name)\b
+  \bgreen(app.make)\b \bblue(model)\b \byellow(name[:table])\b
 
 HELP;
 
@@ -79,7 +79,7 @@ HELP;
     is_file($config_file) && config($config_file);
 
 
-    @list($what, $name, $parent) = $args;
+    @list($what, $name) = $args;
 
     if ( ! in_array($what, array(
       'controller',
@@ -102,7 +102,7 @@ HELP;
         switch ($what)
         {
           case 'controller';
-            $out_file = option('mvc.controllers_path').DS.$name.EXT;
+            $out_file = mkpath(option('mvc.controllers_path')).DS.$name.EXT;
 
             if (is_file($out_file))
             {
@@ -132,7 +132,9 @@ HELP;
             }
           break;
           case 'action';
-            $out_file = option('mvc.controllers_path').DS.$parent.EXT;
+            @list($parent, $name) = explode(':', $name);
+
+            $out_file = mkpath(option('mvc.controllers_path')).DS.$parent.EXT;
 
             if ( ! $parent)
             {
@@ -142,9 +144,15 @@ HELP;
             {
               error(ln('tetl.controller_not_exists', array('name' => $parent)));
             }
+            elseif ( ! $name)
+            {
+              error(ln("tetl.missing_{$what}_name"));
+            }
             else
             {
-              if (preg_match("/\b(?:private|public)\s+static\s+function\s+$name\s*\(/s", read($out_file)))
+              $content = read($out_file);
+
+              if (preg_match("/\b(?:private|public)\s+static\s+function\s+$name\s*\(/s", $content))
               {
                 error(ln('tetl.action_already_exists', array('name' => $name, 'controller' => $parent)));
               }
@@ -155,24 +163,26 @@ HELP;
                 $action_tpl = "  public static function $name()\n"
                             . "  {\n  }\n";
 
-                write($out_file, preg_replace('/\}[^{}]*?$/s', "$action_tpl\\0", read($out_file)));
+                write($out_file, preg_replace('/\}[^{}]*?$/s', "$action_tpl\\0", $content));
 
 
                 success(ln('tetl.action_route_building', array('name' => $name, 'controller' => $parent)));
 
                 $route_file = CWD.DS.'app'.DS.'routes'.EXT;
-                write($route_file, preg_replace('/;[^;]*?$/', ";\nroute('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0", read($route_file)));
+                write($route_file, preg_replace('/;[^;]*?$/', ";\nget('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0", read($route_file)));
 
 
                 success(ln('tetl.action_view_building', array('name' => $name, 'controller' => $parent)));
 
                 $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
-                write(mkpath(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
+                write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
               }
             }
           break;
           case 'model';
-            $out_file = option('mvc.models_path').DS.$name.EXT;
+            @list($name, $table) = explode(':', $name);
+
+            $out_file = mkpath(option('mvc.models_path')).DS.$name.EXT;
 
             if (is_file($out_file))
             {
@@ -182,7 +192,7 @@ HELP;
             {
               success(ln('tetl.model_class_building', array('name' => $name)));
 
-              $parent = $parent ? "\n  public static \$table = '$parent';" : '';
+              $parent = $table ? "\n  public static \$table = '$table';" : '';
               $code   = "<?php\n\nclass $name extends model"
                       . "\n{{$parent}\n}\n";
 

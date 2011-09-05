@@ -16,7 +16,7 @@ run(function()
   define('CWD', realpath($path));
 
   $cmd = array_shift($args);
-  @list($module, $action) = explode(':', $cmd);
+  @list($module, $action) = explode('.', $cmd);
 
   if ( ! empty($module))
   {
