@@ -46,10 +46,7 @@ HELP;
 
   final private static function init()
   {
-    $config_file = CWD.DS.'config'.DS.'database'.EXT;
-
-    is_file($config_file) && config($config_file);
-
+    config(CWD.DS.'config'.DS.'database'.EXT);
     import('tetl/db');
   }
 

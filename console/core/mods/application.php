@@ -74,11 +74,8 @@ HELP;
 
   final public static function make($args = array(), $params = array())
   {
-    $config_file = CWD.DS.'config'.DS.'application'.EXT;
-
-    is_file($config_file) && config($config_file);
-
-
+    config(CWD.DS.'config'.DS.'application'.EXT);
+    
     @list($what, $name) = $args;
 
     if ( ! in_array($what, array(
