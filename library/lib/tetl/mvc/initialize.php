@@ -16,11 +16,6 @@ bootstrap::bind(function($app)
   $views_path = realpath(option('mvc.views_path'));
 
 
-  /**
-    * @ignore
-    */
-  require __DIR__.DS.'view'.EXT;
-
   resolve(function($class)
     use($models_path)
   {
@@ -128,6 +123,11 @@ bootstrap::bind(function($app)
         raise(ln('mvc.view_missing', array('controller' => $controller, 'action' => $action)));
       }
 
+
+      /**
+       * @ignore
+       */
+      require __DIR__.DS.'view'.EXT;
 
       $view = view::load($view_file, (array) $class_name::$view);
 

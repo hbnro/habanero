@@ -17,9 +17,6 @@ class model extends prototype
   // new record?
   private $_new_record = NULL;
 
-  // columns definition
-  private static $defs = array();
-
   /**#@-*/
 
 //TODO: validations, relations?
@@ -340,11 +337,13 @@ class model extends prototype
    */
   final public static function columns()
   {
-    if (empty(self::$defs[self::table()]))
-    {// TODO: hackish, I guess
-      self::$defs[self::table()] = db::columns(self::table());
+    static $set = NULL;
+
+    if (is_null($set))
+    {
+      $set = db::columns(self::table());
     }
-    return self::$defs[self::table()];
+    return $set;
   }
 
 
@@ -355,7 +354,9 @@ class model extends prototype
    */
   final public static function table()
   {
-    return self::$table ?: get_called_class();
+    $class = get_called_class();
+
+    return $class::$table ?: $class;
   }
 
 
