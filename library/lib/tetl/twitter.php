@@ -194,7 +194,7 @@ class twitter extends prototype
   {
     static $set = array(// TODO: unicode support?
               '/(\w{3,5}:\/\/([-\w\.]+)+(d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/' => '<a href="\\1">\\1</a>',
-              '/(?<!\w)#([\w–‡Ž’—œ]+)(?=\b)/iu' => '<a href="http://twitter.com/search?q=%23\\1">#\\1</a>',
+              '/(?<!\w)#([\wÃ±Ã¡Ã©Ã­Ã³Ãº]+)(?=\b)/iu' => '<a href="http://twitter.com/search?q=%23\\1">#\\1</a>',
               '/(?<!\w)@(\w+)(?=\b)/u' => '<a href="http://twitter.com/\\1">@\\1</a>',
             );
 
