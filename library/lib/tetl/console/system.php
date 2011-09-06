@@ -11,28 +11,61 @@ class cli extends prototype
    * @ignore
    */
 
-  //
+  // commands stack
+  private static $set = array();
+
+  // main loop control
   private static $loop = FALSE;
 
-  //
+  // default screen width
   private static $width = 80;
 
-  //
+  // default screen height
   private static $height = 20;
 
-  //
+  // arguments input
   private static $flags = NULL;
+
+  // background
+  private static $bgcolors = array(
+                    'black' => 40,
+                    'red' => 41,
+                    'green' => 42,
+                    'yellow' => 43,
+                    'blue' => 44,
+                    'magenta' => 45,
+                    'cyan' => 46,
+                    'light_gray' => 47,
+                  );
+
+  // foreground
+  private static $fgcolors = array(
+                    'black' => 30,
+                    'red' => 31,
+                    'green' => 32,
+                    'brown' => 33,
+                    'blue' => 34,
+                    'purple' => 35,
+                    'cyan' => 36,
+                    'light_gray' => 37,
+                    'dark_gray' => '1;30',
+                    'light_red' => '1;31',
+                    'light_green' => '1;32',
+                    'yellow' => '1;33',
+                    'light_blue' => '1;34',
+                    'light_purple' => '1;35',
+                    'light_cyan' => '1;36',
+                    'white' => '1;37',
+                  );
 
   /**#@-*/
 
 
 
   /**
-   * Mostrar un error
+   * Retrieve input args
    *
-   * @param  string  $text  Mensaje de error
-   * @param  boolean $plain Formato plano
-   * @return void
+   * @return array
    */
   final public static function args()
   {
@@ -85,7 +118,7 @@ class cli extends prototype
 
           for ($j = 1; $j < $k; $j += 1)
           {
-            self::$flags[$str[$j]] = TRUE;
+            self::$flags[substr($str, $j, 1)] = TRUE;
           }
         }
       }
@@ -106,17 +139,53 @@ class cli extends prototype
 
 
   /**
-   * Mostrar un error
+   * Register handler
    *
-   * @param  string  $text  Mensaje de error
-   * @param  boolean $plain Formato plano
+   * @param  mixed Command|Aliases
+   * @param  mixed Function callback
    * @return void
    */
-  final public static function main($callback)
+  final public static function register($command, Closure $callback)
   {
-    // TODO: echo start
+    self::$set []= array(
+      'aliases' => (array) $command,
+      'callback' => $callback,
+    );
+  }
 
 
+  /**
+   * Execute handler
+   *
+   * @param  string Command
+   * @param  array  Arguments
+   * @return void
+   */
+  final public static function execute($command, array $args = array())
+  {
+    foreach (self::$set as $one)
+    {
+      if ( ! in_array($command, $one['aliases']))
+      {
+        continue;
+      }
+
+      apply($one['callback'], $args);
+      break;
+    }
+
+    self::help(self::ln('available_commands'), self::$set);
+  }
+
+
+  /**
+   * Main loop
+   *
+   * @param  mixed Function callback
+   * @return void
+   */
+  final public static function main(Closure $callback)
+  { // TODO: echo start?
     self::$loop = TRUE;
 
     while (self::$loop)
@@ -127,10 +196,8 @@ class cli extends prototype
 
 
   /**
-   * Mostrar un error
+   * Stop main loop
    *
-   * @param  string  $text  Mensaje de error
-   * @param  boolean $plain Formato plano
    * @return void
    */
   final public static function quit()
@@ -139,12 +206,10 @@ class cli extends prototype
   }
 
 
-
   /**
-   * Mantener ejecucion en espera
+   * Wait for user input
    *
-   * @param  string $text Mensaje de paso
-   * @param  integer
+   * @param  mixed Message|Secs
    * @return void
    */
   final public static function wait($text = 'press_any_key')
@@ -173,9 +238,9 @@ class cli extends prototype
 
 
   /**
-   * Mostrar un error
+   * Print out formatted text
    *
-   * @param  string  $text  Mensaje de error|...
+   * @param  string Text to print out
    * @return void
    */
   final public static function printf($text)
@@ -185,9 +250,9 @@ class cli extends prototype
 
 
   /**
-   * Leer la entrada del usuario
+   * Read user input
    *
-   * @param  string $text Cadena de consulta
+   * @param  string Text to prompt
    * @return mixed
    */
   final public static function readln($text = "\n")
@@ -196,7 +261,7 @@ class cli extends prototype
 
     if (function_exists('readline'))
     {
-      return readline(join('', $args));
+      return trim(readline(join('', $args)));
     }
 
     self::printf(join('', $args));
@@ -206,25 +271,24 @@ class cli extends prototype
 
 
   /**
-   * Escribir la salida en la consola
+   * Print out a line of text
    *
-   * @param  string $text Cadena de texto
+   * @param  string Text to print out
    * @return void
    */
   final public static function writeln($text = "\n")
   {
     $args = func_get_args();
 
-    self::printf(trim(join('', $args)) . "\n");
+    self::printf(join('', $args) . "\n");
     self::flush();
   }
 
 
   /**
-   * Mostrar un error
+   * Print out raw text
    *
-   * @param  string  $text  Mensaje de error
-   * @param  boolean $plain Formato plano
+   * @param  string Text to print out
    * @return void
    */
   final public static function write($text = '')
@@ -234,16 +298,17 @@ class cli extends prototype
   }
 
 
-   /**
-   * Mostrar un error
+  /**
+   * Error output
    *
-   * @param  string  $text  Mensaje de error
-   * @param  boolean $plain Formato plano
+   * @param  string  Error message
+   * @param  boolean Plain output
    * @return void
    */
   final public static function error($text, $plain = FALSE)
   {
-    $text = is_true($plain) ? $text : "\n\bred(Error)\b $text\n";
+    $error = self::ln('error');
+    $text  = is_true($plain) ? $text : "\n\bred($error)\b $text\n";
 
     fwrite(STDERR, self::format($text));
 
@@ -252,8 +317,9 @@ class cli extends prototype
 
 
   /**
-   * Limpiar buffer
+   * Clear screen
    *
+   * @param  integer Spaces to back
    * @return void
    */
   final public static function clear($num = 0)
@@ -268,9 +334,10 @@ class cli extends prototype
     }
     else
     {
-      $c = 20;
+      $c = self::$height;
+
       while($c -= 1)
-      {//FIX
+      {
         self::writeln();
       }
     }
@@ -279,53 +346,24 @@ class cli extends prototype
   }
 
 
-
-
   /**
-   * Formatear texto sencillo
+   * Basic text formatting
    *
-   * @param   string $text
-   * @staticvar Expresion regular
-   * @return  string
+   * @param     string Text to print out
+   * @staticvar string RegExp to match format
+   * @return    string
    */
   final public static function format($text)
   {
-    static $regex = NULL,
-           $bgcolors = array(
-              'black' => 40,
-              'red' => 41,
-              'green' => 42,
-              'yellow' => 43,
-              'blue' => 44,
-              'magenta' => 45,
-              'cyan' => 46,
-              'light_gray' => 47,
-            ),
-           $fgcolors = array(
-              'black' => 30,
-              'red' => 31,
-              'green' => 32,
-              'brown' => 33,
-              'blue' => 34,
-              'purple' => 35,
-              'cyan' => 36,
-              'light_gray' => 37,
-              'dark_gray' => '1;30',
-              'light_red' => '1;31',
-              'light_green' => '1;32',
-              'yellow' => '1;33',
-              'light_blue' => '1;34',
-              'light_purple' => '1;35',
-              'light_cyan' => '1;36',
-              'white' => '1;37',
-            );
+    static $regex = NULL;
 
 
     if (is_null($regex))
     {
       $expr  = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\(\s*(.*?)\s*\)\\1/s';
-      $regex = sprintf($expr, join('|', array_keys($fgcolors)), join('|', array_keys($bgcolors)));
+      $regex = sprintf($expr, join('|', array_keys(self::$fgcolors)), join('|', array_keys(self::$bgcolors)));
     }
+
 
     while (preg_match_all($regex, $text, $match))
     {
@@ -336,7 +374,7 @@ class cli extends prototype
 
         if ($key = array_shift($test))
         {
-          $out []= $fgcolors[$key];
+          $out []= self::$fgcolors[$key];
         }
 
 
@@ -358,7 +396,7 @@ class cli extends prototype
 
         if ($key = array_shift($test))
         {
-          $out []= $bgcolors[$key];
+          $out []= self::$bgcolors[$key];
         }
 
         $color = "\033[" . ( $out ? join(';', $out) : 0) . 'm';
@@ -371,54 +409,51 @@ class cli extends prototype
 
 
   /**
-   * Comprobar argumento especifico
+   * Retrieve flag
    *
-   * @param  string  $name Bandera
+   * @param  string  Item name
+   * @param  mixed   Default value
    * @return boolean
    */
-  function flag($name)
+  final public static function flag($name, $or = FALSE)
   {
-    $set  = self::args();
+    $set = self::args();
 
-    $args = func_get_args();
-    $test = is_array($name) ? $name : $args;
-
-
-    foreach ($test as $one)
+    foreach ((array) $name as $one)
     {
-      if ($one && array_key_exists($one, $set))
-      {//FIX
+      if ( ! empty($set[$one]))
+      {
         return $set[$one];
       }
     }
-    return FALSE;
+    return $or;
   }
 
 
   /**
-   * Pregunta generica
+   * User prompt
    *
-   * @param  string $text  Cuestionamiento de entrada
-   * @param  string $default Valor por defecto
+   * @param  string Question
+   * @param  string Default
    * @return mixed
    */
-  function prompt($text, $default = '')
+  final public static function prompt($text, $default = '')
   {
     $default && $text .= " [$default]";
 
-    return ($out = self::readln($text, ': ')) ? $out : $default;
+    return self::readln($text, ': ') ?: $default;
   }
 
 
   /**
-   * Elegir un opcion
+   * Options
    *
-   * @param  string $text  Cuestionamiento de entrada
-   * @param  string $value   Opciones disponibles
-   * @param  string $default Valor por defecto
+   * @param  string Question
+   * @param  string Options
+   * @param  string Default
    * @return mixed
    */
-  function option($text, $value = 'yn', $default = 'n')
+  final public static function option($text, $value = 'yn', $default = 'n')
   {
     $value = strtolower(str_replace($default, '', $value)) . strtoupper($default);
     $value = str_replace('\\', '/', trim(addcslashes($value, $value), '\\'));
@@ -430,15 +465,15 @@ class cli extends prototype
 
 
   /**
-   * Menu de seleccion
+   * Options menu
    *
-   * @param  array  $set   Arreglo de opciones
-   * @param  mixed  $default Valor por defecto
-   * @param  string $title   Titulo del menu
-   * @param  string $warn Opcion errada
+   * @param  array  Options hash
+   * @param  mixed  Default value
+   * @param  string Menu title
+   * @param  string Warn text
    * @return mixed
    */
-  function menu($set, $default = '', $title = 'choose_one_option', $warn = 'unknown_option')
+  final public static function menu(array $set, $default = '', $title = 'choose_one_option', $warn = 'unknown_option')
   {
     $old = array_values($set);
     $pad = strlen(sizeof($set)) + 2;
@@ -455,159 +490,198 @@ class cli extends prototype
     {
       $val = self::readln("\n", self::ln($title), ': ');
 
-      if ( ! is_numeric($val)) return $default;
+      if ( ! is_numeric($val))
+      {
+        return $default;
+      }
       else
       {
-      if (isset($old[$val -= 1])) return array_search($old[$val], $set);
-      elseif ($val < 0 OR $val >= sizeof($old)) self::error(self::ln($warn));
+        if (isset($old[$val -= 1]))
+        {
+          return array_search($old[$val], $set);
+        }
+        elseif ($val < 0 OR $val >= sizeof($old))
+        {
+          self::error(self::ln($warn));
+        }
       }
     }
   }
 
 
-
-
   /**
-   * Ajustar texto
+   * Text wrap
    *
-   * @param  mixed   $text    Cadena de entrada|Arreglo
-   * @param  integer $width   Ancho final del texto
-   * @param  integer $align   Orientacion del texto
-   * @param  integer $margin  Margen horizontal
-   * @param  string  $separator Union de frases
+   * @param  mixed   Text to print out
+   * @param  integer Text width
+   * @param  integer Text align
+   * @param  integer Horizontal margin
+   * @param  string  Phrase separator
    * @return void
    */
-  function wrap($text, $width = -1, $align = 1, $margin = 2, $separator = ' ')
-  {//--
-  if (is_array($text)) $text = join("\n", $text);
-  $max = $width > 0? $width: self::$width +$width;
-  $max -= $margin *2;
-  $out = array();
-  $cur = '';
-
-  $sep = strlen($separator);
-  $left = str_repeat(' ', $margin);
-  $pad = $align < 0? 0: ($align == 0? 2: 1);
-  $test = explode("\n", str_replace(' ', "\n", $text));
-
-  foreach ($test as $i => $str)
+  final public static function wrap($text, $width = -1, $align = 1, $margin = 2, $separator = ' ')
   {
-    if (strlen($str) > $max)
+    if (is_array($text))
     {
-    if ( ! empty($cur)) $out []= $cur;
-    $out []= wordwrap($str, $max +2, "\n$left", TRUE);
-    $cur = '';
+      $text = join("\n", $text);
     }
-    else
+
+    $max  = $width > 0 ? $width : self::$width + $width;
+    $max -= $margin *2;
+    $out  = array();
+    $cur  = '';
+
+    $sep  = strlen($separator);
+    $left = str_repeat(' ', $margin);
+    $pad  = $align < 0 ? 0 : ($align === 0 ? 2 : 1);
+    $test = explode("\n", str_replace(' ', "\n", $text));
+
+    foreach ($test as $i => $str)
     {
-    if ((strlen($cur) +strlen($str) +$sep) >= $max)
-    {//--
-      $cur = trim($cur, $separator);
-      $out []= str_pad($cur, $max, ' ', $pad);
-      $cur = '';
+      if (strlen($str) > $max)
+      {
+        if ( ! empty($cur))
+        {
+          $out []= $cur;
+        }
+        $out []= wordwrap($str, $max + 2, "\n$left", TRUE);
+        $cur  = '';
+      }
+      else
+      {
+        if ((strlen($cur) + strlen($str) + $sep) >= $max)
+        {
+          $cur   = trim($cur, $separator);
+          $out []= str_pad($cur, $max, ' ', $pad);
+          $cur   = '';
+        }
+        $cur .= "$str$separator";
+      }
     }
-    $cur .= "$str$separator";
+
+    if ( ! empty($cur))
+    {
+      $out []= $cur;
     }
-  }
 
-  if ( ! empty($cur)) $out []= $cur;
+    $test = join("\n$left", $out);
 
-  $test = join("\n$left", $out);
-  self::writeln("\n", "$left$test");
+    self::writeln("\n", "$left$test");
   }
 
 
   /**
-   * Mostrar cuadro de informacion
+   * Show help
    *
-   * @param  string $title Titulo del cuadro
-   * @param  array  $set   Opciones detalladas
+   * @param  string Help title
+   * @param  array  Options
    * @return void
    */
-  function help($title, $set = array())
-  {// --
-  self::_print("\n$title");
-
-  $max = 0;
-  foreach (array_keys($set) as $one)
+  final public static function help($title, array $set = array())
   {
-    $cur = ! empty($val['args'])? strlen(join('< >', $val['args'])): 0;
-    if (($cur += strlen($one)) > $max) $max = $cur;
-  }
-  $max += 4;
+    self::write("\n$title");
 
-  foreach ($set as $key => $val)
-  {
-    self::_print(sprintf("\n  %-{$max}s %s%s",
-        $key . ( ! empty($val['args'])? ' <' . join('> <', $val['args']) . '>': ''),
-        ! empty($val['flag'])? "-$val[flag]  ": '',
-        $val['title']));
-  }
-  self::_flush(1);
-  }
+    $max = 0;
 
-
-
-
-
-  /**
-   * Barra de progreso
-   *
-   * @param   integer $current Valor actual
-   * @param   integer $total   Valor total
-   * @param   string  $title   Titulo
-   * @staticvar Marca de tiempo
-   * @return  void
-   */
-  function progress($current, $total = 100, $title = '')
-  {// --
-  static $start = 0;
-
-  $now = array_sum(explode(' ', microtime()));
-  if ($current == 0) $start = $now;
-
-  $diff = $current > 0? round((($now -$start) /$current) *($total -$current)): 0;
-  $perc = min(100, str_pad(round(($current /$total) *100), 4, ' ', STR_PAD_LEFT) +  1);
-
-  $title = str_replace('{elapsed}', self::_time(round($now -$start)), $title);
-  $title = str_replace('{remaining}', self::_time($diff), $title); //--
-  $dummy = self::_strip($title = self::format($title));
-  $length = self::$width -(strlen($dummy) +7);
-
-  if ($current > 0) self::back(self::$width);
-  if ( ! empty($title)) self::_print("$title ");
-  self::_print($current == $total? "\n": '');
-
-  $inc = 0;
-  for ($i = 0; $i <= $length; $i += 1)
-  {
-    if ($i <= ($current /$total *$length))
+    foreach ($set as $one => $val)
     {
-      $char = $i === 0 ? '[' : ($i == $length ? ']' : self::__progress_char);
-      self::_print(self::format("\c{self::__progress}{$char}\c"));
-    }
-    else
-    {//--
-      $background = $perc > 99 ? self::__progress : self::__background;
-    $char = ($inc += 1) == 0? self::__progress_mark: ' ';
-    self::_print(self::format("\c{$background}" . ($i == $length? ']': $char) . '\c'));
-    }
-  }
+      $cur = ! empty($val['args']) ? strlen(join('> <', $val['args'])) : 0;
 
-  self::_print(' %3d%%', $perc);
-  self::_flush($perc > 99);
+      if (($cur += strlen($one)) > $max)
+      {
+        $max = $cur;
+      }
+    }
+
+    $max += 4;
+
+    foreach ($set as $key => $val)
+    {
+      $args = $key . ( ! empty($val['args']) ? ' <' . join('> <', $val['args']) . '>' : '');
+      $flag = ! empty($val['flag']) ? "-$val[flag]  " : '';
+
+      self::write(sprintf("\n  %-{$max}s %s%s", $args, $flag, $val['title']));
+    }
+    self::flush(1);
   }
 
 
   /**
-   * Tabulacion de resultados
+   * Progress bar
    *
-   * @param  array Matriz de datos
-   * @param  array Cabeceras
+   * @param     integer Current value
+   * @param     integer Total value
+   * @param     string  Title
+   * @staticvar integer Timestamp
+   * @return    void
+   */
+  final public static function progress($current, $total = 100, $title = '')
+  {
+    static $start = 0;
+
+
+    $now = ticks();
+
+    if ($current == 0)
+    {
+      $start = $now;
+    }
+
+
+    $diff = $current > 0 ? round((($now - $start) / $current) * ($total - $current)) : 0;
+    $perc = min(100, str_pad(round(($current / $total) * 100), 4, ' ', STR_PAD_LEFT) +  1);
+
+    $title  = str_replace('%{elapsed}', self::duration(round($now - $start)), $title);
+    $title  = str_replace('%{remaining}', self::duration($diff), $title);
+    $dummy  = self::strips($title = self::format($title));
+    $length = self::$width - (strlen($dummy) + 7);
+
+    if ($current > 0)
+    {
+      self::clear(self::$width);
+    }
+
+    if ( ! empty($title))
+    {
+      self::write("$title ");
+    }
+
+    self::write($current == $total ? "\n" : '');
+
+    $inc = 0;
+
+    for ($i = 0; $i <= $length; $i += 1)
+    {
+      if ($i <= ($current / $total * $length))
+      {
+        $char = $i === 0 ? '[' : ($i == $length ? ']' : '*');
+
+        self::write(self::format("\ccyan($char)\c"));
+      }
+      else
+      {
+        $background = $perc > 99 ? 'green' : 'red';
+        $char = ($inc += 1) == 0 ? '=' : ' ';
+
+        self::write(self::format("\c{$background}" . ($i == $length ? ']' : $char) . '\c'));
+      }
+    }
+
+    self::write(' %3d%%', $perc);
+    self::flush($perc > 99);
+  }
+
+
+  /**
+   * Data tabulation
+   *
+   * @param  array Matrix
+   * @param  array Headers
    * @return void
    */
-  function table(array $set, array $heads = array())
+  final public static function table(array $set, array $heads = array())
   {
+    // TODO: make it work on large amount of data?
     $set  = array_values($set);
     $max  = self::$width / sizeof($set[0]);
     $max -= sizeof($set[0]);
@@ -646,6 +720,7 @@ class cli extends prototype
     foreach (array_values($heads) as $key => $one)
     {
       $head []= str_pad($one, $col[$key], ' ', STR_PAD_BOTH);
+
       if (strlen($one) > $col[$key])
       {
         $col[$key] = strlen($one);
@@ -661,7 +736,7 @@ class cli extends prototype
     if ( ! empty($heads))
     {
       $heads = trim(join(' ', $head));
-      $heads = preg_replace('/\b\w+\b/', '\bwhite(\\0)\b', $heads);
+      $heads = preg_replace('/\b\w+\b/', '\cpurple(\\0)\c', $heads);
 
       self::write(cli::format(" $heads"));
       self::writeln();
@@ -676,7 +751,7 @@ class cli extends prototype
       foreach ($test as $one)
       {
         $one   = substr($one, 0, strlen($one) > $max ? $max - 3 : $max) . (strlen($one) > $max ? '...' : '');
-        $one   = str_pad($one, $col[$key], ' ', is_numeric($one)? STR_PAD_LEFT : STR_PAD_RIGHT);
+        $one   = str_pad($one, $col[$key], ' ', is_num($one) ? STR_PAD_LEFT : STR_PAD_RIGHT);
         $row []= preg_replace('/[\r\n\t]/', ' ', $one);
         $key  += 1;
       }
@@ -709,46 +784,22 @@ class cli extends prototype
     flush();
   }
 
-  //
-  function strips($test)
+  // remove color codes
+  final private static function strips($test)
   {
     return preg_replace("/\033\[.*?m/", '', $test);
   }
 
-  //
-  function duration($secs)
+  // time formatting
+  final private static function duration($secs)
   {
     $out = sprintf('%d:%02d:%02d', floor($secs / 3600), floor($secs % 3600 / 60), $secs % 60);
 
     return preg_replace('/^0+:/', '', $out);
   }
 
-  //
-  function call($command, $args = array())
-  {
-    foreach (self::$stack as $key => $val)
-    {
-      $test = array($key);
-
-      if ( ! empty($val['aliases']))
-      {
-        $test = array_merge($test, $val['aliases']);
-      }
-
-      if ( ! in_array($command, $test))
-      {
-        continue;
-      }
-      elseif ( ! empty($val['callback']) && is_callable($val['callback']))
-      {
-        apply($val['callback'], $args);
-      }
-      break;
-    }
-  }
-
-  //
-  function ln($str)
+  // translations
+  final private static function ln($str)
   {
     return ln( ! is_false(strpos($str, '.')) ? $str : "cli.$str");
   }
