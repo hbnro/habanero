@@ -28,7 +28,7 @@ class valid extends prototype
    * Define rules
    *
    * @param     array Validation ruleset
-   * @staticvar Replacements
+   * @staticvar array Replacements
    * @return    void
    */
   final public static function setup(array $test = array())

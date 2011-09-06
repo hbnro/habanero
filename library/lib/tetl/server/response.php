@@ -280,3 +280,5 @@ function status($num = 200, array $headers = array())
     header("$protocol $num {$set['reasons'][$num]}", TRUE, $num);
   }
 }
+
+/* EOF: ./lib/tetl/server/response.php */

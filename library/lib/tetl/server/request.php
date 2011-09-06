@@ -63,7 +63,7 @@ class request extends prototype
    *
    * @return mixed
    */
-  function put()
+  final public static function put()
   {
     if ( ! request::is_put())
     {
@@ -88,7 +88,7 @@ class request extends prototype
   * @param  mixed  Default value
   * @return mixed
   */
-  function get($key, $or = FALSE)
+  final public static function get($key, $or = FALSE)
   {
     return value($_GET, $key, $or);
   }
@@ -101,7 +101,7 @@ class request extends prototype
   * @param  mixed  Default value
   * @return mixed
   */
-  function post($key, $or = FALSE)
+  final public static function post($key, $or = FALSE)
   {
     return value($_POST, $key, $or);
   }
@@ -113,7 +113,7 @@ class request extends prototype
   * @param  string Identifier
   * @return mixed
   */
-  function upload($key)
+  final public static function upload($key)
   {
     return value($_FILES, $key, array());
   }
@@ -124,7 +124,7 @@ class request extends prototype
   *
   * @return string
   */
-  function address()
+  final public static function address()
   {
     return is_callable('gethostbyaddr') ? gethostbyaddr(request::remote_ip()) : request::remote_ip();
   }
@@ -135,7 +135,7 @@ class request extends prototype
   *
   * @return integer
   */
-  function port()
+  final public static function port()
   {
     return (int) server('REMOTE_PORT');
   }
@@ -146,7 +146,7 @@ class request extends prototype
   *
   * @return mixed
   */
-  function agent()
+  final public static function agent()
   {
     return server('HTTP_USER_AGENT');
   }
@@ -157,7 +157,7 @@ class request extends prototype
   *
   * @return string
   */
-  function method()
+  final public static function method()
   {
     return server('REQUEST_METHOD');
   }
@@ -169,7 +169,7 @@ class request extends prototype
   * @param  string Valor por defecto
   * @return mixed
   */
-  function referer($or = FALSE)
+  final public static function referer($or = FALSE)
   {
     return server('HTTP_REFERER', $or);
   }
@@ -181,7 +181,7 @@ class request extends prototype
   * @param  string Default value
   * @return string
   */
-  function remote_ip($or = FALSE)
+  final public static function remote_ip($or = FALSE)
   {
     return server('HTTP_X_FORWARDED_FOR', server('HTTP_CLIENT_IP', server('REMOTE_ADDR', $or)));
   }
@@ -192,7 +192,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  function is_root()
+  final public static function is_root()
   {
     return URI === '/';
   }
@@ -203,7 +203,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  function is_post()
+  final public static function is_post()
   {
     return request::method() === POST;
   }
@@ -214,7 +214,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  function is_get()
+  final public static function is_get()
   {
     return request::method() === GET;
   }
@@ -225,7 +225,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  function is_put()
+  final public static function is_put()
   {
     return request::method() === PUT;
   }
@@ -236,7 +236,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  function is_delete()
+  final public static function is_delete()
   {
     return request::method() === DELETE;
   }
@@ -248,7 +248,7 @@ class request extends prototype
    * @param  string  Key or name
    * @return boolean
    */
-  function is_upload($key = NULL)
+  final public static function is_upload($key = NULL)
   {
     if (func_num_args() == 0)
     {
@@ -276,7 +276,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  function is_ajax()
+  final public static function is_ajax()
   {
     if (empty($_SERVER['HTTP_X_REQUESTED_WITH']))
     {// intentionally native
@@ -293,7 +293,7 @@ class request extends prototype
    * @staticvar string  Token
    * @return    boolean
    */
-  function is_safe()
+  final public static function is_safe()
   {
     static $check = NULL,
            $_token = NULL;
