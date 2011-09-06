@@ -6,17 +6,7 @@
 
 function client($ua = '')
 {
-  static $set = NULL,
-         $defs = array(
-            'robot' => '',
-            'mobile' => '',
-            'browser' => '',
-            'version' => '',
-            'platform' => '',
-            'is_browser' => FALSE,
-            'is_mobile' => FALSE,
-            'is_robot' => FALSE,
-          );
+  static $set = NULL;
 
 
   if (is_null($set))
@@ -24,7 +14,16 @@ function client($ua = '')
     $set = include __DIR__.DS.'assets'.DS.'scripts'.DS.'user_agents'.EXT;
   }
 
-  $out = $defs;
+  $out = array(
+    'robot' => '',
+    'mobile' => '',
+    'browser' => '',
+    'version' => '',
+    'platform' => '',
+    'is_browser' => FALSE,
+    'is_mobile' => FALSE,
+    'is_robot' => FALSE,
+  );
   $ua  = $ua ?: value($_SERVER, 'HTTP_USER_AGENT');
 
 

@@ -131,11 +131,7 @@ bootstrap::bind(function($app)
     unset($_POST['_method']);
   }
 
-  // CRSF token
-  define('TOKEN', sprintf('%d %s', time(), sha1(salt(13))));
-
   ignore_user_abort(FALSE);
-
 
   return function()
     use($app)

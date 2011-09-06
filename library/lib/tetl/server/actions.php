@@ -27,6 +27,10 @@ function url_for($action, array $params = array())
   {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'action')));
   }
+  elseif (is_url($params['action']))
+  {
+    return $params['action'];
+  }
 
 
   $params  = array_merge(array(
@@ -41,10 +45,10 @@ function url_for($action, array $params = array())
   $link    = is_true($params['host']) ? server(TRUE, ROOT, $abs) : ROOT;
   $rewrite = (boolean) option('rewrite');
 
-  if ( ! $rewrite)
-  {
-    $link .= INDEX . (option('query') ? '?' : '');
-  }
+
+  ! $rewrite && $link .= INDEX;
+
+  $link .= option('query') ? '?' : '';
 
   $anchor =
   $query  = '';
@@ -54,7 +58,7 @@ function url_for($action, array $params = array())
     @list($part, $anchor) = explode('#', $params['action']);
     @list($part, $query)  = explode('?', $part);
 
-    $link .= '/' . ltrim($part, '/');
+    $link .= ($rewrite ? '' : '/') . ltrim($part, '/');
   }
 
   if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
@@ -125,7 +129,7 @@ function pre_url($text)
  *
  * @param  mixed  Link text|Options hash|Path
  * @param  mixed  Options hash|Path|Function callback
- * @param  mixed  Options hash|Function callback
+ * @param  mixed  Attributes|Function callback
  * @return string
  */
 function link_to($text, $url = NULL, $args = array())
@@ -139,7 +143,9 @@ function link_to($text, $url = NULL, $args = array())
   }
   elseif (is_assoc($url))
   {
-    $params['action'] = (string) $text;
+    $params = array_merge($url, $params);
+
+    $url = (string) $text;
   }
   elseif (is_closure($url))
   {
@@ -187,7 +193,7 @@ function link_to($text, $url = NULL, $args = array())
   ), $params);
 
   return tag('a', array_merge(array(
-    'href' => url_for($params),
+    'href' => substr($params['action'], 0, 1) === '/' ? $params['action'] : url_for($params),
     'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
     'data-confirm' => $params['confirm'] ?: FALSE,
   ), $attrs), $params['text']);

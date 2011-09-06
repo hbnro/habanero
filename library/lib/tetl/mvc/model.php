@@ -88,6 +88,11 @@ class model extends prototype
 
       unset($fields[$class::pk()]);
 
+      if (array_key_exists('created_at', $fields))
+      {
+        $fields['created_at'] = $fields['modified_at'] = date('Y-m-d H:i:s');
+      }
+
       $this->_props[$class::pk()] = db::insert($class::table(), $fields);
     }
     else
@@ -118,6 +123,12 @@ class model extends prototype
     $fields = $this->_props;
 
     unset($fields[$class::pk()]);
+
+    if (array_key_exists('modified_at', $fields))
+    {
+      $fields['modified_at'] = date('Y-m-d H:i:s');
+    }
+
 
     db::update($class::table(), $fields, array(
       $class::pk() => $this->_props[$class::pk()],
@@ -162,12 +173,12 @@ class model extends prototype
 
 
   /**
-   * Create row (not save)
+   * Create row without saving
    *
    * @param  array Properties
    * @return model
    */
-  final public static function create(array $params = array())
+  final public static function build(array $params = array())
   {
     $row   = (object) $params;
     $class = get_called_class();
@@ -177,6 +188,19 @@ class model extends prototype
     return new $class((array) $row, TRUE, 'after_create');
   }
 
+
+  /**
+   * Create row and save it
+   *
+   * @param  array Properties
+   * @return model
+   */
+  final public static function create(array $params = array())
+  {
+    $class = get_called_class();
+
+    return $class::build($params)->save();
+  }
 
 
   /**
@@ -292,34 +316,25 @@ class model extends prototype
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
-      return $class::count(array(
-        substr($method, 9) => $arguments,
-      ));
+      return $class::count(self::where(substr($method, 9), $arguments));
     }
     elseif (strpos($method, 'find_or_create_by_') === 0)
     {
-      $res = db::select($class::table(), ALL, array(
-        substr($method, 18) => $arguments,
-      ));
+      $test = self::where(substr($method, 18), $arguments);
+      $res  = db::select($class::table(), ALL, $test);
 
       if (db::numrows($res))
       {
         return new $class(db::fetch($res, AS_ARRAY), FALSE, 'after_find');
       }
-
-      $test = preg_split('/_(?:or|and)_/', substr($method, 18));
-      $test = array_combine($test, $arguments);
-
-      return $class::create($test)->save();
+      return $class::create($test);
     }
     else
     {
       if (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
       {
         return $class::find($match[1], array(
-          'where' => array(
-            $match[2] => $arguments,
-          ),
+          'where' => self::where($match[2], $arguments),
         ));
       }
 
@@ -337,13 +352,7 @@ class model extends prototype
    */
   final public static function columns()
   {
-    static $set = NULL;
-
-    if (is_null($set))
-    {
-      $set = db::columns(self::table());
-    }
-    return $set;
+    return db::columns(self::table());
   }
 
 
@@ -398,6 +407,12 @@ class model extends prototype
   final private static function callback($row, $method)
   {
     self::defined($method) && self::$method($row);
+  }
+
+  // dynamic where
+  final private static function where($as, $are)
+  {
+    return array_combine(preg_split('/_and_/', $as), $are);
   }
 
   /**#@-*/

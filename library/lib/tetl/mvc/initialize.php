@@ -8,6 +8,8 @@ import('tetl/server');
 
 bootstrap::bind(function($app)
 {
+  import('tetl/session');
+
   i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
   $controllers_path = realpath(option('mvc.controllers_path'));
@@ -130,7 +132,7 @@ bootstrap::bind(function($app)
 
         $view = render($layout_file, TRUE, array(
           'locals' => array(
-            'yield' => $view,
+            'body' => $view,
             'title' => $class_name::$title,
           ),
         ));

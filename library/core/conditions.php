@@ -5,6 +5,33 @@
  */
 
 /**
+ * Is application root?
+ *
+ * @return boolean
+ */
+function is_root()
+{
+  return URI === '/';
+}
+
+
+/**
+ * Is ajax maded request?
+ *
+ * @return boolean
+ */
+function is_ajax()
+{
+  if (empty($_SERVER['HTTP_X_REQUESTED_WITH']))
+  {// intentionally native
+    return FALSE;
+  }
+
+  return $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+}
+
+
+/**
  * Is odd number?
  *
  * @param  scalar  Number
@@ -420,7 +447,7 @@ function is_local($test = NULL)
     return TRUE;
   }
 
-  return preg_match($regex, $test ?: remote()) > 0;
+  return preg_match($regex, $test ?: request::remote_ip()) > 0;
 }
 
 

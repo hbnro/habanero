@@ -59,11 +59,11 @@ function session($key, $value = '', array $option = array())
     }
     return FALSE;
   }
-  elseif (is_string($key) && ! is_num($key))
+  elseif (is_string($hash) && ! is_num($hash))
   {
-    if (is_null($value) && isset($_SESSION[$key]))
+    if (is_null($value) && isset($_SESSION[$hash]))
     {
-      unset($_SESSION[$key]);
+      unset($_SESSION[$hash]);
     }
     else
     {

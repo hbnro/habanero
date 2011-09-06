@@ -8,6 +8,6 @@ config(dirname(__DIR__).DS.'config'.DS.'database'.EXT);
 import('tetl/mvc');
 
 run(function()
-{
+{// TODO: implement UJS to catch PUT|DELETE
   require __DIR__.DS.'routes'.EXT;
 });

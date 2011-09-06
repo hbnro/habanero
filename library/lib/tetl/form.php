@@ -48,7 +48,9 @@ class form extends prototype
       'method'    => GET,
       'content'   => 'raise',
       'multipart' => FALSE,
-    ), $defs);
+      'confirm'   => FALSE,
+      'remote'    => FALSE,
+    ), $params);
 
     if ( ! is_closure($params['content']))
     {
@@ -80,7 +82,11 @@ class form extends prototype
     }
 
     $params['action'] && $params['action'] = pre_url($params['action']);
+    $params['confirm'] && $params['data']['confirm'] = $params['confirm'];
 
+    is_true($params['remote']) && $params['data']['remote'] = 'true';
+
+    unset($params['remote'], $params['confirm']);
 
     $input = tag('input', array(
       'type' => 'hidden',
@@ -97,7 +103,7 @@ class form extends prototype
         'value' => $params['method'],
       ));
 
-      $params['method']  = 'post';//FIX
+      $params['method'] = 'post';
     }
 
     $div = tag('div', array(
@@ -319,7 +325,7 @@ class form extends prototype
         {
           $sub .= tag('option', array(
             'value' => $key,
-            'selected' => is_array($default) ? in_array($key, $default) : ! strcmp($key, $default),
+            'selected' => is_array($default) ? in_array($key, $default, TRUE) : ! strcmp($key, $default),
           ), ents($val, TRUE));
         }
 
@@ -393,7 +399,7 @@ class form extends prototype
     $out = '';
     $key = form::index($params['name'], TRUE);
 
-    $default = (array) form::value($params['name'], form::value($key));
+    $default = (array) form::value($params['name'], form::value($key, $params['default']));
     $index   = strtr($key, '.', '_');
     $name    = $params['name'];
     $old     = $params;
@@ -404,7 +410,6 @@ class form extends prototype
     {
       $params['name'] .= '[]';
     }
-
 
     foreach ($options as $key => $value)
     {
@@ -418,7 +423,7 @@ class form extends prototype
         'type' => $params['multiple'] ? 'checkbox' : 'radio',
         'name' => $params['name'],
         'value' => $key,
-        'checked' => in_array($key, $default),
+        'checked' => in_array($key, $default, TRUE),
         'title' => $value,
         'id' => $index . '_' . $key,
       ));

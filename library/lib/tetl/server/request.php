@@ -188,17 +188,6 @@ class request extends prototype
 
 
   /**
-   * Is application root?
-   *
-   * @return boolean
-   */
-  final public static function is_root()
-  {
-    return URI === '/';
-  }
-
-
-  /**
    * Is POST request?
    *
    * @return boolean
@@ -272,22 +261,6 @@ class request extends prototype
 
 
   /**
-   * Is ajax maded request?
-   *
-   * @return boolean
-   */
-  final public static function is_ajax()
-  {
-    if (empty($_SERVER['HTTP_X_REQUESTED_WITH']))
-    {// intentionally native
-      return FALSE;
-    }
-
-    return $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-  }
-
-
-  /**
    * Is CSRF-free request valid?
    *
    * @staticvar string  Token
@@ -301,7 +274,7 @@ class request extends prototype
 
     if (is_null($check))
     {
-      $check = ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : FALSE;
+      $check = defined('CHECK') ? CHECK : NULL;
 
       if ($_token = value($_POST, '_token'))
       {

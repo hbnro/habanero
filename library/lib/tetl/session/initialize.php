@@ -7,8 +7,8 @@
 call_user_func(function()
 {
   require __DIR__.DS.'functions'.EXT;
-  
-  
+
+
   // default session hanlder
   // http://php.net/session_set_save_handler
 
@@ -44,12 +44,12 @@ call_user_func(function()
   {
     session_set_cookie_params(86400, ROOT, '.' . server());
   }
-  
+
   session_name('--a-' . preg_replace('/\W/', '-', phpversion()));
   // TODO: BTW with session_id()?
   session_start();
-  
-  
+
+
   // expires+hops
   foreach ($_SESSION as $key => $val)
   {
@@ -57,17 +57,23 @@ call_user_func(function()
     {
       continue;
     }
-    
+
     if (isset($_SESSION[$key]['expires']) && (time() >= $val['expires']))
     {
       unset($_SESSION[$key]);
     }
-    
+
     if (isset($_SESSION[$key]['hops']) && ($_SESSION[$key]['hops']-- <= 0))
     {
       unset($_SESSION[$key]);
     }
   }
+
+  // TODO: CRSF token check?
+  define('TOKEN', sprintf('%d %s', time(), sha1(salt(13))));
+  define('CHECK', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
+
+  $_SESSION['--csrf-token'] = TOKEN;
 });
 
 /* EOF: ./lib/tetl/session/initialize.php */

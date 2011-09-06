@@ -117,7 +117,7 @@ HELP;
               success(ln('tetl.controller_route_building', array('name' => $name)));
 
               $route_file = CWD.DS.'app'.DS.'routes'.EXT;
-              write($route_file, preg_replace('/;[^;]*?$/', ";\nroute('/$name', '$name#index', array('path' => '$name'))\\0", read($route_file)));
+              write($route_file, preg_replace('/;[^;]*?$/', ";\nget('/$name', '$name#index', array('path' => '$name'))\\0", read($route_file)));
 
 
               success(ln('tetl.controller_view_building', array('name' => $name)));
