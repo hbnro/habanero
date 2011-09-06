@@ -124,7 +124,7 @@ HELP;
 
               $ext = ! empty($params['type']) ? '.' . $params['type'] : EXT;
 
-              $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
+              $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
               write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$name).DS.'index'.$ext, $text);
             }
           break;
@@ -171,7 +171,7 @@ HELP;
 
                 success(ln('tetl.action_view_building', array('name' => $name, 'controller' => $parent)));
 
-                $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?></p>\n<?php echo ticks(BEGIN), 's';\n";
+                $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
                 write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
               }
             }
