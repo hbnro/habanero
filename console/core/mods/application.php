@@ -9,11 +9,11 @@ class application extends prototype
 
   $app_introduction
 
-  \bgreen(app.st)\b
-  \bgreen(app.gen)\b
-  \bgreen(app.make)\b \bblue(controller)\b \byellow(name)\b
-  \bgreen(app.make)\b \bblue(action)\b \byellow(controller:name)\b
-  \bgreen(app.make)\b \bblue(model)\b \byellow(name[:table])\b
+  \cgreen(app.st)\c
+  \cgreen(app.gen)\c
+  \cgreen(app.make)\c \cpurple(controller)\c \cyellow(name)\c
+  \cgreen(app.make)\c \cpurple(action)\c \cyellow(controller:name)\c
+  \cgreen(app.make)\c \cpurple(model)\c \cyellow(name[:table])\c
 
 HELP;
 
@@ -75,7 +75,7 @@ HELP;
   final public static function make($args = array(), $params = array())
   {
     config(CWD.DS.'config'.DS.'application'.EXT);
-    
+
     @list($what, $name) = $args;
 
     if ( ! in_array($what, array(

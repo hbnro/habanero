@@ -24,20 +24,20 @@ class database extends prototype
 
   $db_introduction
 
-  \bgreen(db.st)\b
-  \bgreen(db.make)\b
-  \bgreen(db.show)\b \bblue(table)\b
-  \bgreen(db.drop)\b \bblue(table)\b
-  \bgreen(db.rename)\b \bblue(table)\b \bwhite(new)\b
-  \bgreen(db.create)\b \bblue(table)\b \byellow(field:type[:length])\b [...]
-  \bgreen(db.add_column)\b \bblue(table)\b \byellow(field:type[:length])\b [...]
-  \bgreen(db.remove_column)\b \bblue(table)\b \byellow(name)\b [...]
-  \bgreen(db.rename_column)\b \bblue(table)\b \byellow(name)\b \bwhite(new)\b [...]
-  \bgreen(db.change_column)\b \bblue(table)\b \byellow(name)\b \bwhite(type[:length])\b [...]
-  \bgreen(db.add_index)\b \bblue(table)\b \byellow(name)\b \bwhite(column)\b [...] [--unique]
-  \bgreen(db.remove_index)\b \bblue(table)\b \byellow(name)\b
-  \bgreen(db.export)\b \bblue(table)\b \bwhite(file)\b [--raw] [--data]
-  \bgreen(db.import)\b \bblue(table)\b \bwhite(file)\b [--raw]
+  \cgreen(db.st)\c
+  \cgreen(db.make)\c
+  \cgreen(db.show)\c \cpurple(table)\c
+  \cgreen(db.drop)\c \cpurple(table)\c
+  \cgreen(db.rename)\c \cpurple(table)\c \cwhite(new)\c
+  \cgreen(db.create)\c \cpurple(table)\c \cyellow(field:type[:length])\c [...]
+  \cgreen(db.add_column)\c \cpurple(table)\c \cyellow(field:type[:length])\c [...]
+  \cgreen(db.remove_column)\c \cpurple(table)\c \cyellow(name)\c [...]
+  \cgreen(db.rename_column)\c \cpurple(table)\c \cyellow(name)\c \cwhite(new)\c [...]
+  \cgreen(db.change_column)\c \cpurple(table)\c \cyellow(name)\c \cwhite(type[:length])\c [...]
+  \cgreen(db.add_index)\c \cpurple(table)\c \cyellow(name)\c \cwhite(column)\c [...] [--unique]
+  \cgreen(db.remove_index)\c \cpurple(table)\c \cyellow(name)\c
+  \cgreen(db.export)\c \cpurple(table)\c \cwhite(file)\c [--raw] [--data]
+  \cgreen(db.import)\c \cpurple(table)\c \cwhite(file)\c [--raw]
 
 HELP;
 
