@@ -591,7 +591,7 @@ class css extends prototype
     $args = self::do_solve($match[2]);
     $args = array_filter(explode(',', $args), 'strlen');
 
-    $out  = self::apply($match[1], $args);
+    $out  = self::defined($match[1]) ? self::apply($match[1], $args) : '';
     $out  = ! is_empty($out) ? $out : "$match[1]!({$match[2]})";
 
     return ! empty($match[3]) ? (string) value($out, substr($match[3], 1)) : (string) $out;

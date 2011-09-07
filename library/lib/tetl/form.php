@@ -91,7 +91,7 @@ class form extends prototype
     $input = tag('input', array(
       'type' => 'hidden',
       'name' => '_token',
-      'value' => TOKEN,
+      'value' => defined('TOKEN') ? TOKEN : '',
     ));
 
 
