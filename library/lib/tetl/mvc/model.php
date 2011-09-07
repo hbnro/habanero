@@ -36,15 +36,13 @@ class model extends prototype
   // model constructor
   public function __construct(array $params = array(), $create = FALSE, $method = NULL)
   {
-    $class = get_called_class();
-
     $this->_new_record = (bool) $create;
 
-    foreach (array_keys($class::columns()) as $key)
+    foreach (array_keys(static::columns()) as $key)
     {
       $this->_props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
     }
-    $class::callback($this, $method);
+    static::callback($this, $method);
   }
 
   // properties getter
@@ -78,31 +76,29 @@ class model extends prototype
    */
   final public function save()
   {
-    $class = get_called_class();
-
-    $class::callback($this, 'before_save');
+    static::callback($this, 'before_save');
 
     if ($this->is_new())
     {
       $fields = $this->_props;
 
-      unset($fields[$class::pk()]);
+      unset($fields[static::pk()]);
 
       if (array_key_exists('created_at', $fields))
       {
         $fields['created_at'] = $fields['modified_at'] = date('Y-m-d H:i:s');
       }
 
-      $this->_props[$class::pk()] = db::insert($class::table(), $fields);
+      $this->_props[static::pk()] = db::insert(static::table(), $fields);
     }
     else
     {
-      db::update($class::table(), $this->_props, array(
-        $class::pk() => $this->_props[$class::pk()],
+      db::update(static::table(), $this->_props, array(
+        static::pk() => $this->_props[static::pk()],
       ));
     }
 
-    $class::callback($this, 'after_save');
+    static::callback($this, 'after_save');
 
     return $this;
   }
@@ -115,14 +111,12 @@ class model extends prototype
    */
   final public function update()
   {
-    $class = get_called_class();
-
-    $class::callback($this, 'before_update');
+    static::callback($this, 'before_update');
 
 
     $fields = $this->_props;
 
-    unset($fields[$class::pk()]);
+    unset($fields[static::pk()]);
 
     if (array_key_exists('modified_at', $fields))
     {
@@ -130,11 +124,11 @@ class model extends prototype
     }
 
 
-    db::update($class::table(), $fields, array(
-      $class::pk() => $this->_props[$class::pk()],
+    db::update(static::table(), $fields, array(
+      static::pk() => $this->_props[static::pk()],
     ));
 
-    $class::callback($this, 'after_update');
+    static::callback($this, 'after_update');
 
     return $this;
   }
@@ -147,15 +141,13 @@ class model extends prototype
    */
   final public function delete()
   {
-    $class = get_called_class();
+    static::callback($this, 'before_delete');
 
-    $class::callback($this, 'before_delete');
-
-    db::delete($class::table(), array(
-      $class::pk() => $this->_props[$class::pk()],
+    db::delete(static::table(), array(
+      static::pk() => $this->_props[static::pk()],
     ));
 
-    $class::callback($this, 'after_delete');
+    static::callback($this, 'after_delete');
 
     return $this;
   }
@@ -181,11 +173,10 @@ class model extends prototype
   final public static function build(array $params = array())
   {
     $row   = (object) $params;
-    $class = get_called_class();
 
-    $class::callback($row, 'before_create');
+    static::callback($row, 'before_create');
 
-    return new $class((array) $row, TRUE, 'after_create');
+    return new static((array) $row, TRUE, 'after_create');
   }
 
 
@@ -197,9 +188,7 @@ class model extends prototype
    */
   final public static function create(array $params = array())
   {
-    $class = get_called_class();
-
-    return $class::build($params)->save();
+    return static::build($params)->save();
   }
 
 
@@ -210,7 +199,7 @@ class model extends prototype
    */
   final public static function exists($params = array())
   {
-    return self::count($params) > 0;
+    return static::count($params) > 0;
   }
 
 
@@ -221,7 +210,7 @@ class model extends prototype
    */
   final public static function count($params = array())
   {
-    return (int) db::result(db::select(self::table(get_called_class()), 'COUNT(*)', $params));
+    return (int) db::result(db::select(static::table(get_called_class()), 'COUNT(*)', $params));
   }
 
 
@@ -234,7 +223,6 @@ class model extends prototype
   final public static function find()
   {
     $args    = func_get_args();
-    $class   = get_called_class();
 
     $wich    = array_shift($args);
     $params  = array_pop($args);
@@ -265,20 +253,20 @@ class model extends prototype
       case 'last';
         $options['limit'] = 1;
         $options['order'] = array(
-          $class::pk() => $wich === 'first' ? ASC : DESC,
+          static::pk() => $wich === 'first' ? ASC : DESC,
         );
 
-        $row = db::fetch(db::select($class::table(), $what, $where, $options), AS_ARRAY);
+        $row = db::fetch(db::select(static::table(), $what, $where, $options), AS_ARRAY);
 
-        return $row ? new $class($row, FALSE, 'after_find') : FALSE;
+        return $row ? new static($row, FALSE, 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
-        $res = db::select($class::table(), $what, $where, $options);
+        $res = db::select(static::table(), $what, $where, $options);
 
         while ($row = db::fetch($res, AS_ARRAY))
         {
-          $out []= new $class($row, FALSE, 'after_find');
+          $out []= new static($row, FALSE, 'after_find');
         }
         return $out;
       break;
@@ -287,11 +275,11 @@ class model extends prototype
       break;
     }
 
-    $row = db::fetch(db::select($class::table(), $what, array(
-      $class::pk() => $args,
+    $row = db::fetch(db::select(static::table(), $what, array(
+      static::pk() => $args,
     )), AS_ARRAY);
 
-    return $row ? new $class($row, FALSE, 'after_find') : FALSE;
+    return $row ? new static($row, FALSE, 'after_find') : FALSE;
   }
 
 
@@ -304,43 +292,41 @@ class model extends prototype
    */
   final public static function missing($method, array $arguments = array())
   {
-    $class = get_called_class();
-
     if (strpos($method, 'find_by_') === 0)
     {
-      $row = db::fetch(db::select($class::table(), ALL, array(
+      $row = db::fetch(db::select(static::table(), ALL, array(
         substr($method, 8) => $arguments,
       )), AS_ARRAY);
 
-      return $row ? new $class($row, FALSE, 'after_find') : FALSE;
+      return $row ? new static($row, FALSE, 'after_find') : FALSE;
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
-      return $class::count(self::where(substr($method, 9), $arguments));
+      return static::count(static::where(substr($method, 9), $arguments));
     }
     elseif (strpos($method, 'find_or_create_by_') === 0)
     {
-      $test = self::where(substr($method, 18), $arguments);
-      $res  = db::select($class::table(), ALL, $test);
+      $test = static::where(substr($method, 18), $arguments);
+      $res  = db::select(static::table(), ALL, $test);
 
       if (db::numrows($res))
       {
-        return new $class(db::fetch($res, AS_ARRAY), FALSE, 'after_find');
+        return new static(db::fetch($res, AS_ARRAY), FALSE, 'after_find');
       }
-      return $class::create($test);
+      return static::create($test);
     }
     else
     {
       if (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
       {
-        return $class::find($match[1], array(
-          'where' => self::where($match[2], $arguments),
+        return static::find($match[1], array(
+          'where' => static::where($match[2], $arguments),
         ));
       }
 
       array_unshift($arguments, $method);
 
-      return call_user_func_array("$class::find", $arguments);
+      return call_user_func_array("static::find", $arguments);
     }
   }
 
@@ -352,7 +338,7 @@ class model extends prototype
    */
   final public static function columns()
   {
-    return db::columns(self::table());
+    return db::columns(static::table());
   }
 
 
@@ -363,9 +349,7 @@ class model extends prototype
    */
   final public static function table()
   {
-    $class = get_called_class();
-
-    return $class::$table ?: $class;
+    return static::$table ?: get_called_class();
   }
 
 
@@ -376,25 +360,25 @@ class model extends prototype
    */
   final public static function pk()
   {
-    if ( ! self::$primary_key)
+    if ( ! static::$primary_key)
     {
-      foreach (self::columns() as $key => $one)
+      foreach (static::columns() as $key => $one)
       {
         if ($one['type'] === 'primary_key')
         {
-          self::$primary_key = $key;
+          static::$primary_key = $key;
 
           break;
         }
       }
 
-      if ( ! self::$primary_key)
+      if ( ! static::$primary_key)
       {
         raise(ln('mvc.primary_key_missing', array('model' => get_called_class())));
       }
     }
 
-    return self::$primary_key;
+    return static::$primary_key;
   }
 
 
@@ -406,7 +390,7 @@ class model extends prototype
   // execute callbacks
   final private static function callback($row, $method)
   {
-    self::defined($method) && self::$method($row);
+    static::defined($method) && static::$method($row);
   }
 
   // dynamic where
