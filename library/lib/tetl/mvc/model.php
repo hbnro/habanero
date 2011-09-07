@@ -396,7 +396,10 @@ class model extends prototype
   // dynamic where
   final private static function where($as, $are)
   {
-    return array_combine(preg_split('/_and_/', $as), $are);
+    $as     = preg_split('/_and_/', $as);
+    $length = max(sizeof($as), sizeof($are));
+
+    return array_combine(array_slice($as, 0, $length), array_slice($are, 0, $length));
   }
 
   /**#@-*/
