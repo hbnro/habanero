@@ -133,6 +133,7 @@ bootstrap::bind(function($app)
         $view = render($layout_file, TRUE, array(
           'locals' => array(
             'body' => $view,
+            'head' => $class_name::$head,
             'title' => $class_name::$title,
           ),
         ));
