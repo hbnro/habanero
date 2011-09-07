@@ -24,7 +24,7 @@ HELP;
   {
     info(ln('tetl.verifying_installation'));
 
-    if ( ! is_file(CWD.DS.'app'.DS.'initialize'.EXT))
+    if ( ! is_file(CWD.DS.'initialize'.EXT))
     {
       error(ln('tetl.not_installed'));
     }
