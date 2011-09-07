@@ -14,6 +14,9 @@ class controller extends prototype
   // view instance vars
   public static $view = array();
 
+  // head hooks?
+  public static $head = '';
+
   // default title
   public static $title = 'untitled';
 

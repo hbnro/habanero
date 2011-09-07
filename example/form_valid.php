@@ -6,11 +6,11 @@ import('tetl/server');
 
 run(function()
 {
-
+  import('tetl/session');
+  
   route('POST /create', function()
   {
     import('tetl/valid');
-    import('tetl/session');
 
     valid::setup(array(
       'row[address]' => 'required is_email|is_url|is_ip',

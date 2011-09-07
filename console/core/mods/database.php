@@ -281,7 +281,7 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function create($args = array())
+  final public static function create($args = array(), $params = array())
   {
     self::init();
 
@@ -310,6 +310,12 @@ HELP;
         $pk = FALSE;
         $fail = FALSE;
         $fields = array();
+
+        if ( ! empty($params['timestamps']))
+        {
+          $args []= 'created_at:timestamp';
+          $args []= 'modified_at:timestamp';
+        }
 
         foreach ($args as $one)
         {

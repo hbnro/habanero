@@ -20,17 +20,20 @@ if ( ! empty($_GET['grid']))
 
 require dirname(__DIR__).'/library/initialize.php';
 
+import('tetl/server');
+
 run(function()
 {
 
   import('tetl/css');
   import('tetl/taml');
-  import('tetl/router');
 
   css::setup('path', __DIR__);
 
   $css = css::render(__DIR__.DS.'assets'.DS.'sample.css');
 
   taml::render(__DIR__.DS.'assets'.DS.'sample.taml', compact('css'));
+
+  exit;
 
 });
