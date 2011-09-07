@@ -9,11 +9,13 @@ if ( ! function_exists('curl_init'))
   raise(ln('extension_missing', array('name' => 'cURL')));
 }
 
+// TODO: should be a standalone helper?
+
 /**
  * Encoding constants
  */
-defined('MD5') OR define('MD5', 'md5');
-defined('SHA1') OR define('SHA1', 'sha1');
+define('MD5', 'md5');
+define('SHA1', 'sha1');
 /**#@-*/
 
 /**

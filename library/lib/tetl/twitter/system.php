@@ -194,16 +194,16 @@ class twitter extends prototype
   }
 
   /**
-   * Formatear enlaces para Twitter
+   * Primitive formatting links
    *
    * @link    http://www.snipe.net/2009/09/php-twitter-clickable-links/
-   * @param   string $text Cadena
-   * @staticvar array  Coleccion de expresiones
-   * @return  string
+   * @param     string Input string
+   * @staticvar array  Replacements
+   * @return    string
    */
   final public static function linkify($text)
   {
-    static $set = array(// TODO: unicode support?
+    static $set = array(// TODO: better unicode support?
               '/(\w{3,5}:\/\/([-\w\.]+)+(d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/' => '<a href="\\1">\\1</a>',
               '/(?<!\w)#([\wñáéíóú]+)(?=\b)/iu' => '<a href="http://twitter.com/search?q=%23\\1">#\\1</a>',
               '/(?<!\w)@(\w+)(?=\b)/u' => '<a href="http://twitter.com/\\1">@\\1</a>',
@@ -217,19 +217,7 @@ class twitter extends prototype
 
 
   /**
-   * Actualizar perfil
-   *
-   * @param  array $set Opciones|Arreglo
-   * @return mixed
-   */
-  final public static function profile(array $set = array())
-  {
-    return self::api_call('account/update_profile', $set, POST);
-  }
-
-
-  /**
-   * Estadisticas
+   * Current client status
    *
    * @return mixed
    */
@@ -240,149 +228,13 @@ class twitter extends prototype
 
 
   /**
-   * Estado individual
+   * Searching
    *
-   * @param  integer $id Identificador
+   * @param  string  Input string
+   * @param  integer Limit
    * @return mixed
    */
-  final public static function status_show($id)
-  {
-    return self::api_call("statuses/show/$id");
-  }
-
-
-  /**
-   * Menciones
-   *
-   * @param  integer $page Pagina
-   * @param  integer $since Offset
-   * @return mixed
-   */
-  final public static function status_mentions($page = 1, $since = 0)
-  {
-    $data['page'] = (int) $page;
-
-    $since > 0 && $data['since_id'] = $since;
-
-    return self::api_call('statuses/mentions', $data);
-  }
-
-
-  /**
-   * Nueva actualizacion
-   *
-   * @param  string $text Cadena|Mensaje de estado
-   * @return mixed
-   */
-  final public static function status_update($text)
-  {
-    return self::api_call('statuses/update', array(
-          'status' => $text,
-      ), POST);
-  }
-
-
-  /**
-   * Eliminar estado
-   *
-   * @param  integer $id Identificador
-   * @return mixed
-   */
-  final public static function status_destroy($id)
-  {
-    return self::api_call("statuses/destroy/$id", array(), POST);
-  }
-
-
-  /**
-   * Informacion del usuario
-   *
-   * @param  string $user Nombre del usuario
-   * @return mixed
-   */
-  final public static function user_show($user = '')
-  {
-    $user = $user ?: self::$screen_name;
-
-    return self::api_call('users/show/' . urlencode($user));
-  }
-
-
-  /**
-   * Seguir usuario
-   *
-   * @param  string $user Nombre del usuario
-   * @return mixed
-   */
-  final public static function user_follow($user)
-  {
-    return self::api_call('friendships/create/' . urlencode($user), array(
-        'follow' => 'true',
-    ), POST);
-  }
-
-
-   /**
-   * Dejar de seguir usuario
-   *
-   * @param  string $user Nombre del usuario
-   * @return mixed
-   */
-  final public static function user_unfollow($user)
-  {
-    return self::api_call('friendships/destroy/' . urlencode($user), array(), POST);
-  }
-
-
-  /**
-   * Lista de amigos (IDs)
-   *
-   * @param  string $user Nombre del usuario
-   * @return mixed
-   */
-  final public static function friends_ids($user = '')
-  {
-    $out  = 'friends/ids';
-    $out .= $user ? '/' . urlencode($user) : '';
-
-    return self::api_call($out);
-  }
-
-
-  /**
-   * Lista de seguidores (IDs)
-   *
-   * @param  string $user Nombre del usuario
-   * @return void
-   */
-  final public static function followers_ids($user = '')
-  {
-    $out  = 'followers/ids';
-    $out .= $user ? '/' . urlencode($user) : '';
-
-    return self::api_call($out);
-  }
-
-
-  /**
-   * Tendencias o #hash
-   *
-   * @return mixed
-   */
-  final public static function trends()
-  {
-    return self::api_call('trends');
-  }
-
-
-  /**
-   * Buscar en la linea de tiempo
-   *
-   * @param  string  $text  Cadena a buscar
-   * @param  integer $limit Limitar resultados
-   * @return mixed
-   */
-  final public static function search_timeline($text, $limit = 20)
+  final public static function search_by($text, $limit = 20)
   {
     $limit > 0 && $data['rpp'] = $limit;
 
@@ -393,134 +245,39 @@ class twitter extends prototype
 
 
   /**
-   * Linea publica de tiempo
+   * Handle dynamically
    *
-   * @param  integer $since Offset
+   * @param  string Method
+   * @param  array  Arguments
    * @return mixed
    */
-  final public static function public_timeline($since = 0)
+  final public static function missing($method, array $args = array())
   {
-    $data = array();
+    $type   = GET;
+    $data   = array();
+    $test   = array_pop($args);
+    $params = array_pop($args);
 
-    $since && $data['since_id'] = $since;
+    is_assoc($params) ? $data = $params : $params && $args []= $params;
 
-    return self::api_call('statuses/public_timeline', $data);
-  }
-
-
-  /**
-   * Linea de tiempo (amigos)
-   *
-   * @param  integer $since Offset
-   * @param  string  $user  Nombre del usuario
-   * @return mixed
-   */
-  final public static function friends_timeline($since = 0, $user = '')
-  {
-    $data = array();
-
-    $since > 0 && $data['since'] = $since;
-
-    $url  = 'statuses/friends_timeline';
-    $url .= $user ? '/' . urlencode($user) : '';
-
-    return self::api_call($url, $data);
-  }
+    if (is_assoc($test))
+    {
+      $data = $test;
+    }
+    elseif ($test === POST)
+    {
+      $type = $test;
+    }
+    else
+    {
+      $test && $args []= $test;
+    }
 
 
-  /**
-   * Linea de tiempo (home)
-   *
-   * @param  array Options hash
-   * @return mixed
-   */
-  final public static function home_timeline(array $params = array())
-  {
-    return self::api_call('statuses/home_timeline', $params);
-  }
+    $extra = join('/', $args);
+    $url   = $method . ($extra ? "/$extra" : '');
 
-
-  /**
-   * Linea de tiempo (usuario)
-   *
-   * @param  integer $count Elementos
-   * @param  integer $since Offset
-   * @param  string  $user  Nombre del usuario
-   * @return mixed
-   */
-  final public static function user_timeline($count = 20, $since = 0, $user = '')
-  {
-    $data = array();
-    $data['count'] = (int) $count;
-
-    $since > 0 && $data['since'] = $since;
-
-    $url  = 'statuses/user_timeline';
-    $url .= $user ? '/' . urlencode($user) : '';
-
-    return self::api_call($url, $data);
-  }
-
-
-  /**
-   * Mensajes directos
-   *
-   * @param  integer $since Offset
-   * @param  integer $page  Pagina
-   * @return mixed
-   */
-  final public static function direct_messages($since = 0, $page = 1)
-  {
-    $data['page'] = $page;
-
-    $since > 0 && $data['since_id'] = $since;
-
-    return self::api_call('direct_messages', $data);
-  }
-
-
-  /**
-   * Mensajes directos enviados
-   *
-   * @param  integer $since Offset
-   * @param  integer $page  Pagina
-   * @return mixed
-   */
-  final public static function direct_messages_sent($since = 0, $page = 1)
-  {
-    $data['page'] = $page;
-
-    $since > 0 && $data['since_id'] = $since;
-
-    return self::api_call('direct_messages', $data);
-  }
-
-
-  /**
-   * Nuevo mensaje directo
-   *
-   * @param  string $user Nombre del usuario
-   * @param  string $text Mensaje
-   * @return mixed
-   */
-  final public static function direct_message_new($user, $text)
-  {
-    return self::api_call('direct_messages/new', array(
-        'text' => $text,
-        'user' => $user,
-    ), POST);
-  }
-
-
-  /**
-   * Eliminar mensaje directo
-   *
-   * @param  integer $id Identificador
-   * @return mixed
-   */
-  final public static function direct_message_destroy($id)
-  {
-    return self::api_call("direct_messages/destroy/$id", array(), POST);
+    return self::api_call($url, $data, $type);
   }
 
 }
