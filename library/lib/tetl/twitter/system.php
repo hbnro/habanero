@@ -4,8 +4,6 @@
  * Twitter API
  */
 
-// TODO: improve please...
-
 class twitter extends prototype
 {
 
@@ -67,7 +65,9 @@ class twitter extends prototype
 
 
   /**
+   * Retrieve user credentials
    *
+   * @return array
    */
   final public static function credentials()
   {
@@ -80,7 +80,9 @@ class twitter extends prototype
 
 
   /**
+   * Retrieve user name
    *
+   * @return string
    */
   final public static function screen_name()
   {
@@ -89,7 +91,9 @@ class twitter extends prototype
 
 
   /**
+   * Retrieve user id
    *
+   * @return string
    */
   final public static function user_id()
   {
@@ -98,7 +102,9 @@ class twitter extends prototype
 
 
   /**
+   * There is a connection?
    *
+   * @return boolean
    */
   final public static function is_logged()
   {
@@ -137,7 +143,9 @@ class twitter extends prototype
 
 
   /**
+   * Finalize session
    *
+   * @return void
    */
   final public static function logout()
   {
@@ -146,23 +154,28 @@ class twitter extends prototype
 
 
   /**
+   * Retrieve authorization URL
    *
+   * @return mixed
    */
   final public static function authorization_url()
   {
     parse_str(oauth_exec(self::$req, self::$request_token_url), $test);
 
-    if ( ! isset($test['oauth_token']))
+    if ( ! empty($test['oauth_token']))
     {
-      raise(ln(key($test)));
+      return self::$authorize_url . '?oauth_token=' . $test['oauth_token'];
     }
-
-    return self::$authorize_url . '?oauth_token=' . $test['oauth_token'];
   }
 
 
   /**
+   * Execute API call
    *
+   * @param  string Endpoint URL
+   * @param  array  Request vars
+   * @param  string Method
+   * @return mixed
    */
   final public static function api_call($url, array $vars = array(), $method = GET)
   {
@@ -171,14 +184,12 @@ class twitter extends prototype
       $url  = ! is_url($url) ? rtrim(self::$api_url, '/') . "/$url.json" : $url;
       $test = oauth_exec(self::$req, $url, $vars, $method, TRUE);
 
-      if (preg_match('/"error":"(.+?)"/', $test, $match))
+      if ( ! preg_match('/"error":"(.+?)"/', $test, $match))
       {
-        raise(ln(stripslashes($match[1])));
+        $test = preg_replace('/(\w+)":(\d+)/', '\\1":"\\2"', $test);
+
+        return json_decode($test);
       }
-
-      $test = preg_replace('/(\w+)":(\d+)/', '\\1":"\\2"', $test);
-
-      return json_decode($test);
     }
   }
 
@@ -514,4 +525,4 @@ class twitter extends prototype
 
 }
 
-/* EOF: ./lib/tetl/twitter.php */
+/* EOF: ./lib/tetl/twitter/system.php */
