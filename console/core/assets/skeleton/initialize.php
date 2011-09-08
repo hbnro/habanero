@@ -17,12 +17,6 @@ call_user_func(function()
   bootstrap::implement('raise', function($message)
     use($bootstrap)
   {
-    $error_path = __DIR__.DS.'app'.DS.'views'.DS.'errors';
-
-    $error_404  = $error_path.DS.'404.html'.EXT;
-    $error_500  = $error_path.DS.'500.html'.EXT;
-
-    $error_file   = $error_500;
     $error_status = 500;
 
     switch (option('environment'))
@@ -35,11 +29,13 @@ call_user_func(function()
       default;
         if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message))
         {
-          $error_file   = $error_404;
           $error_status = 404;
         }
       break;
     }
+
+
+    $error_file   = __DIR__.DS.'app'.DS.'views'.DS.'errors'.DS."$error_status.html".EXT;
 
     response(render($error_file, TRUE), array(
       'status' => $error_status,
