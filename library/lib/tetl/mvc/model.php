@@ -119,7 +119,7 @@ class model extends prototype
 
       return $test['from']::$method($params);
     }
-    raise(ln('mvc.undefined_relationship', array('name' => $method)));
+    raise(ln('mvc.undefined_relationship', array('name' => $method, 'class' => get_called_class())));
   }
 
   /**#@-*/
