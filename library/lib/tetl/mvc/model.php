@@ -17,15 +17,23 @@ class model extends prototype
   // new record?
   private $_new_record = NULL;
 
+  // valid record?
+  private $_valid_record = NULL;
+
   /**#@-*/
 
-//TODO: validations, relations?
 
   // table name
   public static $table = NULL;
 
   // default primary key
   public static $primary_key = NULL;
+
+  // validation rules
+  public static $validate = array();
+
+  // simple relations
+  public static $relations = array();
 
 
 
@@ -65,6 +73,55 @@ class model extends prototype
     $this->_props[$key] = $value;
   }
 
+  // relationships caller
+  public function __call($method, array $arguments = array())
+  {
+    $what  = 'all';
+    $where = array();
+
+    if (substr($method, 0, 6) === 'count_')
+    {
+      $method = substr($method, 6);
+      $what   = 'count';
+    }
+    elseif (preg_match('/^(first|last)_of_(\w+)$/', $method, $match))
+    {
+      $method = $match[2];
+      $what   = $match[1];
+    }
+    elseif (preg_match('/^(\w+)_by_(.+?)$/', $method, $match))
+    {
+      $method = $match[1];
+      $where  = static::where($match[2], $arguments);
+    }
+
+
+    if ( ! is_false(strpos($method, '_by_')))
+    {
+      $params = explode('_by_', $method, 2);
+
+      $params && $method = array_shift($params);
+      $params && $where = static::where(array_shift($params), $arguments);
+    }
+
+
+    if ($test = static::fetch_relation($method))
+    {
+      $params = (array) array_shift($arguments);
+      $params = array_merge(array(
+        'where' => array_merge(array(
+          $test['on'] => $this->_props[$test['fk']],
+        ), $where),
+      ), $params);
+
+
+      $method = $what === 'count' ? $what : (is_true($test['has_many']) ? $what : 'first');
+
+      return $test['from']::$method($params);
+    }
+    raise(ln('mvc.undefined_relationship', array('name' => $method)));
+  }
+
   /**#@-*/
 
 
@@ -72,11 +129,18 @@ class model extends prototype
   /**
    * Save row
    *
+   * @param  boolean Skip validation?
    * @return model
    */
-  final public function save()
+  final public function save($skip = FALSE)
   {
     static::callback($this, 'before_save');
+
+    if ( ! $skip && ! $this->is_valid())
+    {
+      return FALSE;
+    }
+
 
     if ($this->is_new())
     {
@@ -165,6 +229,29 @@ class model extends prototype
 
 
   /**
+   * Is a valid record?
+   *
+   * @return boolean
+   */
+  final public function is_valid()
+  {
+    if ( ! static::$validate)
+    {
+      return TRUE;
+    }
+    elseif (is_null($this->_valid_record))
+    {
+      import('tetl/valid');
+
+      valid::setup(static::$validate);
+
+      $this->_valid_record = valid::done($this->_props);
+    }
+    return $this->_valid_record;
+  }
+
+
+  /**
    * Create row without saving
    *
    * @param  array Properties
@@ -183,12 +270,13 @@ class model extends prototype
   /**
    * Create row and save it
    *
-   * @param  array Properties
+   * @param  array   Properties
+   * @param  boolean Skip validation?
    * @return model
    */
-  final public static function create(array $params = array())
+  final public static function create(array $params = array(), $skip = FALSE)
   {
-    return static::build($params)->save();
+    return static::build($params)->save($skip);
   }
 
 
@@ -210,7 +298,7 @@ class model extends prototype
    */
   final public static function count($params = array())
   {
-    return (int) db::result(db::select(static::table(get_called_class()), 'COUNT(*)', $params));
+    return (int) db::result(db::select(static::table(), 'COUNT(*)', ! empty($params['where']) ? $params['where'] : $params));
   }
 
 
@@ -386,6 +474,20 @@ class model extends prototype
   /**#@+
    * @ignore
    */
+
+  // relationships
+  final private static function fetch_relation($key)
+  {
+    if ( ! empty(static::$relations[$key]))
+    {
+      return array_merge(array(
+        'has_many' => FALSE,
+        'from' => $key,
+        'fk' => static::pk(),
+        'on' => static::table() . '_id',
+      ), static::$relations[$key]);
+    }
+  }
 
   // execute callbacks
   final private static function callback($row, $method)
