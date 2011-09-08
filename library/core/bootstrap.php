@@ -27,7 +27,7 @@ final class bootstrap extends prototype
    * @param  string Module name
    * @return void
    */
-  function enhance($lib)
+  final public static function enhance($lib)
   {
     $lib = strtr($lib, '\\/', DS.DS);
 
