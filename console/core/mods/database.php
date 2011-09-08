@@ -181,7 +181,7 @@ HELP;
 
     $seed_file = CWD.DS.'db'.DS.'seed'.EXT;
 
-    if ( ! is_file($seed_file))
+    if ( ! is_file($seed_file) OR ! filesize($seed_file))
     {
       error(ln('tetl.without_seed'));
     }
