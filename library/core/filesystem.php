@@ -236,7 +236,7 @@ function mkpath($dir, $perms = FALSE)
       }
     }
   }
-  return $path;
+  return rtrim($path, DS);
 }
 
 
