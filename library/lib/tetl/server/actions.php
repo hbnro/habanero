@@ -196,6 +196,7 @@ function link_to($text, $url = NULL, $args = array())
   ), $params);
 
   return tag('a', array_merge(array(
+    'rel' => $params['method'] <> GET ? 'nofollow' : FALSE,
     'href' => substr($params['action'], 0, 1) === '/' ? $params['action'] : url_for($params),
     'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
     'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
