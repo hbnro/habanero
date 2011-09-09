@@ -28,6 +28,7 @@
     <?php dump(array(
       'user' => "$user@$host",
       'route' => $route,
+      'method' => value($_SERVER, 'REQUEST_METHOD'),
       'params' => function_exists('params') ? params() : array(),
       'bootstrap' => APP_LOADER,
     ), TRUE); ?>
