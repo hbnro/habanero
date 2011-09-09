@@ -187,15 +187,21 @@ function link_to($text, $url = NULL, $args = array())
 
 
   $params = array_merge(array(
-    'action' => slug($params['text']),
-    'method' => GET,
+    'action'  => slug($params['text']),
+    'method'  => GET,
     'confirm' => FALSE,
+    'remote'  => FALSE,
+    'params'  => FALSE,
+    'type'    => FALSE,
   ), $params);
 
   return tag('a', array_merge(array(
     'href' => substr($params['action'], 0, 1) === '/' ? $params['action'] : url_for($params),
     'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
+    'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
+    'data-params' => $params['params'] ? http_build_query($params['params']) : FALSE,
     'data-confirm' => $params['confirm'] ?: FALSE,
+    'data-type' => $params['type'] ?: FALSE,
   ), $attrs), $params['text']);
 }
 
@@ -370,9 +376,11 @@ function button_to($name, $url = NULL, array $args = array())
 
 
   $params = array_merge(array(
+    'type'         => FALSE,
     'action'       => slug($params['text']),
     'method'       => POST,
     'remote'       => FALSE,
+    'params'       => FALSE,
     'confirm'      => FALSE,
     'disabled'     => FALSE,
     'disable_with' => '',
@@ -382,7 +390,6 @@ function button_to($name, $url = NULL, array $args = array())
     'type' => 'submit',
     'value' => $name,
     'disabled' => is_true($params['disabled']),
-    'data-confirm' => $params['confirm'] ?: FALSE,
     'data-disabled' => $params['disable_with'] ?: FALSE,
   ), $args));
 
@@ -403,7 +410,10 @@ function button_to($name, $url = NULL, array $args = array())
     'class' => 'button_to',
     'action' => url_for($params['action']),
     'method' => 'post',
+    'data-type' => $params['type'] ?: FALSE,
+    'data-confirm' => $params['confirm'] ?: FALSE,
     'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
+    'data-params' => $params['params'] ? http_build_query($params['params']) : FALSE,
   ), "<div>$extra$button</div>");
 }
 

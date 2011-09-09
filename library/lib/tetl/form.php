@@ -48,9 +48,6 @@ class form extends prototype
       'method'    => GET,
       'content'   => 'raise',
       'multipart' => FALSE,
-      'confirm'   => FALSE,
-      'remote'    => FALSE,
-      'type'      => FALSE,
     ), $params);
 
     if ( ! is_closure($params['content']))
@@ -69,6 +66,7 @@ class form extends prototype
 
 
     $callback = $params['content'];
+    $params   = static::ujs($params);
 
     unset($params['multipart'], $params['content']);
 
@@ -82,18 +80,7 @@ class form extends prototype
       $params['action'] = $match[2];
     }
 
-    // UJS
-    $params['action'] && $params['action'] = pre_url($params['action']);
-    $params['confirm'] && $params['data']['confirm'] = $params['confirm'];
-
-    is_true($params['remote']) && $params['data']['remote'] = 'true';
-
-    $params['type'] && $params['data']['type'] = $params['type'];
-
-    unset($params['confirm'], $params['remote'], $params['type']);
-
-
-    $input = tag('input', array(
+    $input  = tag('input', array(
       'type' => 'hidden',
       'name' => '_token',
       'value' => defined('TOKEN') ? TOKEN : '',
@@ -609,6 +596,7 @@ class form extends prototype
   {
     $params = array_merge(array(
       'url'          => FALSE,
+      'type'         => FALSE,
       'method'       => FALSE,
       'remote'       => FALSE,
       'params'       => FALSE,
@@ -617,6 +605,7 @@ class form extends prototype
 
 
     $params['url'] && $params['data']['url'] = $params['url'];
+    $params['type'] && $params['data']['type'] = $params['type'];
     $params['method'] && $params['data']['method'] = $params['method'];
     $params['params'] && $params['data']['params'] = http_build_query($params['params']);
     $params['disable_with'] && $params['data']['disable-with'] = $params['disable_with'];
