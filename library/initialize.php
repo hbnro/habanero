@@ -7,42 +7,21 @@
  * @link    https://github.com/pateketrueke/tetlphp
  */
 
-// framework version
-define('VER', '1.0.20');
-
-
-// filename extension
-define('EXT', substr(__FILE__, strrpos(__FILE__, '.')));
-
-
-// system root
-define('LIB', __DIR__);
-
-
-// -dumb-
-define('DS', DIRECTORY_SEPARATOR);
-
-
-
-// core libraries
-/**#@+
- * @ignore
- */
-require LIB.DS.'core'.DS.'runtime'.EXT;
-require LIB.DS.'core'.DS.'utilities'.EXT;
-
-require LIB.DS.'core'.DS.'prototype'.EXT;
-require LIB.DS.'core'.DS.'bootstrap'.EXT;
-
-require LIB.DS.'core'.DS.'filesystem'.EXT;
-require LIB.DS.'core'.DS.'conditions'.EXT;
-/**#@-*/
-
-
-
 // do!
 call_user_func(function()
 {
+  // filename extension
+  define('EXT', '.php');
+
+
+  // system root
+  define('LIB', __DIR__);
+
+
+  // -dumb-
+  define('DS', DIRECTORY_SEPARATOR);
+
+
   // the root-script
 
   $trace = debug_backtrace();
@@ -74,6 +53,23 @@ call_user_func(function()
   // useful constants
   define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
   define('IS_CLI', (bool) defined('STDIN'));
+
+
+
+  // core libraries
+  /**#@+
+   * @ignore
+   */
+  require LIB.DS.'core'.DS.'runtime'.EXT;
+  require LIB.DS.'core'.DS.'utilities'.EXT;
+
+  require LIB.DS.'core'.DS.'prototype'.EXT;
+  require LIB.DS.'core'.DS.'bootstrap'.EXT;
+
+  require LIB.DS.'core'.DS.'filesystem'.EXT;
+  require LIB.DS.'core'.DS.'conditions'.EXT;
+  /**#@-*/
+
 
 
   // global
