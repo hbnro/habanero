@@ -133,7 +133,7 @@ class form extends prototype
   */
   final public static function file($name, $args = array())
   {
-    return form::input('file', $name, '', $args);
+    return static::input('file', $name, '', $args);
   }
 
 
@@ -168,20 +168,20 @@ class form extends prototype
          switch ($one['type'])
          {
            case 'file';
-             $input = form::file($one['name'], (array) $one['options']);
+             $input = static::file($one['name'], (array) $one['options']);
            break;
            case 'group';
            case 'select';
            case 'textarea';
-             $input = form::$one['type']($one['name'], $one['value'], (array) $one['options']);
+             $input = static::$one['type']($one['name'], $one['value'], (array) $one['options']);
            break;
            default;
-             $input = form::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
+             $input = static::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
            break;
          }
 
          $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
-         $label  = ! empty($one['label']) ? form::label($one['name'], $one['label']) : '';
+         $label  = ! empty($one['label']) ? static::label($one['name'], $one['label']) : '';
 
          $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
        }
@@ -251,17 +251,17 @@ class form extends prototype
       'value' => '',
     ), $params);
 
-    $params = form::ujs($params);
-    $key    = form::index($params['name'], TRUE);
+    $params = static::ujs($params);
+    $key    = static::index($params['name'], TRUE);
 
 
     if ( ! preg_match('/^(?:radio|checkbox)$/', $params['type']))
     {
-      $params['value'] = form::value($key, $params['value']);
+      $params['value'] = static::value($key, $params['value']);
     }
     else
     {
-      $default = form::value($params['name'], form::value($key));
+      $default = static::value($params['name'], static::value($key));
 
       $params['checked'] = is_array($default) ? in_array($params['value'], $default) : $default === $params['value'];
     }
@@ -318,9 +318,9 @@ class form extends prototype
     $out     = '';
     $args    = array();
 
-    $params  = form::ujs($params);
-    $key     = form::index($params['name'], TRUE);
-    $default = form::value($key, $params['default']);
+    $params  = static::ujs($params);
+    $key     = static::index($params['name'], TRUE);
+    $default = static::value($key, $params['default']);
 
     foreach ($options as $key => $value)
     {
@@ -404,9 +404,9 @@ class form extends prototype
     ), $params);
 
     $out = '';
-    $key = form::index($params['name'], TRUE);
+    $key = static::index($params['name'], TRUE);
 
-    $default = (array) form::value($params['name'], form::value($key, $params['default']));
+    $default = (array) static::value($params['name'], static::value($key, $params['default']));
     $index   = strtr($key, '.', '_');
     $name    = $params['name'];
     $old     = $params;
@@ -422,7 +422,7 @@ class form extends prototype
     {
       if (is_array($value))
       {
-        $out .= sprintf($params['wrapper'], ents($key, TRUE), form::group($name, $value, $params));
+        $out .= sprintf($params['wrapper'], ents($key, TRUE), static::group($name, $value, $params));
         continue;
       }
 
@@ -491,11 +491,11 @@ class form extends prototype
     }
 
 
-    $args = form::ujs($args);
+    $args = static::ujs($args);
 
-    if ($id = form::index($args['name'], TRUE))
+    if ($id = static::index($args['name'], TRUE))
     {
-      $args['text'] = form::value($id, $value);
+      $args['text'] = static::value($id, $value);
       $args['id']   = strtr($id, '.', '_');
       $args['name'] = $args['name'];
     }
@@ -555,7 +555,7 @@ class form extends prototype
     $text = $args['text'];
     unset($args['text']);
 
-    if ($id = form::index($for, TRUE))
+    if ($id = static::index($for, TRUE))
     {
       $args['for'] = strtr($id, '.', '_');
     }
