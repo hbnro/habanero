@@ -66,7 +66,7 @@ class form extends prototype
 
 
     $callback = $params['content'];
-    $params   = static::ujs($params);
+    $params   = static::ujs($params, TRUE);
 
     unset($params['multipart'], $params['content']);
 
@@ -592,7 +592,7 @@ class form extends prototype
   }
 
   // unobstrusive javascript
-  final private static function ujs($params)
+  final private static function ujs($params, $form = FALSE)
   {
     $params = array_merge(array(
       'url'          => FALSE,
@@ -606,13 +606,18 @@ class form extends prototype
 
     $params['url'] && $params['data']['url'] = $params['url'];
     $params['type'] && $params['data']['type'] = $params['type'];
-    $params['method'] && $params['data']['method'] = $params['method'];
     $params['params'] && $params['data']['params'] = http_build_query($params['params']);
     $params['disable_with'] && $params['data']['disable-with'] = $params['disable_with'];
 
     is_true($params['remote']) && $params['data']['remote'] = 'true';
 
-    unset($params['disable_with'], $params['remote'], $params['method'], $params['url']);
+    unset($params['disable_with'], $params['remote'], $params['url']);
+
+    if (is_false($form))
+    {
+      $params['method'] && $params['data']['method'] = $params['method'];
+      unset($params['method']);
+    }
 
     return $params;
   }
