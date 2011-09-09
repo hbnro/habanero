@@ -102,6 +102,7 @@ bootstrap::bind(function($app)
         require $helper_file;
       }
 
+      $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
       $class_name::defined('init') && $class_name::init();
       $class_name::$action();
 
@@ -133,7 +134,7 @@ bootstrap::bind(function($app)
         $view = render($layout_file, TRUE, array(
           'locals' => array(
             'body' => $view,
-            'head' => $class_name::$head,
+            'head' => join("\n", $class_name::$head),
             'title' => $class_name::$title,
           ),
         ));

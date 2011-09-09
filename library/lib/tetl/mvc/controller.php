@@ -15,7 +15,7 @@ class controller extends prototype
   public static $view = array();
 
   // head hooks?
-  public static $head = '';
+  public static $head = array();
 
   // default title
   public static $title = 'untitled';
@@ -32,6 +32,7 @@ class controller extends prototype
   );
 
   /**#@-*/
+
 }
 
 /* EOF: ./lib/tetl/mvc/controller.php */
