@@ -12,9 +12,6 @@
 
     <title><?php echo $title; ?></title>
 
-    <meta name="title" content="">
-    <meta name="description" content="">
-
     <link rel="stylesheet" href="<?php echo ROOT; ?>css/style.css">
     <link rel="shortcut icon" href="<?php echo ROOT; ?>img/favicon.ico">
 
@@ -29,6 +26,7 @@
     <script>window.jQuery || document.write("<script src='<?php echo ROOT; ?>js/jquery-1.5.1.min.js'>\x3C/script>")</script>
 
     <script src="<?php echo ROOT; ?>js/functions.js"></script>
+    <script src="<?php echo ROOT; ?>js/application.js"></script>
 
 <!--
     <script>
