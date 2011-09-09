@@ -50,6 +50,7 @@ class form extends prototype
       'multipart' => FALSE,
       'confirm'   => FALSE,
       'remote'    => FALSE,
+      'type'      => FALSE,
     ), $params);
 
     if ( ! is_closure($params['content']))
@@ -81,12 +82,16 @@ class form extends prototype
       $params['action'] = $match[2];
     }
 
+    // UJS
     $params['action'] && $params['action'] = pre_url($params['action']);
     $params['confirm'] && $params['data']['confirm'] = $params['confirm'];
 
     is_true($params['remote']) && $params['data']['remote'] = 'true';
 
-    unset($params['remote'], $params['confirm']);
+    $params['type'] && $params['data']['type'] = $params['type'];
+
+    unset($params['confirm'], $params['remote'], $params['type']);
+
 
     $input = tag('input', array(
       'type' => 'hidden',
@@ -246,7 +251,8 @@ class form extends prototype
       'value' => '',
     ), $params);
 
-    $key = form::index($params['name'], TRUE);
+    $params = form::ujs($params);
+    $key    = form::index($params['name'], TRUE);
 
 
     if ( ! preg_match('/^(?:radio|checkbox)$/', $params['type']))
@@ -312,6 +318,7 @@ class form extends prototype
     $out     = '';
     $args    = array();
 
+    $params  = form::ujs($params);
     $key     = form::index($params['name'], TRUE);
     $default = form::value($key, $params['default']);
 
@@ -484,6 +491,8 @@ class form extends prototype
     }
 
 
+    $args = form::ujs($args);
+
     if ($id = form::index($args['name'], TRUE))
     {
       $args['text'] = form::value($id, $value);
@@ -593,6 +602,30 @@ class form extends prototype
     }
 
     return $name;
+  }
+
+  // unobstrusive javascript
+  final private static function ujs($params)
+  {
+    $params = array_merge(array(
+      'url'          => FALSE,
+      'method'       => FALSE,
+      'remote'       => FALSE,
+      'params'       => FALSE,
+      'disable_with' => FALSE,
+    ), $params);
+
+
+    $params['url'] && $params['data']['url'] = $params['url'];
+    $params['method'] && $params['data']['method'] = $params['method'];
+    $params['params'] && $params['data']['params'] = http_build_query($params['params']);
+    $params['disable_with'] && $params['data']['disable-with'] = $params['disable_with'];
+
+    is_true($params['remote']) && $params['data']['remote'] = 'true';
+
+    unset($params['disable_with'], $params['remote'], $params['method'], $params['url']);
+
+    return $params;
   }
 
   /**#@-*/
