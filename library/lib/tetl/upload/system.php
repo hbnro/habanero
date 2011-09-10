@@ -78,11 +78,11 @@ class upload extends prototype
   {
     if (is_assoc($key))
     {
-      self::$defs = array_merge($key, self::$defs);
+      static::$defs = array_merge($key, static::$defs);
     }
-    elseif (array_key_exists($key, self::$defs))
+    elseif (array_key_exists($key, static::$defs))
     {
-      self::$defs[$key] = $value;
+      static::$defs[$key] = $value;
     }
   }
 
@@ -96,28 +96,28 @@ class upload extends prototype
   final public static function validate($skip = FALSE)
   {
     // reset
-    self::$handle = NULL;
-    self::$files  = array();
-    self::$error  = array();
+    static::$handle = NULL;
+    static::$files  = array();
+    static::$error  = array();
 
 
     $out = FALSE;
 
-    if ( ! is_dir(self::$defs['path']))
+    if ( ! is_dir(static::$defs['path']))
     {
-      return self::set_error(UPLOAD_ERR_PATH);
+      return static::set_error(UPLOAD_ERR_PATH);
     }
 
 
-    $set = self::fix_files(value($_FILES, self::$defs['name'], array()));
+    $set = static::fix_files(value($_FILES, static::$defs['name'], array()));
 
     if (empty($set))
     {
-      return self::set_error(UPLOAD_ERR_NO_FILE);
+      return static::set_error(UPLOAD_ERR_NO_FILE);
     }
-    elseif (is_false(self::$defs['multiple']) && (sizeof($set['name']) > 1))
+    elseif (is_false(static::$defs['multiple']) && (sizeof($set['name']) > 1))
     {
-      return self::set_error(UPLOAD_ERR_MULTI);
+      return static::set_error(UPLOAD_ERR_MULTI);
     }
 
 
@@ -125,27 +125,27 @@ class upload extends prototype
     {
       if ($val > 0)
       {
-        if (is_false(self::$defs['skip_error'], $skip))
+        if (is_false(static::$defs['skip_error'], $skip))
         {
-          return self::set_error($val);
+          return static::set_error($val);
         }
         continue;
       }
 
 
-      if ($set['size'][$i] > self::$defs['max_size'])
+      if ($set['size'][$i] > static::$defs['max_size'])
       {
-        return self::set_error(UPLOAD_ERR_MAX_SIZE);
+        return static::set_error(UPLOAD_ERR_MAX_SIZE);
       }
-      elseif ($set['size'][$i] < self::$defs['min_size'])
+      elseif ($set['size'][$i] < static::$defs['min_size'])
       {
-        return self::set_error(UPLOAD_ERR_MIN_SIZE);
+        return static::set_error(UPLOAD_ERR_MIN_SIZE);
       }
 
 
       $type = FALSE;
 
-      foreach ((array) self::$defs['type'] as $one)
+      foreach ((array) static::$defs['type'] as $one)
       {
         if (match($one, $set['type'][$i]))
         {
@@ -156,13 +156,13 @@ class upload extends prototype
 
       if (is_false($type))
       {
-        return self::set_error(UPLOAD_ERR_TYPE);
+        return static::set_error(UPLOAD_ERR_TYPE);
       }
 
 
       $ext = FALSE;
 
-      foreach ((array) self::$defs['extension'] as $one)
+      foreach ((array) static::$defs['extension'] as $one)
       {
 
         if (match($one, strtolower($set['name'][$i])))
@@ -174,21 +174,21 @@ class upload extends prototype
 
       if (is_false($ext))
       {
-        return self::set_error(UPLOAD_ERR_EXT);
+        return static::set_error(UPLOAD_ERR_EXT);
       }
 
 
       $name = slug($set['name'][$i], '_');
-      $file = self::$defs['path'].DS.$name;
+      $file = static::$defs['path'].DS.$name;
 
-      if ( ! is_true(self::$defs['unique']))
+      if ( ! is_true(static::$defs['unique']))
       {
         $new = ext($name, TRUE);
         $old = basename($name, $new);
 
         while (is_file($file))
         {
-          $file  = self::$defs['path'].DS;
+          $file  = static::$defs['path'].DS;
           $file .= uniqid($old);
           $file .= $new;
         }
@@ -197,7 +197,7 @@ class upload extends prototype
 
       if (move_uploaded_file($tmp = $set['tmp_name'][$i], $file) OR copy($tmp, $file)) //FIX
       {
-        self::$files []= array(
+        static::$files []= array(
           'file' => $file,
           'type' => $set['type'][$i],
           'size' => $set['size'][$i],
@@ -219,7 +219,7 @@ class upload extends prototype
    */
   final public static function have_files()
   {
-    if (self::$handle = array_shift(self::$files))
+    if (static::$handle = array_shift(static::$files))
     {
       return TRUE;
     }
@@ -236,9 +236,9 @@ class upload extends prototype
   {
     $out = array();
 
-    foreach (self::$error as $one)
+    foreach (static::$error as $one)
     {
-      $out []= ln(sprintf('upload.%s', self::$status[$one]));
+      $out []= ln(sprintf('upload.%s', static::$status[$one]));
     }
 
     return $out;
@@ -252,7 +252,7 @@ class upload extends prototype
    */
   final public static function get_file()
   {
-    return self::$handle['file'];
+    return static::$handle['file'];
   }
 
 
@@ -263,7 +263,7 @@ class upload extends prototype
    */
   final public static function get_size()
   {
-    return (int) self::$handle['size'];
+    return (int) static::$handle['size'];
   }
 
 
@@ -274,7 +274,7 @@ class upload extends prototype
    */
   final public static function get_type()
   {
-    return self::$handle['type'];
+    return static::$handle['type'];
   }
 
 
@@ -285,7 +285,7 @@ class upload extends prototype
    */
   final public static function get_name()
   {
-    return self::$handle['name'];
+    return static::$handle['name'];
   }
 
 
@@ -297,7 +297,7 @@ class upload extends prototype
   // append error code to stack
   final private static function set_error($code)
   {
-    self::$error []= $code;
+    static::$error []= $code;
   }
 
   // fixate multiple uploads

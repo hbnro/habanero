@@ -25,7 +25,7 @@ class request extends prototype
    */
   final public static function all_headers()
   {
-    if ( ! request::$headers)
+    if ( ! static::$headers)
     {
       foreach ($_SERVER as $key => $val)
       {
@@ -34,11 +34,11 @@ class request extends prototype
           $key = strtolower(substr($key, 5));
           $key = camelcase($key, TRUE, '-');
 
-          request::$headers[$key] = $val;
+          static::$headers[$key] = $val;
         }
       }
     }
-    return request::$headers;
+    return static::$headers;
   }
 
 
@@ -51,7 +51,7 @@ class request extends prototype
    */
   final public static function header($name, $default = FALSE)
   {
-    $set = request::all_headers();
+    $set = static::all_headers();
 
     return ! empty($set[$name]) ? $set[$name] : $default;
   }
@@ -65,7 +65,7 @@ class request extends prototype
    */
   final public static function put()
   {
-    if ( ! request::is_put())
+    if ( ! static::is_put())
     {
       return FALSE;
     }
@@ -73,7 +73,7 @@ class request extends prototype
 
     $out = (string) @file_get_contents('php://input');
 
-    if (request::header('content-type') === 'application/x-www-form-urlencoded')
+    if (static::header('content-type') === 'application/x-www-form-urlencoded')
     {
       parse_str($out, $out);
     }
@@ -126,7 +126,7 @@ class request extends prototype
   */
   final public static function address()
   {
-    return is_callable('gethostbyaddr') ? gethostbyaddr(request::remote_ip()) : request::remote_ip();
+    return is_callable('gethostbyaddr') ? gethostbyaddr(static::remote_ip()) : static::remote_ip();
   }
 
 
@@ -194,7 +194,7 @@ class request extends prototype
    */
   final public static function is_post()
   {
-    return request::method() === POST;
+    return static::method() === POST;
   }
 
 
@@ -205,7 +205,7 @@ class request extends prototype
    */
   final public static function is_get()
   {
-    return request::method() === GET;
+    return static::method() === GET;
   }
 
 
@@ -216,7 +216,7 @@ class request extends prototype
    */
   final public static function is_put()
   {
-    return request::method() === PUT;
+    return static::method() === PUT;
   }
 
 
@@ -227,7 +227,7 @@ class request extends prototype
    */
   final public static function is_delete()
   {
-    return request::method() === DELETE;
+    return static::method() === DELETE;
   }
 
 

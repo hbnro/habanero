@@ -69,11 +69,11 @@ class css extends prototype
   {
     if (is_assoc($key))
     {
-      self::$defs = array_merge($key, self::$defs);
+      static::$defs = array_merge($key, static::$defs);
     }
-    elseif (array_key_exists($key, self::$defs))
+    elseif (array_key_exists($key, static::$defs))
     {
-      self::$defs[$key] = $value;
+      static::$defs[$key] = $value;
     }
   }
 
@@ -88,7 +88,7 @@ class css extends prototype
   {
     foreach ($vars as $key => $val)
     {
-      self::$props[$key] = $val;
+      static::$props[$key] = $val;
     }
   }
 
@@ -102,7 +102,7 @@ class css extends prototype
    */
   final public static function render($path, $minify = FALSE)
   {
-    return self::parse(self::load_file($path), $minify);
+    return static::parse(static::load_file($path), $minify);
   }
 
 
@@ -115,25 +115,25 @@ class css extends prototype
    */
   final public static function parse($rules, $minify = FALSE)
   {
-    self::$css     =
-    self::$sets    =
-    self::$props   =
-    self::$mixins  =
-    self::$imports = array();
+    static::$css     =
+    static::$sets    =
+    static::$props   =
+    static::$mixins  =
+    static::$imports = array();
 
-    self::parse_buffer($rules);
-    self::build_properties(self::$sets);
+    static::parse_buffer($rules);
+    static::build_properties(static::$sets);
 
-    foreach (self::$sets as $key => $set)
+    foreach (static::$sets as $key => $set)
     {
-      self::$css []= self::build_rules($set, $key);
+      static::$css []= static::build_rules($set, $key);
     }
 
-    $text = join("\n", self::$css);
+    $text = join("\n", static::$css);
 
     if (is_true($minify))
     {
-      $text = preg_replace(array_keys(self::$minify_expr), self::$minify_expr, $text);
+      $text = preg_replace(array_keys(static::$minify_expr), static::$minify_expr, $text);
     }
 
     $text = preg_replace('/%\(\s*([\'"])(.+?)\\1\s*(?:,([^()]+?))?\)/e', "vsprintf('\\2',explode(',','\\3'))", $text);
@@ -156,7 +156,7 @@ class css extends prototype
   {
     if ( ! is_url($path))
     {
-      $root = self::$defs['path'];
+      $root = static::$defs['path'];
 
       $path = str_replace(array('\\', '/'), DS, $path);
       $path = preg_replace(sprintf('/^\.%s/', preg_quote(DS, '/')), $root, $path);
@@ -186,11 +186,11 @@ class css extends prototype
   {
     if ( ! is_file($path))
     {
-      $path = self::path($path);
+      $path = static::path($path);
 
       if (is_false(strrpos(basename($path), '.')))
       {
-        $path .= self::$defs['extension'];
+        $path .= static::$defs['extension'];
       }
     }
 
@@ -204,7 +204,7 @@ class css extends prototype
 
     if (is_true($parse))
     {
-      self::parse_buffer($text);
+      static::parse_buffer($text);
     }
     return $text;
   }
@@ -212,11 +212,11 @@ class css extends prototype
   // internal file append
   final private static function add_file($path, $parse = FALSE)
   {
-    $text = self::load_file($path, $parse);
+    $text = static::load_file($path, $parse);
 
     if (is_false($parse))
     {
-      self::$css []= $text;
+      static::$css []= $text;
     }
   }
 
@@ -226,23 +226,23 @@ class css extends prototype
     switch ($match[1])
     {
       case 'require';
-        $inc_file  = self::$defs['path'].DS.$match[3];
-        $inc_file .= self::$defs['extension'];
+        $inc_file  = static::$defs['path'].DS.$match[3];
+        $inc_file .= static::$defs['extension'];
 
         if ( ! is_file($inc_file))
         {
           raise(ln('file_not_exists', array('name' => $inc_file)));
         }
 
-        self::$css []= read($inc_file);
+        static::$css []= read($inc_file);
       break;
       case 'use';
-        if (in_array($match[3], self::$imports))
+        if (in_array($match[3], static::$imports))
         {
           break;
         }
 
-        self::$imports []= $match[3];
+        static::$imports []= $match[3];
 
         $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].css";
 
@@ -251,10 +251,10 @@ class css extends prototype
           raise(ln('file_not_exists', array('name' => $css_file)));
         }
 
-        self::add_file($css_file, TRUE);
+        static::add_file($css_file, TRUE);
       break;
       default;
-        return self::load($match[3], FALSE);
+        return static::load($match[3], FALSE);
       break;
     }
   }
@@ -262,7 +262,7 @@ class css extends prototype
   // set properties callback
   final private static function fetch_properties($match)
   {
-    self::$props[$match[1]] = $match[2];
+    static::$props[$match[1]] = $match[2];
   }
 
   // fetch blocks callback
@@ -295,28 +295,28 @@ class css extends prototype
         $name = end(explode(' ', trim($match[1])));
       }
 
-      self::$mixins[$name]['props'] = self::parse_properties($match[2]);
-      self::$mixins[$name]['args']  = $args;
+      static::$mixins[$name]['props'] = static::parse_properties($match[2]);
+      static::$mixins[$name]['args']  = $args;
     }
     else
     {
-      $props  = self::parse_properties($match[2]);
+      $props  = static::parse_properties($match[2]);
       $parent = array_map('trim', array_filter($test));
 
-      self::$sets[$part] = array();
+      static::$sets[$part] = array();
 
       if ( ! empty($parent))
       {
-        foreach (array_keys(self::$sets) as $key)
+        foreach (array_keys(static::$sets) as $key)
         {
           if (in_array($key, $parent))
           {
-            self::$sets[$part] += self::$sets[$key];
+            static::$sets[$part] += static::$sets[$key];
           }
         }
       }
 
-      self::$sets[$part] += self::parse_properties($match[2]);
+      static::$sets[$part] += static::parse_properties($match[2]);
     }
   }
 
@@ -325,7 +325,7 @@ class css extends prototype
   {
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
-    $text = preg_replace(array_keys(self::$fixate_css_expr), self::$fixate_css_expr, $text);
+    $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, $text);
     $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', array('css', 'fetch_externals'), $text);
     $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', array('css', 'fetch_properties'), $text);
 
@@ -360,7 +360,7 @@ class css extends prototype
     $out  = array();
 
     $text = str_replace("'", "\'", $text);
-    $text = preg_replace(array_keys(self::$fixate_array_expr), self::$fixate_array_expr, $text);
+    $text = preg_replace(array_keys(static::$fixate_array_expr), static::$fixate_array_expr, $text);
 
     @eval("\$out = array($text);");
 
@@ -376,7 +376,7 @@ class css extends prototype
 
       if (is_array($val))
       {//FIX
-        self::build_properties($val, str_replace(' &', '', trim("$parent $key")));
+        static::build_properties($val, str_replace(' &', '', trim("$parent $key")));
       }
       else
       {
@@ -385,20 +385,20 @@ class css extends prototype
           case '@extend';
             foreach (array_filter(explode(',', $val)) as $part)
             {
-              if ( ! empty(self::$sets[$part]))
+              if ( ! empty(static::$sets[$part]))
               {
-                self::$sets[$part]['@children'] = $parent;
+                static::$sets[$part]['@children'] = $parent;
               }
             }
           break;
           case '@include';
-            $mix = self::do_mixin($val);
+            $mix = static::do_mixin($val);
 
-            self::build_properties($mix, $parent);
+            static::build_properties($mix, $parent);
 
-            $old = isset(self::$sets[$parent]) ? self::$sets[$parent] : array();
+            $old = isset(static::$sets[$parent]) ? static::$sets[$parent] : array();
 
-            self::$sets[$parent] = array_merge($old, $mix);
+            static::$sets[$parent] = array_merge($old, $mix);
           break;
           default;
           break;
@@ -418,17 +418,17 @@ class css extends prototype
 
       if (substr($key, -1) === ':')
       {
-        $out []= self::make_properties($val, $key);
+        $out []= static::make_properties($val, $key);
       }
       elseif (is_array($val))
       {
         if (substr($parent, 0, 1) === '@')
         {
-          $out []= self::build_rules($val, $key);
+          $out []= static::build_rules($val, $key);
         }
-        elseif ($tmp = self::build_rules($val, str_replace(' &', '', "$parent $key")))
+        elseif ($tmp = static::build_rules($val, str_replace(' &', '', "$parent $key")))
         {
-          self::$css []= $tmp;
+          static::$css []= $tmp;
         }
       }
       elseif (substr($key, 0, 1) <> '@')
@@ -448,7 +448,7 @@ class css extends prototype
 
       $parent = preg_replace('/\s+:/', ':', wordwrap(str_replace(',', ', ', $parent)));
 
-      return self::do_solve(sprintf("$parent {\n%s\n}", join("\n", $out)));
+      return static::do_solve(sprintf("$parent {\n%s\n}", join("\n", $out)));
     }
   }
 
@@ -474,7 +474,7 @@ class css extends prototype
       }
       else
       {
-        $out []= self::make_properties($val, $old . $key);
+        $out []= static::make_properties($val, $old . $key);
       }
     }
 
@@ -494,7 +494,7 @@ class css extends prototype
     {
       foreach ($test as $key => $val)
       {
-        $test[$key] = self::do_vars($val, $set);
+        $test[$key] = static::do_vars($val, $set);
       }
       return $test;
     }
@@ -509,15 +509,15 @@ class css extends prototype
   final private static function do_mixin($text)
   {
     $out  = array();
-    $text = self::do_solve($text);
+    $text = static::do_solve($text);
 
     if (preg_match_all('/\s*([\w\-]+)!?(?:\((.+?)\))?\s*/', $text, $matches))
     {
       foreach ($matches[1] as $i => $part)
       {
-        if (array_key_exists($part, self::$mixins))
+        if (array_key_exists($part, static::$mixins))
         {
-          $old = self::$mixins[$part]['args'];
+          $old = static::$mixins[$part]['args'];
 
           if ( ! empty($matches[2][$i]))
           {
@@ -536,8 +536,8 @@ class css extends prototype
           }
 
 
-          $old = array_merge(self::$props, $old);
-          $out = self::do_vars(self::$mixins[$part]['props'], $old);
+          $old = array_merge(static::$props, $old);
+          $out = static::do_vars(static::$mixins[$part]['props'], $old);
         }
       }
     }
@@ -566,7 +566,7 @@ class css extends prototype
     {
       foreach ($text as $key => $val)
       {
-        $text[$key] = self::do_solve($val);
+        $text[$key] = static::do_solve($val);
       }
     }
     else
@@ -576,7 +576,7 @@ class css extends prototype
         $old  = strlen($text);
 
         $text = preg_replace_callback('/(?<![\-._])([\w-]+?)\(([^\(\)]+)\)(\.\w+)?/', array('css', 'do_helper'), $text);
-        $text = self::do_math(self::do_vars($text, self::$props));
+        $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 
       } while($old != strlen($text));
@@ -588,10 +588,10 @@ class css extends prototype
   // css helper callback
   final private static function do_helper($match)
   {
-    $args = self::do_solve($match[2]);
+    $args = static::do_solve($match[2]);
     $args = array_filter(explode(',', $args), 'strlen');
 
-    $out  = self::defined($match[1]) ? self::apply($match[1], $args) : '';
+    $out  = static::defined($match[1]) ? static::apply($match[1], $args) : '';
     $out  = ! is_empty($out) ? $out : "$match[1]!({$match[2]})";
 
     return ! empty($match[3]) ? (string) value($out, substr($match[3], 1)) : (string) $out;
@@ -620,7 +620,7 @@ class css extends prototype
 
         if (strpos($val, '#') !== FALSE)
         {
-          $out  = preg_replace('/#(\w+)(?=\b|$)/e', '"0x".self::hex("\\1");', $expr);
+          $out  = preg_replace('/#(\w+)(?=\b|$)/e', '"0x".static::hex("\\1");', $expr);
           $out  = preg_replace('/[^\dxa-fA-F\s*\/.+-]/', '', $expr);
           $expr = "sprintf('#%06x', $out)";
           $ext  = '';

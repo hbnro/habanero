@@ -55,11 +55,11 @@ class twitter extends prototype
   {
     if (is_assoc($key))
     {
-      self::$defs = array_merge($key, self::$defs);
+      static::$defs = array_merge($key, static::$defs);
     }
-    elseif (array_key_exists($key, self::$defs))
+    elseif (array_key_exists($key, static::$defs))
     {
-      self::$defs[$key] = $value;
+      static::$defs[$key] = $value;
     }
   }
 
@@ -71,11 +71,11 @@ class twitter extends prototype
    */
   final public static function credentials()
   {
-    if ( ! self::$data)
+    if ( ! static::$data)
     {
-      self::$data = self::api_call('account/verify_credentials');
+      static::$data = static::api_call('account/verify_credentials');
     }
-    return self::$data;
+    return static::$data;
   }
 
 
@@ -86,7 +86,7 @@ class twitter extends prototype
    */
   final public static function screen_name()
   {
-    return self::$screen_name;
+    return static::$screen_name;
   }
 
 
@@ -97,7 +97,7 @@ class twitter extends prototype
    */
   final public static function user_id()
   {
-    return self::$user_id;
+    return static::$user_id;
   }
 
 
@@ -108,19 +108,19 @@ class twitter extends prototype
    */
   final public static function is_logged()
   {
-    if (is_null(self::$connected))
+    if (is_null(static::$connected))
     {
-      extract(self::$defs);
+      extract(static::$defs);
 
-      self::$req = oauth_init($consumer_key, $consumer_secret, $token, $token_secret);
+      static::$req = oauth_init($consumer_key, $consumer_secret, $token, $token_secret);
 
       if ($token = request::get('oauth_token'))
       {
-        oauth_set(self::$req, $token);
-        parse_str(oauth_exec(self::$req, self::$access_token_url), $test);
+        oauth_set(static::$req, $token);
+        parse_str(oauth_exec(static::$req, static::$access_token_url), $test);
         session('twitter_auth', $test);
 
-        oauth_set(self::$req, $test['oauth_token'], $test['oauth_token_secret']);
+        oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
       }
       else
       {
@@ -130,15 +130,15 @@ class twitter extends prototype
 
       if ( ! empty($test['oauth_token']) && ! empty($test['oauth_token']))
       {
-        oauth_set(self::$req, $test['oauth_token'], $test['oauth_token_secret']);
+        oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
       }
 
-      ! empty($test['screen_name']) && self::$screen_name = $test['screen_name'];
-      ! empty($test['user_id']) && self::$user_id = (string) $test['user_id'];
+      ! empty($test['screen_name']) && static::$screen_name = $test['screen_name'];
+      ! empty($test['user_id']) && static::$user_id = (string) $test['user_id'];
 
-      self::$connected = self::$user_id > 0;
+      static::$connected = static::$user_id > 0;
     }
-    return self::$connected;
+    return static::$connected;
   }
 
 
@@ -160,11 +160,11 @@ class twitter extends prototype
    */
   final public static function authorization_url()
   {
-    parse_str(oauth_exec(self::$req, self::$request_token_url), $test);
+    parse_str(oauth_exec(static::$req, static::$request_token_url), $test);
 
     if ( ! empty($test['oauth_token']))
     {
-      return self::$authorize_url . '?oauth_token=' . $test['oauth_token'];
+      return static::$authorize_url . '?oauth_token=' . $test['oauth_token'];
     }
   }
 
@@ -179,10 +179,10 @@ class twitter extends prototype
    */
   final public static function api_call($url, array $vars = array(), $method = GET)
   {
-    if (self::is_logged())
+    if (static::is_logged())
     {
-      $url  = ! is_url($url) ? rtrim(self::$api_url, '/') . "/$url.json" : $url;
-      $test = oauth_exec(self::$req, $url, $vars, $method, TRUE);
+      $url  = ! is_url($url) ? rtrim(static::$api_url, '/') . "/$url.json" : $url;
+      $test = oauth_exec(static::$req, $url, $vars, $method, TRUE);
 
       if ( ! preg_match('/"error":"(.+?)"/', $test, $match))
       {
@@ -223,7 +223,7 @@ class twitter extends prototype
    */
   final public static function status_limit()
   {
-    return self::api_call('account/rate_limit_status');
+    return static::api_call('account/rate_limit_status');
   }
 
 
@@ -240,7 +240,7 @@ class twitter extends prototype
 
     $data['q'] = $text;
 
-    return self::api_call('http://search.twitter.com/search.json', $data);
+    return static::api_call('http://search.twitter.com/search.json', $data);
   }
 
 
@@ -277,7 +277,7 @@ class twitter extends prototype
     $extra = join('/', $arguments);
     $url   = $method . ($extra ? "/$extra" : '');
 
-    return self::api_call($url, $data, $type);
+    return static::api_call($url, $data, $type);
   }
 
 }

@@ -28,7 +28,7 @@ class sql extends prototype
     foreach ($set as $i => $val)
     {
       $test = array_map($callback, explode('.', $val));
-      $char = substr(self::quotes('x'), 0, 1);
+      $char = substr(static::quotes('x'), 0, 1);
 
       foreach ($test as $key => $val)
       {
@@ -51,7 +51,7 @@ class sql extends prototype
     $length = sizeof($set);
     $output = array();
 
-    $output []= "\n" . self::build_where(array(
+    $output []= "\n" . static::build_where(array(
       $set[0] => $value,
     ));
 
@@ -66,7 +66,7 @@ class sql extends prototype
       }
 
       $output []= strtoupper($one) . "\n";
-      $output []= self::build_where(array(
+      $output []= static::build_where(array(
         $next => $value,
       ));
     }
@@ -84,11 +84,11 @@ class sql extends prototype
 
         if ( ! is_num($col))
         {
-          return self::names("$val.$col");
+          return static::names("$val.$col");
         }
         else
         {
-          return self::fixate_string($val, TRUE);
+          return static::fixate_string($val, TRUE);
         }
       }
       else
@@ -98,7 +98,7 @@ class sql extends prototype
     }
     elseif (is_string($test))
     {
-      $test = "'" . self::escape($test) . "'";
+      $test = "'" . static::escape($test) . "'";
     }
     return $test;
   }
@@ -115,10 +115,10 @@ class sql extends prototype
       }
       elseif (is_num($key))
       {
-        $sql []= ' ' . self::names($val);
+        $sql []= ' ' . static::names($val);
         continue;
       }
-      $sql []= ' ' . self::names($key) . ' AS ' . self::names($val);
+      $sql []= ' ' . static::names($key) . ' AS ' . static::names($val);
     }
     return join(",\n", $sql);
   }
@@ -134,7 +134,7 @@ class sql extends prototype
 
       foreach (array_keys($fields) as $one)
       {
-        $cols []= self::names($one);
+        $cols []= static::names($one);
       }
 
       $sql []= '(' . join(', ', $cols) . ')';
@@ -153,7 +153,7 @@ class sql extends prototype
       }
       else
       {
-        $val = self::fixate_string($val, TRUE);
+        $val = static::fixate_string($val, TRUE);
 
         if (is_true($insert))
         {
@@ -161,7 +161,7 @@ class sql extends prototype
         }
         elseif ( ! empty($val))
         {
-          $sql []= sprintf('%s = %s', self::names($key), $val ?: "''");
+          $sql []= sprintf('%s = %s', static::names($key), $val ?: "''");
         }
       }
       $sql []= (($count += 1) < $total ? ",\n" : '');
@@ -189,14 +189,14 @@ class sql extends prototype
         if (preg_match('/_(?:or|and)_/', $key))
         {
           $sql .= "$operator\n";
-          $sql .= self::mix_columns($key, $val);
+          $sql .= static::mix_columns($key, $val);
 
           $count += 1;
           continue;
         }
         elseif (is_keyword($key))
         {
-          $out  = self::build_where($val, $key);
+          $out  = static::build_where($val, $key);
           $sql .= strtoupper($key) . "\n$out";
 
           $count += 1;
@@ -215,13 +215,13 @@ class sql extends prototype
           }
           else
           {
-            $sql .= self::build_where($val, $operator);
+            $sql .= static::build_where($val, $operator);
           }
         }
         elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match))
         {
           $oper = '';
-          $key  = self::names($match[1]);
+          $key  = static::names($match[1]);
 
           if (is_null($val))
           {
@@ -229,7 +229,7 @@ class sql extends prototype
           }
           else
           {
-            $val = self::fixate_string($val, FALSE);
+            $val = static::fixate_string($val, FALSE);
             $oper = ! empty($match[2]) ? ($match[2] == '!' ? '!=' : $match[2]) : '=';
           }
 
@@ -256,7 +256,7 @@ class sql extends prototype
       $sql = preg_replace('/(AND|OR)\s*(AND|OR)/s', '\\1', $sql);
       $sql = preg_replace('/(?<=\()\s*AND|OR\s*(?=\))/s', '', $sql);
 
-      $sql = self::query_repare($sql);
+      $sql = static::query_repare($sql);
 
       return $sql;
     }
@@ -272,7 +272,7 @@ class sql extends prototype
       $limit_expr = '/\s+LIMIT\s+(\d+)(?:\s*(?:,|\s+TO\s+)\s*(\d+))?\s*$/i';
       $test       = preg_replace_callback($limit_expr, function($match)
       {
-        return self::limit($match[1], $match[2]);
+        return static::limit($match[1], $match[2]);
       }, $test);
     }
 

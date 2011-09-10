@@ -33,7 +33,7 @@ class routing extends prototype
       'to'          => 'raise',
     ), $params);
 
-    routing::$routes []= $params;
+    static::$routes []= $params;
   }
 
 
@@ -44,7 +44,7 @@ class routing extends prototype
    */
   final public static function execute()
   {
-    foreach (routing::$routes as $params)
+    foreach (static::$routes as $params)
     {
       $expr = "^$params[match]$";
       $test = request::method() . ' ' . URI;

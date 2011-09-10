@@ -26,7 +26,7 @@ class url_for extends prototype
    */
   public static function register($path, $to)
   {
-    self::$map[$path] = $to;
+    static::$map[$path] = $to;
   }
 
 
@@ -50,7 +50,7 @@ class url_for extends prototype
       $arguments []= $test;
     }
 
-    $route = ! empty(self::$map[$method]) ? self::$map[$method] : strtr($method, '_', '/');
+    $route = ! empty(static::$map[$method]) ? static::$map[$method] : strtr($method, '_', '/');
     $extra = $arguments ? '/' . join('/', $arguments) : '';
 
     return url_for($route . $extra, $params);
