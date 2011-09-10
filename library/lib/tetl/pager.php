@@ -41,11 +41,11 @@ class pager extends prototype
   {
     if (is_assoc($key))
     {
-      pager::$defs = array_merge($key, pager::$defs);
+      static::$defs = array_merge($key, static::$defs);
     }
-    elseif (array_key_exists($key, pager::$defs))
+    elseif (array_key_exists($key, static::$defs))
     {
-      pager::$defs[$key] = $value;
+      static::$defs[$key] = $value;
     }
   }
 
@@ -58,8 +58,8 @@ class pager extends prototype
    */
   final public static function set_array(array $set)
   {
-    $index = pager::offset(sizeof($set));
-    $set   = array_slice($set, $index, pager::count_page());
+    $index = static::offset(sizeof($set));
+    $set   = array_slice($set, $index, static::count_page());
 
     return $set;
   }
@@ -72,7 +72,7 @@ class pager extends prototype
    */
   final public static function total()
   {
-    return (int) pager::$count;
+    return (int) static::$count;
   }
 
 
@@ -83,7 +83,7 @@ class pager extends prototype
    */
   final public static function pages()
   {
-    return ceil(pager::$count / pager::$defs['count_page']);
+    return ceil(static::$count / static::$defs['count_page']);
   }
 
 
@@ -94,7 +94,7 @@ class pager extends prototype
    */
   final public static function count_page()
   {
-    return (int) pager::$defs['count_page'];
+    return (int) static::$defs['count_page'];
   }
 
 
@@ -105,7 +105,7 @@ class pager extends prototype
    */
   final public static function count_max()
   {
-    return (int) pager::$defs['count_max'];
+    return (int) static::$defs['count_max'];
   }
 
 
@@ -116,7 +116,7 @@ class pager extends prototype
    */
   final public static function current()
   {
-    return pager::$current ?  (int) pager::$current : 1;
+    return static::$current ?  (int) static::$current : 1;
   }
 
 
@@ -127,7 +127,7 @@ class pager extends prototype
    */
   final public static function index($num)
   {
-    pager::$current = (int) $num;
+    static::$current = (int) $num;
   }
 
 
@@ -140,15 +140,15 @@ class pager extends prototype
    */
   final public static function offset($count, $current = FALSE)
   {
-    pager::$count = (int) $count;
+    static::$count = (int) $count;
 
     if ( ! is_false($current))
     {
-      pager::$current = (int) $current;
+      static::$current = (int) $current;
     }
 
-    $index = pager::$current ? pager::$current - 1 : pager::$current;
-    $index = floor($index * pager::$defs['count_page']);
+    $index = static::$current ? static::$current - 1 : static::$current;
+    $index = floor($index * static::$defs['count_page']);
 
     return $index;
   }
@@ -163,12 +163,12 @@ class pager extends prototype
   final public static function page_all($wrap = '[%s]')
   {
     $out = array();
-    $end = pager::pages();
-    $cur = pager::current();
+    $end = static::pages();
+    $cur = static::current();
 
     for ($i = 1; $i <= $end; $i += 1)
     {
-      $link = pager::page_link($i, pager::$defs['link_text']);
+      $link = static::page_link($i, static::$defs['link_text']);
 
       if ($cur === $i)
       {
@@ -195,9 +195,9 @@ class pager extends prototype
       $args = args(attrs($args));
     }
 
-    $text = $text ? sprintf(pager::$defs['link_text'], number_format($num)) : number_format($num);
+    $text = $text ? sprintf(static::$defs['link_text'], number_format($num)) : number_format($num);
 
-    $args['href'] = sprintf($num <= 1 ? pager::$defs['link_root'] : str_replace('%25d', '%d', pager::$defs['link_href']), $num);//FIX
+    $args['href'] = sprintf($num <= 1 ? static::$defs['link_root'] : str_replace('%25d', '%d', static::$defs['link_href']), $num);//FIX
 
     return tag('a', $args, $text);
   }
@@ -211,8 +211,8 @@ class pager extends prototype
   final public static function page_step($from = 0)
   {
     $out = 0;
-    $max = pager::count_max();
-    $end = pager::current() + $from;
+    $max = static::count_max();
+    $end = static::current() + $from;
 
     for ($i = 0; $i < $end; $i += 1)
     {
