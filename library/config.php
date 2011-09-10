@@ -3,7 +3,7 @@
 # $config['key'] = 'value';
 # OR return array('key' => 'value');
 
-$config['language'] = 'es_MX';
+$config['language'] = 'en';
 $config['import_path'] = getcwd();
 $config['temporary_files'] = '/tmp';
 $config['timezone'] = 'America/Mexico_City';
