@@ -25,8 +25,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script>window.jQuery || document.write("<script src='<?php echo ROOT; ?>js/jquery-1.5.1.min.js'>\x3C/script>")</script>
 
-    <script src="<?php echo ROOT; ?>js/functions.js"></script>
-    <script src="<?php echo ROOT; ?>js/application.js"></script>
+    <script src="<?php echo ROOT; ?>js/jquery-ujs.js"></script>
+    <script src="<?php echo ROOT; ?>js/app.js"></script>
 
 <!--
     <script>
