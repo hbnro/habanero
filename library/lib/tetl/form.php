@@ -571,10 +571,42 @@ class form extends prototype
   */
   final public static function value($from, $or = FALSE)
   {
-    $set   = $_SERVER['REQUEST_METHOD'] <> 'GET' ? $_POST : $_GET;
+    $set   = value($_SERVER, 'REQUEST_METHOD') <> GET ? $_POST : $_GET;
     $value = value($set, $from, $or);
 
     return $value;
+  }
+
+
+  /**
+   * Dynamic inputs
+   *
+   * @param     string Method
+   * @param     array  Arguments
+   * @staticvar array  Input types
+   * @return    string
+   */
+  final public static function missing($method, $arguments)
+  {
+    static $test = NULL;
+
+
+    if (is_null($test))
+    {
+      $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
+    }
+
+
+    $type = strtr($method, '_', '-');
+
+    if ( ! in_array($type, $test['types']))
+    {
+      raise(ln('method_missing', array('class' => 'form', 'name' => $method)));
+    }
+
+    array_unshift($arguments, $type);
+
+    return apply('form::input', $arguments);
   }
 
 
@@ -636,24 +668,5 @@ class form extends prototype
 
   /**#@-*/
 }
-
-
-// dynamic inputs
-call_user_func(function()
-{
-  $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
-
-  foreach ($test['types'] as $type)
-  {
-    if ( ! form::defined(strtr($type, '-', '_')))
-    {
-      form::implement(strtr($type, '-', '_'), function($name, $value = '', $args = array())
-        use($type)
-      {
-        return form::input($type, $name, $value, $args);
-      });
-    }
-  }
-});
 
 /* EOF: ./lib/tetl/form.php */

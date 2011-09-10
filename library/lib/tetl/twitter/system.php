@@ -251,14 +251,14 @@ class twitter extends prototype
    * @param  array  Arguments
    * @return mixed
    */
-  final public static function missing($method, array $args = array())
+  final public static function missing($method, $arguments)
   {
     $type   = GET;
     $data   = array();
-    $test   = array_pop($args);
-    $params = array_pop($args);
+    $test   = array_pop($arguments);
+    $params = array_pop($arguments);
 
-    is_assoc($params) ? $data = $params : $params && $args []= $params;
+    is_assoc($params) ? $data = $params : $params && $arguments []= $params;
 
     if (is_assoc($test))
     {
@@ -270,11 +270,11 @@ class twitter extends prototype
     }
     else
     {
-      $test && $args []= $test;
+      $test && $arguments []= $test;
     }
 
 
-    $extra = join('/', $args);
+    $extra = join('/', $arguments);
     $url   = $method . ($extra ? "/$extra" : '');
 
     return self::api_call($url, $data, $type);

@@ -378,7 +378,7 @@ class model extends prototype
    * @param  array  Arguments
    * @return mixed
    */
-  final public static function missing($method, array $arguments = array())
+  final public static function missing($method, $arguments)
   {
     if (strpos($method, 'find_by_') === 0)
     {
