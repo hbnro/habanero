@@ -149,6 +149,7 @@ class model extends prototype
       }
 
       $this->_props[static::pk()] = db::insert(static::table(), $fields);
+      $this->_new_record = FALSE;
     }
     else
     {
