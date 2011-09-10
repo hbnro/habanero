@@ -42,7 +42,7 @@ class model extends prototype
    */
 
   // model constructor
-  public function __construct(array $params = array(), $create = FALSE, $method = NULL)
+  private function __construct(array $params = array(), $create = FALSE, $method = NULL)
   {
     $this->_new_record = (bool) $create;
 
@@ -88,11 +88,6 @@ class model extends prototype
     {
       $method = $match[2];
       $what   = $match[1];
-    }
-    elseif (preg_match('/^(\w+)_by_(.+?)$/', $method, $match))
-    {
-      $method = $match[1];
-      $where  = static::where($match[2], $arguments);
     }
 
 
