@@ -141,50 +141,50 @@ class form extends prototype
 
     foreach ($args as $one)
     {
-       if (is_assoc($one))
-       {
-         $one = array_merge(array(
-            'type'    => '',
-            'name'    => '',
-            'value'   => '',
-            'label'   => '',
-            'options' => array(),
-            'before'  => '',
-            'after'   => '',
-            'div'     => '',
-          ), $one);
+      if (is_assoc($one))
+      {
+        $one = array_merge(array(
+          'type'    => '',
+          'name'    => '',
+          'value'   => '',
+          'label'   => '',
+          'options' => array(),
+          'before'  => '',
+          'after'   => '',
+          'div'     => '',
+        ), $one);
 
-         switch ($one['type'])
-         {
-           case 'file';
-             $input = static::file($one['name'], (array) $one['options']);
-           break;
-           case 'group';
-           case 'select';
-           case 'textarea';
-             $input = static::$one['type']($one['name'], $one['value'], (array) $one['options']);
-           break;
-           default;
-             $input = static::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
-           break;
-         }
+        switch ($one['type'])
+        {
+          case 'file';
+            $input = static::file($one['name'], (array) $one['options']);
+          break;
+          case 'group';
+          case 'select';
+          case 'textarea';
+            $input = static::$one['type']($one['name'], $one['value'], (array) $one['options']);
+          break;
+          default;
+            $input = static::input($one['type'], $one['name'], $one['value'], (array) $one['options']);
+          break;
+        }
 
-         $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
-         $label  = ! empty($one['label']) ? static::label($one['name'], $one['label']) : '';
+        $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
+        $label  = ! empty($one['label']) ? static::label($one['name'], $one['label']) : '';
 
-         $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
-       }
-       elseif (is_array($one))
-       {
-         $out []= apply('form::input', $one);
-       }
-       elseif (is_scalar($one))
-       {
-         $out []= $one;
-       }
-     }
+        $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
+      }
+      elseif (is_array($one))
+      {
+        $out []= apply('form::input', $one);
+      }
+      elseif (is_scalar($one))
+      {
+        $out []= $one;
+      }
+    }
 
-     return tag('div', '', join('', $out));
+    return tag('div', '', join('', $out));
   }
 
 
@@ -594,12 +594,13 @@ class form extends prototype
     if (is_null($test))
     {
       $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
+      $test = $test['types'];
     }
 
 
     $type = strtr($method, '_', '-');
 
-    if ( ! in_array($type, $test['types']))
+    if ( ! in_array($type, $test))
     {
       raise(ln('method_missing', array('class' => 'form', 'name' => $method)));
     }
