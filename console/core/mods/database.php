@@ -654,7 +654,17 @@ HELP;
       $raw = isset($params['raw']);
       $ext = $raw ? '.sql' : EXT;
 
-      $out_file = mkpath(CWD.DS.'db'.DS.'backup').DS.date('YmdHis_').$name.$ext;
+      $path = mkpath(CWD.DS.'db'.DS.'backup');
+      $out_file = $path.DS.$name.$ext;
+
+      while (is_file($out_file))
+      {
+        $out_file  = $path.DS.basename($name, $ext);
+        $out_file  = date('YmdHis_') . "{$name}_";
+        $out_file .= substr(sha1($out_file), 0, 6);
+        $out_file .= $ext;
+      }
+
       $path = str_replace(CWD.DS, '', $out_file);
 
       success(ln('tetl.exporting', array('path' => $path)));
@@ -677,7 +687,7 @@ HELP;
     else
     {
       $raw = isset($params['raw']);
-      $inc_file = CWD.DS.$name;
+      $inc_file = CWD.DS.'db'.DS.'backup'.DS.$name;
 
       if ( ! is_file($inc_file))
       {
