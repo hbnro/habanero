@@ -33,8 +33,6 @@
             return false;
           }
 
-          $ujs.disable(that);
-
           setTimeout(function() {
             $ujs.remote_to(that);
           }, 20);
@@ -134,10 +132,12 @@
     disable: function(el) {
       el.find('input[data-disable-with]').each(function() {
         var that = $(this),
-            method = that.is('input') ? 'val' : 'html';
+            method = that.is('input') ? 'val' : 'html',
+            new_text = that.data('disable-with');
 
-        that.data('enable-with', that[method]());
         that.is('input') ? that.attr('disabled', 'disabled') : that.addClass('disabled');
+        ! that.data('enable-with') && that.data('enable-with', that[method]());
+        new_text && that[method](new_text);
       });
     },
     all_fields: function(el, blank) {
