@@ -160,7 +160,7 @@ bootstrap::implement('raise', function($message)
 
 
   // system info
-  $var['host'] = php_uname('n');
+  $var['host'] = @php_uname('n') ?: sprintf('<%s>', ln('unknown'));
   $var['user'] = 'Unknown';
 
   foreach (array('USER', 'LOGNAME', 'USERNAME', 'APACHE_RUN_USER') as $key)
