@@ -437,7 +437,7 @@ function is_local($test = NULL)
 
   if (is_url($test))
   {
-    $host = server('HTTP_HOST');
+    $host = value($_SERVER, 'HTTP_HOST');
     $test = parse_url($test);
 
     if (isset($test['host']) && ($test['host'] !== $host))
@@ -447,7 +447,7 @@ function is_local($test = NULL)
     return TRUE;
   }
 
-  return preg_match($regex, $test ?: request::remote_ip()) > 0;
+  return preg_match($regex, $test ?: value($_SERVER, 'REMOTE_ADDR')) > 0;
 }
 
 
