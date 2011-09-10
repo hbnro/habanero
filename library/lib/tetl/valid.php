@@ -42,8 +42,8 @@ class valid extends prototype
             );
 
 
-    valid::$error = array();
-    valid::$rules = array_fill_keys(array_keys($test), array());
+    static::$error = array();
+    static::$rules = array_fill_keys(array_keys($test), array());
 
     foreach ($test as $field => $rules)
     {
@@ -56,18 +56,18 @@ class valid extends prototype
             $name = slug(strtr($one, $fix), '_', SLUG_STRICT | SLUG_TRIM);
             $name = ! is_num($key) ? $key : $name;
 
-            valid::$rules[$field][$name] = $one;
+            static::$rules[$field][$name] = $one;
           }
         }
         else
         {
           if (is_string($key) && ! is_num($key))
           {
-            valid::$rules[$field][$key] = $one;
+            static::$rules[$field][$key] = $one;
           }
           else
           {
-            valid::$rules[$field] []= $one;
+            static::$rules[$field] []= $one;
           }
         }
       }
@@ -83,19 +83,19 @@ class valid extends prototype
    */
   final public static function done(array $set = array())
   {
-    valid::$data = $set;
+    static::$data = $set;
 
     $ok = 0;
 
-    foreach (valid::$rules as $key => $set)
+    foreach (static::$rules as $key => $set)
     {
-      if ( ! valid::wrong($key, (array) $set))
+      if ( ! static::wrong($key, (array) $set))
       {
         $ok += 1;
       }
     }
 
-    return sizeof(valid::$rules) === $ok;
+    return sizeof(static::$rules) === $ok;
   }
 
 
@@ -110,10 +110,10 @@ class valid extends prototype
   {
     if ( ! func_num_args())
     {
-      return valid::$error;
+      return static::$error;
     }
 
-    return ! empty(valid::$error[$name]) ? valid::$error[$name] : $default;
+    return ! empty(static::$error[$name]) ? static::$error[$name] : $default;
   }
 
 
@@ -128,10 +128,10 @@ class valid extends prototype
   {
     if ( ! func_num_args())
     {
-      return valid::$data;
+      return static::$data;
     }
 
-    return value(valid::$data, $name, $default);
+    return value(static::$data, $name, $default);
   }
 
 
@@ -144,7 +144,7 @@ class valid extends prototype
   final private static function wrong($name, array $set = array())
   {
     $fail = FALSE;
-    $test = value(valid::$data, $name);
+    $test = value(static::$data, $name);
 
     if ($key = array_search('required', $set))
     {
@@ -190,7 +190,7 @@ class valid extends prototype
         }
         elseif (preg_match('/^((?:[!=]=?|[<>])=?)(.+?)$/', $rule, $match))
         {
-          $expr = array_shift(valid::vars($match[2]));
+          $expr = array_shift(static::vars($match[2]));
 
           $test = ! is_num($test) ? "'$test'" : addslashes($test);
           $expr = ! is_num($expr) ? "'$expr'" : addslashes($expr);
@@ -231,7 +231,7 @@ class valid extends prototype
             }
 
 
-            $args = valid::vars($match[2]);
+            $args = static::vars($match[2]);
             array_unshift($args, $test);
 
             $value = apply($callback, $args);
@@ -243,7 +243,7 @@ class valid extends prototype
             }
           }
         }
-        elseif ( ! in_array($test, valid::vars($rule)))
+        elseif ( ! in_array($test, static::vars($rule)))
         {
           $fail = TRUE;
           break;
@@ -254,7 +254,7 @@ class valid extends prototype
 
     if ($fail && ! empty($error))
     {
-      valid::$error[$name] = (string) $error;
+      static::$error[$name] = (string) $error;
     }
 
     return $fail;
@@ -277,7 +277,7 @@ class valid extends prototype
       }
       else
       {
-        $test[$key] = value(valid::$data, $val);
+        $test[$key] = value(static::$data, $val);
       }
     }
 
