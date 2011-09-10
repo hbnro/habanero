@@ -108,8 +108,8 @@ HELP;
             else
             {
               $controller_tpl = "<?php\n\nclass {$name}_controller extends controller\n{"
-                              . "\n  public static function index()\n"
-                              . "  {\n  }\n}\n";
+                              . "\n\n  public static function index()\n"
+                              . "  {\n  }\n\n}\n";
 
               success(ln('tetl.controller_class_building', array('name' => $name)));
               write($out_file, $controller_tpl);
@@ -158,7 +158,7 @@ HELP;
                 success(ln('tetl.action_method_building', array('name' => $name, 'controller' => $parent)));
 
                 $action_tpl = "  public static function $name()\n"
-                            . "  {\n  }\n";
+                            . "  {\n  }\n\n";
 
                 write($out_file, preg_replace('/\}[^{}]*?$/s', "$action_tpl\\0", $content));
 
