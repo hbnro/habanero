@@ -600,12 +600,14 @@ class form extends prototype
       'method'       => FALSE,
       'remote'       => FALSE,
       'params'       => FALSE,
+      'confirm'      => FALSE,
       'disable_with' => FALSE,
     ), $params);
 
 
     $params['url'] && $params['data']['url'] = $params['url'];
     $params['type'] && $params['data']['type'] = $params['type'];
+    $params['confirm'] && $params['data']['confirm'] = $params['confirm'];
     $params['params'] && $params['data']['params'] = http_build_query($params['params']);
     $params['disable_with'] && $params['data']['disable-with'] = $params['disable_with'];
 
