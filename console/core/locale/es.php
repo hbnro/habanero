@@ -73,5 +73,6 @@ $lang['table_building'] = 'Creando tabla %{name}';
 $lang['table_dropping'] = 'Eliminando tabla %{name}';
 $lang['table_show_columns'] = 'Mostrando columnas de %{name}';
 $lang['export_name_missing'] = 'Hace falta un nombre para exportar';
+$lang['export_already_exists'] = 'El archivo a exportar ya existe';
 $lang['exporting'] = 'Exportando %{path}';
 $lang['importing'] = 'Importando %{path}';

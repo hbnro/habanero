@@ -654,21 +654,20 @@ HELP;
       $raw = isset($params['raw']);
       $ext = $raw ? '.sql' : EXT;
 
-      $path = mkpath(CWD.DS.'db'.DS.'backup');
-      $out_file = $path.DS.$name.$ext;
+      $out_file = mkpath(CWD.DS.'db'.DS.'backup').DS.$name.$ext;
 
-      while (is_file($out_file))
+      if (is_file($out_file))
       {
-        $out_file  = $path.DS.basename($name, $ext);
-        $out_file  = date('YmdHis_') . "{$name}_";
-        $out_file .= substr(sha1($out_file), 0, 6);
-        $out_file .= $ext;
+        error(ln('tetl.export_already_exists'));
       }
+      else
+      {
+        $path = str_replace(CWD.DS, '', $out_file);
 
-      $path = str_replace(CWD.DS, '', $out_file);
-
-      success(ln('tetl.exporting', array('path' => $path)));
-      db::export($out_file, '*', $data, $raw);
+        touch($out_file);
+        success(ln('tetl.exporting', array('path' => $path)));
+        db::export($out_file, '*', $data, $raw);
+      }
     }
 
     bold(ln('tetl.done'));
