@@ -69,8 +69,8 @@ call_user_func(function()
     }
   }
 
-  // TODO: CRSF token check?
-  define('TOKEN', sprintf('%d %s', time(), sha1(salt(13))));
+  // TODO: still using the same token against XHR?
+  define('TOKEN', is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
   define('CHECK', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
 
   $_SESSION['--csrf-token'] = TOKEN;

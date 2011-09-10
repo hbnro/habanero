@@ -274,12 +274,8 @@ class request extends prototype
 
     if (is_null($check))
     {
-      $check = defined('CHECK') ? CHECK : NULL;
-
-      if ($_token = value($_POST, '_token'))
-      {
-        unset($_POST['_token']);
-      }
+      $check  = defined('CHECK') ? CHECK : NULL;
+      $_token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
     }
 
 

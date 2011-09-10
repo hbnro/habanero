@@ -131,6 +131,14 @@ bootstrap::bind(function($app)
     unset($_POST['_method']);
   }
 
+  // CSRF override
+  if ($_token = value($_POST, '_token'))
+  {
+    $_SERVER['HTTP_X_CSRF_TOKEN'] = $_POST['_token'];
+
+    unset($_POST['_token']);
+  }
+
   ignore_user_abort(FALSE);
 
   return function()
