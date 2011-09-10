@@ -68,7 +68,9 @@ class form extends prototype
     $callback = $params['content'];
     $params   = static::ujs($params, TRUE);
 
-    unset($params['multipart'], $params['content']);
+    $params['type'] && $params['data']['type'] = $params['type'];
+
+    unset($params['multipart'], $params['content'], $params['type']);
 
     $params['method'] = strtolower($params['method'] ?: GET);
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
@@ -309,6 +311,11 @@ class form extends prototype
     $key     = static::index($params['name'], TRUE);
     $default = static::value($key, $params['default']);
 
+    $params['type'] && $params['data']['type'] = $params['type'];
+
+    unset($params['type']);
+
+
     foreach ($options as $key => $value)
     {
       if (is_array($value))
@@ -480,6 +487,10 @@ class form extends prototype
 
     $args = static::ujs($args);
 
+    $args['type'] && $args['data']['type'] = $args['type'];
+
+    unset($args['type']);
+
     if ($id = static::index($args['name'], TRUE))
     {
       $args['text'] = static::value($id, $value);
@@ -606,14 +617,13 @@ class form extends prototype
 
 
     $params['url'] && $params['data']['url'] = $params['url'];
-    $params['type'] && $params['data']['type'] = $params['type'];
     $params['confirm'] && $params['data']['confirm'] = $params['confirm'];
     $params['params'] && $params['data']['params'] = http_build_query($params['params']);
     $params['disable_with'] && $params['data']['disable-with'] = $params['disable_with'];
 
     is_true($params['remote']) && $params['data']['remote'] = 'true';
 
-    unset($params['disable_with'], $params['remote'], $params['url']);
+    unset($params['disable_with'], $params['confirm'], $params['remote'], $params['url']);
 
     if (is_false($form))
     {
