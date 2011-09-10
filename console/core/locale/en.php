@@ -7,7 +7,7 @@
 $lang['application_generator'] = 'Application';
 $lang['database_generator'] = 'Database';
 $lang['generator_intro'] = '¡Welcome to the console utility!';
-$lang['done'] = 'Hecho';
+$lang['done'] = 'Done';
 $lang['missing_model_name'] = 'Model name missing';
 $lang['missing_action_name'] = 'Action name missing';
 $lang['missing_controller_name'] = 'Controller name missing';
@@ -15,7 +15,7 @@ $lang['action_already_exists'] = 'Action %{controller}#%{name} already exists';
 $lang['controller_already_exists'] = 'Controller %{name} already exists';
 $lang['controller_missing'] = 'Controller is missing';
 $lang['controller_not_exists'] = 'Controller %{name} does not exists';
-$lang['directory_must_be_ampty'] = 'Directory must be empty';
+$lang['directory_must_be_empty'] = 'Directory must be empty';
 $lang['not_installed'] = 'Not installed';
 $lang['unknown_generator'] = 'Unknown %{name} generator';
 $lang['copying_skeleton'] = 'Copying base to %{path}';
