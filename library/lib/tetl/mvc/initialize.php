@@ -27,13 +27,14 @@ bootstrap::bind(function($app)
 
     switch ($class)
     {
-      case 'model';
-        import('tetl/db');
-
-        require __DIR__.DS.'model'.EXT;
+      case 'db';
+      case 'taml';
+        import("tetl/$class");
       break;
+      case 'model';
+      case 'view';
       case 'controller';
-        require __DIR__.DS.'controller'.EXT;
+        require __DIR__.DS.$class.EXT;
       break;
       default;
       break;
@@ -49,6 +50,13 @@ bootstrap::bind(function($app)
 
     /**#@-*/
   });
+
+
+  view::register('taml', function($file, array $vars = array())
+  {
+    return taml::render($file, $vars);
+  });
+
 
   $request = request::methods();
 
@@ -114,11 +122,6 @@ bootstrap::bind(function($app)
         raise(ln('mvc.view_missing', array('controller' => $controller, 'action' => $action)));
       }
 
-
-      /**
-       * @ignore
-       */
-      require __DIR__.DS.'view'.EXT;
 
       $view = view::load($view_file, (array) $class_name::$view);
 
