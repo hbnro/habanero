@@ -73,7 +73,7 @@ class taml extends prototype
       write($php_file, $out);
     }
 
-    echo render($php_file, TRUE, array(
+    return render($php_file, TRUE, array(
       'locals' => $vars,
     ));
   }
