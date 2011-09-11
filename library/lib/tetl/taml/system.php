@@ -11,6 +11,9 @@ class taml extends prototype
    * @ignore
    */
 
+  // open blocks
+  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
+
   // defaults
   private static $defs = array(
     'indent' => 2,
@@ -95,8 +98,9 @@ class taml extends prototype
               '/^\s*<!--#PRE#-->/m' => '',
               '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
               '/<\?php\s+(?!echo\s+@|\})/' => "\n<?php ",
-              '/}\s*else\s*{/s' => '} else {',
+              '/}\s*else\s*/s' => '} else ',
               '/><\?php/' => ">\n<?php",
+              '/-->\s*<!--/s' => "\n",
             );
 
 
@@ -153,7 +157,6 @@ class taml extends prototype
       $code .= ";\n";
     }
 
-
     @eval($code);
 
     if (empty($out))
@@ -184,14 +187,15 @@ class taml extends prototype
   // compile lines
   final private static function compile($tree)
   {
-    $out = array();
+    $out  = array();
+    $expr = sprintf('-\s+%s', static::$open);
 
     if ( ! empty($tree[-1]))
     {
       $key       = $tree[-1];
       $sub[$key] = array_slice($tree, 1);
 
-      if (preg_match('/-\s+(else|if|for(?:each)?|while|switch)/', $key))
+      if (preg_match("/^\s*$expr/", $key))
       {
         $sub[$key] []= '- }';
       }
@@ -199,6 +203,19 @@ class taml extends prototype
     }
     else
     {
+      foreach ($tree as $key => $value)
+      {
+        if ( ! is_scalar($value))
+        {
+          continue;
+        }
+        elseif (preg_match("/^\s*$expr/", $value))
+        {
+          $tree []= '- }';
+        }
+      }
+
+
       foreach ($tree as $key => $value)
       {
         if (is_string($value))
@@ -257,7 +274,7 @@ class taml extends prototype
         // php
         $key   = stripslashes(substr($key, 1));
         $key   = rtrim(join(' ', static::tokenize($key)), ';');
-        $close = preg_match('/^\s*(?:if|else(?:\s*if)?|while|switch|for(?:each)?)/', $key) ? ' {' : '';
+        $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : '';
 
         return preg_replace('/^/m', '  ', "<?php $key$close ?>\n$text");
       break;
