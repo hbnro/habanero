@@ -33,7 +33,9 @@ bootstrap::bind(function($app)
       case 'html';
       case 'form';
       case 'cache';
+      case 'valid';
       case 'upload';
+      case 'twitter';
         import("tetl/$class");
       break;
       case 'model';
