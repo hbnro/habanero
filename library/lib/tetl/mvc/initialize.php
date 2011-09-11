@@ -137,6 +137,8 @@ bootstrap::bind(function($app)
         {
           import('tetl/css');
 
+          css::setup('path', $views_path.DS.'styles');
+
           write($styles, css::render($css_file, option('environment') <> 'development'));
         }
 

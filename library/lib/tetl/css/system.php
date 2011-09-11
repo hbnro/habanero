@@ -234,7 +234,7 @@ class css extends prototype
           raise(ln('file_not_exists', array('name' => $inc_file)));
         }
 
-        static::$css []= read($inc_file);
+        static::add_file($inc_file, TRUE);
       break;
       case 'use';
         if (in_array($match[3], static::$imports))
@@ -254,7 +254,7 @@ class css extends prototype
         static::add_file($css_file, TRUE);
       break;
       default;
-        return static::load($match[3], FALSE);
+        return static::load_file($match[3], FALSE);
       break;
     }
   }
