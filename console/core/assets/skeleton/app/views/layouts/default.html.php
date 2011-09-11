@@ -8,13 +8,10 @@
 
   <head>
     <meta charset="<?php echo CHARSET; ?>">
-    <meta name="csrf-token" content="<?php echo TOKEN; ?>">
 
     <title><?php echo $title; ?></title>
 
-    <link rel="stylesheet" href="<?php echo ROOT; ?>css/style.css">
     <link rel="shortcut icon" href="<?php echo ROOT; ?>img/favicon.ico">
-
     <script src="<?php echo ROOT; ?>js/modernizr-1.7.min.js"></script>
     <?php echo $head; ?>
 
