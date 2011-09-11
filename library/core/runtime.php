@@ -438,6 +438,8 @@ function dump($var, $show = FALSE, $deep = 99)
     {
       foreach ($test as $key => $val)
       {
+        $key = preg_replace('/^\W.*?\W/', '', $key);
+
         if (($cur = strlen($key)) > $width)
         {
           $width = $cur;
@@ -447,8 +449,10 @@ function dump($var, $show = FALSE, $deep = 99)
 
     foreach ($test as $key => $val)
     {
-      $old   = dump($val, FALSE, $deep - 1, $depth + 1);
-      $pre   = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
+      $key = preg_replace('/^\W.*?\W/', '', $key);
+
+      $old = dump($val, FALSE, $deep - 1, $depth + 1);
+      $pre = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
 
       $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;
     }
