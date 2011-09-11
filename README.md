@@ -90,7 +90,7 @@ Quick start
       });
 
     });
-    
+
 Within bundled mvc everything is organized into conventional paths
 
     /app
@@ -102,6 +102,7 @@ Within bundled mvc everything is organized into conventional paths
         /layouts
         /scripts
           /home
+        /styles
     /config
       /environments
     /db
@@ -110,8 +111,8 @@ Within bundled mvc everything is organized into conventional paths
     /public
       /css
       /js
-      
-Currently tetl support making of controllers, models and actions also basic database migrations.
+
+Currently tetl support making of controllers, models, actions and basic database migrations.
 
 Follow [@tetlphp](http://twitter.com/tetlphp)
 ------
