@@ -184,7 +184,7 @@ class twitter extends prototype
       $url  = ! is_url($url) ? rtrim(static::$api_url, '/') . "/$url.json" : $url;
       $test = oauth_exec(static::$req, $url, $vars, $method, TRUE);
 
-      if ( ! preg_match('/"error":"(.+?)"/', $test, $match))
+      if (is_false(strpos($test, '"error"')))
       {
         $test = preg_replace('/(\w+)":(\d+)/', '\\1":"\\2"', $test);
 
