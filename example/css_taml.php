@@ -32,7 +32,7 @@ run(function()
 
   $css = css::render(__DIR__.DS.'assets'.DS.'sample.css');
 
-  taml::render(__DIR__.DS.'assets'.DS.'sample.taml', compact('css'));
+  echo taml::render(__DIR__.DS.'assets'.DS.'sample.taml', compact('css'));
 
   exit;
 

@@ -13,6 +13,4 @@ require __DIR__.DS.'colors'.EXT;
 require __DIR__.DS.'images'.EXT;
 require __DIR__.DS.'numbers'.EXT;
 
-i18n::load_path(__DIR__.DS.'locale', 'css');
-
 /* EOF: ./lib/tetl/css/initialize.php */
