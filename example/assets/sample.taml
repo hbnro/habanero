@@ -16,8 +16,6 @@
             - if ($i == 3)
             :ul
               :li other
-            - endif
-          - endfor
       :aside#menu
         Menu
           :a.button FTW!
