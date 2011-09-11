@@ -197,7 +197,6 @@ HELP;
             }
           break;
           default;
-            error(ln('tetl.unknown_generator', array('name' => $what)));
           break;
         }
       }

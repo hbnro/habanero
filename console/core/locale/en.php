@@ -17,7 +17,6 @@ $lang['controller_missing'] = 'Controller is missing';
 $lang['controller_not_exists'] = 'Controller %{name} does not exists';
 $lang['directory_must_be_empty'] = 'Directory must be empty';
 $lang['not_installed'] = 'Not installed';
-$lang['unknown_generator'] = 'Unknown %{name} generator';
 $lang['copying_skeleton'] = 'Copying base to %{path}';
 $lang['migrating_database'] = 'Migrating database';
 $lang['verifying_seed'] = 'Verifying records';

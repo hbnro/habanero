@@ -17,7 +17,6 @@ $lang['controller_missing'] = 'Hace falta un controlador';
 $lang['controller_not_exists'] = 'El controlador %{name} no existe';
 $lang['directory_must_be_empty'] = 'La carpeta de destino debe estar vacía';
 $lang['not_installed'] = 'No se ha instalado';
-$lang['unknown_generator'] = 'Generador %{name} desconocido';
 $lang['copying_skeleton'] = 'Copiando base a %{path}';
 $lang['migrating_database'] = 'Migrando base de datos';
 $lang['verifying_seed'] = 'Comprobando registros';
