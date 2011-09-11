@@ -112,7 +112,8 @@ Within bundled mvc everything is organized into conventional paths
       /css
       /js
 
-Currently tetl support making of controllers, models, actions and basic database migrations.
+Currently tetl support making of controllers, models, actions and basic
+database migrations via the command line utility.
 
 Follow [@tetlphp](http://twitter.com/tetlphp)
 ------
