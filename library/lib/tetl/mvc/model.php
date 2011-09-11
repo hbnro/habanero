@@ -20,6 +20,9 @@ class model extends prototype
   // valid record?
   private $valid_record = NULL;
 
+  // validation errors
+  private $error_list = array();
+
   /**#@-*/
 
 
@@ -237,13 +240,23 @@ class model extends prototype
     }
     elseif (is_null($this->valid_record))
     {
-      import('tetl/valid');
-
       valid::setup(static::$validate);
 
       $this->valid_record = valid::done($this->props);
+      $this->error_list   = valid::error();
     }
     return $this->valid_record;
+  }
+
+
+  /**
+   * Retrieve validation errors
+   *
+   * @return array
+   */
+  final public function errors()
+  {
+    return $this->error_list;
   }
 
 
