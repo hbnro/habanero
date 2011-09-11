@@ -423,7 +423,7 @@ class model extends prototype
 
       array_unshift($arguments, $method);
 
-      return call_user_func_array("static::find", $arguments);
+      return apply(get_called_class() . '::find', $arguments);
     }
   }
 
