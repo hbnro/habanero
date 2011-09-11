@@ -131,12 +131,10 @@ bootstrap::bind(function($app)
           raise(ln('mvc.layout_missing', array('name' => $layout_file)));
         }
 
-        $view = render($layout_file, TRUE, array(
-          'locals' => array(
-            'body' => $view,
-            'head' => join("\n", $class_name::$head),
-            'title' => $class_name::$title,
-          ),
+        $view = view::load($layout_file, array(
+          'body' => $view,
+          'head' => join("\n", $class_name::$head),
+          'title' => $class_name::$title,
         ));
       }
 
