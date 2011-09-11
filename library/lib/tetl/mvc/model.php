@@ -12,13 +12,13 @@ class model extends prototype
    */
 
   // model properties
-  private $_props = array();
+  private $props = array();
 
   // new record?
-  private $_new_record = NULL;
+  private $new_record = NULL;
 
   // valid record?
-  private $_valid_record = NULL;
+  private $valid_record = NULL;
 
   /**#@-*/
 
@@ -44,11 +44,11 @@ class model extends prototype
   // model constructor
   private function __construct(array $params = array(), $create = FALSE, $method = NULL)
   {
-    $this->_new_record = (bool) $create;
+    $this->new_record = (bool) $create;
 
     foreach (array_keys(static::columns()) as $key)
     {
-      $this->_props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
+      $this->props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
     }
     static::callback($this, $method);
   }
@@ -56,21 +56,21 @@ class model extends prototype
   // properties getter
   public function __get($key)
   {
-    if ( ! array_key_exists($key, $this->_props))
+    if ( ! array_key_exists($key, $this->props))
     {
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
-    return $this->_props[$key];
+    return $this->props[$key];
   }
 
   // properties setter
   public function __set($key, $value)
   {
-    if ( ! array_key_exists($key, $this->_props))
+    if ( ! array_key_exists($key, $this->props))
     {
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
-    $this->_props[$key] = $value;
+    $this->props[$key] = $value;
   }
 
   // relationships caller
@@ -105,7 +105,7 @@ class model extends prototype
       $params = (array) array_shift($arguments);
       $params = array_merge(array(
         'where' => array_merge(array(
-          $test['on'] => $this->_props[$test['fk']],
+          $test['on'] => $this->props[$test['fk']],
         ), $where),
       ), $params);
 
@@ -139,7 +139,7 @@ class model extends prototype
 
     if ($this->is_new())
     {
-      $fields = $this->_props;
+      $fields = $this->props;
 
       unset($fields[static::pk()]);
 
@@ -148,13 +148,13 @@ class model extends prototype
         $fields['created_at'] = $fields['modified_at'] = date('Y-m-d H:i:s');
       }
 
-      $this->_props[static::pk()] = db::insert(static::table(), $fields);
-      $this->_new_record = FALSE;
+      $this->props[static::pk()] = db::insert(static::table(), $fields);
+      $this->new_record = FALSE;
     }
     else
     {
-      db::update(static::table(), $this->_props, array(
-        static::pk() => $this->_props[static::pk()],
+      db::update(static::table(), $this->props, array(
+        static::pk() => $this->props[static::pk()],
       ));
     }
 
@@ -174,7 +174,7 @@ class model extends prototype
     static::callback($this, 'before_update');
 
 
-    $fields = $this->_props;
+    $fields = $this->props;
 
     unset($fields[static::pk()]);
 
@@ -185,7 +185,7 @@ class model extends prototype
 
 
     db::update(static::table(), $fields, array(
-      static::pk() => $this->_props[static::pk()],
+      static::pk() => $this->props[static::pk()],
     ));
 
     static::callback($this, 'after_update');
@@ -204,7 +204,7 @@ class model extends prototype
     static::callback($this, 'before_delete');
 
     db::delete(static::table(), array(
-      static::pk() => $this->_props[static::pk()],
+      static::pk() => $this->props[static::pk()],
     ));
 
     static::callback($this, 'after_delete');
@@ -220,7 +220,7 @@ class model extends prototype
    */
   final public function is_new()
   {
-    return $this->_new_record;
+    return $this->new_record;
   }
 
 
@@ -235,15 +235,15 @@ class model extends prototype
     {
       return TRUE;
     }
-    elseif (is_null($this->_valid_record))
+    elseif (is_null($this->valid_record))
     {
       import('tetl/valid');
 
       valid::setup(static::$validate);
 
-      $this->_valid_record = valid::done($this->_props);
+      $this->valid_record = valid::done($this->props);
     }
-    return $this->_valid_record;
+    return $this->valid_record;
   }
 
 
