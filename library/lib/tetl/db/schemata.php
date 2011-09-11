@@ -194,8 +194,8 @@ db::implement('columns', function($of)
     $default     = ! empty($set[$val['type']]) ? $set[$val['type']] : $val['type'];
     $val['type'] = strtolower($default);
     $test[$key]  = $val;
-
   }
+
   return $test;
 });
 
