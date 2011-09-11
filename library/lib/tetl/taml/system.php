@@ -247,6 +247,10 @@ class taml extends prototype
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
       break;
+      case '<';
+        // html
+        return stripslashes($key . $text);
+      break;
       case '#';
       break;
       case '-';
