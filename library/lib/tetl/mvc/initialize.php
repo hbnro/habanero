@@ -129,34 +129,34 @@ bootstrap::bind(function($app)
       }
 
 
-      $css_file = $views_path.DS.'styles'.DS."$controller.css";
-
-      if (is_file($css_file))
-      {
-        $styles = APP_PATH.DS.'css'.DS."$controller.css";
-
-        if ( ! is_file($styles) OR (filemtime($css_file) > filemtime($styles)))
-        {
-          import('tetl/css');
-
-          css::setup('path', $views_path.DS.'styles');
-
-          write($styles, css::render($css_file, option('environment') <> 'development'));
-        }
-
-        $class_name::$head []= tag('link', array(
-          'rel' => 'stylesheet',
-          'href' => ROOT."css/$controller.css",
-        ));
-      }
-
-
-      $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
-
       $view = view::load($view_file, (array) $class_name::$view);
 
       if ( ! is_false($class_name::$layout))
       {
+        $css_file = $views_path.DS.'styles'.DS."$controller.css";
+
+        if (is_file($css_file))
+        {
+          $styles = APP_PATH.DS.'css'.DS."$controller.css";
+
+          if ( ! is_file($styles) OR (filemtime($css_file) > filemtime($styles)))
+          {
+            import('tetl/css');
+
+            css::setup('path', $views_path.DS.'styles');
+
+            write($styles, css::render($css_file, option('environment') <> 'development'));
+          }
+
+          $class_name::$head []= tag('link', array(
+            'rel' => 'stylesheet',
+            'href' => ROOT."css/$controller.css",
+          ));
+        }
+
+
+        $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
+        
         $layout_file = $views_path.DS.'layouts'.DS.$class_name::$layout.EXT;
 
         if ( ! is_file($layout_file))
