@@ -93,9 +93,9 @@ class taml extends prototype
               '/\?>\s*<\//' => '?></',
               '/\s*(?=[\r\n])/s' => '',
               '/^\s*<!--#PRE#-->/m' => '',
-              '/end(?:if|while|switch|for(?:each)?)\s*;?/m' => '}',
               '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
               '/<\?php\s+(?!echo\s+@|\})/' => "\n<?php ",
+              '/}\s*else\s*{/s' => '} else {',
               '/><\?php/' => ">\n<?php",
             );
 
@@ -162,9 +162,9 @@ class taml extends prototype
     }
 
     $out = ents(static::compile($out));
-    $out = str_replace('<!--#PRE#-->', '', $out);
     $out = preg_replace(array_keys($fix), $fix, $out);
     $out = preg_replace_callback('/%\{([^{}]+?)\}/', array('taml', 'value'), $out);
+    $out = str_replace('<!--#PRE#-->', '', $out);
 
     return $out;
   }
@@ -187,10 +187,15 @@ class taml extends prototype
     $out = array();
 
     if ( ! empty($tree[-1]))
-    {// TODO: auto-close blocks?
-      $out []= trim(static::compile(array(
-        $tree[-1] => array_slice($tree, 1),
-      )));
+    {
+      $key       = $tree[-1];
+      $sub[$key] = array_slice($tree, 1);
+
+      if (preg_match('/-\s+(else|if|for(?:each)?|while|switch)/', $key))
+      {
+        $sub[$key] []= '- }';
+      }
+      $out []= static::compile($sub);
     }
     else
     {
@@ -202,25 +207,13 @@ class taml extends prototype
           continue;
         }
 
-
-        if (preg_match('/^\s*(:pre|\/)/', $key, $match))
+        if (preg_match('/\s*:pre/', $key))
         {
-          $value = join("\n", static::flatten($value));
+          $plus  = strlen($key) - strlen(trim($key));
+          $value = tag('pre', '', join("\n", static::flatten($value)));
 
-          if ($match[1] === '/')
-          {
-            $key   = substr(trim($key), 1);
-            $out []= "<!--$key\n$value-->";
-            continue;
-          }
-          else
-          {
-            $plus  = strlen($key) - strlen(trim($key));
-            $value = preg_replace("/^\s{{$plus}}/m", '<!--#PRE#-->', $value);
-          }
-        }
-        elseif (preg_match('/^\s*#/', $key))
-        {
+          $out []= preg_replace("/^\s{{$plus}}/m", '<!--#PRE#-->', $value);
+
           continue;
         }
 
@@ -259,13 +252,10 @@ class taml extends prototype
       case '-';
         // php
         $key   = stripslashes(substr($key, 1));
-        $key   = rtrim(join(' ', static::tokenize(substr($key, 1))), ';');
+        $key   = rtrim(join(' ', static::tokenize($key)), ';');
+        $close = preg_match('/^\s*(?:if|else(?:\s*if)?|while|switch|for(?:each)?)/', $key) ? ' {' : '';
 
-        $open  = substr(trim($key), 0, 4) === 'else' ? '} ' : '';
-        $close = preg_match('/^\s*(?:if|else(?:if)?|while|switch|for(?:each)?)/', $key) ? ' {' : ';';
-
-
-        return preg_replace('/^/m', '  ', "<?php $open$key$close ?>\n$text");
+        return preg_replace('/^/m', '  ', "<?php $key$close ?>\n$text");
       break;
       case '=';
         // print
