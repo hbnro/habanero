@@ -47,7 +47,7 @@ class url_for extends prototype
     }
     else
     {
-      $arguments []= $test;
+      $test && $arguments []= $test;
     }
 
     $route = ! empty(static::$map[$method]) ? static::$map[$method] : strtr($method, '_', '/');
