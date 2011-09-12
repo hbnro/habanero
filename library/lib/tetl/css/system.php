@@ -69,7 +69,7 @@ class css extends prototype
   {
     if (is_assoc($key))
     {
-      static::$defs = array_merge($key, static::$defs);
+      static::$defs = array_merge(static::$defs, $key);
     }
     elseif (array_key_exists($key, static::$defs))
     {
