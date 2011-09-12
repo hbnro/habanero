@@ -152,7 +152,7 @@ class valid extends prototype
 
       if ( ! trim($test))
       {//FIX
-        $error = 'required';
+        $error = ! is_num($key) ? $key : 'required';
         $fail  = TRUE;
       }
     }
