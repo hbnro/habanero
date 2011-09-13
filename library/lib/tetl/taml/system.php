@@ -4,6 +4,23 @@
  * Template markup library
  */
 
+/*
+TODO:
+
+- refactor attr hashing, convert it into native array instead of regex it
+- allow custom tags, like input:text => input{ type => 'text' }
+- remove tag prefix, allow jade-like attr hashing ( foo="bar" )
+- allow :filters, flatten all inner content, then wrap it
+- pipe concatenates all flatten content into single line
+- html comments are ever // and not single /, nested too
+- mandatory colon after php-block ? ie, - if (true):
+- // [if ?] conditional comments?
+- support for inline closures
+- pre-building or post-proccess?
+- use tag() or just plain php?
+
+*/
+
 class taml extends prototype
 {
 
