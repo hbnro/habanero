@@ -10,6 +10,11 @@ call_user_func(function()
   config(__DIR__.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
+  $include_path  = option('include_path');
+  $include_path []= __DIR__.DS.'lib';
+
+  config('include_path', $include_path);
+
   import('tetl/mvc');
 
   $bootstrap = bootstrap::methods();
@@ -48,5 +53,7 @@ call_user_func(function()
   {
     require __DIR__.DS.'app'.DS.'helpers'.EXT;
     require __DIR__.DS.'app'.DS.'routes'.EXT;
+
+    i18n::load_path(__DIR__.DS.'locale');
   });
 });
