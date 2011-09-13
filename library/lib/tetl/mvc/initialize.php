@@ -38,7 +38,14 @@ bootstrap::bind(function($app)
         import("tetl/$class");
       break;
       case 'model';
+        require __DIR__.DS.'model'.EXT;
+      break;
+      case 'dbmodel';
         import('tetl/db');
+        require __DIR__.DS.'model'.DS.'db'.EXT;
+      case 'mongdel';
+        require __DIR__.DS.'model'.DS.'mongo'.EXT;
+      break;
       case 'view';
       case 'controller';
         require __DIR__.DS.$class.EXT;
