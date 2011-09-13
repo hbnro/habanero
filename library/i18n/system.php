@@ -116,7 +116,7 @@ class i18n extends prototype
   {
     if (is_array($from))
     {
-      return array_map(__FUNCTION__, $from);
+      return array_map('i18n::load_path', $from);
     }
 
 
