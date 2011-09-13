@@ -27,7 +27,6 @@ bootstrap::bind(function($app)
 
     switch ($class)
     {
-      case 'db';
       case 'xss';
       case 'taml';
       case 'html';
@@ -39,6 +38,7 @@ bootstrap::bind(function($app)
         import("tetl/$class");
       break;
       case 'model';
+        import('tetl/db');
       case 'view';
       case 'controller';
         require __DIR__.DS.$class.EXT;
@@ -156,7 +156,7 @@ bootstrap::bind(function($app)
 
 
         $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
-        
+
         $layout_file = $views_path.DS.'layouts'.DS.$class_name::$layout.EXT;
 
         if ( ! is_file($layout_file))
