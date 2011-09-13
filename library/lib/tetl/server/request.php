@@ -88,9 +88,9 @@ class request extends prototype
   * @param  mixed  Default value
   * @return mixed
   */
-  final public static function get($key, $or = FALSE)
+  final public static function get($key = '', $or = FALSE)
   {
-    return value($_GET, $key, $or);
+    return $key ? value($_GET, $key, $or) : $_GET;
   }
 
 
@@ -101,9 +101,9 @@ class request extends prototype
   * @param  mixed  Default value
   * @return mixed
   */
-  final public static function post($key, $or = FALSE)
+  final public static function post($key = '', $or = FALSE)
   {
-    return value($_POST, $key, $or);
+    return $key ? value($_POST, $key, $or) : $_POST;
   }
 
 
@@ -113,9 +113,9 @@ class request extends prototype
   * @param  string Identifier
   * @return mixed
   */
-  final public static function upload($key)
+  final public static function upload($key = '')
   {
-    return value($_FILES, $key, array());
+    return $key ? value($_FILES, $key, array()) : $_FILES;
   }
 
 

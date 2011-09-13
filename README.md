@@ -22,7 +22,7 @@ Installation
 
 Just clone the repo from Github.
 
-    $ git clone git@github.com:pateketrueke/tetlphp.git ~/tetlphp
+    $ git clone git://github.com/pateketrueke/tetlphp.git ~/tetlphp
 
 Then move or link the entire directory within php **include_path**.
 
