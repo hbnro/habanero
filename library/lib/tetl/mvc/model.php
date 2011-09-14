@@ -106,7 +106,7 @@ class model extends prototype
       $params = array_merge(array(
         'where' => array_merge(array(
           $test['on'] => $this->props[$test['fk']],
-        ), $where),
+        ), $where ?: array()),
       ), $params);
 
 
@@ -119,6 +119,17 @@ class model extends prototype
 
   /**#@-*/
 
+
+
+  /**
+   * Retrieve record ID
+   *
+   * @return mixed
+   */
+  function id()
+  {
+    return $this->props[static::pk()];
+  }
 
 
   /**
@@ -239,6 +250,24 @@ class model extends prototype
   final protected static function callback($row, $method)
   {
     static::defined($method) && static::$method($row);
+  }
+
+  // make timestamps
+  final protected static function stamp($fields, $new)
+  {
+    $current = date('Y-m-d H:i:s');
+
+    if ($new && array_key_exists('created_at', $fields))
+    {
+      $fields['created_at'] = $current;
+    }
+
+    if (array_key_exists('modified_at', $fields))
+    {
+      $fields['modified_at'] = $current;
+    }
+
+    return $fields;
   }
 
   /**#@-*/

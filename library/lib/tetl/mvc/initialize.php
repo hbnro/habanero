@@ -42,9 +42,10 @@ bootstrap::bind(function($app)
       break;
       case 'dbmodel';
         import('tetl/db');
-        require __DIR__.DS.'model'.DS.'db'.EXT;
+        require __DIR__.DS.'drivers'.DS.'db'.EXT;
+      break;
       case 'mongdel';
-        require __DIR__.DS.'model'.DS.'mongo'.EXT;
+        require __DIR__.DS.'drivers'.DS.'mongo'.EXT;
       break;
       case 'view';
       case 'controller';
