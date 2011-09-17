@@ -114,7 +114,7 @@ class mongdel extends model
       $where = (array) $options['where'];
     }
 
-    $what = ! empty($options['select']) ? $options['select'] : static::columns();
+    $what = ! empty($options['select']) ? $options['select'] : array();
 
 
     switch ($wich)
@@ -166,7 +166,7 @@ class mongdel extends model
       $where = static::where(substr($method, 8), $arguments);
       $row   = static::conn()->findOne($where);
 
-      return $row ? new static(iterator_to_array($row), FALSE, 'after_find') : FALSE;
+      return $row ? new static($row, FALSE, 'after_find') : FALSE;
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
@@ -177,25 +177,24 @@ class mongdel extends model
       $test = static::where(substr($method, 18), $arguments);
       $res  = static::conn()->findOne($test);
 
-      if ($res)
-      {
-        return new static($res, FALSE, 'after_find');
-      }
-      return static::create($test);
+      return $res ? new static($res, FALSE, 'after_find') : static::create($test);
     }
-    else
+    elseif (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
     {
-      if (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
-      {
-        return static::find($match[1], array(
-          'where' => static::where($match[2], $arguments),
-        ));
-      }
-
-      array_unshift($arguments, $method);
-
-      return apply(get_called_class() . '::find', $arguments);
+      return static::find($match[1], array(
+        'where' => static::where($match[2], $arguments),
+      ));
     }
+
+
+    if (in_array($method, get_class_methods(get_class())))
+    {// TODO: why?
+      return call_user_func_array("static::$method", $arguments);
+    }
+
+    array_unshift($arguments, $method);
+
+    return apply(get_called_class() . '::find', $arguments);
   }
 
 
@@ -206,7 +205,11 @@ class mongdel extends model
    */
   final public static function columns()
   {
-    return array_merge((array) '_id', static::$columns);
+    return array_merge(array(
+      '_id' => array(
+        'type' => 'primary_key',
+      ),
+    ), static::$columns);
   }
 
 
@@ -218,6 +221,31 @@ class mongdel extends model
   final public static function pk()
   {
     return '_id';
+  }
+
+
+  /**
+   * Delete all records
+   *
+   * @param  array Where
+   * @return void
+   */
+  final public static function delete_all(array $params = array())
+  {
+    static::conn()->remove($params);
+  }
+
+
+  /**
+   * Update all records
+   *
+   * @param  array Fields
+   * @param  array Where
+   * @return void
+   */
+  final public static function update_all(array $data, array $params = array())
+  {
+    static::conn()->update($params, $data, array('multiple' => TRUE));
   }
 
 

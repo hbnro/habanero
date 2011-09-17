@@ -176,25 +176,19 @@ class dbmodel extends model
       $test = static::where(substr($method, 18), $arguments);
       $res  = db::select(static::table(), ALL, $test);
 
-      if (db::numrows($res))
-      {
-        return new static(db::fetch($res, AS_ARRAY), FALSE, 'after_find');
-      }
-      return static::create($test);
+      return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), FALSE, 'after_find') : static::create($test);
     }
-    else
+    elseif (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
     {
-      if (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
-      {
-        return static::find($match[1], array(
-          'where' => static::where($match[2], $arguments),
-        ));
-      }
-
-      array_unshift($arguments, $method);
-
-      return apply(get_called_class() . '::find', $arguments);
+      return static::find($match[1], array(
+        'where' => static::where($match[2], $arguments),
+      ));
     }
+
+
+    array_unshift($arguments, $method);
+
+    return apply(get_called_class() . '::find', $arguments);
   }
 
 
@@ -205,7 +199,7 @@ class dbmodel extends model
    */
   final public static function columns()
   {// TODO: implements caching for this...
-    return array_keys(db::columns(static::table()));
+    return db::columns(static::table());
   }
 
 
@@ -217,8 +211,8 @@ class dbmodel extends model
   final public static function pk()
   {
     if ( ! static::$primary_key)
-    {// TODO: caching also saves a lot right here?
-      foreach (db::columns(static::table()) as $key => $one)
+    {
+      foreach (static::columns() as $key => $one)
       {
         if ($one['type'] === 'primary_key')
         {
@@ -235,6 +229,31 @@ class dbmodel extends model
     }
 
     return static::$primary_key;
+  }
+
+
+  /**
+   * Delete all records
+   *
+   * @param  array Where
+   * @return void
+   */
+  final public static function delete_all(array $params = array())
+  {
+    db::delete(static::table(), $params);
+  }
+
+
+  /**
+   * Update all records
+   *
+   * @param  array Fields
+   * @param  array Where
+   * @return void
+   */
+  final public static function update_all(array $data, array $params = array())
+  {
+    db::update(static::table(), $data, $params);
   }
 
 

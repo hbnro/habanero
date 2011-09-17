@@ -46,7 +46,7 @@ class model extends prototype
   {
     $this->new_record = (bool) $create;
 
-    foreach (static::columns() as $key)
+    foreach (array_keys(static::columns()) as $key)
     {
       $this->props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
     }
@@ -96,7 +96,7 @@ class model extends prototype
       $params = explode('_by_', $method, 2);
 
       $params && $method = array_shift($params);
-      $params && $where = static::where(array_shift($params), $arguments);
+      $params && $where = static::where($params[0], $arguments);
     }
 
 
