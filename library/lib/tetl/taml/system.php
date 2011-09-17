@@ -4,23 +4,6 @@
  * Template markup library
  */
 
-/*
-TODO:
-
-- refactor attr hashing, convert it into native array instead of regex it
-- allow custom tags, like input:text => input{ type => 'text' }
-- remove tag prefix, allow jade-like attr hashing ( foo="bar" )
-- allow :filters, flatten all inner content, then wrap it
-- pipe concatenates all flatten content into single line
-- html comments are ever // and not single /, nested too
-- mandatory colon after php-block ? ie, - if (true):
-- // [if ?] conditional comments?
-- support for inline closures
-- pre-building or post-proccess?
-- use tag() or just plain php?
-
-*/
-
 class taml extends prototype
 {
 
@@ -28,11 +11,16 @@ class taml extends prototype
    * @ignore
    */
 
+  // custom tags
+  private static $stack = array();
+
   // open blocks
   private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
 
   // defaults
   private static $defs = array(
+    'default' => 'div',
+    'prefix' => '',
     'indent' => 2,
     'path' => TMP,
   );
@@ -112,12 +100,12 @@ class taml extends prototype
               '/\s*<\?/' => '<?',
               '/\?>\s*<\//' => '?></',
               '/\s*(?=[\r\n])/s' => '',
-              '/^\s*<!--#PRE#-->/m' => '',
-              '/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
-              '/<\?php\s+(?!echo\s+@|\})/' => "\n<?php ",
+              '/\s*<!--#CONCAT#-->/s' => '',
+              '/\s*<!--#PRE#-->(\s*\|\s)?/m' => "\n",
+              '/<([\w:-]+)([^<>]*)>[|\s]*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
+              '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
               '/}\s*else\s*/s' => '} else ',
               '/><\?php/' => ">\n<?php",
-              '/-->\s*<!--/s' => "\n",
             );
 
 
@@ -174,6 +162,7 @@ class taml extends prototype
       $code .= ";\n";
     }
 
+
     @eval($code);
 
     if (empty($out))
@@ -183,10 +172,22 @@ class taml extends prototype
 
     $out = ents(static::compile($out));
     $out = preg_replace(array_keys($fix), $fix, $out);
-    $out = preg_replace_callback('/%\{([^{}]+?)\}/', array('taml', 'value'), $out);
-    $out = str_replace('<!--#PRE#-->', '', $out);
+    $out = preg_replace_callback('/%\{([^{}]+?)\}/', 'taml::value', $out);
 
     return $out;
+  }
+
+
+  /**
+   * Register custom tags
+   *
+   * @param  string Shortcut
+   * @param  mixed  Remplacement
+   * @return void
+   */
+  final public static function expand($tag, $with, array $args = array())
+  {
+    static::$stack[$tag] = sprintf("%s$with(%s)", static::$defs['prefix'], trim(attrs($args)));
   }
 
 
@@ -198,7 +199,7 @@ class taml extends prototype
   // variable interpolation
   final private static function value($match)
   {
-    return sprintf('<?php echo @(%s); ?>', join(' ', static::tokenize($match[1])));
+    return sprintf('<?php echo %s; ?>', join(' ', static::tokenize($match[1])));
   }
 
   // compile lines
@@ -240,14 +241,16 @@ class taml extends prototype
           $out []= static::line(trim($value));
           continue;
         }
-
-        if (preg_match('/\s*:pre/', $key))
+        elseif (substr(trim($key), 0, 3) === 'pre')
         {
-          $plus  = strlen($key) - strlen(trim($key));
-          $value = tag('pre', '', join("\n", static::flatten($value)));
-
-          $out []= preg_replace("/^\s{{$plus}}/m", '<!--#PRE#-->', $value);
-
+          $indent = strlen($key) - strlen(ltrim($key));
+          $value  = tag('pre', '', join("\n", static::flatten($value)));
+          $out  []= preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
+          continue;
+        }
+        elseif (preg_match('/^(\s*):(\w+)\s*$/', $key, $match))
+        {
+          $out []= static::filter($match[2], $value, strlen($match[1]));
           continue;
         }
 
@@ -262,30 +265,60 @@ class taml extends prototype
     return $out;
   }
 
+  // filters
+  final private static function filter($name, $value, $indent = 0)
+  {
+    $plain = trim(join("\n", static::flatten($value)));
+
+    switch ($name)
+    {
+      case 'php';
+        $value = sprintf('<?php %s ?>', $plain);
+      break;
+      case 'css';
+        $value = tag('style', '', $plain);
+      break;
+      case 'cdata';
+        $value = sprintf('<![CDATA[%s]]>', $plain);
+      break;
+      case 'javascript';
+        $value = tag('script', '', $plain);
+      break;
+      default;
+        raise(ln('taml.unknown_filter', array('name' => $name)));
+      break;
+    }
+    return $value;
+  }
+
   // parse single line
   final private static function line($key, $text = '')
   {
+    static $tags = NULL;
+
+
+    if (is_null($tags))
+    {
+      $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
+      $test = array_merge($test['empty'], $test['complete']);
+      $tags = sprintf('(%s)', join('|', $test));
+    }
+
+
     switch (substr($key, 0, 1))
     {
       case '!';
-        switch ($key)
-        {
-          case '!doctype';
-            return "<$key html>";
-          break;
-          default;
-          break;
-        }
+        return $key === '!doctype' ? "<$key html>" : $key;
       break;
       case '/';
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
       break;
-      case '<';
+      case '|';
+        return sprintf("<!--#CONCAT#-->%s$text", substr($key, 1));
+      break;case '<';
         // html
         return stripslashes($key . $text);
-      break;
-      case '#';
       break;
       case '-';
         // php
@@ -300,19 +333,23 @@ class taml extends prototype
         $key = stripslashes(trim(substr($key, 1)));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
 
-        return preg_replace('/^/m', '  ', "<?php echo @($key); ?>$text");
+        return preg_replace('/^/m', '  ', "<?php echo $key; ?>$text");
       break;
       default;
         $tag  = '';
         $args = array();
 
+        $key  = strtr($key, static::$stack);
+        $key  = preg_replace('/\)\s*\(/', ' ', $key);
+
+
         // tag name
-        preg_match('/^:[\w:-]+/', $key, $match);
+        preg_match(sprintf('/^%s%s\b/', static::$defs['prefix'], $tags), $key, $match);
 
         if ( ! empty($match[0]))
         {
-          $key = preg_replace('/^:[\w:-]+/', '', $key);
-          $tag = substr($match[0], 1);
+          $key = str_replace($match[0], '', $key);
+          $tag = $match[1];
         }
 
         // attributes (raw)
@@ -320,27 +357,29 @@ class taml extends prototype
 
         if ( ! empty($match[0]))
         {
-          $key  = preg_replace('/^[#.][.\w:-]+/', '', $key);
+          $key  = str_replace($match[0], '', $key);
           $args = args(attrs($match[0]));
+          $tag  = static::$defs['default'];
         }
 
-        // attributes (hash)
+        // attributes {hash => val}
         preg_match('/(?<!%)\{([^{}]+)\}/', $key, $match);
 
         if ( ! empty($match[0]))
         {
-          $key  = preg_replace('/\{([^{}]+)\}/', '', $key);
+          $key  = str_replace($match[0], '', $key);
           $hash = join('', static::tokenize($match[1]));
 
-          preg_match_all('/([\w:-]+)=>(.+?)(?=,|$)/', $hash, $matches);
+          @eval("\$args=array($hash);");
+        }
 
-          foreach (array_keys($matches[0]) as $i)
-          {
-            $attrs = stripslashes($matches[2][$i]);
-            $attrs = join(' ', static::tokenize($attrs));
+        // other (hash="val")
+        preg_match('/\(([^()]+)\)/', $key, $match);
 
-            $args[$matches[1][$i]] = "%{ $attrs }";
-          }
+        if ( ! empty($match[0]))
+        {
+          $key  = str_replace($match[0], '', $key);
+          $args = args(stripslashes($match[1]));
         }
 
         // output
@@ -349,7 +388,7 @@ class taml extends prototype
         if ( ! empty($match[0]))
         {
           $key  = stripslashes(trim(substr(trim($key), 1)));
-          $text = preg_replace('/^/m', '  ', "<?php echo @($key); ?>$text");
+          $text = preg_replace('/^/m', '  ', "<?php echo $key; ?>$text");
         }
         elseif ( ! is_numeric($key))
         {
