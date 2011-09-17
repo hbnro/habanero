@@ -389,9 +389,9 @@ function button_to($name, $url = NULL, array $args = array())
 
   $button = tag('input', array_merge(array(
     'type' => 'submit',
-    'value' => $name,
+    'value' => $params['text'],
     'disabled' => is_true($params['disabled']),
-    'data-disabled' => $params['disable_with'] ?: FALSE,
+    'data-disable-with' => $params['disable_with'] ?: FALSE,
   ), $args));
 
 
@@ -405,6 +405,12 @@ function button_to($name, $url = NULL, array $args = array())
       'value' => strtolower($params['method']),
     ));
   }
+
+  $extra .= tag('input', array(
+    'type' => 'hidden',
+    'name' => '_token',
+    'value' => TOKEN,
+  ));
 
 
   return tag('form', array(

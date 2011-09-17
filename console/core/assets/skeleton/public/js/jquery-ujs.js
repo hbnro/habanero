@@ -186,7 +186,7 @@
     return $ujs.handle(this);
   });
 
-  $('form[data-confirm],form[data-remote]').live('submit.ujs', function() {
+  $('form').live('submit.ujs', function() {
     return $ujs.handle(this);
   });
 
