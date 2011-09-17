@@ -31,6 +31,7 @@ bootstrap::bind(function($app)
       case 'taml';
       case 'html';
       case 'form';
+      case 'pager';
       case 'cache';
       case 'valid';
       case 'upload';
