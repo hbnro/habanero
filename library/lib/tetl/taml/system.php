@@ -106,6 +106,7 @@ class taml extends prototype
               '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
               '/}\s*else\s*/s' => '} else ',
               '/><\?php/' => ">\n<?php",
+              '/\s+\|\s/m' => "\n",
             );
 
 
