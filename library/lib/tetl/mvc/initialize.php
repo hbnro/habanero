@@ -27,6 +27,7 @@ bootstrap::bind(function($app)
 
     switch ($class)
     {
+      case 'db';
       case 'xss';
       case 'taml';
       case 'html';
