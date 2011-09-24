@@ -209,7 +209,7 @@ HELP;
   final public static function run($args = array())
   {
     $name = array_shift($args);
-    $key = array_shift($args);
+    @list($name, $key) = explode('#', $name);
 
     info(ln('tetl.verifying_script'));
 
