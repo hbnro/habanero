@@ -11,8 +11,8 @@ function help()
 
   $introduction
 
-  \cred(app)\c $app_title
-   \cred(db)\c $db_title
+  \bgreen(app)\b $app_title
+   \bgreen(db)\b $db_title
 
 HELP;
 
@@ -21,25 +21,25 @@ HELP;
 
 function error($text)
 {
-  cli::writeln(cli::format("\cred($text)\c"));
+  cli::writeln(cli::format("\bred($text)\b"));
 }
 
 function info($text)
 {
-  cli::writeln(cli::format("\ccyan($text)\c"));
+  cli::writeln(cli::format("\bcyan($text)\b"));
 }
 
 function bold($text)
 {
-  cli::writeln(cli::format("\cwhite($text)\c"));
+  cli::writeln(cli::format("\bwhite($text)\b"));
 }
 
 function notice($text)
 {
-  cli::writeln(cli::format("\cyellow($text)\c"));
+  cli::writeln(cli::format("\byellow($text)\b"));
 }
 
 function success($text)
 {
-  cli::writeln(cli::format("\cgreen($text)\c"));
+  cli::writeln(cli::format("\bgreen($text)\b"));
 }

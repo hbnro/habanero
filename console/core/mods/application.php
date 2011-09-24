@@ -9,12 +9,12 @@ class application extends prototype
 
   $app_introduction
 
-  \cgreen(app.st)\c
-  \cgreen(app.gen)\c
-  \cgreen(app.make)\c \cpurple(controller)\c \cyellow(name)\c
-  \cgreen(app.make)\c \cpurple(action)\c \cyellow(controller:name)\c
-  \cgreen(app.make)\c \cpurple(model)\c \cyellow(name[:table])\c
-  \cgreen(app.run)\c \cpurple(script[:param])\c [...]
+  \bgreen(app.st)\b
+  \bgreen(app.gen)\b
+  \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b
+  \bgreen(app.make)\b \bcyan(action)\b \byellow(controller:name)\b
+  \bgreen(app.make)\b \bcyan(model)\b \byellow(name[:table])\b
+  \bgreen(app.run)\b \bcyan(script[:param])\b [...]
 
 HELP;
 
