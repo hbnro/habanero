@@ -14,6 +14,7 @@ class application extends prototype
   \cgreen(app.make)\c \cpurple(controller)\c \cyellow(name)\c
   \cgreen(app.make)\c \cpurple(action)\c \cyellow(controller:name)\c
   \cgreen(app.make)\c \cpurple(model)\c \cyellow(name[:table])\c
+  \cgreen(app.run)\c \cpurple(script[:param])\c [...]
 
 HELP;
 
@@ -204,4 +205,59 @@ HELP;
 
     bold(ln('tetl.done'));
   }
+
+  final public static function run($args = array())
+  {
+    $name = array_shift($args);
+    $key = array_shift($args);
+
+    info(ln('tetl.verifying_script'));
+
+    if ( ! $name)
+    {
+      error(ln("tetl.missing_script_name"));
+    }
+    else
+    {
+      $trap = function()
+      {
+        include func_get_arg(0);
+        return get_defined_vars();
+      };
+
+
+      $script_file  = CWD.DS.$name;
+      $script_file .= is_dir($script_file) ? DS.$name : '';
+      $script_file .= EXT;
+
+      if ( ! is_file($script_file))
+      {
+        error(ln('tetl.missing_script_file', array('name' => $script_file)));
+      }
+      else
+      {
+        ! $key && $key = 'default';
+
+        $test = $trap($script_file);
+
+
+        if (empty($test['params']))
+        {
+          error(ln('tetl.missing_script_params'));
+        }
+        elseif ( ! array_key_exists($key, $test['params']))
+        {
+          error(ln('tetl.unknown_script_param', array('name' => $key)));
+        }
+        else
+        {
+          success(ln('tetl.executing_script', array('name' => $script_file)));
+
+          apply($test['params'][$key], $args);
+        }
+      }
+    }
+    bold(ln('tetl.done'));
+  }
+
 }
