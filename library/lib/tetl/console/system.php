@@ -417,9 +417,10 @@ class cli extends prototype
    */
   final public static function flag($name, $or = FALSE)
   {
-    $set = static::args();
+    $set  = static::args();
+    $name = ! is_array($name) ? explode(' ', $name) : $name;
 
-    foreach ((array) $name as $one)
+    foreach ($name as $one)
     {
       if ( ! empty($set[$one]))
       {
