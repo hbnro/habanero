@@ -195,7 +195,7 @@ function config($set = NULL, $value = NULL)
       $bag = array_merge($bag, $config);
     }
   }
-  elseif ( ! is_num($set))
+  elseif ( ! is_num($set) && $value)
   {
     $bag[$set] = $value;
   }
