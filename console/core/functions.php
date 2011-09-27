@@ -48,8 +48,8 @@ function pretty($text)
 {
   ob_start() && $text();
 
-  $text = preg_replace('/\b(\w+)(?=\s=>)/', '\bcyan(\\1)\b', ob_get_clean());
-  $text = preg_replace('/^(\w+)(\s+)(.+?)$/m', '\bblue(\\1)\b\\2\clight_gray(\\3)\c', $text);
+  $text = preg_replace('/\b([\w.-]+)(?=\s=>)/', '\bcyan(\\1)\b', ob_get_clean());
+  $text = preg_replace('/^([\w.-]+)(\s+)(.+?)$/m', '\bblue(\\1)\b\\2\clight_gray(\\3)\c', $text);
 
   return $text;
 }

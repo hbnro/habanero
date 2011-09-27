@@ -11,10 +11,10 @@ class application extends prototype
 
   \bgreen(app.st)\b
   \bgreen(app.gen)\b
+  \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|dev|test|prod|app|db]
   \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
   \bgreen(app.make)\b \bcyan(action)\b \byellow(controller:name)\b [--view]
   \bgreen(app.make)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
-  \bgreen(app.conf)\b \bcyan(--option=value)\b [...]
   \bgreen(app.run)\b \bcyan(script[:param])\b [...]
 
 HELP;
@@ -240,11 +240,90 @@ HELP;
 
   final public static function conf()
   {
-    info(ln('tetl.configuration'));
-
     cli::writeln(pretty(function()
     {
-      dump(config(), TRUE);
+      $trap = function()
+      {
+        if (is_file(func_get_arg(0)))
+        {
+          $test = include func_get_arg(0);
+
+          is_array($test) && extract($test);
+
+          unset($test);
+        }
+        return isset($config) ? $config : get_defined_vars();
+      };
+
+
+      $what = 'current';
+
+      if (cli::flag('dev'))
+      {
+        $what = 'development';
+        $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
+      }
+      elseif (cli::flag('test'))
+      {
+        $what = 'testing';
+        $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
+      }
+      elseif (cli::flag('prod'))
+      {
+        $what = 'production';
+        $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
+      }
+      elseif (cli::flag('app'))
+      {
+        $what = 'application';
+        $file = CWD.DS.'config'.DS.$what.EXT;
+      }
+      elseif (cli::flag('db'))
+      {
+        $what = 'database';
+        $file = CWD.DS.'config'.DS.$what.EXT;
+      }
+      elseif (cli::flag('global'))
+      {
+        $file = LIB.DS.'config'.EXT;
+        $what = 'default';
+      }
+
+      info(ln("tetl.{$what}_configuration"));
+
+      $config = isset($file) ? $trap($file) : config();
+
+      $vars = array_slice(cli::args(), 1);
+      $vars = array_diff_key($vars, array_flip(array('global', 'prod', 'test', 'dev', 'app', 'db')));
+
+      if ( ! empty($vars))
+      {
+        success(ln("tetl.setting_{$what}_options"));
+        dump($vars, TRUE);
+
+        $code = '';
+
+        foreach ($vars as $item => $value)
+        {
+          $sub = explode('.', $item);
+          $key = "['" . join("']['", $sub) . "']";
+
+          $value = trim(var_export($value, TRUE));
+          $value = is_num($value) ? substr($value, 1, -1) : $value;
+
+          $code .= "\$config{$key} = $value;\n";
+        }
+
+        if (isset($file))
+        {
+          ! is_file($file) && mkpath(dirname($file)) && write($file, "<?php\n\n");
+          write($file, $code, 1);
+        }
+      }
+      else
+      {
+        dump($config, TRUE);
+      }
     }));
 
     bold(ln('tetl.done'));
