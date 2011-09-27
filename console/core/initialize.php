@@ -15,6 +15,19 @@ run(function()
 
   define('CWD', realpath($path));
 
+  config(CWD.DS.'config'.DS.'application'.EXT);
+  config(CWD.DS.'config'.DS.'database'.EXT);
+
+  config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
+
+  option('dsn') && import('tetl/db');
+
+
+  $helper_file = CWD.DS.'helpers'.EXT;
+
+  is_file($helper_file) && require $helper_file;
+
+
   $cmd = array_shift($args);
   @list($module, $action) = explode('.', $cmd);
 
@@ -51,27 +64,18 @@ run(function()
     }
     else
     {
-      $test =
+      $test   =
       $params = array();
 
       foreach ($args as $key => $val)
       {
-        if (is_numeric($key))
-        {
-          $test []= $val;
-        }
-        else
-        {
-          $params[$key] = $val;
-        }
+        is_numeric($key) ? $test []= $val : $params[$key] = $val;
       }
-
-      $module::$action($test, $params);
+      apply("$module::$action", $test);
     }
   }
   else
   {
     help();
   }
-
 });

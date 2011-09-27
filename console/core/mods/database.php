@@ -29,7 +29,7 @@ class database extends prototype
   \bgreen(db.show)\b \bcyan(table)\b
   \bgreen(db.drop)\b \bcyan(table)\b
   \bgreen(db.rename)\b \bcyan(table)\b \bwhite(new)\b
-  \bgreen(db.create)\b \bcyan(table)\b \byellow(field:type[:length])\b [...]
+  \bgreen(db.create)\b \bcyan(table)\b \byellow(field:type[:length])\b [...] [--model]
   \bgreen(db.add_column)\b \bcyan(table)\b \byellow(field:type[:length])\b [...]
   \bgreen(db.remove_column)\b \bcyan(table)\b \byellow(name)\b [...]
   \bgreen(db.rename_column)\b \bcyan(table)\b \byellow(name)\b \bwhite(new)\b [...]
@@ -44,16 +44,8 @@ HELP;
     cli::write(cli::format("$str\n"));
   }
 
-  final private static function init()
-  {
-    config(CWD.DS.'config'.DS.'database'.EXT);
-    import('tetl/db');
-  }
-
   final private static function check_table($table)
   {
-    self::init();
-
     info(ln('tetl.verifying_structure'));
 
 
@@ -71,9 +63,12 @@ HELP;
     }
   }
 
-  final private static function migrate($name)
+  final private static function migrate($callback)
   {
+    import('tetl/db');
+
     $args = array_slice(func_get_args(), 1);
+    $name = cli::flag('name', $callback);
     $time = time();
 
     $migration_name = date('YmdHis_', $time).$args[0].'_'.$name;
@@ -104,30 +99,31 @@ HELP;
     }
 
 
-    $callback = sprintf("$name(%s);\n", join(', ', $args));
+    $code = sprintf("$callback(%s);\n", join(', ', $args));
 
     if ( ! is_file($migration_file))
     {
       $date = date('Y-m-d H:i:s', $time);
 
-      write($migration_file, "<?php\n/* $date */\n$callback");
+      write($migration_file, "<?php\n/* $date */\n$code");
     }
     else
     {
-      write($migration_file, $callback, 1);
+      write($migration_file, $code, 1);
     }
 
     @eval($callback);
   }
 
-  function st()
+  final public static function st()
   {
-    self::init();
-
     info(ln('tetl.verifying_database'));
 
-
-    success(DB_DSN);
+    cli::writeln(pretty(function()
+    {
+      $test = parse_url(DB_DSN);
+      dump($test, TRUE);
+    }));
 
     $test = db::tables();
 
@@ -137,6 +133,8 @@ HELP;
     }
     else
     {
+      success(ln('tetl.tables'));
+
       foreach ($test as $one)
       {
         $count = (int) db::result(db::select($one, 'COUNT(*)'));
@@ -147,16 +145,17 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function make($args = array(), $params = array())
+  final public static function make()
   {
-    self::init();
-
     info(ln('tetl.verifying_database'));
 
-    foreach (db::tables() as $one)
+    if (cli::flag('drop-all'))
     {
-      notice(ln('tetl.table_dropping', array('name' => $one)));
-      drop_table($one);
+      foreach (db::tables() as $one)
+      {
+        notice(ln('tetl.table_dropping', array('name' => $one)));
+        drop_table($one);
+      }
     }
 
     info(ln('tetl.migrating_database'));
@@ -195,10 +194,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function show($args = array())
+  final public static function show($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       success(ln('tetl.table_show_columns', array('name' => $table)));
@@ -245,10 +242,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function drop($args = array())
+  final public static function drop($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       success(ln('tetl.table_dropping', array('name' => $table)));
@@ -258,10 +253,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function rename($args = array())
+  final public static function rename($table = '', $to = '')
   {
-    @list($table, $to) = $args;
-
     self::check_table($table);
 
     if ( ! $to)
@@ -281,13 +274,9 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function create($args = array(), $params = array())
+  final public static function create($table = '')
   {
-    self::init();
-
     info(ln('tetl.verifying_structure'));
-
-    @list($table) = $args;
 
     $args = array_slice($args, 1);
 
@@ -311,7 +300,7 @@ HELP;
         $fail = FALSE;
         $fields = array();
 
-        if ( ! empty($params['timestamps']))
+        if (cli::flag('timestamps'))
         {
           $args []= 'created_at:timestamp';
           $args []= 'modified_at:timestamp';
@@ -358,6 +347,21 @@ HELP;
         {
           success(ln('tetl.table_building', array('name' => $table)));
           self::migrate('create_table', $table, $fields);
+
+          if (cli::flag('model'))
+          {
+            $out_file = mkpath(option('mvc.models_path')).DS.$table.EXT;
+
+            if ( ! is_file($out_file))
+            {
+              success(ln('tetl.model_class_building', array('name' => $table)));
+
+              $code   = "<?php\n\nclass $table extends dbmodel"
+                      . "\n{\n}\n";
+
+              write($out_file, $code);
+            }
+          }
         }
       }
     }
@@ -365,10 +369,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function add_column($args = array())
+  final public static function add_column($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       $fields = array_keys(db::columns($table));
@@ -408,10 +410,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function remove_column($args = array())
+  final public static function remove_column($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       $fields = array_keys(db::columns($table));
@@ -441,10 +441,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function rename_column($args = array())
+  final public static function rename_column($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       $fields = array_keys(db::columns($table));
@@ -483,10 +481,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function change_column($args = array())
+  final public static function change_column($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       $fields = db::columns($table);
@@ -542,10 +538,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function add_index($args = array(), $params = array())
+  final public static function add_index($table = '', $name = '')
   {
-    @list($table, $name) = $args;
-
     if (self::check_table($table))
     {
       if ( ! $name)
@@ -554,7 +548,7 @@ HELP;
       }
       else
       {
-        $unique = isset($params['unique']);
+        $unique = cli::flag('unique');
         $args = array_slice($args, 2);
         $idx = db::indexes($table);
 
@@ -600,10 +594,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function remove_index($args = array())
+  final public static function remove_index($table = '')
   {
-    @list($table) = $args;
-
     if (self::check_table($table))
     {
       $args = array_slice(func_get_args(), 1);
@@ -634,11 +626,9 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function export($args = array(), $params = array())
+  final public static function export($name = '')
   {
     info(ln('tetl.verifying_export'));
-
-    @list($name) = $args;
 
     if ( ! $name)
     {
@@ -646,12 +636,10 @@ HELP;
     }
     else
     {
-      self::init();
-
       $name = preg_replace('/\W/', '_', $name);
 
-      $data = isset($params['data']);
-      $raw = isset($params['raw']);
+      $data = cli::flag('data');
+      $raw = cli::flag('raw');
       $ext = $raw ? '.sql' : EXT;
 
       $out_file = mkpath(CWD.DS.'db'.DS.'backup').DS.$name.$ext;
@@ -673,10 +661,8 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function import($args = array(), $params = array())
+  final public static function import($name = '')
   {
-    @list($name) = $args;
-
     info(ln('tetl.verifying_import'));
 
     if ( ! $name)
@@ -685,7 +671,6 @@ HELP;
     }
     else
     {
-      $raw = isset($params['raw']);
       $inc_file = CWD.DS.'db'.DS.'backup'.DS.$name;
 
       if ( ! is_file($inc_file))
@@ -697,8 +682,8 @@ HELP;
         $path = str_replace(CWD.DS, '', $inc_file);
         success(ln('tetl.importing', array('path' => $path)));
 
-        self::init();
-        db::import($inc_file, $raw);
+        import('tetl/db');
+        db::import($inc_file, cli::flag('raw'));
       }
     }
 

@@ -11,9 +11,10 @@ class application extends prototype
 
   \bgreen(app.st)\b
   \bgreen(app.gen)\b
-  \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b
-  \bgreen(app.make)\b \bcyan(action)\b \byellow(controller:name)\b
-  \bgreen(app.make)\b \bcyan(model)\b \byellow(name[:table])\b
+  \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
+  \bgreen(app.make)\b \bcyan(action)\b \byellow(controller:name)\b [--view]
+  \bgreen(app.make)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
+  \bgreen(app.conf)\b \bcyan(--option=value)\b [...]
   \bgreen(app.run)\b \bcyan(script[:param])\b [...]
 
 HELP;
@@ -42,24 +43,44 @@ HELP;
 
       success(ln('tetl.counting_files', array('length' => number_format($count))));
       success(ln('tetl.sizing_files', array('size' => fmtsize($size))));
-    }
+      success(ln('tetl.environment', array('env' => option('environment'))));
 
-    bold(ln('tetl.done'));
+      bold(ln('tetl.done'));
+    }
   }
 
-  final public static function gen($args = array())
+  final public static function gen()
   {
     info(ln('tetl.verifying_installation'));
 
-    @list($name) = $args;
-
-    if ( ! $name)
-    {
-      $name = basename(CWD);
-    }
-
     if (dirsize(CWD, TRUE))
     {
+      notice(ln('tetl.application'));
+
+      $tmp = dir2arr(CWD, '*', DIR_RECURSIVE | DIR_EMPTY);
+      $map = function($tree, $self, $deep = 0)
+      {
+        foreach ($tree as $key => $val)
+        {
+          $pre = str_repeat(' ', $deep);
+
+          if (is_array($val))
+          {
+            cli::writeln("$pre \clight_gray,black($key)\c/");
+            $self($val, $self, $deep + 2);
+          }
+          else
+          {
+            $size = fmtsize(filesize($val));
+            $val  = basename($val);
+
+            cli::writeln("$pre \bwhite($val)\b \clight_gray($size)\c");
+          }
+        }
+      };
+
+      $map($tmp, $map);
+
       error(ln('tetl.directory_must_be_empty'));
     }
     else
@@ -73,11 +94,9 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function make($args = array(), $params = array())
+  final public static function make($what = '', $name = '')
   {
     config(CWD.DS.'config'.DS.'application'.EXT);
-
-    @list($what, $name) = $args;
 
     if ( ! in_array($what, array(
       'controller',
@@ -108,12 +127,13 @@ HELP;
             }
             else
             {
-              $controller_tpl = "<?php\n\nclass {$name}_controller extends controller\n{"
-                              . "\n\n  public static function index()\n"
-                              . "  {\n  }\n\n}\n";
+              $type = cli::flag('parent') ?: 'controller';
+              $code = "<?php\n\nclass {$name}_controller extends $type\n{"
+                    . "\n\n  public static function index()\n"
+                    . "  {\n  }\n\n}\n";
 
               success(ln('tetl.controller_class_building', array('name' => $name)));
-              write($out_file, $controller_tpl);
+              write($out_file, $code);
 
               success(ln('tetl.controller_route_building', array('name' => $name)));
 
@@ -121,12 +141,20 @@ HELP;
               write($route_file, preg_replace('/;[^;]*?$/', ";\nget('/$name', '$name#index', array('path' => '$name'))\\0", read($route_file)));
 
 
-              success(ln('tetl.controller_view_building', array('name' => $name)));
+              if (cli::flag('helper'))
+              {
+                success(ln('tetl.controller_helper_building', array('name' => $name)));
+                write(mkpath(option('mvc.helpers_path')).DS.$name.EXT, "<?php\n");
+              }
 
-              $ext = ! empty($params['type']) ? '.' . $params['type'] : EXT;
 
-              $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
-              write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$name).DS.'index'.$ext, $text);
+              if (cli::flag('view'))
+              {
+                success(ln('tetl.controller_view_building', array('name' => $name)));
+
+                $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
+                write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$name).DS.'index'.EXT, $text);
+              }
             }
           break;
           case 'action';
@@ -158,10 +186,10 @@ HELP;
               {
                 success(ln('tetl.action_method_building', array('name' => $name, 'controller' => $parent)));
 
-                $action_tpl = "  public static function $name()\n"
-                            . "  {\n  }\n\n";
+                $code = "  public static function $name()\n"
+                      . "  {\n  }\n\n";
 
-                write($out_file, preg_replace('/\}[^{}]*?$/s', "$action_tpl\\0", $content));
+                write($out_file, preg_replace('/\}[^{}]*?$/s', "$code\\0", $content));
 
 
                 success(ln('tetl.action_route_building', array('name' => $name, 'controller' => $parent)));
@@ -170,10 +198,13 @@ HELP;
                 write($route_file, preg_replace('/;[^;]*?$/', ";\nget('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0", read($route_file)));
 
 
-                success(ln('tetl.action_view_building', array('name' => $name, 'controller' => $parent)));
+                if (cli::flag('view'))
+                {
+                  success(ln('tetl.action_view_building', array('name' => $name, 'controller' => $parent)));
 
-                $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
-                write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
+                  $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
+                  write(mkpath(option('mvc.views_path').DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
+                }
               }
             }
           break;
@@ -190,8 +221,9 @@ HELP;
             {
               success(ln('tetl.model_class_building', array('name' => $name)));
 
+              $type   = cli::flag('parent') ?: 'dbmodel';
               $parent = $table ? "\n  public static \$table = '$table';" : '';
-              $code   = "<?php\n\nclass $name extends model"
+              $code   = "<?php\n\nclass $name extends $type"
                       . "\n{{$parent}\n}\n";
 
               write($out_file, $code);
@@ -206,9 +238,20 @@ HELP;
     bold(ln('tetl.done'));
   }
 
-  final public static function run($args = array())
+  final public static function conf()
   {
-    $name = array_shift($args);
+    info(ln('tetl.configuration'));
+
+    cli::writeln(pretty(function()
+    {
+      dump(config(), TRUE);
+    }));
+
+    bold(ln('tetl.done'));
+  }
+
+  final public static function run($name = '')
+  {
     @list($name, $key) = explode('#', $name);
 
     info(ln('tetl.verifying_script'));
@@ -252,6 +295,8 @@ HELP;
         else
         {
           success(ln('tetl.executing_script', array('name' => $script_file)));
+
+          $args = array_slice(func_get_args(), 1);
 
           apply($test['params'][$key], $args);
         }
