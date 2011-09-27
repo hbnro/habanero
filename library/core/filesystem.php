@@ -117,8 +117,8 @@ function dir2arr($from, $filter = '*', $options = FALSE)
     {
       $key = ! $map ? basename($value) : $value;
 
-      if ( ! in_array($key, $extra))
-      {
+      if ($map && ! in_array($key, $extra))
+      {//FIX
         $extra []= $key;
       }
 
@@ -143,7 +143,7 @@ function dir2arr($from, $filter = '*', $options = FALSE)
 
 
   if (func_num_args() < 4)
-  {//FIX
+  {
     $items = array_merge($items, $extra);
     $extra = array();
   }
