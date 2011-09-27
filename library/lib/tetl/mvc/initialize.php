@@ -17,7 +17,6 @@ bootstrap::bind(function($app)
   $models_path = realpath(option('mvc.models_path'));
   $views_path = realpath(option('mvc.views_path'));
 
-
   rescue(function($class)
     use($models_path)
   {
@@ -43,7 +42,6 @@ bootstrap::bind(function($app)
         require __DIR__.DS.'model'.EXT;
       break;
       case 'dbmodel';
-        import('tetl/db');
         require __DIR__.DS.'drivers'.DS.'db'.EXT;
       break;
       case 'mongdel';
@@ -54,17 +52,14 @@ bootstrap::bind(function($app)
         require __DIR__.DS.$class.EXT;
       break;
       default;
+        $model_file = $models_path.DS.$class.EXT;
+
+        if (is_file($model_file))
+        {
+          require $model_file;
+        }
       break;
     }
-
-
-    $model_file = $models_path.DS.$class.EXT;
-
-    if (is_file($model_file))
-    {
-      require $model_file;
-    }
-
     /**#@-*/
   });
 
