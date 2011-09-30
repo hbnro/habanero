@@ -348,7 +348,7 @@ HELP;
       };
 
 
-      $script_file  = CWD.DS.$name;
+      $script_file  = CWD.DS.'tasks'.DS.$name;
       $script_file .= is_dir($script_file) ? DS.$name : '';
       $script_file .= EXT;
 
