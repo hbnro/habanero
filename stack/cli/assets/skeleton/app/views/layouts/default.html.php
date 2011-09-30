@@ -13,6 +13,7 @@
 
     <link rel="shortcut icon" href="<?php echo ROOT; ?>img/favicon.ico">
     <script src="<?php echo ROOT; ?>js/modernizr-1.7.min.js"></script>
+    <link rel="stylesheet" href="<?php echo ROOT; ?>css/all.css">
     <?php echo $head; ?>
 
   </head>
@@ -21,9 +22,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script>window.jQuery || document.write("<script src='<?php echo ROOT; ?>js/jquery-1.5.1.min.js'>\x3C/script>")</script>
-
-    <script src="<?php echo ROOT; ?>js/jquery-ujs.js"></script>
-    <script src="<?php echo ROOT; ?>js/app.js"></script>
+    <script src="<?php echo ROOT; ?>js/all.js"></script>
 
 <!--
     <script>
