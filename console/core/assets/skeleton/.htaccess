@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /
+
+RewriteCond $1 \.(pdf|html|zip|svg|mp3|swf|flv|ogg|ogv|xml|rss|jpe?g|png|gif|ico|txt|log|css|js|gz)$
+RewriteRule ^(.*)$ index.php?resource=$1 [PT,L]
+
+RewriteCond $1 ^(.git|db|app|tetlphp|config|public|tasks) [OR]
+RewriteCond %{REQUEST_FILENAME} !-f
+
+RewriteRule ^(.*)$ index.php/$1 [PT,L]
