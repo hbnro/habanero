@@ -34,12 +34,11 @@ final class bootstrap extends prototype
     if ( ! in_array($lib, bootstrap::$library))
     {
       $test   = (array) option('import_path', array());
-      $test []= LIB.DS.'lib'.DS;
-
+      $test []= LIB.DS.'lib';
 
       foreach ($test as $dir)
       {
-        $helper_path  = $dir.$lib;
+        $helper_path  = $dir.DS.$lib;
         $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
 
         if (is_file($helper_path))

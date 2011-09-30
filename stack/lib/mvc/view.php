@@ -37,7 +37,7 @@ class view extends prototype
    * @param  array  Local vars
    * @return string
    */
-  final public static function load($file, array $vars = array())
+  final public static function render($file, array $vars = array())
   {
     $type = ext(basename($file, EXT));
 
@@ -49,6 +49,28 @@ class view extends prototype
     return render($file, TRUE, array(
       'locals' => $vars,
     ));
+  }
+
+
+  /**
+   * Fetch dynamic views
+   *
+   * @param  string File path
+   * @param  string Action name
+   * @param  array  Local vars
+   * @return string
+   */
+  final public static function load($path, array $vars = array())
+  {
+    @list($action, $path) = array(basename($path), dirname($path));
+
+    $view_file = findfile($path, "$action.*", FALSE, 1);
+
+    if ( ! is_file($view_file))
+    {
+      raise(ln('mvc.view_missing', array('path' => $path, 'action' => $action)));
+    }
+    return static::render($view_file, $vars);
   }
 
 }

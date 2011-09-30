@@ -9,45 +9,14 @@ call_user_func(function()
 
   config(__DIR__.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
-
-  $include_path  = option('include_path');
-  $include_path []= __DIR__.DS.'lib';
-
-  config('include_path', $include_path);
-
-  import('tetl/mvc');
-
-  $bootstrap = bootstrap::methods();
-
-  bootstrap::implement('raise', function($message)
-    use($bootstrap)
-  {
-    $error_status = 500;
-
-    switch (option('environment'))
-    {
-      case 'development';
-        $bootstrap['raise']($message);
-      break;
-      case 'production';
-      case 'testing';
-      default;
-        if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message))
-        {
-          $error_status = 404;
-        }
-      break;
-    }
+  $import_path   = (array) option('import_path', array());
+  $import_path []= dirname(LIB).DS.'stack'.DS.'lib';
+  $import_path []= __DIR__.DS.'lib';
 
 
-    $error_file   = __DIR__.DS.'app'.DS.'views'.DS.'errors'.DS."$error_status.html".EXT;
+  config('import_path', $import_path);
 
-    response(render($error_file, TRUE), array(
-      'status' => $error_status,
-      'message' => $message,
-    ));
-  });
-
+  import('stack/mvc');
 
   run(function()
   {

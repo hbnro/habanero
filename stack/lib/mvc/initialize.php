@@ -4,187 +4,209 @@
  * MVC initialization
  */
 
-import('tetl/server');
-
-bootstrap::bind(function($app)
+call_user_func(function()
 {
-  import('tetl/session');
+  import('tetl/server');
 
-  i18n::load_path(__DIR__.DS.'locale', 'mvc');
+  $bootstrap = bootstrap::methods();
 
-  $controllers_path = APP_PATH.DS.'app'.DS.'controllers';
-  $helpers_path = APP_PATH.DS.'app'.DS.'helpers';
-  $models_path = APP_PATH.DS.'app'.DS.'models';
-  $views_path = APP_PATH.DS.'app'.DS.'views';
-
-  rescue(function($class)
-    use($models_path)
+  bootstrap::implement('raise', function($message)
+    use($bootstrap)
   {
-    /**
-      * @ignore
-      */
+    $error_status = 500;
 
-    switch ($class)
+    switch (option('environment'))
     {
-      case 'db';
-      case 'xss';
-      case 'taml';
-      case 'html';
-      case 'form';
-      case 'pager';
-      case 'cache';
-      case 'valid';
-      case 'upload';
-      case 'twitter';
-        import("tetl/$class");
+      case 'development';
+        $bootstrap['raise']($message);
       break;
-      case 'model';
-        require __DIR__.DS.'model'.EXT;
-      break;
-      case 'dbmodel';
-        require __DIR__.DS.'drivers'.DS.'db'.EXT;
-      break;
-      case 'mongdel';
-        require __DIR__.DS.'drivers'.DS.'mongo'.EXT;
-      break;
-      case 'view';
-      case 'controller';
-        require __DIR__.DS.$class.EXT;
-      break;
+      case 'production';
+      case 'testing';
       default;
-        $model_file = $models_path.DS.$class.EXT;
-
-        if (is_file($model_file))
+        if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message))
         {
-          require $model_file;
+          $error_status = 404;
         }
       break;
     }
-    /**#@-*/
+
+
+    $error_file = dirname(APP_PATH).DS.'app'.DS.'views'.DS.'errors'.DS.$error_status;
+
+    response(view::load($error_file), array(
+      'status' => $error_status,
+      'message' => $message,
+    ));
   });
 
 
-  view::register('taml', function($file, array $vars = array())
+  bootstrap::bind(function($app)
   {
-    return taml::render($file, $vars);
-  });
+    import('tetl/session');
 
+    i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
-  $request = request::methods();
+    $controllers_path = dirname(APP_PATH).DS.'app'.DS.'controllers';
+    $helpers_path = dirname(APP_PATH).DS.'app'.DS.'helpers';
+    $models_path = dirname(APP_PATH).DS.'app'.DS.'models';
+    $views_path = dirname(APP_PATH).DS.'app'.DS.'views';
 
-  request::implement('dispatch', function(array $params = array())
-    use($request, $controllers_path, $helpers_path, $views_path)
-  {
-    if (is_callable($params['to']))
+    rescue(function($class)
+      use($models_path)
     {
-      $request['dispatch']($params);
-    }
-    else
-    {
-      list($controller, $action) = explode('#', (string) $params['to']);
+      /**
+        * @ignore
+        */
 
-      $controller_file = $controllers_path.DS.$controller.EXT;
-
-      if ( ! is_file($controller_file))
+      switch ($class)
       {
-        raise(ln('mvc.controller_missing', array('name' => $controller_file)));
+        case 'db';
+        case 'css';
+        case 'xss';
+        case 'taml';
+        case 'html';
+        case 'form';
+        case 'pager';
+        case 'cache';
+        case 'valid';
+        case 'upload';
+        case 'twitter';
+          import("tetl/$class");
+        break;
+        case 'dbmodel';
+          require __DIR__.DS.'drivers'.DS.'db'.EXT;
+        break;
+        case 'mongdel';
+          require __DIR__.DS.'drivers'.DS.'mongo'.EXT;
+        break;
+        case 'view';
+        case 'model';
+        case 'controller';
+          require __DIR__.DS.$class.EXT;
+        break;
+        default;
+          $model_file = $models_path.DS.$class.EXT;
+
+          if (is_file($model_file))
+          {
+            require $model_file;
+          }
+        break;
       }
-
-
-      /**#@+
-       * @ignore
-       */
-
-      require $controller_file;
-
       /**#@-*/
+    });
 
-      $class_name  = $controller . '_controller';
+
+    view::register('taml', function($file, array $vars = array())
+    {
+      return taml::render($file, $vars);
+    });
 
 
-      if ( ! class_exists($class_name))
+    $request = request::methods();
+
+    request::implement('dispatch', function(array $params = array())
+      use($request, $controllers_path, $helpers_path, $views_path)
+    {
+      if (is_callable($params['to']))
       {
-        raise(ln('mvc.class_missing', array('controller' => $class_name)));
+        $request['dispatch']($params);
       }
-      elseif ( ! $class_name::defined($action))
+      else
       {
-        raise(ln('mvc.action_missing', array('controller' => $class_name, 'action' => $action)));
-      }
+        list($controller, $action) = explode('#', (string) $params['to']);
+
+        $controller_file = $controllers_path.DS.$controller.EXT;
+
+        if ( ! is_file($controller_file))
+        {
+          raise(ln('mvc.controller_missing', array('name' => $controller_file)));
+        }
 
 
-      $helper_file = $helpers_path.DS.$controller.EXT;
-
-      if (is_file($helper_file))
-      {
-        /**
+        /**#@+
          * @ignore
          */
-        require $helper_file;
-      }
 
-      $class_name::defined('init') && $class_name::init();
-      $class_name::$action();
+        require $controller_file;
 
+        /**#@-*/
 
-      $view_file = findfile($views_path.DS.'scripts'.DS.$controller, "$action.*", FALSE, 1);
-
-      if ( ! is_file($view_file))
-      {
-        raise(ln('mvc.view_missing', array('controller' => $controller, 'action' => $action)));
-      }
+        $class_name  = $controller . '_controller';
 
 
-      $view = view::load($view_file, (array) $class_name::$view);
-
-      if ( ! is_false($class_name::$layout))
-      {
-        $css_file = $views_path.DS.'styles'.DS."$controller.css";
-
-        if (is_file($css_file))
+        if ( ! class_exists($class_name))
         {
-          $styles = APP_PATH.DS.'css'.DS."$controller.css";
+          raise(ln('mvc.class_missing', array('controller' => $class_name)));
+        }
+        elseif ( ! $class_name::defined($action))
+        {
+          raise(ln('mvc.action_missing', array('controller' => $class_name, 'action' => $action)));
+        }
 
-          if ( ! is_file($styles) OR (filemtime($css_file) > filemtime($styles)))
+
+        $helper_file = $helpers_path.DS.$controller.EXT;
+
+        if (is_file($helper_file))
+        {
+          /**
+           * @ignore
+           */
+          require $helper_file;
+        }
+
+        $class_name::defined('init') && $class_name::init();
+        $class_name::$action();
+
+
+        if ( ! is_false($class_name::$layout))
+        {
+          $css_file = $views_path.DS.'styles'.DS."$controller.css";
+
+          if (is_file($css_file))
           {
-            import('tetl/css');
+            $styles = APP_PATH.DS.'css'.DS."$controller.css";
 
-            css::setup('path', $views_path.DS.'styles');
+            if ( ! is_file($styles) OR (filemtime($css_file) > filemtime($styles)))
+            {
+              css::setup('path', $views_path.DS.'styles');
 
-            write($styles, css::render($css_file, option('environment') <> 'development'));
+              write($styles, css::render($css_file, option('environment') <> 'development'));
+            }
+
+            $class_name::$head []= tag('link', array(
+              'rel' => 'stylesheet',
+              'href' => ROOT."css/$controller.css",
+            ));
           }
 
-          $class_name::$head []= tag('link', array(
-            'rel' => 'stylesheet',
-            'href' => ROOT."css/$controller.css",
+
+          $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
+
+          $layout_file = findfile($views_path.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
+
+          if ( ! is_file($layout_file))
+          {
+            raise(ln('mvc.layout_missing', array('name' => $layout_file)));
+          }
+
+          $view = view::render($layout_file, array(
+            'body' => view::load($views_path.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view),
+            'head' => join("\n", $class_name::$head),
+            'title' => $class_name::$title,
           ));
         }
 
+        $output = $class_name::$response;
 
-        $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
+        $output['output'] = $view;
 
-        $layout_file = $views_path.DS.'layouts'.DS.$class_name::$layout.EXT;
-
-        if ( ! is_file($layout_file))
-        {
-          raise(ln('mvc.layout_missing', array('name' => $layout_file)));
-        }
-
-        $view = view::load($layout_file, array(
-          'body' => $view,
-          'head' => join("\n", $class_name::$head),
-          'title' => $class_name::$title,
-        ));
+        response($output);
       }
+    });
 
-      $output = $class_name::$response;
-
-      $output['output'] = $view;
-
-      response($output);
-    }
+    return $app;
   });
-
-  return $app;
 });
 
 /* EOF: ./lib/tetl/mvc/initialize.php */
