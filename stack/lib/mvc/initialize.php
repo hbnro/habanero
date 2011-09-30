@@ -12,10 +12,10 @@ bootstrap::bind(function($app)
 
   i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
-  $controllers_path = realpath(option('mvc.controllers_path'));
-  $helpers_path = realpath(option('mvc.helpers_path'));
-  $models_path = realpath(option('mvc.models_path'));
-  $views_path = realpath(option('mvc.views_path'));
+  $controllers_path = APP_PATH.DS.'app'.DS.'controllers';
+  $helpers_path = APP_PATH.DS.'app'.DS.'helpers';
+  $models_path = APP_PATH.DS.'app'.DS.'models';
+  $views_path = APP_PATH.DS.'app'.DS.'views';
 
   rescue(function($class)
     use($models_path)
