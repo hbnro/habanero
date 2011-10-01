@@ -20,47 +20,29 @@ run(function()
 
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
-  option('dsn') && import('tetl/db');
-
-
-  $helper_file = CWD.DS.'helpers'.EXT;
-
-  is_file($helper_file) && require $helper_file;
-
 
   $cmd = array_shift($args);
+
   @list($module, $action) = explode('.', $cmd);
+
+  $test = dir2arr(__DIR__.DS.'mods', '*');
 
   if ( ! empty($module))
   {
-    $mod_list = array(
-      'app' => 'application',
-      'db' => 'database',
-    );
-
-
-    foreach ($mod_list as $key => $val)
-    {
-      $test = explode(':', $key);
-
-      if (in_array($module, $test))
-      {
-        $module = $val;
-        break;
-      }
-    }
-
-    $mod_file = __DIR__.DS.'mods'.DS.$module.EXT;
+    $mod_file = __DIR__.DS.'mods'.DS.$module.DS.'generator'.EXT;
+    $mod_class = "{$module}_generator";
 
     is_file($mod_file) && require $mod_file;
 
-    if ( ! class_exists($module))
+    if ( ! class_exists($mod_class))
     {
-      help();
+      help($test);
     }
-    elseif (empty($action) OR ! $module::defined($action))
+    elseif (empty($action) OR ! $mod_class::defined($action))
     {
-      $module::help();
+      $help = ln("$module.generator_usage");
+
+      cli::write(cli::format("$help\n"));
     }
     else
     {
@@ -71,11 +53,13 @@ run(function()
       {
         is_numeric($key) ? $test []= $val : $params[$key] = $val;
       }
-      apply("$module::$action", $test);
+      apply("$mod_class::$action", $test);
     }
   }
   else
   {
-    help();
+    help($test);
   }
 });
+
+/* EOF: ./cli/initialize.php */

@@ -179,10 +179,12 @@ class i18n extends prototype
     {
       if ( ! empty($scope))
       {
-        $set = array($scope => (array) $set);
+        $old = isset($tree[$scope]) ? $tree[$scope] : array();
+        $set = array($scope => array_merge($old, $set));
       }
-      $tree = array_merge((array) $set, $tree);
+      $tree = array_merge($tree, $set);
     }
+
     return $tree;
   }
 

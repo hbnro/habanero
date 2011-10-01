@@ -4,10 +4,11 @@
  * English generator strings
  */
 
-$lang['application_generator'] = 'Application';
-$lang['database_generator'] = 'Database';
 $lang['generator_intro'] = '¡Welcome to the console utility!';
 $lang['done'] = 'Done';
+
+$lang['application_generator'] = 'Application';
+$lang['database_generator'] = 'Database';
 $lang['missing_model_name'] = 'Model name missing';
 $lang['missing_action_name'] = 'Action name missing';
 $lang['missing_controller_name'] = 'Controller name missing';

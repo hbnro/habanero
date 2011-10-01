@@ -14,7 +14,7 @@ if (isset($backtrace))
 
 
 printf("\n\n%s\n--\n", ln('config'));
-print_r(config());
+dump(config(), TRUE);
 
 
 if (isset($env))

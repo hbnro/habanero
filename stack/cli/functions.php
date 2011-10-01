@@ -1,22 +1,19 @@
 <?php
 
-function help()
+function help($test)
 {
-  $introduction = ln('tetl.generator_intro');
+  $str  = sprintf("\n  %s\n", ln('tetl.generator_intro'));
 
-  $app_title = ln('tetl.application_generator');
-  $db_title = ln('tetl.database_generator');
+  foreach ($test as $one)
+  {
+    $ns = basename($one);
 
-  $str = <<<HELP
+    i18n::load_path($one.DS.'locale', $ns);
 
-  $introduction
+    $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($ns)\b", ln("$ns.generator_intro"));
+  }
 
-  \bgreen(app)\b $app_title
-   \bgreen(db)\b $db_title
-
-HELP;
-
-  cli::write(cli::format("$str\n"));
+  cli::write(cli::format("$str\n\n"));
 }
 
 function error($text)
@@ -51,5 +48,7 @@ function pretty($text)
   $text = preg_replace('/\b([\w.-]+)(?=\s=>)/', '\bcyan(\\1)\b', ob_get_clean());
   $text = preg_replace('/^([\w.-]+)(\s+)(.+?)$/m', '\bblue(\\1)\b\\2\clight_gray(\\3)\c', $text);
 
-  return $text;
+  cli::write(cli::format($text));
 }
+
+/* EOF: ./cli/functions.php */

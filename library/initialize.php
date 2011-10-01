@@ -75,6 +75,7 @@ call_user_func(function()
   // global
   $config_set = array(
     LIB.DS.'config'.EXT,
+    getcwd().DS.'config'.EXT,
     APP_PATH.DS.'config'.EXT,
   );
 
