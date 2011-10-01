@@ -333,9 +333,11 @@ class app_generator extends prototype
       $script_file .= is_dir($script_file) ? DS.$name : '';
       $script_file .= EXT;
 
+      $path = str_replace(CWD.DS, '', $script_file);
+
       if ( ! is_file($script_file))
       {
-        error(ln('app.missing_script_file', array('name' => $script_file)));
+        error(ln('app.missing_script_file', array('name' => $path)));
       }
       else
       {
@@ -354,7 +356,7 @@ class app_generator extends prototype
         }
         else
         {
-          success(ln('app.executing_script', array('name' => $script_file)));
+          success(ln('app.executing_script', array('name' => $path)));
 
           $args = array_slice(func_get_args(), 1);
 
