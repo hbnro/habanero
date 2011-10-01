@@ -36,7 +36,7 @@ run(function()
 
     if ( ! class_exists($mod_class))
     {
-      help($test);
+      return help($test);
     }
 
 

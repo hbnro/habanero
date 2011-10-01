@@ -45,11 +45,7 @@ call_user_func(function()
 
   define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? $temporary_files : LIB.DS.'tmp');
 
-  if ( ! is_dir(TMP))
-  {
-    mkpath(TMP, PERMS);
-  }
-
+  ! is_dir(TMP) && mkpath(TMP);
 
 
   // initialize language settings

@@ -14,7 +14,6 @@ $lang['controller_not_exists'] = 'Controller %{name} does not exists';
 $lang['action_already_exists'] = 'Action %{controller}#%{name} already exists';
 
 $lang['not_installed'] = 'Not installed';
-$lang['copying_skeleton'] = 'Copying base to %{path}';
 
 $lang['verifying_script'] = 'Verifying script';
 $lang['verifying_generator'] = 'Verifying generator';

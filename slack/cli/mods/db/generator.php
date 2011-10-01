@@ -7,6 +7,7 @@ i18n::load_path(__DIR__.DS.'locale', 'db');
 
 class db_generator extends prototype
 {
+
   private static $types = array(
             'primary_key',
             'text',

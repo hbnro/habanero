@@ -5,6 +5,7 @@ i18n::load_path(__DIR__.DS.'locale', 'app');
 
 class app_generator extends prototype
 {
+
   final public static function st()
   {
     info(ln('app.verifying_installation'));
@@ -68,10 +69,7 @@ class app_generator extends prototype
     }
     else
     {
-      success(ln('app.copying_skeleton', array('path' => CWD)));
-
-      $skel_dir = APP_PATH.DS.'core'.DS.'assets'.DS.'skeleton';
-      cpfiles($skel_dir, CWD, '*', TRUE);
+      require __DIR__.DS.'scripts'.DS.'create_app'.EXT;
     }
 
     bold(ln('tetl.done'));

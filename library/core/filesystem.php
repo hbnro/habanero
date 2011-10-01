@@ -187,7 +187,7 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE)
 {
   if (is_dir($from))
   {
-    ! is_dir($to) && mkpath($to, PERMS);
+    ! is_dir($to) && mkpath($to);
 
     $options = (is_true($recursive) ? DIR_RECURSIVE : 0) | DIR_EMPTY;
     $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
