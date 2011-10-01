@@ -262,6 +262,16 @@ class mongdel extends model
     ! empty($options['limit']) && $row->limit($options['limit']);
     ! empty($options['offset']) && $row->skip($options['offset']);
 
+    //TODO: WTF with group?
+    if ( ! empty($options['order']))
+    {
+      foreach ($options['order'] as $key => $val)
+      {
+        $options['order'][$key] = $val === DESC ? -1 : 1;
+      }
+      $row->order($options['order']);
+    }
+
     return iterator_to_array($row);
   }
 
@@ -270,6 +280,49 @@ class mongdel extends model
   {// TODO: implement Javascript filter callbacks...
     $as   = preg_split('/_and_/', $as);
     $test = array_combine($as, $are);
+
+    foreach ($test as $key => $val)
+    {
+      if (is_keyword($key))
+      {
+        $test['$' . strtolower($key)] = $val;
+      }
+      elseif (strrpos($key, '/_or_/'))
+      {
+        $test['$or'] = array();
+
+        foreach (explode('_or_') as $one)
+        {
+          $test['$or'] []= array($one => $val);
+        }
+      }
+      elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match))
+      {
+        switch ($match[2])
+        {
+          case 'NOT'; case '<>'; case '!'; case '!=';
+            $test[$match[1]] = array(is_array($val) ? '$nin': '$ne' => $val);
+          break;
+          case '<'; case '<=';
+            $test[$match[1]] = array('$lt' . (substr($match[2], -1) === '=' ? 'e' : '') => $val);
+          break;
+          case '>'; case '>=';
+            $test[$match[1]] = array('$gt' . (substr($match[2], -1) === '=' ? 'e' : '') => $val);
+          break;
+          case 'RLIKE';
+            $test[$match[1]] = sprintf('/%s/gis', preg_quote($match[2], '/'));
+          break;
+          case 'LIKE';
+            $test[$match[1]] = sprintf('/%s/gis', str_replace('\\\\\*', '.*?', preg_quote($match[2], '/')));
+          break;
+          default;
+            $test[$match[1]] = is_array($val) ? array('$in' => $val) : $val;
+          break;
+        }
+      }
+
+      unset($test[$key]);
+    }
 
     return $test;
   }
