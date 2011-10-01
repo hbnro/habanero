@@ -63,25 +63,25 @@ $lang['setting_default_options'] = 'Aplicando configuración por defecto';
 $lang['generator_intro'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP
 
-  \clight_gray(Muestra el estado actual de la aplicación.)\c
+  \clight_gray(Muestra el estado actual de la aplicación)\c
     \bgreen(app.st)\b
 
-  \clight_gray(Genera y verifica la estructura de la aplicación.)\c
+  \clight_gray(Genera y verifica la estructura de la aplicación)\c
     \bgreen(app.gen)\b [--force]
 
-  \clight_gray(Muestra y modifica las opciones de configuración.)\c
+  \clight_gray(Muestra y modifica las opciones de configuración)\c
     \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|dev|test|prod|app|db]
 
-  \clight_gray(Generador del controlador por defecto.)\c
+  \clight_gray(Generador del controlador por defecto)\c
     \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
 
-  \clight_gray(Generador de la acción por defecto.)\c
+  \clight_gray(Generador de la acción por defecto)\c
     \bgreen(app.make)\b \bcyan(action)\b \byellow(controller:name)\b [--view]
 
-  \clight_gray(Generador del modelo por defecto.)\c
+  \clight_gray(Generador del modelo por defecto)\c
     \bgreen(app.make)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
 
-  \clight_gray(Ejecuta tareas programadas.)\c
+  \clight_gray(Ejecuta tareas programadas)\c
     \bgreen(app.run)\b \bcyan(script[:param])\b [...]
 
 HELP;
