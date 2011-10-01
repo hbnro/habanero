@@ -52,9 +52,10 @@ create_file(CWD.DS.'tasks'.DS.'rsync'.DS.'exclude.txt', "tasks\n");
 
 create_dir(CWD.DS.'lib');
 
+create_dir(CWD.DS.'public');
 create_dir(CWD.DS.'public'.DS.'js');
 copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'jquery-1.5.1.min.js');
 copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'modernizr-1.7.min.js');
+create_file(CWD.DS.'public'.DS.'index'.EXT, "<?php\n\nrequire dirname(__DIR__).'/initialize.php';\n");
 
-create_file(CWD.DS.'index'.EXT, "<?php\n\nrequire dirname(__DIR__).'/initialize.php';\n");
 copy_file(CWD, $skel_dir.DS.'initialize'.EXT);
