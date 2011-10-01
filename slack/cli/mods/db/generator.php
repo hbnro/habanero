@@ -143,16 +143,16 @@ class db_generator extends prototype
       }
     }
 
-    info(ln('db.migrating_database'));
-
     if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
     {
       sort($test);
 
+      success(ln('db.migrating_database'));
+
       foreach ($test as $migration_file)
       {
         $path = str_replace(CWD.DS, '', $migration_file);
-        success(ln('db.run_migration', array('path' => $path)));
+        notice(ln('db.run_migration', array('path' => $path)));
         require $migration_file;
       }
     }
