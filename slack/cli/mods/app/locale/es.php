@@ -67,7 +67,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(app.st)\b
 
   \clight_gray(Genera y verifica la estructura de la aplicación.)\c
-    \bgreen(app.gen)\b
+    \bgreen(app.gen)\b [--force]
 
   \clight_gray(Muestra y modifica las opciones de configuración.)\c
     \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|dev|test|prod|app|db]

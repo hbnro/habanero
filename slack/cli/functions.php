@@ -89,7 +89,7 @@ function action($format, $text, $what)
   cli::write(cli::format("$prefix  $text\n"));
 }
 
-function status($type, $text)
+function status($type, $text = '')
 {
   switch ($type)
   {
@@ -109,8 +109,10 @@ function status($type, $text)
       action('yellow', $type, $text);
     break;
     default:
+      $text && $text = "  $text";
       $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
-      cli::write(cli::format("$prefix  $text\n"));
+
+      cli::write(cli::format("$prefix$text\n"));
     break;
   }
 }

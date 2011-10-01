@@ -2,6 +2,8 @@
 
 $skel_dir = dirname(__DIR__).DS.'assets';
 
+cli::flag('force') && status('force');
+
 create_dir(CWD.DS.'app');
 create_file(CWD.DS.'app'.DS.'helpers'.EXT, "<?php\n");
 create_file(CWD.DS.'app'.DS.'routes'.EXT, "<?php\n\nroot('home#index', array('path' => 'home'));");

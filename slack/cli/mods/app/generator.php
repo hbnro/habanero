@@ -37,7 +37,7 @@ class app_generator extends prototype
   {
     info(ln('app.verifying_installation'));
 
-    if (dirsize(CWD, TRUE))
+    if (dirsize(CWD, TRUE) && ! cli::flag('force'))
     {
       notice(ln('app.application'));
 
