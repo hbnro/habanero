@@ -38,11 +38,19 @@ run(function()
     {
       help($test);
     }
-    elseif (empty($action) OR ! $mod_class::defined($action))
+
+
+    $mod_class::implement('help', function()
+      use($module)
     {
       $help = ln("$module.generator_usage");
 
       cli::write(cli::format("$help\n"));
+    });
+
+    if (empty($action) OR ! $mod_class::defined($action))
+    {
+      $mod_class::help();
     }
     else
     {
