@@ -11,7 +11,7 @@ class model extends prototype
    * @ignore
    */
 
-  // mongdel properties
+  // model properties
   protected $props = array();
 
   // new record?
