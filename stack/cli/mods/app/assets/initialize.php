@@ -10,13 +10,13 @@ call_user_func(function()
   config(__DIR__.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
   $import_path   = (array) option('import_path', array());
-  $import_path []= dirname(LIB).DS.'slack'.DS.'lib';
+  $import_path []= dirname(LIB).DS.'stack'.DS.'lib';
   $import_path []= __DIR__.DS.'lib';
 
 
   config('import_path', $import_path);
 
-  import('slack/mvc');
+  import('app/mvc');
 
   run(function()
   {
