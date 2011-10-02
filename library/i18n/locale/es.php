@@ -4,7 +4,7 @@
  * Spanish core strings
  */
 
-$lang['method_missing'] = 'El método %{class}::%{name} no está disponible';
+$lang['method_missing'] = 'El método %{class}::%{name}() no está disponible';
 
 $lang['extension_missing'] = 'La extensión %{name} no existe y es necesaria';
 $lang['function_param_missing'] = 'El parámetro %{input} para %{name}() hace falta';
