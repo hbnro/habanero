@@ -163,26 +163,26 @@ class mongdel extends model
   {
     if (strpos($method, 'find_by_') === 0)
     {
-      $where = static::where(substr($method, 8), $arguments);
-      $row   = static::conn()->findOne($where);
+      $where = static::merge(substr($method, 8), $arguments);
+      $row   = static::select(array(), $where, array('single' => TRUE));
 
       return $row ? new static($row, 'after_find') : FALSE;
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
-      return static::count(static::where(substr($method, 9), $arguments));
+      return static::count(static::merge(substr($method, 9), $arguments));
     }
     elseif (strpos($method, 'find_or_create_by_') === 0)
     {
-      $test = static::where(substr($method, 18), $arguments);
-      $res  = static::conn()->findOne($test);
+      $where = static::merge(substr($method, 18), $arguments);
+      $res   = static::select(array(), $where, array('single' => TRUE));
 
-      return $res ? new static($res, 'after_find') : static::create($test);
+      return $res ? new static($res, 'after_find') : static::create($where);
     }
     elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match))
     {
       return static::find($match[1], array(
-        'where' => static::where($match[2], $arguments),
+        'where' => static::merge($match[2], $arguments),
       ));
     }
 
@@ -249,7 +249,8 @@ class mongdel extends model
   // selection
   final private static function select($fields, $where, $options)
   {
-    $row = static::conn()->find($where, $fields);
+    $method = ! empty($options['single']) ? 'findOne' : 'find';
+    $row    = static::conn()->$method(static::parse($where), $fields);
 
     ! empty($options['limit']) && $row->limit($options['limit']);
     ! empty($options['offset']) && $row->skip($options['offset']);
@@ -264,15 +265,12 @@ class mongdel extends model
       $row->order($options['order']);
     }
 
-    return iterator_to_array($row);
+    return ! is_array($row) ? iterator_to_array($row) : $row;
   }
 
   // dynamic where
-  private static function where($as, $are)
+  private static function parse($test)
   {// TODO: implement Javascript filter callbacks...
-    $as   = preg_split('/_and_/', $as);
-    $test = array_combine($as, $are);
-
     foreach ($test as $key => $val)
     {
       unset($test[$key]);
@@ -293,7 +291,7 @@ class mongdel extends model
       elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*|)$/', $key, $match))
       {
         switch ($match[2])
-        {
+        {// TODO: do testing!
           case 'NOT'; case '<>'; case '!'; case '!=';
             $test[$match[1]] = array(is_array($val) ? '$nin': '$ne' => $val);
           break;
@@ -321,22 +319,21 @@ class mongdel extends model
 
   // connection
   final private static function conn()
-  {// TODO: improve connection and database?
+  {
     static $conn = NULL;
 
 
     if (is_null($conn))
     {
+      $database   = option('mongo.db');
       $dsn_string = option('mongo.dsn');
 
-      $conn = $dsn_string ? new Mongo($dsn_string) : new Mongo;
+      $mongo    = $dsn_string ? new Mongo($dsn_string) : new Mongo;
+      $database = $database ?: 'default';
+      $conn     = $mongo->$database;
     }
 
-
-    $database   = 'default';
-    $collection = static::table();
-
-    return $conn->$database->$collection;
+    return $conn->{static::table()};
   }
 
   /**#@-*/

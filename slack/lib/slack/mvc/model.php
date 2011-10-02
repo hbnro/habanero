@@ -89,6 +89,17 @@ class model extends prototype
       $method = $match[2];
       $what   = $match[1];
     }
+    elseif (preg_match('/^(create|build)_on_(\w+)_from_(\w+)$/', $method, $match))
+    {
+      if ($test = static::fetch_relation($match[2]))
+      {
+        return $test['from']::$match[1](array_merge(static::merge($match[3], $arguments), array(
+          $test['on'] => $this->{$test['fk']},
+        )));
+      }
+      raise(ln('mvc.undefined_relationship', array('name' => $match[1], 'class' => get_called_class())));
+    }
+
 
     if (strpos($method, '_by_'))
     {
@@ -97,8 +108,7 @@ class model extends prototype
       $params && $method = $params[0];
 
       $params = array_slice($params, 1);
-      $where  = static::defined('where')?static::where($params[0], $arguments):array_combine($params);
-      dump(array($params[0],$arguments,$where),true);echo '<hr>';
+      $where  = static::merge($params[0], $arguments);
     }
 
 
@@ -244,7 +254,7 @@ class model extends prototype
     }
     elseif (preg_match('/^(build|create)_from_(.+)$/', $method, $match))
     {
-      return static::$match[1](self::where($match[2], $arguments));
+      return static::$match[1](static::merge($match[2], $arguments));
     }
 
     raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
@@ -288,8 +298,8 @@ class model extends prototype
     return $fields;
   }
 
-  // where implementation
-  private static function where($as, array $are = array())
+  // merge fields
+  final protected static function merge($as, array $are = array())
   {
     $as     = preg_split('/_and_/', $as);
     $length = max(sizeof($as), sizeof($are));

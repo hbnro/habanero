@@ -169,11 +169,11 @@ class dbmodel extends model
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
-      return static::count(static::where(substr($method, 9), $arguments));
+      return static::count(static::merge(substr($method, 9), $arguments));
     }
     elseif (strpos($method, 'find_or_create_by_') === 0)
     {
-      $test = static::where(substr($method, 18), $arguments);
+      $test = static::merge(substr($method, 18), $arguments);
       $res  = db::select(static::table(), ALL, $test);
 
       return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), 'after_find') : static::create($test);
@@ -181,7 +181,7 @@ class dbmodel extends model
     elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match))
     {
       return static::find($match[1], array(
-        'where' => static::where($match[2], $arguments),
+        'where' => static::merge($match[2], $arguments),
       ));
     }
 
