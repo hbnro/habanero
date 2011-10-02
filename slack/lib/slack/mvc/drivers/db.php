@@ -178,17 +178,14 @@ class dbmodel extends model
 
       return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), 'after_find') : static::create($test);
     }
-    elseif (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
+    elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match))
     {
       return static::find($match[1], array(
         'where' => static::where($match[2], $arguments),
       ));
     }
 
-
-    array_unshift($arguments, $method);
-
-    return apply(get_called_class() . '::find', $arguments);
+    return parent::super($method, $arguments);
   }
 
 
@@ -256,22 +253,6 @@ class dbmodel extends model
     db::update(static::table(), $data, $params);
   }
 
-
-
-  /**#@+
-   * @ignore
-   */
-
-  // dynamic where
-  final protected static function where($as, $are)
-  {
-    $as     = preg_split('/_and_/', $as);
-    $length = max(sizeof($as), sizeof($are));
-
-    return array_combine(array_slice($as, 0, $length), array_slice($are, 0, $length));
-  }
-
-  /**#@-*/
 }
 
 /* EOF: ./lib/tetl/mvc/model/db.php */

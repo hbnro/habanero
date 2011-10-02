@@ -42,9 +42,9 @@ class model extends prototype
    */
 
   // model constructor
-  protected function __construct(array $params = array(), $method = NULL)
+  protected function __construct(array $params = array(), $method = NULL, $new = FALSE)
   {
-    $this->new_record = FALSE;
+    $this->new_record = (bool) $new;
 
     foreach (array_keys(static::columns()) as $key)
     {
@@ -189,7 +189,7 @@ class model extends prototype
 
     static::callback($row, 'before_create');
 
-    return new static((array) $row, TRUE, 'after_create');
+    return new static((array) $row, 'after_create', TRUE);
   }
 
 
@@ -233,8 +233,25 @@ class model extends prototype
    * @ignore
    */
 
+  // super method fake!
+  final protected static function super($method, $arguments)
+  {
+    if (in_array($method, array('first', 'last', 'all')))
+    {
+      array_unshift($arguments, $method);
+
+      return apply(get_called_class() . '::find', $arguments);
+    }
+    elseif (preg_match('/^(build|create)_from_(.+)$/', $method, $match))
+    {
+      return static::$match[1](self::where($match[2], $arguments));
+    }
+
+    raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
+  }
+
   // relationships
-  final private static function fetch_relation($key)
+  final protected static function fetch_relation($key)
   {
     if ( ! empty(static::$relations[$key]))
     {
@@ -269,6 +286,15 @@ class model extends prototype
     }
 
     return $fields;
+  }
+
+  // where implementation
+  private static function where($as, array $are = array())
+  {
+    $as     = preg_split('/_and_/', $as);
+    $length = max(sizeof($as), sizeof($are));
+
+    return array_combine(array_slice($as, 0, $length), array_slice($are, 0, $length));
   }
 
   /**#@-*/

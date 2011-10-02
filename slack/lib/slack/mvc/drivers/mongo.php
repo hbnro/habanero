@@ -179,17 +179,14 @@ class mongdel extends model
 
       return $res ? new static($res, 'after_find') : static::create($test);
     }
-    elseif (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
+    elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match))
     {
       return static::find($match[1], array(
         'where' => static::where($match[2], $arguments),
       ));
     }
 
-
-    array_unshift($arguments, $method);
-
-    return apply(get_called_class() . '::find', $arguments);
+    return static::super($method, $arguments);
   }
 
 
@@ -271,20 +268,20 @@ class mongdel extends model
   }
 
   // dynamic where
-  final private static function where($as, $are)
+  private static function where($as, $are)
   {// TODO: implement Javascript filter callbacks...
     $as   = preg_split('/_and_/', $as);
     $test = array_combine($as, $are);
-return (array)$test;
-    #dump(func_get_args(),true);
 
     foreach ($test as $key => $val)
     {
+      unset($test[$key]);
+
       if (is_keyword($key))
       {
         $test['$' . strtolower($key)] = $val;
       }
-      elseif (strrpos($key, '/_or_/'))
+      elseif (strpos($key, '/_or_/'))
       {
         $test['$or'] = array();
 
@@ -317,8 +314,6 @@ return (array)$test;
           break;
         }
       }
-
-      unset($test[$key]);
     }
 
     return $test;
