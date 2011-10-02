@@ -124,7 +124,7 @@ class dbmodel extends model
 
         $row = db::fetch(db::select(static::table(), $what, $where, $options), AS_ARRAY);
 
-        return $row ? new static($row, FALSE, 'after_find') : FALSE;
+        return $row ? new static($ro, 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
@@ -132,7 +132,7 @@ class dbmodel extends model
 
         while ($row = db::fetch($res, AS_ARRAY))
         {
-          $out []= new static($row, FALSE, 'after_find');
+          $out []= new static($row, 'after_find');
         }
         return $out;
       break;
@@ -146,7 +146,7 @@ class dbmodel extends model
       static::pk() => array_shift($args),
     ), $options), AS_ARRAY);
 
-    return $row ? new static($row, FALSE, 'after_find') : FALSE;
+    return $row ? new static($row, 'after_find') : FALSE;
   }
 
 
@@ -165,7 +165,7 @@ class dbmodel extends model
         substr($method, 8) => $arguments,
       )), AS_ARRAY);
 
-      return $row ? new static($row, FALSE, 'after_find') : FALSE;
+      return $row ? new static($row, 'after_find') : FALSE;
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
@@ -176,7 +176,7 @@ class dbmodel extends model
       $test = static::where(substr($method, 18), $arguments);
       $res  = db::select(static::table(), ALL, $test);
 
-      return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), FALSE, 'after_find') : static::create($test);
+      return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), 'after_find') : static::create($test);
     }
     elseif (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
     {

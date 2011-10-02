@@ -126,7 +126,7 @@ class mongdel extends model
           'limit' => 1,
         ));
 
-        return $row ? new static(array_shift($row), FALSE, 'after_find') : FALSE;
+        return $row ? new static(array_shift($row), 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
@@ -134,7 +134,7 @@ class mongdel extends model
 
         while ($row = array_shift($res))
         {
-          $out []= new static($row, FALSE, 'after_find');
+          $out []= new static($row, 'after_find');
         }
         return $out;
       break;
@@ -148,7 +148,7 @@ class mongdel extends model
       '_id' => array_shift($args),
     ), $options);
 
-    return $row ? new static(array_shift($row), FALSE, 'after_find') : FALSE;
+    return $row ? new static(array_shift($row), 'after_find') : FALSE;
   }
 
 
@@ -166,7 +166,7 @@ class mongdel extends model
       $where = static::where(substr($method, 8), $arguments);
       $row   = static::conn()->findOne($where);
 
-      return $row ? new static($row, FALSE, 'after_find') : FALSE;
+      return $row ? new static($row, 'after_find') : FALSE;
     }
     elseif (strpos($method, 'count_by_') === 0)
     {
@@ -177,7 +177,7 @@ class mongdel extends model
       $test = static::where(substr($method, 18), $arguments);
       $res  = static::conn()->findOne($test);
 
-      return $res ? new static($res, FALSE, 'after_find') : static::create($test);
+      return $res ? new static($res, 'after_find') : static::create($test);
     }
     elseif (preg_match('/^find_(all|first|last)_by_(.+)$/', $method, $match))
     {
@@ -186,11 +186,6 @@ class mongdel extends model
       ));
     }
 
-
-    if (in_array($method, get_class_methods(get_class())))
-    {// TODO: why?
-      return call_user_func_array("static::$method", $arguments);
-    }
 
     array_unshift($arguments, $method);
 
@@ -280,6 +275,8 @@ class mongdel extends model
   {// TODO: implement Javascript filter callbacks...
     $as   = preg_split('/_and_/', $as);
     $test = array_combine($as, $are);
+return (array)$test;
+    #dump(func_get_args(),true);
 
     foreach ($test as $key => $val)
     {
@@ -296,7 +293,7 @@ class mongdel extends model
           $test['$or'] []= array($one => $val);
         }
       }
-      elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match))
+      elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*|)$/', $key, $match))
       {
         switch ($match[2])
         {

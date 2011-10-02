@@ -42,9 +42,9 @@ class model extends prototype
    */
 
   // model constructor
-  protected function __construct(array $params = array(), $create = FALSE, $method = NULL)
+  protected function __construct(array $params = array(), $method = NULL)
   {
-    $this->new_record = (bool) $create;
+    $this->new_record = FALSE;
 
     foreach (array_keys(static::columns()) as $key)
     {
@@ -90,13 +90,15 @@ class model extends prototype
       $what   = $match[1];
     }
 
-
-    if ( ! is_false(strpos($method, '_by_')))
+    if (strpos($method, '_by_'))
     {
       $params = explode('_by_', $method, 2);
 
-      $params && $method = array_shift($params);
-      $params && $where = static::where($params[0], $arguments);
+      $params && $method = $params[0];
+
+      $params = array_slice($params, 1);
+      $where  = static::defined('where')?static::where($params[0], $arguments):array_combine($params);
+      dump(array($params[0],$arguments,$where),true);echo '<hr>';
     }
 
 
@@ -106,9 +108,8 @@ class model extends prototype
       $params = array_merge(array(
         'where' => array_merge(array(
           $test['on'] => $this->props[$test['fk']],
-        ), $where ?: array()),
+        ), $where),
       ), $params);
-
 
       $method = $what === 'count' ? $what : (is_true($test['has_many']) ? $what : 'first');
 
