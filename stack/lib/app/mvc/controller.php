@@ -1,11 +1,11 @@
 <?php
 
 /**
- * MVC controller
+ * MVC base controller
  */
 
 class controller extends prototype
-{
+{// TODO: implement... what stuff?
 
   /**#@+
    * @ignore
@@ -35,4 +35,4 @@ class controller extends prototype
 
 }
 
-/* EOF: ./lib/tetl/mvc/controller.php */
+/* EOF: ./lib/app/mvc/controller.php */

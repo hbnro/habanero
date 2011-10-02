@@ -14,4 +14,4 @@ $lang['undefined_property'] = 'Undefined property %{class}.%{name}';
 $lang['undefined_relationship'] = 'Undefined relation %{class}.%{name}';
 $lang['primary_key_missing'] = 'Primary key for %{model} is missing';
 
-/* EOF: ./lib/tetl/mvc/locale/en.php */
+/* EOF: ./lib/app/mvc/locale/en.php */

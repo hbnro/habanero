@@ -1,11 +1,11 @@
 <?php
 
 /**
- * MVC view
+ * MVC base view
  */
 
 class view extends prototype
-{
+{//TODO: caching or anything else?
 
   /**#@+
    * @ignore
@@ -75,4 +75,4 @@ class view extends prototype
 
 }
 
-/* EOF: ./lib/tetl/mvc/view.php */
+/* EOF: ./lib/app/mvc/view.php */

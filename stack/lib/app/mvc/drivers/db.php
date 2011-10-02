@@ -255,4 +255,4 @@ class dbmodel extends model
 
 }
 
-/* EOF: ./lib/tetl/mvc/model/db.php */
+/* EOF: ./lib/app/mvc/drivers/dbmodel.php */

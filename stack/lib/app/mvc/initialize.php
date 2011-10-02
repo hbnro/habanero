@@ -209,4 +209,4 @@ call_user_func(function()
   });
 });
 
-/* EOF: ./lib/tetl/mvc/initialize.php */
+/* EOF: ./lib/app/mvc/initialize.php */

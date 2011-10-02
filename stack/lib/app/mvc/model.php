@@ -310,4 +310,4 @@ class model extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/tetl/mvc/model.php */
+/* EOF: ./lib/app/mvc/model.php */

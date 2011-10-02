@@ -14,4 +14,4 @@ $lang['undefined_property'] = 'La propiedad %{class}.%{name} no está definida';
 $lang['undefined_relationship'] = 'La relación %{class}.%{name} no está definida';
 $lang['primary_key_missing'] = 'La clave primaria de %{model} no existe';
 
-/* EOF: ./lib/tetl/mvc/locale/en.php */
+/* EOF: ./lib/app/mvc/locale/en.php */
