@@ -27,7 +27,7 @@ class app_generator extends prototype
 
       success(ln('app.counting_files', array('length' => number_format($count))));
       success(ln('app.sizing_files', array('size' => fmtsize($size))));
-      success(ln('app.environment', array('env' => option('environment'))));
+      success(ln('app.environment', array('env' => option('environment', 'unknown'))));
 
       bold(ln('tetl.done'));
     }
