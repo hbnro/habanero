@@ -7,6 +7,7 @@
 $lang['migrating_database'] = 'Migrando base de datos';
 
 $lang['verifying_seed'] = 'Comprobando registros';
+$lang['verifying_schema'] = 'Comprobando esquema';
 $lang['verifying_import'] = 'Comprobando importación';
 $lang['verifying_export'] = 'Comprobando exportación';
 $lang['verifying_database'] = 'Comprobando base de datos';
@@ -45,6 +46,7 @@ $lang['without_tables'] = 'Sin tablas';
 $lang['without_seed'] = 'Sin datos';
 
 $lang['loading_seed'] = 'Cargando datos de %{path}';
+$lang['loading_schema'] = 'Cargando esquema de %{path}';
 $lang['unknown_field'] = 'No se conoce el tipo %{type} de la columna %{name}';
 
 $lang['column_building'] = 'Creando columna %{name}:%{type}';
@@ -107,7 +109,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(db.backup)\b \bcyan(name)\b [--raw] [--data] [--import]
 
   \clight_gray(Ejecuta las migraciones)\c
-    \bgreen(db.make)\b [--drop-all]
+    \bgreen(db.make)\b [--drop-all] [--seed]
 
 HELP;
 

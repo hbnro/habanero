@@ -15,13 +15,13 @@ call_user_func(function()
 
   define('AS_ARRAY', 'AS_ARRAY');
   define('AS_OBJECT', 'AS_OBJECT');
-  
+
   i18n::load_path(__DIR__.DS.'locale', 'db');
 
 
   // default database adapter
   $dsn_string   = option('dsn');
-  $dsn_default  = 'sqlite:' . __DIR__.DS.'assets'.DS.'db.sqlite';
+  $dsn_default  = 'sqlite:' . APP_PATH.DS.'db.sqlite';
 
   $regex_string = '/^\w+:|scheme\s*=\s*\w+/';
 
@@ -60,7 +60,7 @@ call_user_func(function()
 
   $scheme_file = $driver_file = '';
 
-  
+
   if (class_exists('PDO') && option('pdo'))
   {
     if ( ! in_array($parts['scheme'], pdo_drivers()))
@@ -79,11 +79,11 @@ call_user_func(function()
   {
     raise(ln('db.database_driver_missing', array('adapter' => $parts['scheme'])));
   }
-  
-  
+
+
   $scheme_name = str_replace('mysqli', 'mysql', $parts['scheme']); // DRY
   $scheme_file = __DIR__.DS.'schemes'.DS.$scheme_name.EXT;
-  
+
   if ( ! is_file($scheme_file))
   {
     raise(ln('db.database_scheme_missing', array('adapter' => $parts['scheme'])));
@@ -93,7 +93,7 @@ call_user_func(function()
   /**#@+
     * @ignore
     */
-  
+
   require __DIR__.DS.'system'.EXT;
   require __DIR__.DS.'builder'.EXT;
   require __DIR__.DS.'schemata'.EXT;
@@ -101,14 +101,14 @@ call_user_func(function()
 
   require $driver_file;
   require $scheme_file;
-  
+
   /**#@-*/
-  
-  
+
+
   define('DB_DSN', $dsn_string);
   define('DB_SCHEME', $parts['scheme']);
   define('DB_VERSION', sql::version(sql::connect($parts)));
-  
+
   if (sql::defined('encoding'))
   {// TODO: sure dude?
     sql::encoding(preg_replace('/\W/', '', CHARSET));

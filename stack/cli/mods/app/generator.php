@@ -50,7 +50,7 @@ class app_generator extends prototype
 
           if (is_array($val))
           {
-            cli::writeln("$pre \clight_gray,black($key)\c/");
+            cli::writeln("$pre  \clight_gray,black($key)\c/");
             $self($val, $self, $deep + 2);
           }
           else
@@ -58,7 +58,7 @@ class app_generator extends prototype
             $size = fmtsize(filesize($val));
             $val  = basename($val);
 
-            cli::writeln("$pre \bwhite($val)\b \clight_gray($size)\c");
+            cli::writeln("$pre  \bwhite($val)\b \clight_gray($size)\c");
           }
         }
       };

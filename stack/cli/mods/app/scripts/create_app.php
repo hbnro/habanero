@@ -49,7 +49,7 @@ cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'db');
   create_file(CWD.DS.'db'.DS.'db.sqlite');
-    copy_file(CWD.DS.'db', $skel_dir.DS.'scheme'.EXT);
+    copy_file(CWD.DS.'db', $skel_dir.DS.'schema'.EXT);
     copy_file(CWD.DS.'db', $skel_dir.DS.'seeds'.EXT);
    create_dir(CWD.DS.'db'.DS.'backup');
    create_dir(CWD.DS.'db'.DS.'migrate');

@@ -132,38 +132,53 @@ class db_generator extends prototype
 
   final public static function make()
   {
-    info(ln('db.verifying_database'));
-
-    if (cli::flag('drop-all'))
+    if ( ! cli::flag('seed'))
     {
-      foreach (db::tables() as $one)
+      info(ln('db.verifying_database'));
+
+      if (cli::flag('drop-all'))
       {
-        notice(ln('db.table_dropping', array('name' => $one)));
-        drop_table($one);
+        foreach (db::tables() as $one)
+        {
+          notice(ln('db.table_dropping', array('name' => $one)));
+          drop_table($one);
+        }
       }
-    }
 
-    if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
-    {
-      sort($test);
 
-      success(ln('db.migrating_database'));
+      $schema_file = CWD.DS.'db'.DS.'schema'.EXT;
 
-      foreach ($test as $migration_file)
+      if (is_file($schema_file))
       {
-        $path = str_replace(CWD.DS, '', $migration_file);
-        notice(ln('db.run_migration', array('path' => $path)));
-        require $migration_file;
+        info(ln('db.verifying_schema'));
+        $path = str_replace(CWD.DS, '', $schema_file);
+        success(ln('db.loading_schema', array('path' => $path)));
+        require $schema_file;
       }
-    }
-    else
-    {
-      error(ln('db.without_migrations'));
+
+
+      if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
+      {
+        sort($test);
+
+        success(ln('db.migrating_database'));
+
+        foreach ($test as $migration_file)
+        {
+          $path = str_replace(CWD.DS, '', $migration_file);
+          notice(ln('db.run_migration', array('path' => $path)));
+          require $migration_file;
+        }
+      }
+      else
+      {
+        error(ln('db.without_migrations'));
+      }
     }
 
     info(ln('db.verifying_seed'));
 
-    $seed_file = CWD.DS.'db'.DS.'seed'.EXT;
+    $seed_file = CWD.DS.'db'.DS.'seeds'.EXT;
 
     if ( ! is_file($seed_file))
     {
