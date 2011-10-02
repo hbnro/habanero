@@ -33,7 +33,7 @@
       'bootstrap' => APP_LOADER,
     ), TRUE); ?>
     <h3><?php echo ln('configuration'); ?></h3>
-    <pre><?php print_r(config()); ?></pre>
+    <?php dump(config(), TRUE); ?>
     <?php if (isset($env)) { ?><h3><?php echo ln('environment'); ?></h3>
     <?php dump($env, TRUE); } ?>
     <?php if (isset($headers)) { ?><h3><?php echo ln('response_headers'); ?></h3>
