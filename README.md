@@ -5,7 +5,6 @@ It's basically a php framework, useful to develop web applications, and also web
 
 The main idea here is expressiveness and simplicity, based on the most simple and beautiful concepts that I have learned.
 
-
 Features
 --------
 
@@ -16,11 +15,10 @@ Features
   * Integrated i18n for most basic language operations.
   * Many more utilities, and so on.
 
-
 Installation
 ------------
 
-Just clone the repo from Github.
+Just clone the GitHub read-only repository.
 
     $ git clone git://github.com/pateketrueke/tetlphp.git ~/tetlphp
 
@@ -32,39 +30,39 @@ or
 
     $ sudo ln -s ~/tetlphp /usr/share/php
 
-Or download the latest version and extract it wherever you want.
+This is the best approach of the framework installation rather than using manually.
 
 Command line utility
 --------------------
 
-To achieve this we must give execution permissions to file **console/bin**
+To achieve this we must give execution permissions to file **stack/bin**:
 
-    $ chmod +x /usr/share/php/tetlphp/console/bin
+    $ chmod +x /usr/share/php/tetlphp/stack/bin
 
-Next we must create a symbolic link to the executable file
+Next we must create a symbolic link to the executable file:
 
-    $ sudo ln -s /usr/share/php/tetlphp/console/bin /usr/local/bin/tetl
+    $ sudo ln -s /usr/share/php/tetlphp/stack/bin /usr/local/bin/tetl
 
-To create a project using the bundled mvc middleware first execute
+To create a project using the bundled `app/mvc` middleware first execute:
 
     $ cd /www/vhosts
     $ mkdir -p sandbox && cd sandbox
     $ tetl app.gen
 
-This will create some directories and some sample files
+This will create some directories and some blank files.
 
-Then we modify our **/etc/hosts** configuration to get something like
+Then we modify our **/etc/hosts** configuration to get something like:
 
     127.0.0.1	localhost sandbox.dev
 
 Depending in your OS configuration you will need create and enable a
-virtual host pointing to the path previously created
+virtual host pointing to the path previously created:
 
     <VirtualHost *:80>
       ServerName sandbox.dev
-      DocumentRoot /home/vhosts/sandbox/public
+      DocumentRoot /var/www/vhosts/sandbox/public
 
-      <Directory /home/vhosts/sandbox/public/>
+      <Directory /var/www/vhosts/sandbox/public/>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride All
         Order allow,deny
@@ -72,10 +70,10 @@ virtual host pointing to the path previously created
       </Directory>
     </VirtualHost>
 
-
-
 Quick start
 -----------
+
+You can write simple applications using code like this:
 
     require 'tetlphp/library/initialize.php';
 
@@ -91,9 +89,13 @@ Quick start
 
     });
 
-Within bundled mvc everything is organized into conventional paths
+Within bundled `app/mvc` everything is organized into conventional paths:
 
     /app
+      /assets
+        /javascripts
+          /lib
+        /stylesheets
       /controllers
       /helpers
       /models
@@ -108,17 +110,13 @@ Within bundled mvc everything is organized into conventional paths
     /db
       /backup
       /migrate
+    /lib
     /public
-      /css
       /js
+    /tasks
+      /rsync
 
-Currently tetl support making of controllers, models, actions and basic
+To start navigating just open your browser pointing to the virtual host you created.
+
+Currently **tetl** support making of controllers, models, actions and basic
 database migrations via the command line utility.
-
-Follow [@tetlphp](http://twitter.com/tetlphp)
-------
-
-Our contributors:
-
-  * [@Sourcegeek](http://twitter.com/Sourcegeek)
-  * [@pateketrueke](http://twitter.com/pateketrueke)
