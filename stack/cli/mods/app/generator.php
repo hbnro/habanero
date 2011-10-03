@@ -356,7 +356,7 @@ class app_generator extends prototype
         }
         else
         {
-          success(ln('app.executing_script', array('name' => $path)));
+          success(ln('app.executing_script', array('name' => $path, 'param' => $key)));
 
           $args = array_slice(func_get_args(), 1);
 

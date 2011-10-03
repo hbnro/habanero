@@ -40,7 +40,7 @@ $lang['missing_script_file'] = 'El script %{name} no existe';
 $lang['missing_script_params'] = 'Hacen falta los parametros del script';
 $lang['unknown_script_param'] = 'Parametro %{name} desconocido';
 
-$lang['executing_script'] = 'Ejecutando %{name}';
+$lang['executing_script'] = 'Ejecutando %{name}#%{param}';
 $lang['configuration'] = 'Configuración';
 $lang['application'] = 'Aplicación';
 $lang['environment'] = 'Entorno: %{env}';
