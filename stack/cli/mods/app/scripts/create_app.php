@@ -9,7 +9,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'app');
-    copy_file(CWD.DS.'app', $skel_dir.DS.'helpers'.EXT);
+  create_file(CWD.DS.'app', $skel_dir.DS.'helpers'.EXT, "<?php\n");
     copy_file(CWD.DS.'app', $skel_dir.DS.'routes'.EXT);
 
    create_dir(CWD.DS.'app'.DS.'assets');
@@ -39,8 +39,8 @@ cli::flag('force') && status('force');
   create_file(CWD.DS.'app'.DS.'views'.DS.'styles'.DS.'home.css');
 
    create_dir(CWD.DS.'config');
-  create_file(CWD.DS.'config'.DS.'application'.EXT);
-  create_file(CWD.DS.'config'.DS.'database'.EXT);
+    copy_file(CWD.DS.'config', $skel_dir.DS.'application'.EXT);
+    copy_file(CWD.DS.'config', $skel_dir.DS.'database'.EXT);
 
    create_dir(CWD.DS.'config'.DS.'environments');
   create_file(CWD.DS.'config'.DS.'environments'.DS.'development'.EXT);
@@ -49,8 +49,8 @@ cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'db');
   create_file(CWD.DS.'db'.DS.'db.sqlite');
-    copy_file(CWD.DS.'db', $skel_dir.DS.'schema'.EXT);
-    copy_file(CWD.DS.'db', $skel_dir.DS.'seeds'.EXT);
+  create_file(CWD.DS.'db'.DS.'schema'.EXT, "<?php\n");
+  create_file(CWD.DS.'db'.DS.'seeds'.EXT, "<?php\n");
    create_dir(CWD.DS.'db'.DS.'backup');
    create_dir(CWD.DS.'db'.DS.'migrate');
 

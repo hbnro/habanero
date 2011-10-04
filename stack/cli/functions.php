@@ -57,10 +57,10 @@ function copy_file($to, $from)
   copy($from, mkpath($to).DS.basename($from));
 }
 
-function create_file($path)
+function create_file($path, $text = '')
 {
   status('create', $path);
-  write(mkpath(dirname($path)).DS.basename($path));
+  write(mkpath(dirname($path)).DS.basename($path), $text);
 }
 
 function remove_file($path)
