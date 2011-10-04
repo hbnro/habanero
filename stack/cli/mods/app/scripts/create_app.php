@@ -9,7 +9,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'app');
-  create_file(CWD.DS.'app', $skel_dir.DS.'helpers'.EXT, "<?php\n");
+  create_file(CWD.DS.'app'.DS.'helpers'.EXT, "<?php\n");
     copy_file(CWD.DS.'app', $skel_dir.DS.'routes'.EXT);
 
    create_dir(CWD.DS.'app'.DS.'assets');

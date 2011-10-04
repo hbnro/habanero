@@ -74,6 +74,8 @@ call_user_func(function()
           import("tetl/$class");
         break;
         case 'dbmodel';
+          import('tetl/db');
+
           require __DIR__.DS.'drivers'.DS.'db'.EXT;
         break;
         case 'mongdel';
