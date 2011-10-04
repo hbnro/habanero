@@ -464,7 +464,7 @@ function dump($var, $show = FALSE, $deep = 99)
 
   if (is_object($var) && is_false($show))
   {
-    $out = sprintf("{{$newline}$out$newline}(%s)", get_class($var));
+    $out = sprintf("{{$newline}%s$newline}(%s)", $out, get_class($var));
   }
   elseif (is_array($var) && is_false($show))
   {
