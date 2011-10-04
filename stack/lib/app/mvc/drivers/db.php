@@ -124,7 +124,7 @@ class dbmodel extends model
 
         $row = db::fetch(db::select(static::table(), $what, $where, $options), AS_ARRAY);
 
-        return $row ? new static($ro, 'after_find') : FALSE;
+        return $row ? new static($row, 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
