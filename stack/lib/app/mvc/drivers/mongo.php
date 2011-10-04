@@ -265,7 +265,7 @@ class mongdel extends model
       $row->order($options['order']);
     }
 
-    return ! is_array($row) ? iterator_to_array($row) : $row;
+    return is_object($row) ? iterator_to_array($row) : $row;
   }
 
   // dynamic where
