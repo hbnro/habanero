@@ -367,7 +367,7 @@ class db_generator extends prototype
     if (static::check_table($table))
     {
       $fields = array_keys(db::columns($table));
-      $args   = array_slice($args, 1);
+      $args   = array_slice(func_get_args(), 1);
 
       if ( ! $args)
       {
@@ -408,7 +408,7 @@ class db_generator extends prototype
     if (static::check_table($table))
     {
       $fields = array_keys(db::columns($table));
-      $args   = array_slice($args, 1);
+      $args   = array_slice(func_get_args(), 1);
 
       if ( ! $args)
       {
@@ -439,7 +439,7 @@ class db_generator extends prototype
     if (static::check_table($table))
     {
       $fields = array_keys(db::columns($table));
-      $args   = array_slice($args, 1);
+      $args   = array_slice(func_get_args(), 1);
 
       if ( ! $args)
       {
@@ -479,7 +479,7 @@ class db_generator extends prototype
     if (static::check_table($table))
     {
       $fields = db::columns($table);
-      $args   = array_slice($args, 1);
+      $args   = array_slice(func_get_args(), 1);
 
       if ( ! $args)
       {
@@ -542,7 +542,7 @@ class db_generator extends prototype
       else
       {
         $unique = cli::flag('unique');
-        $args   = array_slice($args, 2);
+        $args   = array_slice(func_get_args(), 2);
         $idx    = db::indexes($table);
 
         if ( ! $args)
