@@ -89,11 +89,15 @@ class model extends prototype
       $method = $match[2];
       $what   = $match[1];
     }
-    elseif (preg_match('/^(create|build)_on_(\w+)_from_(\w+)$/', $method, $match))
+    elseif (preg_match('/^(create|build)_on_(.+?)$/', $method, $match))
     {
-      if ($test = static::fetch_relation($match[2]))
+      @list($method, $where) = explode('_from_', $match[2], 2);
+
+      if ($test = static::fetch_relation($method))
       {
-        return $test['from']::$match[1](array_merge(static::merge($match[3], $arguments), array(
+        $where = ! empty($where) ? static::merge($where, $arguments) : array();
+
+        return $test['from']::$match[1](array_merge($where, array(
           $test['on'] => $this->{$test['fk']},
         )));
       }
