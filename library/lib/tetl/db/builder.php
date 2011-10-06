@@ -233,7 +233,7 @@ class db extends prototype
   {
     $args     = func_get_args();
     $callback = array('db', strpos($sql, '?') > 0 ? 'prep' : 'escape');
-    $sql      = sizeof($args) > 1 ? apply($callback, $args) : $sql;
+    $sql      = sizeof($args) > 1 ? call_user_func_array($callback, $args) : $sql;
 
     $out = sql::execute(sql::query_repare($sql));
 
@@ -282,7 +282,7 @@ class db extends prototype
     {
       $args     = func_get_args();
       $callback = strpos($result, ' ') ? 'query' : 'select';
-      $result   = apply("static::$callback", $args);
+      $result   = call_user_func_array("static::$callback", $args);
     }
 
 

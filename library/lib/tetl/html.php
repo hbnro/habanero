@@ -440,7 +440,7 @@ class html extends prototype
 
         $tmp[1] = NULL;
 
-        $inner = apply('html::ul', $tmp);
+        $inner = call_user_func_array('html::ul', $tmp);
         $out  .= tag($el, '', $item . $inner);
         continue;
       }

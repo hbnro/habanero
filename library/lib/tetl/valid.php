@@ -234,7 +234,7 @@ class valid extends prototype
             $args = static::vars($match[2]);
             array_unshift($args, $test);
 
-            $value = apply($callback, $args);
+            $value = call_user_func_array($callback, $args);
 
             if (( ! $value && ! $negate) OR ($value && $negate))
             {

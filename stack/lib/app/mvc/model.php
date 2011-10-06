@@ -254,7 +254,7 @@ class model extends prototype
     {
       array_unshift($arguments, $method);
 
-      return apply(get_called_class() . '::find', $arguments);
+      return call_user_func_array(get_called_class() . '::find', $arguments);
     }
     elseif (preg_match('/^(build|create)_from_(.+)$/', $method, $match))
     {

@@ -61,7 +61,7 @@ run(function()
       {
         is_numeric($key) ? $test []= $val : $params[$key] = $val;
       }
-      apply("$mod_class::$action", $test);
+      call_user_func_array("$mod_class::$action", $test);
     }
   }
   else

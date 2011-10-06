@@ -176,7 +176,7 @@ class form extends prototype
       }
       elseif (is_array($one))
       {
-        $out []= apply('form::input', $one);
+        $out []= call_user_func_array('form::input', $one);
       }
       elseif (is_scalar($one))
       {
@@ -607,7 +607,7 @@ class form extends prototype
 
     array_unshift($arguments, $type);
 
-    return apply('form::input', $arguments);
+    return call_user_func_array('form::input', $arguments);
   }
 
 

@@ -360,7 +360,7 @@ class app_generator extends prototype
 
           $args = array_slice(func_get_args(), 1);
 
-          apply($test['params'][$key], $args);
+          call_user_func_array($test['params'][$key], $args);
         }
       }
     }

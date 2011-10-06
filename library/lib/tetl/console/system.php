@@ -170,7 +170,7 @@ class cli extends prototype
         continue;
       }
 
-      apply($one['callback'], $args);
+      call_user_func_array($one['callback'], $args);
       break;
     }
 

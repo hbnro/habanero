@@ -504,17 +504,4 @@ function ticks($start = NULL, $end = FALSE, $round = 4)
   return round(max($end, $start) - min($end, $start), $round);
 }
 
-
-/**
- * Currying apply
- *
- * @param  mixed Function callback
- * @param  array Arguments
- * @return mixed
- */
-function apply($lambda, array $args = array())
-{
-  return call_user_func_array($lambda, $args);
-}
-
 /* EOF: ./core/runtime.php */
