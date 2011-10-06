@@ -24,7 +24,7 @@ call_user_func(function()
 
   // the root-script
 
-  $trace = debug_backtrace();
+  $trace = debug_backtrace(FALSE);
   $trace = array_pop($trace);
 
   define('APP_LOADER', realpath($trace['file']));

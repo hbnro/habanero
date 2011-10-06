@@ -107,7 +107,7 @@ bootstrap::implement('raise', function($message)
 {
   $var   = array();
   $args  = func_get_args();
-  $trace = array_slice(debug_backtrace(), 1);
+  $trace = array_slice(debug_backtrace(FALSE), 1);
 
 
   // finalize opened buffers
