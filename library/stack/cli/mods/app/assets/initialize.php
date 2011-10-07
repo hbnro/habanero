@@ -5,8 +5,6 @@ call_user_func(function()
   require 'tetlphp/library/initialize.php';
 
   config(__DIR__.DS.'config'.DS.'application'.EXT);
-  config(__DIR__.DS.'config'.DS.'database'.EXT);
-
   config(__DIR__.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
   $import_path   = (array) option('import_path', array());

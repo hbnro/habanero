@@ -113,4 +113,4 @@ $lang['generator_usage'] = <<<HELP
 
 HELP;
 
-/* EOF: ./cli/mods/db/locale/es.php */
+/* EOF: ./stack/cli/mods/db/locale/es.php */

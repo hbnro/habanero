@@ -69,4 +69,4 @@ cli::flag('force') && status('force');
 
     copy_file(CWD, $skel_dir.DS.'initialize'.EXT);
 
-/* EOF: ./cli/mods/app/scripts/create_app.php */
+/* EOF: ./stack/cli/mods/app/scripts/create_app.php */

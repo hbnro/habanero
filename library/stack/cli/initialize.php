@@ -1,6 +1,6 @@
 <?php
 
-require dirname(dirname(__DIR__)).'/library/initialize.php';
+require dirname(dirname(__DIR__)).'/initialize.php';
 require __DIR__.DS.'functions'.EXT;
 
 run(function()
@@ -16,8 +16,6 @@ run(function()
   define('CWD', realpath($path));
 
   config(CWD.DS.'config'.DS.'application'.EXT);
-  config(CWD.DS.'config'.DS.'database'.EXT);
-
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
@@ -70,4 +68,4 @@ run(function()
   }
 });
 
-/* EOF: ./cli/initialize.php */
+/* EOF: ./stack/cli/initialize.php */
