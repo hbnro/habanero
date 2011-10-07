@@ -8,6 +8,8 @@ call_user_func(function()
 {
   import('tetl/server');
 
+  require __DIR__.DS.'assets'.EXT;
+
   $bootstrap = bootstrap::methods();
 
   bootstrap::implement('raise', function($message)
@@ -167,23 +169,18 @@ call_user_func(function()
 
           if (is_file($css_file))
           {
-            $styles = APP_PATH.DS.'css'.DS."$controller.css";
+            $partial = $views_path.DS.'assets'.DS.'css'.DS."_$controller.css";
 
-            if ( ! is_file($styles) OR (filemtime($css_file) > filemtime($styles)))
+            if ( ! is_file($partial) OR (filemtime($css_file) > filemtime($partial)))
             {
               css::setup('path', $views_path.DS.'styles');
 
-              write($styles, css::render($css_file, option('environment') <> 'development'));
+              write($partial, css::render($css_file, option('environment') <> 'development'));
             }
-
-            $class_name::$head []= tag('link', array(
-              'rel' => 'stylesheet',
-              'href' => ROOT."css/$controller.css",
-            ));
           }
 
-
           $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
+          $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/assets/all.css')));
 
           $layout_file = findfile($views_path.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
 
@@ -192,9 +189,13 @@ call_user_func(function()
             raise(ln('mvc.layout_missing', array('name' => $layout_file)));
           }
 
+
+          assets::inline(tag('script', array('src' => url_for('/assets/all.js'))), 'body');
+
+          $view  = view::load($views_path.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view);
           $view = view::render($layout_file, array(
-            'body' => view::load($views_path.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view),
-            'head' => join("\n", $class_name::$head),
+            'body' => "$view\n" . assets::after(),
+            'head' => join("\n", $class_name::$head) . "\n" . assets::before(),
             'title' => $class_name::$title,
           ));
         }
@@ -209,6 +210,29 @@ call_user_func(function()
 
     return $app;
   });
+
+
+  route('/assets/all.:type', function()
+  {
+    if (params('type') === 'css')
+    {
+      css::setup('path', dirname(APP_PATH).DS.'app'.DS.'views'.DS.'styles');
+
+      foreach (findfile(dirname(APP_PATH).DS.'app'.DS.'views'.DS.'assets'.DS.'css', '_*.css') as $css_file)
+      {
+        assets::append(basename($css_file));
+      }
+    }
+
+    assets::setup('path', dirname(APP_PATH).DS.'app'.DS.'views'.DS.'assets');
+
+    call_user_func('assets::' . params('type'));
+  }, array(
+    'constraints' => array(
+      ':type' => '(css|js)',
+    ),
+  ));
+
 });
 
 /* EOF: ./lib/app/mvc/initialize.php */

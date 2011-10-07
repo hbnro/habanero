@@ -541,7 +541,7 @@ function mime($of)
   }
 
 
-  $ext = ext($of);
+  $ext = ext($of) ?: $of;
 
   if ( ! array_key_exists($ext, $types))
   {

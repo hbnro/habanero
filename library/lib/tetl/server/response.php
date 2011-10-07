@@ -136,15 +136,12 @@ function response($content, array $params = array())
     'nocache' => FALSE,
   ), $params);
 
-  if ($params['headers'])
-  {
-    $params['type'] = $params['type'] ?: ini_get('default_mimetype');
+  $params['type'] = $params['type'] ?: ini_get('default_mimetype');
 
-    if (is_mime($params['type']))
-    {
-      $params['headers']['content-type'] = $params['type'] . ($params['charset'] ? "; charset=$params[charset]" : '');
-      $params['headers']['content-length'] = strlen((string) $params['output']);
-    }
+  if (is_mime($params['type']))
+  {
+    $params['headers']['content-type'] = $params['type'] . ($params['charset'] ? "; charset=$params[charset]" : '');
+    $params['headers']['content-length'] = strlen((string) $params['output']);
   }
 
   if (is_true($params['nocache']))
