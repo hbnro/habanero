@@ -37,7 +37,7 @@ class app_generator extends prototype
   {
     info(ln('app.verifying_installation'));
 
-    if (dirsize(CWD, TRUE) && ! cli::flag('force'))
+    if (is_file(CWD.DS.'initialize'.EXT) && ! cli::flag('force'))
     {
       notice(ln('app.application'));
 

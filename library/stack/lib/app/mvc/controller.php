@@ -21,7 +21,7 @@ class controller extends prototype
   public static $title = 'untitled';
 
   // default layout
-  public static $layout = 'default';
+  public static $layout = 'default.html';
 
   // output response
   public static $response = array(
