@@ -7,8 +7,47 @@
 call_user_func(function()
 {
   import('tetl/server');
+  import('app/model');
 
-  require __DIR__.DS.'assets'.EXT;
+  define('CWD', dirname(APP_PATH));
+
+  config(CWD.DS.'config'.DS.'application'.EXT);
+  config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
+
+
+  rescue(function($class)
+  {
+    /**
+      * @ignore
+      */
+
+    switch ($class)
+    {
+      case 'db';
+      case 'css';
+      case 'xss';
+      case 'taml';
+      case 'html';
+      case 'form';
+      case 'pager';
+      case 'cache';
+      case 'valid';
+      case 'assets';
+      case 'upload';
+      case 'twitter';
+        import("tetl/$class");
+      break;
+      case 'view';
+      case 'controller';
+        require __DIR__.DS.$class.EXT;
+      break;
+      default;
+      break;
+    }
+    /**#@-*/
+  });
+
+
 
   $bootstrap = bootstrap::methods();
 
@@ -33,7 +72,7 @@ call_user_func(function()
     }
 
 
-    $error_file = dirname(APP_PATH).DS.'app'.DS.'views'.DS.'errors'.DS.$error_status;
+    $error_file = CWD.DS.'app'.DS.'views'.DS.'errors'.DS.$error_status;
 
     response(view::load($error_file), array(
       'status' => $error_status,
@@ -48,59 +87,6 @@ call_user_func(function()
 
     i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
-    $controllers_path = dirname(APP_PATH).DS.'app'.DS.'controllers';
-    $helpers_path = dirname(APP_PATH).DS.'app'.DS.'helpers';
-    $models_path = dirname(APP_PATH).DS.'app'.DS.'models';
-    $views_path = dirname(APP_PATH).DS.'app'.DS.'views';
-
-    rescue(function($class)
-      use($models_path)
-    {
-      /**
-        * @ignore
-        */
-
-      switch ($class)
-      {
-        case 'db';
-        case 'css';
-        case 'xss';
-        case 'taml';
-        case 'html';
-        case 'form';
-        case 'pager';
-        case 'cache';
-        case 'valid';
-        case 'upload';
-        case 'twitter';
-          import("tetl/$class");
-        break;
-        case 'dbmodel';
-          import('tetl/db');
-
-          require __DIR__.DS.'drivers'.DS.'db'.EXT;
-        break;
-        case 'mongdel';
-          require __DIR__.DS.'drivers'.DS.'mongo'.EXT;
-        break;
-        case 'view';
-        case 'model';
-        case 'controller';
-          require __DIR__.DS.$class.EXT;
-        break;
-        default;
-          $model_file = $models_path.DS.$class.EXT;
-
-          if (is_file($model_file))
-          {
-            require $model_file;
-          }
-        break;
-      }
-      /**#@-*/
-    });
-
-
     view::register('taml', function($file, array $vars = array())
     {
       return taml::render($file, $vars);
@@ -110,7 +96,7 @@ call_user_func(function()
     $request = request::methods();
 
     request::implement('dispatch', function(array $params = array())
-      use($request, $controllers_path, $helpers_path, $views_path)
+      use($request)
     {
       if (is_callable($params['to']))
       {
@@ -120,7 +106,7 @@ call_user_func(function()
       {
         list($controller, $action) = explode('#', (string) $params['to']);
 
-        $controller_file = $controllers_path.DS.$controller.EXT;
+        $controller_file = CWD.DS.'app'.DS.'controllers'.DS.$controller.EXT;
 
         if ( ! is_file($controller_file))
         {
@@ -149,7 +135,7 @@ call_user_func(function()
         }
 
 
-        $helper_file = $helpers_path.DS.$controller.EXT;
+        $helper_file = CWD.DS.'app'.DS.'helpers'.DS.$controller.EXT;
 
         if (is_file($helper_file))
         {
@@ -165,15 +151,15 @@ call_user_func(function()
 
         if ( ! is_false($class_name::$layout))
         {
-          $css_file = $views_path.DS.'styles'.DS."$controller.css";
+          $css_file = CWD.DS.'app'.DS.'views'.DS.'styles'.DS."$controller.css";
 
           if (is_file($css_file))
           {
-            $partial = $views_path.DS.'assets'.DS.'css'.DS."_$controller.css";
+            $partial = CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css'.DS."_$controller.css";
 
             if ( ! is_file($partial) OR (filemtime($css_file) > filemtime($partial)))
             {
-              css::setup('path', $views_path.DS.'styles');
+              css::setup('path', CWD.DS.'app'.DS.'views'.DS.'styles');
 
               write($partial, css::render($css_file, option('environment') <> 'development'));
             }
@@ -182,7 +168,7 @@ call_user_func(function()
           $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
           $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/assets/all.css')));
 
-          $layout_file = findfile($views_path.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
+          $layout_file = findfile(CWD.DS.'app'.DS.'views'.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
 
           if ( ! is_file($layout_file))
           {
@@ -192,7 +178,7 @@ call_user_func(function()
 
           assets::inline(tag('script', array('src' => url_for('/assets/all.js'))), 'body');
 
-          $view  = view::load($views_path.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view);
+          $view  = view::load(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view);
           $view = view::render($layout_file, array(
             'body' => "$view\n" . assets::after(),
             'head' => join("\n", $class_name::$head) . "\n" . assets::before(),
@@ -213,18 +199,18 @@ call_user_func(function()
 
 
   route('/assets/all.:type', function()
-  {
+  {//TODO: ...
     if (params('type') === 'css')
     {
-      css::setup('path', dirname(APP_PATH).DS.'app'.DS.'views'.DS.'styles');
+      css::setup('path', CWD.DS.'app'.DS.'views'.DS.'styles');
 
-      foreach (findfile(dirname(APP_PATH).DS.'app'.DS.'views'.DS.'assets'.DS.'css', '_*.css') as $css_file)
+      foreach (findfile(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css', '_*.css') as $css_file)
       {
         assets::append(basename($css_file));
       }
     }
 
-    assets::setup('path', dirname(APP_PATH).DS.'app'.DS.'views'.DS.'assets');
+    assets::setup('path', CWD.DS.'app'.DS.'views'.DS.'assets');
 
     call_user_func('assets::' . params('type'));
   }, array(

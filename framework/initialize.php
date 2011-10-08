@@ -98,9 +98,10 @@ call_user_func(function()
   // lazy loading
   spl_autoload_register(function($class)
   {
-    foreach (rescue() as $callback)
+    foreach (rescue() as $test)
     {
-      $callback($class);
+      is_closure($test) && $test($class);
+      is_array($test) && ! empty($test[$class]) && require $test[$class];
     }
   });
 });

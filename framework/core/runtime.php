@@ -7,11 +7,11 @@
 /**
  * Add classy patch
  *
- * @param     mixed Function callback
+ * @param     mixed Array|Function callback
  * @staticvar array Patch stack
  * @return    void
  */
-function rescue(Closure $with = NULL)
+function rescue($with = NULL)
 {
   static $patch = array();
 
