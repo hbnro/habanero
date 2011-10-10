@@ -393,9 +393,9 @@ function dump($var, $show = FALSE, $deep = 99)
   $tab       = str_repeat('  ', $depth);
 
 
-  $arrow     = is_true($show) ? ' ' : ' => ';
-  $separator = is_true($show) ? "\n" : ', ';
-  $newline   = is_true($show) ? "\n" : ' ';
+  $arrow     = $show ? ' ' : ' => ';
+  $separator = $show ? "\n" : ', ';
+  $newline   = $show ? "\n" : ' ';
 
   $out       = array();
 
@@ -430,7 +430,7 @@ function dump($var, $show = FALSE, $deep = 99)
     $test  = (array) $var;
     $max   = sizeof($test);
 
-    if (is_false($show))
+    if ( ! $show)
     {
       $tab = '';
     }
@@ -460,19 +460,19 @@ function dump($var, $show = FALSE, $deep = 99)
 
   $class = is_object($var) ? get_class($var) : '';
   $type  = sprintf('#<%s%s!empty>', gettype($var), $class ? ":$class" : '');
-  $out   = sizeof($out) ? (($str = join($separator, $out)) === '' ? $type : $str) : (is_true($show) ? $type : '');
+  $out   = sizeof($out) ? (($str = join($separator, $out)) === '' ? $type : $str) : ($show ? $type : '');
 
-  if (is_object($var) && is_false($show))
+  if (is_object($var) && ! $show)
   {
     $out = sprintf("{{$newline}%s$newline}(%s)", $out, get_class($var));
   }
-  elseif (is_array($var) && is_false($show))
+  elseif (is_array($var) && ! $show)
   {
     $out = "[$newline$out$newline]";
   }
 
 
-  if (is_true($show) && $depth <= 0)
+  if ($show && $depth <= 0)
   {
     $out = IS_CLI ? $out : htmlspecialchars($out);
     echo IS_CLI ? $out : "\n<pre>$out</pre>";
