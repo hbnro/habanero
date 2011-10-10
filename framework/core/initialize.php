@@ -51,6 +51,8 @@ call_user_func(function()
   // initialize language settings
   require LIB.DS.'i18n'.DS.'initialize'.EXT;
 
+  i18n::load_path(dirname(__DIR__).DS.'locale');
+
 
   // default error and exception hanlders
   set_exception_handler(function($E)
