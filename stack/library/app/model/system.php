@@ -95,11 +95,11 @@ class model extends prototype
 
       if ($test = static::fetch_relation($method))
       {
-        $where = ! empty($where) ? static::merge($where, $arguments) : array();
-
-        return $test['from']::$match[1](array_merge($where, array(
+        $where = array_merge(static::merge($where, $arguments), array(
           $test['on'] => $this->{$test['fk']},
-        )));
+        ));
+
+        return $test['from']::$match[1]($where);
       }
       raise(ln('mvc.undefined_relationship', array('name' => $match[1], 'class' => get_called_class())));
     }
@@ -305,8 +305,13 @@ class model extends prototype
   // merge fields
   final protected static function merge($as, array $are = array())
   {
+    if ( ! empty($are[0]) && is_assoc($are[0]))
+    {
+      return $are[0];
+    }
+
     $as     = preg_split('/_and_/', $as);
-    $length = max(sizeof($as), sizeof($are));
+    $length = min(sizeof($as), sizeof($are));
 
     return array_combine(array_slice($as, 0, $length), array_slice($are, 0, $length));
   }
