@@ -7,7 +7,6 @@
 call_user_func(function()
 {
   import('tetl/server');
-  import('app/model');
 
   define('CWD', dirname(APP_PATH));
 
@@ -83,8 +82,6 @@ call_user_func(function()
 
   bootstrap::bind(function($app)
   {
-    import('tetl/session');
-
     i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
     view::register('taml', function($file, array $vars = array())
@@ -145,6 +142,9 @@ call_user_func(function()
           require $helper_file;
         }
 
+        import('app/model');
+
+
         $class_name::defined('init') && $class_name::init();
         $class_name::$action();
 
@@ -166,7 +166,7 @@ call_user_func(function()
           }
 
           $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
-          $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/assets/all.css')));
+          #$class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/assets/all.css?skip')));
 
           $layout_file = findfile(CWD.DS.'app'.DS.'views'.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
 
@@ -176,12 +176,12 @@ call_user_func(function()
           }
 
 
-          assets::inline(tag('script', array('src' => url_for('/assets/all.js'))), 'body');
+          #assets::inline(tag('script', array('src' => url_for('/assets/all.js?skip'))), 'body');
 
-          $view  = view::load(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view);
+          $view = view::load(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view);
           $view = view::render($layout_file, array(
             'body' => "$view\n" . assets::after(),
-            'head' => join("\n", $class_name::$head) . "\n" . assets::before(),
+            'head' => assets::before() . "\n" . join("\n", $class_name::$head),
             'title' => $class_name::$title,
           ));
         }
