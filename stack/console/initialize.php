@@ -1,6 +1,6 @@
 <?php
 
-require dirname(dirname(__DIR__)).'/initialize.php';
+require dirname(dirname(__DIR__)).'/framework/initialize.php';
 require __DIR__.DS.'functions'.EXT;
 
 run(function()
