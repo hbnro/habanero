@@ -313,7 +313,10 @@ class model extends prototype
     $as     = preg_split('/_and_/', $as);
     $length = min(sizeof($as), sizeof($are));
 
-    return array_combine(array_slice($as, 0, $length), array_slice($are, 0, $length));
+    $keys   = array_slice($as, 0, $length);
+    $values = array_slice($are, 0, $length);
+
+    return $keys && $values ? array_combine($keys, $values) : array();
   }
 
   /**#@-*/
