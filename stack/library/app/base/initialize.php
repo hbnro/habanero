@@ -14,40 +14,6 @@ call_user_func(function()
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
-  rescue(function($class)
-  {
-    /**
-      * @ignore
-      */
-
-    switch ($class)
-    {
-      case 'db';
-      case 'css';
-      case 'xss';
-      case 'taml';
-      case 'html';
-      case 'form';
-      case 'pager';
-      case 'cache';
-      case 'valid';
-      case 'assets';
-      case 'upload';
-      case 'twitter';
-        import("tetl/$class");
-      break;
-      case 'view';
-      case 'controller';
-        require __DIR__.DS.$class.EXT;
-      break;
-      default;
-      break;
-    }
-    /**#@-*/
-  });
-
-
-
   $bootstrap = bootstrap::methods();
 
   bootstrap::implement('raise', function($message)
@@ -82,10 +48,18 @@ call_user_func(function()
 
   bootstrap::bind(function($app)
   {
+    import('app/base/controller');
+    import('app/base/model');
+    import('app/base/view');
+
+    import('tetl/assets');
+
     i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
     view::register('taml', function($file, array $vars = array())
     {
+      import('tetl/taml');
+
       return taml::render($file, $vars);
     });
 
@@ -142,12 +116,8 @@ call_user_func(function()
           require $helper_file;
         }
 
-        import('app/model');
-
-
         $class_name::defined('init') && $class_name::init();
         $class_name::$action();
-
 
         if ( ! is_false($class_name::$layout))
         {
@@ -159,6 +129,8 @@ call_user_func(function()
 
             if ( ! is_file($partial) OR (filemtime($css_file) > filemtime($partial)))
             {
+              import('tetl/css');
+
               css::setup('path', CWD.DS.'app'.DS.'views'.DS.'styles');
 
               write($partial, css::render($css_file, option('environment') <> 'development'));
