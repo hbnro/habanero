@@ -27,3 +27,5 @@ rescue(function($class)
   }
   /**#@-*/
 });
+
+/* EOF: ./stack/library/app/base/model/initialize.php */
