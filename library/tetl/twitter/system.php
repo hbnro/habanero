@@ -282,4 +282,4 @@ class twitter extends prototype
 
 }
 
-/* EOF: ./lib/tetl/twitter/system.php */
+/* EOF: ./library/tetl/twitter/system.php */

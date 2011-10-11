@@ -75,4 +75,4 @@ class view extends prototype
 
 }
 
-/* EOF: ./lib/app/mvc/view.php */
+/* EOF: ./stack/library/app/base/view.php */

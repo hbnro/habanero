@@ -133,4 +133,4 @@ function remove_index($from, $name)
   return (boolean) sql::remove_index($name);
 }
 
-/* EOF: ./lib/tetl/db/migration.php */
+/* EOF: ./library/tetl/db/migration.php */

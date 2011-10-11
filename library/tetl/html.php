@@ -573,4 +573,4 @@ class html extends prototype
 
 }
 
-/* EOF: ./lib/tetl/html.php */
+/* EOF: ./library/tetl/html.php */

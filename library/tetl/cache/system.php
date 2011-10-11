@@ -216,4 +216,4 @@ class cache extends prototype
 
 }
 
-/* EOF: ./lib/tetl/cache/system.php */
+/* EOF: ./library/tetl/cache/system.php */

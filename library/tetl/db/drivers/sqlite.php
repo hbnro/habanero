@@ -120,4 +120,4 @@ sql::implement('last_id', function()
   return sql::connect()->lastInsertRowID();
 });
 
-/* EOF: ./lib/tetl/db/drivers/sqlite.php */
+/* EOF: ./library/tetl/db/drivers/sqlite.php */

@@ -218,4 +218,4 @@ function oauth_set($request, $token, $secret = NULL)
   $request->token_secret = $secret;
 }
 
-/* EOF: ./lib/tetl/twitter/oauth.php */
+/* EOF: ./library/tetl/twitter/oauth.php */

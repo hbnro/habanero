@@ -117,4 +117,4 @@ function status($type, $text = '')
   }
 }
 
-/* EOF: ./stack/cli/functions.php */
+/* EOF: ./stack/console/functions.php */

@@ -253,4 +253,4 @@ if (class_exists('db'))
   });
 }
 
-/* EOF: ./lib/tetl/pager.php */
+/* EOF: ./library/tetl/pager.php */

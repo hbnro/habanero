@@ -194,4 +194,4 @@ sql::implement('quotes', function($test)
   return '"' . $test . '"';
 });
 
-/* EOF: ./lib/tetl/db/schemes/sqlite.php */
+/* EOF: ./library/tetl/db/schemes/sqlite.php */

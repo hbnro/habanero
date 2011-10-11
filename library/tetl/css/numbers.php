@@ -92,4 +92,4 @@ css::implement('abs', function($num)
   return abs($num);
 });
 
-/* EOF: ./lib/tetl/css/numbers.php */
+/* EOF: ./library/tetl/css/numbers.php */

@@ -221,4 +221,4 @@ call_user_func(function()
 
 });
 
-/* EOF: ./lib/app/mvc/initialize.php */
+/* EOF: ./stack/library/app/base/initialize.php */

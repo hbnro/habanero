@@ -353,4 +353,4 @@ class sql extends prototype
 
 /**#@-*/
 
-/* EOF: ./lib/tetl/db/system.php */
+/* EOF: ./library/tetl/db/system.php */

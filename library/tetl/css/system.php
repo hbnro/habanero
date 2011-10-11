@@ -640,4 +640,4 @@ class css extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/tetl/css/system.php */
+/* EOF: ./library/tetl/css/system.php */

@@ -93,4 +93,4 @@ class prototype
 
 }
 
-/* EOF: ./core/prototype.php */
+/* EOF: ./framework/core/prototype.php */

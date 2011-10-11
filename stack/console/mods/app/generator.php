@@ -369,4 +369,4 @@ class app_generator extends prototype
 
 }
 
-/* EOF: ./stack/cli/mods/app/generator.php */
+/* EOF: ./stack/console/mods/app/generator.php */

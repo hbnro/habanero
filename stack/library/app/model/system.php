@@ -322,4 +322,4 @@ class model extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/app/mvc/model.php */
+/* EOF: ./stack/library/app/base/model.php */

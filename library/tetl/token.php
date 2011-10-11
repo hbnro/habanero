@@ -357,4 +357,4 @@ function sorttok($text, $ord = 32, $mode = '', $join = TRUE)
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
-/* EOF: ./lib/tetl/token.php */
+/* EOF: ./library/tetl/token.php */

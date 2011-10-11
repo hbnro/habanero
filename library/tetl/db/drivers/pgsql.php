@@ -108,4 +108,4 @@ sql::implement('last_id', function($res, $table, $column)
   return $tmp[0];
 });
 
-/* EOF: ./lib/tetl/db/drivers/pgsql.php */
+/* EOF: ./library/tetl/db/drivers/pgsql.php */

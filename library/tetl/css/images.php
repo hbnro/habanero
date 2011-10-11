@@ -48,4 +48,4 @@ css::implement('image', function($path)
   return $out;
 });
 
-/* EOF: ./lib/tetl/css/images.php  */
+/* EOF: ./library/tetl/css/images.php  */

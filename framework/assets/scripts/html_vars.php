@@ -235,4 +235,4 @@ return array(
   ),
 );
 
-/* EOF: ./assets/scripts/html_vars.php */
+/* EOF: ./framework/assets/scripts/html_vars.php */

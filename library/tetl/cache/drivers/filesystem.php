@@ -63,4 +63,4 @@ cache::implement('check_item', function($key)
   return is_file(TMP.DS.'--cache-file'.md5($key));
 });
 
-/* EOF: ./lib/tetl/cache/drivers/filesystem.php */
+/* EOF: ./library/tetl/cache/drivers/filesystem.php */

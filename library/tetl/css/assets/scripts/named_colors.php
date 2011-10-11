@@ -443,4 +443,4 @@ return array(
   'lightgreen' => '#90ee90',
 );
 
-/* EOF: ./lib/tetl/css/assets/scripts/named_colors.php */
+/* EOF: ./library/tetl/css/assets/scripts/named_colors.php */

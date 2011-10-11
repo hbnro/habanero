@@ -188,4 +188,4 @@ function captcha_valid($test, $key = 0, $strict = FALSE)
   return FALSE;
 }
 
-/* EOF: ./lib/tetl/captcha.php */
+/* EOF: ./library/tetl/captcha.php */

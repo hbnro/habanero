@@ -212,4 +212,4 @@ bootstrap::implement('raise', function($message)
   die($output);
 });
 
-/* EOF: ./core/application.php */
+/* EOF: ./framework/core/application.php */

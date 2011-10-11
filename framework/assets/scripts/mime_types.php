@@ -583,4 +583,4 @@ return array(
   'xmt_txt' => 'model/vnd.parasolid.transmit.text',
 );
 
-/* EOF: ./assets/scripts/mime_types.php */
+/* EOF: ./framework/assets/scripts/mime_types.php */

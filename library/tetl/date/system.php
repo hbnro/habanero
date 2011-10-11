@@ -410,4 +410,4 @@ function timezone_list($key = NULL)
   return isset($set[$key]) ? $set[$key] : $set;
 }
 
-/* EOF: ./lib/tetl/date/system.php */
+/* EOF: ./library/tetl/date/system.php */

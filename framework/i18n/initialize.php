@@ -39,4 +39,4 @@ call_user_func(function()
   require __DIR__.DS.'system'.EXT;
 });
 
-/* EOF: ./i18n/initialize.php */
+/* EOF: ./framework/i18n/initialize.php */

@@ -183,4 +183,4 @@ return array(
   ),
 );
 
-/* EOF: ./lib/tetl/agent/assets/scripts/user_agents.php */
+/* EOF: ./library/tetl/agent/assets/scripts/user_agents.php */

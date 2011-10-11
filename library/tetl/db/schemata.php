@@ -309,4 +309,4 @@ db::implement('build', function($table, array $columns = array())
   return $sql;
 });
 
-/* EOF: ./lib/tetl/db/schemata.php */
+/* EOF: ./library/tetl/db/schemata.php */

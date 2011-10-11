@@ -551,4 +551,4 @@ function mime($of)
   return $types[$ext];
 }
 
-/* EOF: ./core/filesystem.php */
+/* EOF: ./framework/core/filesystem.php */

@@ -901,4 +901,4 @@ return array(
   ),
 );
 
-/* EOF: ./assets/scripts/locale_vars.php */
+/* EOF: ./framework/assets/scripts/locale_vars.php */

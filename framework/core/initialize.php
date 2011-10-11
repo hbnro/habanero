@@ -71,4 +71,4 @@ call_user_func(function()
   });
 });
 
-/* EOF: ./core/initialize.php */
+/* EOF: ./framework/core/initialize.php */

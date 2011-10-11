@@ -96,4 +96,4 @@ function client($ua = '')
   return $out;
 }
 
-/* EOF: ./lib/tetl/agent/functions.php */
+/* EOF: ./library/tetl/agent/functions.php */

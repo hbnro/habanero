@@ -424,4 +424,4 @@ function button_to($name, $url = NULL, array $args = array())
   ), "<div>$extra$button</div>");
 }
 
-/* EOF: ./lib/tetl/server/actions.php */
+/* EOF: ./library/tetl/server/actions.php */

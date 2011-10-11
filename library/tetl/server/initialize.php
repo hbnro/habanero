@@ -220,4 +220,4 @@ bootstrap::bind(function($app)
   };
 });
 
-/* EOF: ./lib/tetl/server/initialize.php */
+/* EOF: ./library/tetl/server/initialize.php */

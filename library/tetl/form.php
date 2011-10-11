@@ -670,4 +670,4 @@ class form extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/tetl/form.php */
+/* EOF: ./library/tetl/form.php */

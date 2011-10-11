@@ -115,4 +115,4 @@ call_user_func(function()
   }
 });
 
-/* EOF: ./lib/tetl/db/initialize.php */
+/* EOF: ./library/tetl/db/initialize.php */

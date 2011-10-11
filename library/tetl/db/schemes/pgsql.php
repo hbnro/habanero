@@ -176,4 +176,4 @@ sql::implement('quotes', function($test)
   return '"' . $test . '"';
 });
 
-/* EOF: ./lib/tetl/db/schemes/pgsql.php */
+/* EOF: ./library/tetl/db/schemes/pgsql.php */

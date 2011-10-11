@@ -68,4 +68,4 @@ run(function()
   }
 });
 
-/* EOF: ./stack/cli/initialize.php */
+/* EOF: ./stack/console/initialize.php */

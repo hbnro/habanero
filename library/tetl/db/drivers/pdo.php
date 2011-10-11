@@ -131,4 +131,4 @@ sql::implement('last_id', function()
   return sql::connect()->lastInsertId();
 });
 
-/* EOF: ./lib/tetl/db/drivers/pdo.php */
+/* EOF: ./library/tetl/db/drivers/pdo.php */

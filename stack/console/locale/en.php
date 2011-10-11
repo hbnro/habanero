@@ -7,4 +7,4 @@
 $lang['generator_intro'] = '¡Welcome to the console utility!';
 $lang['done'] = 'Done';
 
-/* EOF: ./stack/cli/locale/en.php */
+/* EOF: ./stack/console/locale/en.php */

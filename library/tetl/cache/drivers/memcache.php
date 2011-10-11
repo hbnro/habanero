@@ -80,4 +80,4 @@ cache::implement('check_item', function($key)
   return FALSE;
 });
 
-/* EOF: ./lib/tetl/cache/drivers/memcache.php */
+/* EOF: ./library/tetl/cache/drivers/memcache.php */

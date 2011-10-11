@@ -808,4 +808,4 @@ class cli extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/tetl/console/system.php */
+/* EOF: ./library/tetl/console/system.php */

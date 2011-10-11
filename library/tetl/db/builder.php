@@ -346,4 +346,4 @@ class db extends prototype
 
 }
 
-/* EOF: ./lib/tetl/db/builder.php */
+/* EOF: ./library/tetl/db/builder.php */

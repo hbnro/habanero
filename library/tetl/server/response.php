@@ -278,4 +278,4 @@ function status($num = 200, array $headers = array())
   }
 }
 
-/* EOF: ./lib/tetl/server/response.php */
+/* EOF: ./library/tetl/server/response.php */

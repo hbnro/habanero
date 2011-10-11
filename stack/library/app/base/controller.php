@@ -35,4 +35,4 @@ class controller extends prototype
 
 }
 
-/* EOF: ./lib/app/mvc/controller.php */
+/* EOF: ./stack/library/app/base/controller.php */

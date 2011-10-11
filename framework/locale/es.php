@@ -29,4 +29,4 @@ $lang['environment'] = 'Variables de entorno';
 $lang['backtrace'] = 'Traza de ejecución';
 $lang['includes'] = 'Archivos cargados';
 
-/* EOF: ./i18n/locale/es.php */
+/* EOF: ./framework/i18n/locale/es.php */

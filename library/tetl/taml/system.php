@@ -527,4 +527,4 @@ class taml extends prototype
   /**#@-*/
 }
 
-/* EOF: ./lib/tetl/taml/system.php */
+/* EOF: ./library/tetl/taml/system.php */

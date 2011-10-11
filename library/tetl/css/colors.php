@@ -633,4 +633,4 @@ css::implement('hex2rgb', function($color)
   );
 });
 
-/* EOF: ./lib/tetl/css/colors.php */
+/* EOF: ./library/tetl/css/colors.php */

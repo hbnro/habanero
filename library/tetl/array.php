@@ -342,4 +342,4 @@ function swap($set)
   return $out;
 }
 
-/* EOF: ./lib/tetl/array.php */
+/* EOF: ./library/tetl/array.php */

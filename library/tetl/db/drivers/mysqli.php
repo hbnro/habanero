@@ -88,4 +88,4 @@ sql::implement('last_id', function()
   return mysqli_insert_id(sql::connect());
 });
 
-/* EOF: ./lib/tetl/db/drivers/mysqli.php */
+/* EOF: ./library/tetl/db/drivers/mysqli.php */

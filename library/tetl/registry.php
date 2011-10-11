@@ -106,4 +106,4 @@ function registry_exists($item, $bag = '')
   return isset($bag->$item);
 }
 
-/* EOF: ./lib/tetl/registry.php */
+/* EOF: ./library/tetl/registry.php */

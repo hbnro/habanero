@@ -255,4 +255,4 @@ class dbmodel extends model
 
 }
 
-/* EOF: ./lib/app/mvc/drivers/dbmodel.php */
+/* EOF: ./stack/library/app/base/drivers/dbmodel.php */
