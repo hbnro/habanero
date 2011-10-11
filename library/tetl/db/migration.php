@@ -9,10 +9,13 @@
  *
  * @param  string  Table
  * @param  array   Definition
+ * @param  array   Options hash
  * @return boolean
  */
-function create_table($name, $columns)
+function create_table($name, array $columns, array $options = array())
 {
+  ! empty($options['force']) && @drop_table($name);
+
   return (boolean) sql::execute(db::build($name, $columns));
 }
 

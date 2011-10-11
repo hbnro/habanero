@@ -42,6 +42,47 @@ class db_generator extends prototype
     }
   }
 
+  final private static function schema()
+  {
+    info(ln('db.verifying_schema'));
+
+    $out = array();
+    $schema_file = CWD.DS.'db'.DS.'schema'.EXT;
+
+    $path = str_replace(CWD.DS, '', $schema_file);
+    success(ln('db.updating_schema', array('path' => $path)));
+
+    foreach (db::tables() as $one)
+    {
+      $out []= sprintf("create_table('$one', array(");
+
+      foreach (db::columns($one) as $key => $val)
+      {
+        $def = array("'{$val['type']}'");
+
+        $val['length'] && $def []= $val['length'];
+
+        $out []= sprintf("  '$key' => array(%s),", join(', ', $def));
+      }
+
+      $out []= "), array('force' => TRUE));";
+    }
+
+    $out []= '';
+
+    foreach (db::indexes($one) as $key => $val)
+    {
+      $def  = array("'name' => '$key'");
+      $cols = "'" . join("', '", $val['column']) . "'";
+
+      ! empty($val['unique']) && $def []= "'unique' => TRUE";
+
+      $out []= sprintf("add_index('$one', array($cols), array(%s));", join(', ', $def));
+    }
+
+    write($schema_file, sprintf("<?php\n/* %s */\n%s\n", date('Y-m-d H:i:s'), join("\n", $out)));
+  }
+
   final private static function migrate($callback)
   {
     $args = array_slice(func_get_args(), 1);
@@ -78,8 +119,6 @@ class db_generator extends prototype
 
     $code = sprintf("$callback(%s);\n", join(', ', $args));
 
-    $callback === 'create_table' && $code = "drop_table($args[0]);\n$code";
-
     if ( ! is_file($migration_file))
     {
       $date = date('Y-m-d H:i:s', $time);
@@ -92,17 +131,14 @@ class db_generator extends prototype
     }
 
     @eval($code);
+
+    static::schema();
   }
 
   final public static function st()
   {
     info(ln('db.verifying_database'));
-
-    cli::writeln(pretty(function()
-    {
-      $test = parse_url(DB_DSN);
-      dump($test, TRUE);
-    }));
+    bold(DB_DSN);
 
     $test = db::tables();
 
@@ -132,63 +168,69 @@ class db_generator extends prototype
 
   final public static function make()
   {
-    if ( ! cli::flag('seed'))
+    if (cli::flag('schema'))
     {
-      info(ln('db.verifying_database'));
-
-      if (cli::flag('drop-all'))
-      {
-        foreach (db::tables() as $one)
-        {
-          notice(ln('db.table_dropping', array('name' => $one)));
-          drop_table($one);
-        }
-      }
-
+      info(ln('db.verifying_schema'));
 
       $schema_file = CWD.DS.'db'.DS.'schema'.EXT;
 
-      if (is_file($schema_file))
-      {
-        info(ln('db.verifying_schema'));
-        $path = str_replace(CWD.DS, '', $schema_file);
-        success(ln('db.loading_schema', array('path' => $path)));
-        require $schema_file;
-      }
+      $path = str_replace(CWD.DS, '', $schema_file);
+      success(ln('db.loading_schema', array('path' => $path)));
 
-
-      if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
-      {
-        sort($test);
-
-        success(ln('db.migrating_database'));
-
-        foreach ($test as $migration_file)
-        {
-          $path = str_replace(CWD.DS, '', $migration_file);
-          notice(ln('db.run_migration', array('path' => $path)));
-          require $migration_file;
-        }
-      }
-      else
-      {
-        error(ln('db.without_migrations'));
-      }
-    }
-
-    info(ln('db.verifying_seed'));
-
-    $seed_file = CWD.DS.'db'.DS.'seeds'.EXT;
-
-    if ( ! is_file($seed_file))
-    {
-      error(ln('db.without_seed'));
+      require $schema_file;
     }
     else
     {
-      $path = str_replace(CWD.DS, '', $seed_file);
-      success(ln('db.loading_seed', array('path' => $path)));
-      require $seed_file;
+      if ( ! cli::flag('seed'))
+      {
+        info(ln('db.verifying_database'));
+        bold(DB_DSN);
+
+        if (cli::flag('drop-all'))
+        {
+          foreach (db::tables() as $one)
+          {
+            notice(ln('db.table_dropping', array('name' => $one)));
+            drop_table($one);
+          }
+        }
+
+
+        if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
+        {
+          sort($test);
+
+          success(ln('db.migrating_database'));
+
+          foreach ($test as $migration_file)
+          {
+            $path = str_replace(CWD.DS, '', $migration_file);
+            notice(ln('db.run_migration', array('path' => $path)));
+            require $migration_file;
+          }
+
+          static::schema();
+        }
+        else
+        {
+          error(ln('db.without_migrations'));
+        }
+      }
+
+      info(ln('db.verifying_seed'));
+
+      $seed_file = CWD.DS.'db'.DS.'seeds'.EXT;
+
+      if ( ! is_file($seed_file))
+      {
+        error(ln('db.without_seed'));
+      }
+      else
+      {
+        $path = str_replace(CWD.DS, '', $seed_file);
+        success(ln('db.loading_seed', array('path' => $path)));
+        require $seed_file;
+      }
     }
 
     bold(ln('tetl.done'));
@@ -339,7 +381,7 @@ class db_generator extends prototype
         else
         {
           success(ln('db.table_building', array('name' => $table)));
-          static::migrate('create_table', $table, $fields);
+          static::migrate('create_table', $table, $fields, array('force' => TRUE));
 
           if (cli::flag('model'))
           {

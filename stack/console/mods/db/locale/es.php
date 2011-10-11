@@ -47,6 +47,7 @@ $lang['without_seed'] = 'Sin datos';
 
 $lang['loading_seed'] = 'Cargando datos de %{path}';
 $lang['loading_schema'] = 'Cargando esquema de %{path}';
+$lang['updating_schema'] = 'Actualizando esquema %{path}';
 $lang['unknown_field'] = 'No se conoce el tipo %{type} de la columna %{name}';
 
 $lang['column_building'] = 'Creando columna %{name}:%{type}';
@@ -109,7 +110,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(db.backup)\b \bcyan(name)\b [--raw] [--data] [--import]
 
   \clight_gray(Ejecuta las migraciones)\c
-    \bgreen(db.make)\b [--drop-all] [--seed]
+    \bgreen(db.make)\b [--drop-all] [--schema] [--seed]
 
 HELP;
 
