@@ -562,7 +562,7 @@ class html extends prototype
 
     if ( ! in_array($method, $test))
     {
-      raise(ln('method_missing', array('class' => 'html', 'name' => $method)));
+      raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
 
     $text  = array_shift($arguments);

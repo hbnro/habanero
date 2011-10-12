@@ -602,7 +602,7 @@ class form extends prototype
 
     if ( ! in_array($type, $test))
     {
-      raise(ln('method_missing', array('class' => 'form', 'name' => $method)));
+      raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
 
     array_unshift($arguments, $type);
