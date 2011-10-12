@@ -52,6 +52,23 @@ class routing extends prototype
   /**
    * Route mounting
    *
+   * @param  string Path
+   * @param  array  Options hash
+   * @return void
+   */
+  final public static function load($path, array $params = array())
+  {
+    is_file($path) && static::mount(function()
+      use($path)
+    {
+      require $path;
+    }, $params);
+  }
+
+
+  /**
+   * Route mounting
+   *
    * @param  mixed Function callback
    * @param  array Options hash
    * @return void

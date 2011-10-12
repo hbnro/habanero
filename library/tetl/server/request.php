@@ -295,12 +295,15 @@ class request extends prototype
 // default output
 request::implement('dispatch', function(array $params = array())
 {
-  if (empty($params['to']) OR
-   ! (is_callable($params['to']) OR
-      is_file($params['to']) OR
-      is_url($params['to'])))
+  if (empty($params['to']))
   {
     raise(ln('function_param_missing', array('name' => 'dispatch', 'input' => 'to')));
+  }
+  elseif ( ! (is_callable($params['to']) OR
+              is_file($params['to']) OR
+              is_url($params['to'])))
+  {
+    raise($params['to']);
   }
 
 
