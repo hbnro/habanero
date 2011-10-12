@@ -48,9 +48,9 @@ call_user_func(function()
 
   bootstrap::bind(function($app)
   {
-    import('app/base/controller');
-    import('app/base/model');
-    import('app/base/view');
+    require __DIR__.DS.'controller'.EXT;
+    require __DIR__.DS.'model'.EXT;
+    require __DIR__.DS.'view'.EXT;
 
     import('tetl/assets');
 
