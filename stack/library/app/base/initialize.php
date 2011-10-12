@@ -174,6 +174,8 @@ call_user_func(function()
   {//TODO: ...
     if (params('type') === 'css')
     {
+      import('tetl/css');
+
       css::setup('path', CWD.DS.'app'.DS.'views'.DS.'styles');
 
       foreach (findfile(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css', '_*.css') as $css_file)
