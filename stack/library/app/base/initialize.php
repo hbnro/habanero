@@ -155,23 +155,26 @@ call_user_func(function()
 
   route('/all.:type', function()
   {//TODO: ...
-    $type = params('type');
+    $type      = params('type');
+
+    $minify    = option('environment') === 'production';
 
     $base_path = CWD.DS.'app'.DS.'views'.DS.'assets';
     $base_file = $base_path.DS.$type.DS."app.$type";
 
+
     assets::setup('path', $base_path);
 
-
     assets::compile('css', function($file)
-      use($base_path)
+      use($base_path, $minify)
     {
       import('tetl/css');
       css::setup('path', $base_path.DS.'css');
-      return css::render($file, option('environment') === 'production');
+      return css::render($file, $minify);
     });
 
     assets::compile('js', function($file)
+      use($minify)
     {// TODO: use JSMin instead...
       static $regex = array(
                       '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
@@ -182,7 +185,7 @@ call_user_func(function()
 
       $text = read($file);
 
-      if (option('environment') === 'production')
+      if ($minify)
       {
         $text = preg_replace(array_keys($regex), $regex, $text);
         $text = str_replace('elseif', 'else if', $text);
