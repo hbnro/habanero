@@ -44,6 +44,12 @@ class routing extends prototype
    */
   final public static function execute()
   {
+    // TODO: still using the same token against XHR?
+    define('TOKEN', is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
+    define('CHECK', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
+
+    option('csrf.protect') && $_SESSION['--csrf-token'] = TOKEN;
+
     foreach (static::$routes as $params)
     {
       $expr = "^$params[match]$";

@@ -207,15 +207,6 @@ bootstrap::bind(function($app)
       }
     }
 
-
-    // TODO: still using the same token against XHR?
-    // here is a issue, the crsf-token is created on every request, if there is
-    // another request the previous token will not match... i.e. bad route, csrf indeed!
-    define('TOKEN', is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
-    define('CHECK', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
-
-    $_SESSION['--csrf-token'] = TOKEN;
-
     routing::execute($app());
   };
 });

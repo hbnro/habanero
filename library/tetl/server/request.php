@@ -282,7 +282,7 @@ class request extends prototype
     @list($old_time, $old_token) = explode(' ', $check);
     @list($new_time, $new_token) = explode(' ', $_token);
 
-    if (((time() - $old_time) < option('csrf', 300)) && ($old_token === $new_token))
+    if (((time() - $old_time) < option('csrf.expires', 300)) && ($old_token === $new_token))
     {
       return TRUE;
     }
