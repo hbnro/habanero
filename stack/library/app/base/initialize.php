@@ -53,13 +53,13 @@ call_user_func(function()
     require __DIR__.DS.'view'.EXT;
 
     import('tetl/assets');
+    import('tetl/taml');
+    import('tetl/css');
 
     i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
     view::register('taml', function($file, array $vars = array())
     {
-      import('tetl/taml');
-
       return taml::render($file, $vars);
     });
 
@@ -121,24 +121,8 @@ call_user_func(function()
 
         if ( ! is_false($class_name::$layout))
         {
-          $css_file = CWD.DS.'app'.DS.'views'.DS.'styles'.DS."$controller.css";
-
-          if (is_file($css_file))
-          {
-            $partial = CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css'.DS."_$controller.css";
-
-            if ( ! is_file($partial) OR (filemtime($css_file) > filemtime($partial)))
-            {
-              import('tetl/css');
-
-              css::setup('path', CWD.DS.'app'.DS.'views'.DS.'styles');
-
-              write($partial, css::render($css_file, option('environment') <> 'development'));
-            }
-          }
-
           $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
-          #$class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/assets/all.css?skip')));
+          $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css')));
 
           $layout_file = findfile(CWD.DS.'app'.DS.'views'.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
 
@@ -148,12 +132,11 @@ call_user_func(function()
           }
 
 
-          #assets::inline(tag('script', array('src' => url_for('/assets/all.js?skip'))), 'body');
+          assets::inline(tag('script', array('src' => url_for('/all.js'))), 'body');
 
-          $view = view::load(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$controller.DS.$action, (array) $class_name::$view);
           $view = view::render($layout_file, array(
-            'body' => "$view\n" . assets::after(),
-            'head' => assets::before() . "\n" . join("\n", $class_name::$head),
+            'body' => view::load(CWD.DS.'app'.DS.'views'.DS.$controller.DS.$action, (array) $class_name::$view),
+            'head' => join("\n", $class_name::$head),
             'title' => $class_name::$title,
           ));
         }
@@ -170,23 +153,53 @@ call_user_func(function()
   });
 
 
-  route('/assets/all.:type', function()
+  route('/all.:type', function()
   {//TODO: ...
-    if (params('type') === 'css')
+    $type = params('type');
+
+    $base_path = CWD.DS.'app'.DS.'views'.DS.'assets';
+    $base_file = $base_path.DS.$type.DS."app.$type";
+
+    assets::setup('path', $base_path);
+
+
+    assets::compile('css', function($file)
+      use($base_path)
     {
       import('tetl/css');
+      css::setup('path', $base_path.DS.'css');
+      return css::render($file, option('environment') === 'production');
+    });
 
-      css::setup('path', CWD.DS.'app'.DS.'views'.DS.'styles');
+    assets::compile('js', function($file)
+    {// TODO: use JSMin instead...
+      static $regex = array(
+                      '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
+                      '/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
+                      '/\s{2,}/' => '',
+                    );
 
-      foreach (findfile(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css', '_*.css') as $css_file)
+
+      $text = read($file);
+
+      if (option('environment') === 'production')
       {
-        assets::append(basename($css_file));
+        $text = preg_replace(array_keys($regex), $regex, $text);
+        $text = str_replace('elseif', 'else if', $text);
       }
-    }
+      return $text;
+    });
 
-    assets::setup('path', CWD.DS.'app'.DS.'views'.DS.'assets');
 
-    call_user_func('assets::' . params('type'));
+    $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function($match)
+      use($type)
+    {
+      assets::append("$match[1].$type");
+    }, read($base_file));
+
+    $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+
+    assets::$type(trim($test));
   }, array(
     'constraints' => array(
       ':type' => '(css|js)',
