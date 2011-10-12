@@ -29,4 +29,4 @@ $lang['environment'] = 'Environment vars';
 $lang['backtrace'] = 'Backtrace log';
 $lang['includes'] = 'Included files';
 
-/* EOF: ./framework/i18n/locale/en.php */
+/* EOF: ./framework/locale/en.php */

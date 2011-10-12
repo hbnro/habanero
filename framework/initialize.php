@@ -68,7 +68,16 @@ call_user_func(function()
 
   require LIB.DS.'core'.DS.'filesystem'.EXT;
   require LIB.DS.'core'.DS.'conditions'.EXT;
+  require LIB.DS.'core'.DS.'configure'.EXT;
   /**#@-*/
+
+
+
+  // autoload
+  config('import_path', array(
+    dirname(LIB).DS.'stack'.DS.'library',
+    dirname(LIB).DS.'library',
+  ));
 
 
 
@@ -81,10 +90,7 @@ call_user_func(function()
 
   foreach ($config_set as $config_file)
   {
-    if (is_file($config_file))
-    {
-      config($config_file);
-    }
+    is_file($config_file) && config($config_file);
   }
 
 
@@ -106,4 +112,4 @@ call_user_func(function()
   });
 });
 
-/* EOF: ./initialize.php */
+/* EOF: ./framework/initialize.php */

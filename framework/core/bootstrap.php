@@ -34,8 +34,6 @@ final class bootstrap extends prototype
     if ( ! in_array($lib, bootstrap::$library))
     {
       $test   = (array) option('import_path', array());
-      $test []= dirname(LIB).DS.'stack'.DS.'library';
-      $test []= dirname(LIB).DS.'library';
 
       foreach ($test as $dir)
       {

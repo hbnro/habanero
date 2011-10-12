@@ -149,7 +149,7 @@ function raise($message)
  */
 function option($get, $or = FALSE)
 {
-  return value(config(), $get, $or);
+  return configure::get($get, $or);
 }
 
 
@@ -163,41 +163,17 @@ function option($get, $or = FALSE)
  */
 function config($set = NULL, $value = NULL)
 {
-  static $bag = array();
-
-
-  if ( ! func_num_args())
+  if ( ! is_null($value))
   {
-    return $bag;
+    configure::set($set, $value);
   }
-  elseif (is_assoc($set))
+  else
   {
-    foreach ($set as $key => $value)
+    if ( ! is_assoc($set) && ! is_file($set))
     {
-      config($key, $value);
+      return configure::get($set);
     }
-  }
-  elseif (func_num_args() === 1 && isset($bag[$set]))
-  {
-    return $bag[$set];
-  }
-  elseif (is_file($set))
-  {
-    $config = array();
-    $test   = include $set;
-
-    if (is_array($config))
-    {
-      if (is_array($test))
-      {
-        $config = array_merge($config, $test);
-      }
-      $bag = array_merge($bag, $config);
-    }
-  }
-  elseif ( ! is_num($set) && $value)
-  {
-    $bag[$set] = $value;
+    configure::add($set);
   }
 }
 
