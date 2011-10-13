@@ -29,11 +29,11 @@ class model extends prototype
   // table name
   public static $table = NULL;
 
+  // simple scopes
+  public static $scopes = array();
+
   // validation rules
   public static $validate = array();
-
-  // simple relations
-  public static $relations = array();
 
 
 
@@ -54,7 +54,7 @@ class model extends prototype
   // properties getter
   public function __get($key) {
     if ( ! array_key_exists($key, $this->props)) {
-      if ($on = static::fetch_relation($key)) {
+      if ($on = static::has_scope($key)) {
         return new relation($on, $this);
       }
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
@@ -68,6 +68,31 @@ class model extends prototype
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     $this->props[$key] = $value;
+  }
+
+  // scopes shortcut
+  public function __call($method, $arguments) {
+    $what = '';
+
+    if ((substr($method, 0, 4) === 'all_') OR (substr($method, 0, 6) === 'count_')) {
+      @list($what, $method) = explode('_', $method, 2);
+
+      $test   = explode('_by_', $method);
+      $method = array_shift($test);
+
+      $test && $what .= '_by_' . array_shift($test);
+    } elseif (preg_match('/^(first|last|create|build)_o[fn]_(.+?)$/', $method, $match)) {
+      $test   = explode('_by_', $match[2]);
+      $method = array_shift($test);
+      $what   = $match[1];
+
+      $test && $what .= '_by_' . array_shift($test);
+    } elseif (preg_match('/^(.+?)_by_(.+?)$/', $method, $match)) {
+      $method = $match[1];
+      $what   = "find_by_$match[2]";
+    }
+
+    return call_user_func_array(array($this->$method, $what ?: 'all'), $arguments);
   }
 
   /**#@-*/
@@ -187,15 +212,15 @@ class model extends prototype
     raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
   }
 
-  // relationships
-  final protected static function fetch_relation($key) {
-    if ( ! empty(static::$relations[$key])) {
+  // relationship scopes
+  final protected static function has_scope($key) {
+    if ( ! empty(static::$scopes[$key])) {
       return array_merge(array(
         'has_many' => FALSE,
         'from' => $key,
         'fk' => static::pk(),
         'on' => static::table() . '_id',
-      ), static::$relations[$key]);
+      ), static::$scopes[$key]);
     }
   }
 
@@ -237,55 +262,4 @@ class model extends prototype
   /**#@-*/
 }
 
-
-// relations
-class relation
-{
-
-  /**#@+
-   * @ignore
-   */
-
-  // temporary correlation
-  private $related_to =  array();
-
-  public function __construct() {
-    $this->related_to = func_get_args();
-  }
-
-  public function __call($method, $arguments) {
-    if ( ! empty($arguments[0]) && is_array($arguments[0])) {
-      $arguments[0][$this->related_to[0]['on']] = $this->related_to[1]->id();
-    } else {
-      $part = explode('_by_', $method, 2);
-      $oper = strpos($method, '_by_') ? 'and' : 'by';
-
-      $method = "{$part[0]}_by_{$this->related_to[0]['on']}";
-
-      ! empty($test[1]) && $method .= "_{$oper}_$test[1]";
-
-      $arguments []= $this->related_to[1]->id();
-    }
-
-    return call_user_func_array("{$this->related_to[0]['from']}::$method", $arguments);
-  }
-
-  /**#@-*/
-
-}
-
-
-// autoload
-rescue(function ($class) {
-  /**
-    * @ignore
-    */
-  $model_file = CWD.DS.'app'.DS.'models'.DS.$class.EXT;
-  $driver_file = __DIR__.DS.'drivers'.DS.$class.EXT;
-
-  is_file($driver_file) && require $driver_file;
-  is_file($model_file) && require $model_file;
-  /**#@-*/
-});
-
-/* EOF: ./stack/library/app/base/model.php */
+/* EOF: ./stack/library/app/base/model/system.php */
