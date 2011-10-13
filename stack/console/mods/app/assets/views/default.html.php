@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <!--[if lt IE 7 ]> <html class="ie ie6 no-js" lang="en"> <![endif]-->
 <!--[if IE 7 ]>    <html class="ie ie7 no-js" lang="en"> <![endif]-->
@@ -11,9 +11,9 @@
 
     <title><?php echo $title; ?></title>
 
-    <link rel="shortcut icon" href="<?php echo ROOT; ?>img/favicon.ico">
-    <script src="<?php echo ROOT; ?>js/modernizr-1.7.min.js"></script>
-    <link rel="stylesheet" href="<?php echo ROOT; ?>css/all.css">
+    <?php echo assets::tag_for('modernizr-1.7.min.js'); ?>
+    <?php echo assets::favicon(); ?>
+    <?php echo assets::before(); ?>
     <?php echo $head; ?>
 
   </head>
@@ -21,8 +21,8 @@
 <?php echo $body; ?>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write("<script src='<?php echo ROOT; ?>js/jquery-1.5.1.min.js'>\x3C/script>")</script>
-    <script src="<?php echo ROOT; ?>js/all.js"></script>
+    <script>window.jQuery || document.write("<script src='<?php echo assets::url_for('jquery-1.5.1.min.js'); ?>'>\x3C/script>")</script>
+    <?php echo assets::after(); ?>
 
 <!--
     <script>

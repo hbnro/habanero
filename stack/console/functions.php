@@ -59,13 +59,13 @@ function remove_file($path) {
 }
 
 function create_dir($path) {
-  status('create', $path);
+  status('create', "$path/");
   mkpath($path);
 }
 
 function copy_dir($to, $from) {
-  status('copy', rtrim($to, DS).DS.basename($from));
-  cpfiles($from, $to, '*', TRUE);
+  status('copy', basename($from) . '/');
+  cpfiles($from, $to.DS.basename($from), '*', TRUE);
 }
 
 function action($format, $text, $what) {

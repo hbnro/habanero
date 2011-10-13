@@ -22,6 +22,7 @@ class assets extends prototype
   // defaults
   private static $defs = array(
     'path' => APP_PATH,
+    'root' => ROOT,
   );
 
   // compile filters
@@ -43,6 +44,40 @@ class assets extends prototype
       static::$defs = array_merge(static::$defs, $key);
     } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
+    }
+  }
+
+
+  /**
+   * @return void
+   */
+  final public static function url_for($path, $prefix = '', $host = FALSE) {
+    return path_to(static::$defs['path'].($prefix ? DS.$prefix : '').DS.$path, $host);
+  }
+
+
+  /**
+   * @return void
+   */
+  final public static function tag_for($path) {
+    switch (ext($path)) {
+      case 'css';
+        return tag('link', array('rel' => 'stylesheet', 'href' => static::url_for($path, 'css')));
+      break;
+      case 'js';
+        return tag('script', array('src' => static::url_for($path, 'js')));
+      break;
+      case 'jpeg';
+      case 'jpg';
+      case 'png';
+      case 'gif';
+      case 'ico';
+        return tag('img', array(
+          'src' => static::url_for($path, 'img'),
+          'alt' => $path,
+        ));
+      default;
+      break;
     }
   }
 
@@ -83,7 +118,7 @@ class assets extends prototype
    * @return string
    */
   final public static function favicon($path = '') {
-    return tag('link', array('rel' => pre_url($path ?: './favicon.ico')));
+    return tag('link', array('rel' => 'shortcut icon', 'href' => static::image($path ?: 'favicon.ico')));
   }
 
 
@@ -91,7 +126,7 @@ class assets extends prototype
    * @return string
    */
   final public static function image($path) {
-    return tag('img', array('alt' => $path));
+    return static::url_for($path, 'img');
   }
 
 

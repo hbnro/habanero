@@ -139,7 +139,9 @@ class app_generator extends prototype
                 success(ln('app.action_route_building', array('name' => $name, 'controller' => $parent)));
 
                 $route_file = CWD.DS.'app'.DS.'routes'.EXT;
-                write($route_file, preg_replace('/;[^;]*?$/', ";\nget('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0", read($route_file)));
+                $method     = cli::flag('method') ?: 'get';
+                $repl       = ";\n  %-6s('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
+                write($route_file, preg_replace('/;[^;]*?$/', sprintf($repl, $method), read($route_file)));
 
 
                 if (cli::flag('view')) {

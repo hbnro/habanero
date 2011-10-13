@@ -87,21 +87,19 @@ You can write simple applications using code like this:
 
     });
 
-Within bundled `app/mvc` everything is organized into conventional paths:
+Within bundled `app/base` everything is organized into conventional paths:
 
     /app
-      /assets
-        /javascripts
-          /lib
-        /stylesheets
       /controllers
       /helpers
       /models
       /views
+        /assets
+          /css
+          /js
+            /lib
         /errors
         /layouts
-        /scripts
-          /home
         /styles
     /config
       /environments

@@ -144,7 +144,7 @@ bootstrap::bind(function ($app) {
       return @unlink(TMP.DS."sess_$id");
     }, function ($max) {
       foreach (dir2arr(TMP, "sess_*") as $one) {
-        if ((filemtime(TMP.DS.$one) + $max) < time()) {
+        if ((@filemtime(TMP.DS.$one) + $max) < time()) {
           unlink(TMP.DS.$one);
         }
       }
