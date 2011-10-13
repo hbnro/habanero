@@ -29,11 +29,11 @@ class model extends prototype
   // table name
   public static $table = NULL;
 
-  // simple scopes
-  public static $scopes = array();
-
   // validation rules
   public static $validate = array();
+
+  // scoped relationships
+  public static $related_to = array();
 
 
 
@@ -214,13 +214,12 @@ class model extends prototype
 
   // relationship scopes
   final protected static function has_scope($key) {
-    if ( ! empty(static::$scopes[$key])) {
+    if ( ! empty(static::$related_to[$key])) {
       return array_merge(array(
-        'has_many' => FALSE,
         'from' => $key,
         'fk' => static::pk(),
         'on' => static::table() . '_id',
-      ), static::$scopes[$key]);
+      ), static::$related_to[$key]);
     }
   }
 
