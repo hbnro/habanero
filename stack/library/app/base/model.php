@@ -54,6 +54,9 @@ class model extends prototype
   // properties getter
   public function __get($key) {
     if ( ! array_key_exists($key, $this->props)) {
+      if ($on = static::fetch_relation($key)) {
+        return new relation($on, $this);
+      }
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     return $this->props[$key];
@@ -65,58 +68,6 @@ class model extends prototype
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     $this->props[$key] = $value;
-  }
-
-  // relationships caller
-  public function __call($method, array $arguments = array()) {
-    $what  = 'all';
-    $where = array();
-
-    if (substr($method, 0, 6) === 'count_') {
-      $method = substr($method, 6);
-      $what   = 'count';
-    }
-    elseif (preg_match('/^(first|last)_of_(\w+)$/', $method, $match)) {
-      $method = $match[2];
-      $what   = $match[1];
-    }
-    elseif (preg_match('/^(create|build)_on_(.+?)$/', $method, $match)) {
-      @list($method, $where) = explode('_from_', $match[2], 2);
-
-      if ($test = static::fetch_relation($method)) {
-        $where = array_merge(static::merge($where, $arguments), array(
-          $test['on'] => $this->{$test['fk']},
-        ));
-
-        return $test['from']::$match[1]($where);
-      }
-      raise(ln('mvc.undefined_relationship', array('name' => $match[1], 'class' => get_called_class())));
-    }
-
-
-    if (strpos($method, '_by_')) {
-      $params = explode('_by_', $method, 2);
-
-      $params && $method = $params[0];
-
-      $params = array_slice($params, 1);
-      $where  = static::merge($params[0], $arguments);
-    }
-
-
-    if ($test = static::fetch_relation($method)) {
-      $params = (array) array_shift($arguments);
-      $params = array_merge(array(
-        'where' => array_merge(array(
-          $test['on'] => $this->props[$test['fk']],
-        ), $where),
-      ), $params);
-
-      $method = $what === 'count' ? $what : (is_true($test['has_many']) ? $what : 'first');
-
-      return $test['from']::$method($params);
-    }
-    raise(ln('mvc.undefined_relationship', array('name' => $method, 'class' => get_called_class())));
   }
 
   /**#@-*/
@@ -231,7 +182,7 @@ class model extends prototype
 
       return call_user_func_array(get_called_class() . '::find', $arguments);
     }
-    elseif (preg_match('/^(build|create)_from_(.+)$/', $method, $match)) {
+    elseif (preg_match('/^(build|create)_by_(.+)$/', $method, $match)) {
       return static::$match[1](static::merge($match[2], $arguments));
     }
 
@@ -288,6 +239,44 @@ class model extends prototype
   /**#@-*/
 }
 
+
+// relations
+class relation
+{
+
+  /**#@+
+   * @ignore
+   */
+
+  // temporary correlation
+  private $related_to =  array();
+
+  public function __construct() {
+    $this->related_to = func_get_args();
+  }
+
+  public function __call($method, $arguments) {
+    if ( ! empty($arguments[0]) && is_array($arguments[0])) {
+      $arguments[0][$this->related_to[0]['on']] = $this->related_to[1]->id();
+    }
+    else
+    {
+      $part = explode('_by_', $method, 2);
+      $oper = strpos($method, '_by_') ? 'and' : 'by';
+
+      $method = "{$part[0]}_by_{$this->related_to[0]['on']}";
+
+      ! empty($test[1]) && $method .= "_{$oper}_$test[1]";
+
+      $arguments []= $this->related_to[1]->id();
+    }
+
+    return call_user_func_array("{$this->related_to[0]['from']}::$method", $arguments);
+  }
+
+  /**#@-*/
+
+}
 
 
 // autoload
