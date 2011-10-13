@@ -4,8 +4,7 @@
  * SQLite cache adapter
  */
 
-if ( ! class_exists('SQLite3'))
-{
+if ( ! class_exists('SQLite3')) {
   raise(ln('extension_missing', array('name' => 'SQLite3')));
 }
 
@@ -16,15 +15,12 @@ define('CACHE_DRIVER', 'SQLite3');
 /**#@-*/
 
 
-cache::implement('link', function()
-{
+cache::implement('link', function () {
   static $object = NULL;
   
   
-  if (is_null($object))
-  {
-    if ( ! is_file($db_file = TMP.DS.'--cache-db'))
-    {
+  if (is_null($object)) {
+    if ( ! is_file($db_file = TMP.DS.'--cache-db')) {
       touch($db_file);
       
       $tmp = new SQLite3($db_file); 
@@ -53,30 +49,25 @@ cache::implement('link', function()
   return $object;
 });
 
-cache::implement('free_all', function()
-{
+cache::implement('free_all', function () {
   cache::link()->exec('DELETE FROM "data"');
 });
 
-cache::implement('fetch_item', function($key)
-{
+cache::implement('fetch_item', function ($key) {
   $sql  = 'SELECT value FROM "data"';
   $sql .= "\nWHERE \"key\" = PHP('md5', '$key')";
   
-  if ($tmp = cache::link()->query($sql))
-  {
+  if ($tmp = cache::link()->query($sql)) {
     $test = @array_shift($tmp->fetchArray(SQLITE3_NUM));
     
-    if (is_serialized($test))
-    {
+    if (is_serialized($test)) {
       return unserialize($test);
     }
     cache::delete_item($key);
   }
 });
 
-cache::implement('store_item', function($key, $val, $max)
-{
+cache::implement('store_item', function ($key, $val, $max) {
   $time = time() + $max;
   $val  = str_replace("'", "''", serialize($val));
   
@@ -87,16 +78,14 @@ cache::implement('store_item', function($key, $val, $max)
   return cache::link()->exec($sql);
 });
 
-cache::implement('delete_item', function($key)
-{
+cache::implement('delete_item', function ($key) {
   $sql  = 'DELETE FROM "data"';
   $sql .= "\nWHERE \"key\" = PHP('md5', '$key')";
   
   return cache::link()->exec($sql);
 });
 
-cache::implement('check_item', function($key)
-{
+cache::implement('check_item', function ($key) {
   $sql  = "SELECT COUNT(*) FROM \"data\"";
   $sql .= "\nWHERE \"key\" = PHP('md5', '$key')";
   

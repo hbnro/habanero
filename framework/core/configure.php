@@ -28,10 +28,8 @@ class configure extends prototype
    * @param  mixed  Value
    * @return void
    */
-  final public static function set($key, $value = TRUE)
-  {
-    if ( ! empty(static::$proc[$key]))
-    {
+  final public static function set($key, $value = TRUE) {
+    if ( ! empty(static::$proc[$key])) {
       $value = call_user_func(static::$proc[$key], $value);
     }
     static::$bag[$key] = $value;
@@ -45,8 +43,7 @@ class configure extends prototype
    * @param  mixed  Default value
    * @return mixed
    */
-  final public static function get($key, $or = FALSE)
-  {
+  final public static function get($key, $or = FALSE) {
     return value(static::$bag, $key, $or);
   }
 
@@ -57,17 +54,13 @@ class configure extends prototype
    * @param  mixed Array|Script
    * @return void
    */
-  final public static function add($set)
-  {
-    if (is_assoc($set))
-    {
-      foreach ($set as $key => $value)
-      {
+  final public static function add($set) {
+    if (is_assoc($set)) {
+      foreach ($set as $key => $value) {
         static::set($key, $value);
       }
     }
-    elseif (is_file($set))
-    {
+    elseif (is_file($set)) {
       static::import($set);
     }
   }
@@ -79,10 +72,8 @@ class configure extends prototype
    * @param  string Item
    * @return void
    */
-  final public static function rem($key)
-  {
-    if (isset(static::$bag[$key]))
-    {
+  final public static function rem($key) {
+    if (isset(static::$bag[$key])) {
       unset(static::$bag[$key]);
     }
   }
@@ -94,15 +85,12 @@ class configure extends prototype
    * @param  string Path
    * @return void
    */
-  final public static function import($set)
-  {
+  final public static function import($set) {
     $config = array();
     $test   = include $set;
 
-    if (is_array($config))
-    {
-      if (is_array($test))
-      {
+    if (is_array($config)) {
+      if (is_array($test)) {
         $config = array_merge($config, $test);
       }
       static::add(array_merge(static::$bag, $config));
@@ -117,8 +105,7 @@ class configure extends prototype
    * @param  mixed  Function callback
    * @return void
    */
-  final public static function filter($key, Closure $lambda)
-  {
+  final public static function filter($key, Closure $lambda) {
     static::$proc[$key] = $lambda;
   }
 

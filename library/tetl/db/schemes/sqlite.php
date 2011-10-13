@@ -4,8 +4,7 @@
  * SQLite3 database scheme
  */
 
-sql::implement('type', function()
-{
+sql::implement('type', function () {
   static $set = array(
             'CHARACTER' => 'string',
             'NVARCHAR' => 'string',
@@ -28,8 +27,7 @@ sql::implement('type', function()
   return $set;
 });
 
-sql::implement('raw', function()
-{
+sql::implement('raw', function () {
   static $set = array(
             'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
             'string' => array('type' => 'VARCHAR', 'length' => 255),
@@ -40,43 +38,36 @@ sql::implement('raw', function()
   return $set;
 });
 
-sql::implement('begin', function()
-{
+sql::implement('begin', function () {
   return sql::execute('BEGIN TRANSACTION');
 });
 
-sql::implement('commit', function()
-{
+sql::implement('commit', function () {
   return sql::execute('COMMIT TRANSACTION');
 });
 
-sql::implement('rollback', function()
-{
+sql::implement('rollback', function () {
   return sql::execute('ROLLBACK TRANSACTION');
 });
 
-sql::implement('tables', function()
-{
+sql::implement('tables', function () {
   $out = array();
   $sql = "SELECT name FROM sqlite_master WHERE type = 'table'";
   $old = sql::execute($sql);
 
-  while ($row = sql::fetch_assoc($old))
-  {
+  while ($row = sql::fetch_assoc($old)) {
     $out []= $row['name'];
   }
 
   return $out;
 });
 
-sql::implement('columns', function($test)
-{
+sql::implement('columns', function ($test) {
   $out = array();
   $sql = "PRAGMA table_info('$test')";
   $old = sql::execute($sql);
 
-  while ($row = sql::fetch_assoc($old))
-  {
+  while ($row = sql::fetch_assoc($old)) {
     preg_match('/^(\w+)(?:\((\d+)\))?.*?$/', strtoupper($row['type']), $match);
 
     $out[$row['name']] = array(
@@ -90,16 +81,13 @@ sql::implement('columns', function($test)
   return $out;
 });
 
-sql::implement('indexes', function($test)
-{
+sql::implement('indexes', function ($test) {
   $res = sql::execute("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='$test'");
 
   $out = array();
 
-  while ($one = sql::fetch_object($res))
-  {
-    if (preg_match('/\((.+?)\)/', $one->sql, $match))
-    {
+  while ($one = sql::fetch_object($res)) {
+    if (preg_match('/\((.+?)\)/', $one->sql, $match)) {
       $col = explode(',', preg_replace('/["\s]/', '', $match[1]));
       $out[$one->name] = array(
         'unique' => strpos($one->sql, 'UNIQUE ') !== FALSE,
@@ -111,28 +99,23 @@ sql::implement('indexes', function($test)
   return $out;
 });
 
-sql::implement('limit', function($from, $to)
-{
+sql::implement('limit', function ($from, $to) {
   return "\nLIMIT $from" . ($to ? ",$to\n" : "\n");
 });
 
-sql::implement('rename_table', function($from, $to)
-{
+sql::implement('rename_table', function ($from, $to) {
   return sql::execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
 });
 
-sql::implement('add_column', function($to, $name, $type)
-{
+sql::implement('add_column', function ($to, $name, $type) {
   return sql::execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, db::field($type)));
 });
 
-sql::implement('remove_column', function($from, $name)
-{
+sql::implement('remove_column', function ($from, $name) {
   return sql::change_column($from, $name, NULL);
 });
 
-sql::implement('rename_column', function($from, $name, $to)
-{
+sql::implement('rename_column', function ($from, $name, $to) {
   $set = sql::columns($from);
   $old = $set[$name];
 
@@ -147,16 +130,12 @@ sql::implement('rename_column', function($from, $name, $to)
   return sql::remove_column($from, $name);
 });
 
-sql::implement('change_column', function($from, $name, $to)
-{
+sql::implement('change_column', function ($from, $name, $to) {
   $new = array();
 
-  foreach (sql::columns($from) as $key => $val)
-  {
-    if ($key === $name)
-    {
-      if (is_array($to))
-      {
+  foreach (sql::columns($from) as $key => $val) {
+    if ($key === $name) {
+      if (is_array($to)) {
         $new[$key] = $to;
       }
       continue;
@@ -179,18 +158,15 @@ sql::implement('change_column', function($from, $name, $to)
   return sql::commit();
 });
 
-sql::implement('add_index', function($to, $name, $column, $unique = FALSE)
-{
+sql::implement('add_index', function ($to, $name, $column, $unique = FALSE) {
   return sql::execute(sprintf('CREATE%sINDEX IF NOT EXISTS "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
 });
 
-sql::implement('remove_index', function($name)
-{
+sql::implement('remove_index', function ($name) {
   return sql::execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
 });
 
-sql::implement('quotes', function($test)
-{
+sql::implement('quotes', function ($test) {
   return '"' . $test . '"';
 });
 

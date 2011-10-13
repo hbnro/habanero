@@ -12,15 +12,12 @@
  * @staticvar string Charset
  * @return    string
  */
-function captcha_id($test = 6, $key = 0)
-{
+function captcha_id($test = 6, $key = 0) {
   static $chars = 'jklmn-JKLMN#rstuvwx@RSTUVWX+56789=ABCDEFG';
   
   
-  if ( ! is_num($test))
-  {
-    if ( ! is_file($test))
-    {
+  if ( ! is_num($test)) {
+    if ( ! is_file($test)) {
       return FALSE;
     }
   
@@ -33,17 +30,14 @@ function captcha_id($test = 6, $key = 0)
     $hash = '';
     $max  = strlen($chars) - 1;
     
-    if ($test > 10)
-    {
+    if ($test > 10) {
       $test = 10;
     }
   
-    while(strlen($hash) < $test)
-    {
+    while(strlen($hash) < $test) {
       $old = substr($chars, mt_rand(0, $max), 1);
       
-      if ( ! is_false(strpos($hash, $old)))
-      {
+      if ( ! is_false(strpos($hash, $old))) {
         continue;
       }
       
@@ -69,15 +63,12 @@ function captcha_id($test = 6, $key = 0)
  * @staticvar mixed   Function callback
  * @return    string
  */
-function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FALSE)
-{
+function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FALSE) {
   static $negative = NULL;
   
   
-  if (is_null($negative))
-  {
-    $negative = function($num)
-    {
+  if (is_null($negative)) {
+    $negative = function ($num) {
       return $num * -1;
     };
   }
@@ -93,8 +84,7 @@ function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FA
   $dark  = array(mt_rand(0, 96), mt_rand(0, 96), mt_rand(0, 96));
   $light = array(mt_rand(127, 240), mt_rand(127, 240), mt_rand(127, 240));
 
-  if (is_true($invert))
-  {
+  if (is_true($invert)) {
     $bgcolor = imagecolorallocatealpha($resource, 0, 0, 0, 0);
     $light   = array_map($negative, $light);
     $dark    = array_map($negative, $dark);
@@ -116,21 +106,17 @@ function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FA
   $factor = floor($width / $length);
   $font   = realpath($font);
 
-  if ( ! is_file($font))
-  {
+  if ( ! is_file($font)) {
     $top = ($width * $height) / 3.3;
     
-    for ($i = 0; $i < $top; $i += 1)
-    {
+    for ($i = 0; $i < $top; $i += 1) {
       imagefilledellipse($resource, mt_rand(0, $width), mt_rand(0, $height), 1, mt_rand(1, 3), $bg);
     }
     
-    for ($i = 0; $i < $length; $i += 1)
-    {
+    for ($i = 0; $i < $length; $i += 1) {
       imagestring($resource, 5, ($factor / 3) + $i * $factor, mt_rand(0, $height - mt_rand(13, 20)), substr($hash, $i, 1), $fg);
       
-      if (mt_rand(0, 75) % 9)
-      {
+      if (mt_rand(0, 75) % 9) {
         $img = imagerotate($resource, is_odd($i) ? - .8 : .7, $bgcolor);
       }
     }
@@ -144,8 +130,7 @@ function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FA
   
     imagettftext($resource, $factor, mt_rand(-4, 5), $x = mt_rand($w / strlen($left), $w * 1.3), mt_rand($h, $h * 1.33), $fg, $font, $left);
     
-    for ($i = 2; $i < $factor; $i += 1)
-    {
+    for ($i = 2; $i < $factor; $i += 1) {
       imagettftext($resource, 16, mt_rand(20, 33), ($i - 1.5) * $factor, $i * 15, $bg, $font, str_shuffle($hash));
     }    
     
@@ -173,14 +158,11 @@ function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FA
  * @param  boolean Strict?
  * @return boolean
  */
-function captcha_valid($test, $key = 0, $strict = FALSE)
-{
-  if ( ! empty($test))
-  {
+function captcha_valid($test, $key = 0, $strict = FALSE) {
+  if ( ! empty($test)) {
     $old = session("--captcha-id$$key");
     
-    if (is_true($strict))
-    {
+    if (is_true($strict)) {
       return ! strcmp($old, $test);
     }
     return strtolower($old) === strtolower($test);

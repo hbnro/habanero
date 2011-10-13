@@ -4,8 +4,7 @@
  * Database initialization
  */
 
-call_user_func(function()
-{
+call_user_func(function () {
   define('ALL', '*');
   define('ASC', 'ASC');
   define('DESC', 'DESC');
@@ -30,15 +29,13 @@ call_user_func(function()
 
   $test = array('scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment');
 
-  if (strrpos($dsn_string, ';'))
-  {
+  if (strrpos($dsn_string, ';')) {
     $set = array();
 
     $old = explode(';', $dsn_string);
     $old = array_map('trim', $old);
 
-    foreach ($old as $one)
-    {
+    foreach ($old as $one) {
       $new = explode('=', $one, 2);
       $key = trim(array_shift($new));
 
@@ -53,18 +50,15 @@ call_user_func(function()
 
   $parts = array();
 
-  foreach ($test as $key)
-  {
+  foreach ($test as $key) {
     $parts[$key] = ! empty($set[$key]) ? $set[$key] : '';
   }
 
   $scheme_file = $driver_file = '';
 
 
-  if (class_exists('PDO') && option('pdo'))
-  {
-    if ( ! in_array($parts['scheme'], pdo_drivers()))
-    {
+  if (class_exists('PDO') && option('pdo')) {
+    if ( ! in_array($parts['scheme'], pdo_drivers())) {
       raise(ln('db.pdo_adapter_missing', array('name' => $parts['scheme'])));
     }
     $driver_file = __DIR__.DS.'drivers'.DS.'pdo'.EXT;
@@ -75,8 +69,7 @@ call_user_func(function()
   }
 
 
-  if ( ! is_file($driver_file))
-  {
+  if ( ! is_file($driver_file)) {
     raise(ln('db.database_driver_missing', array('adapter' => $parts['scheme'])));
   }
 
@@ -84,8 +77,7 @@ call_user_func(function()
   $scheme_name = str_replace('mysqli', 'mysql', $parts['scheme']); // DRY
   $scheme_file = __DIR__.DS.'schemes'.DS.$scheme_name.EXT;
 
-  if ( ! is_file($scheme_file))
-  {
+  if ( ! is_file($scheme_file)) {
     raise(ln('db.database_scheme_missing', array('adapter' => $parts['scheme'])));
   }
 
@@ -109,8 +101,7 @@ call_user_func(function()
   define('DB_SCHEME', $parts['scheme']);
   define('DB_VERSION', sql::version(sql::connect($parts)));
 
-  if (sql::defined('encoding'))
-  {// TODO: sure dude?
+  if (sql::defined('encoding')) {// TODO: sure dude?
     sql::encoding(preg_replace('/\W/', '', CHARSET));
   }
 });

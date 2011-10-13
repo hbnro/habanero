@@ -4,8 +4,7 @@
  * Basic OAuth library
  */
 
-if ( ! function_exists('curl_init'))
-{
+if ( ! function_exists('curl_init')) {
   raise(ln('extension_missing', array('name' => 'cURL')));
 }
 
@@ -27,8 +26,7 @@ define('SHA1', 'sha1');
  * @param  string Auth user token secret
  * @return mixed
  */
-function oauth_init($consumer_key = '', $consumer_secret = '', $token = '', $token_secret = '')
-{
+function oauth_init($consumer_key = '', $consumer_secret = '', $token = '', $token_secret = '') {
   $R = new stdClass;
 
   $R->info = array();
@@ -51,8 +49,7 @@ function oauth_init($consumer_key = '', $consumer_secret = '', $token = '', $tok
  * @param  string SHA1|MD5
  * @return array
  */
-function oauth_parse($request, $url, $vars = array(), $method = GET, $callback = SHA1)
-{// TODO: improve?
+function oauth_parse($request, $url, $vars = array(), $method = GET, $callback = SHA1) {// TODO: improve?
   $data['oauth_version'] = '1.0';
   $data['oauth_timestamp'] = time();
   $data['oauth_signature_method'] = strtoupper("hmac-$callback");
@@ -60,8 +57,7 @@ function oauth_parse($request, $url, $vars = array(), $method = GET, $callback =
   $data['oauth_nonce'] = md5(uniqid(mt_rand(), TRUE));
   $data['oauth_token'] = $request->token;
 
-  foreach ($vars as $key => $val)
-  {
+  foreach ($vars as $key => $val) {
     $vars[$key] = $val;
   }
 
@@ -86,8 +82,7 @@ function oauth_parse($request, $url, $vars = array(), $method = GET, $callback =
  * @param  string Method
  * @return mixed
  */
-function oauth_exec($request, $url, $vars = array(), $method = GET)
-{
+function oauth_exec($request, $url, $vars = array(), $method = GET) {
   // normalize URL
   $parts  = @parse_url($url);
   $scheme = strtolower($parts['scheme']);
@@ -110,8 +105,7 @@ function oauth_exec($request, $url, $vars = array(), $method = GET)
 
 
   // define method
-  switch ($method)
-  {
+  switch ($method) {
     case POST; // TODO: manage @uploads?
       ! empty($query) && curl_setopt($resource, CURLOPT_POSTFIELDS, trim($query, '='));
 
@@ -156,20 +150,17 @@ function oauth_exec($request, $url, $vars = array(), $method = GET)
  * @param  string SHA1|MD5
  * @return string
  */
-function oauth_sign($request, $url, $vars = array(), $method = GET, $callback = SHA1)
-{
+function oauth_sign($request, $url, $vars = array(), $method = GET, $callback = SHA1) {
   $key  = oauth_encode($request->consumer_secret) . '&' . oauth_encode($request->token_secret);
   $old  = oauth_encode(str_replace('+', '%20', http_build_query($vars, NULL, '&')));
   $test = sprintf('%s&%s&%s', $method, oauth_encode($url), $old);
 
-  if (function_exists('hash_hmac'))
-  {
+  if (function_exists('hash_hmac')) {
     $test = hash_hmac($callback, $test, $key, TRUE);
   }
   else
   {//TODO: fallback is still needed?
-    if (strlen($key) > 64)
-    {
+    if (strlen($key) > 64) {
       $key = pack('H*', $callback($key));
     }
 
@@ -190,14 +181,11 @@ function oauth_sign($request, $url, $vars = array(), $method = GET, $callback = 
  * @param  mixed Input string|Array
  * @return mixed
  */
-function oauth_encode($test)
-{
-  if (is_scalar($test))
-  {
+function oauth_encode($test) {
+  if (is_scalar($test)) {
     $test = str_replace('%7E', '~', rawurlencode($test));
   }
-  elseif (is_array($test))
-  {
+  elseif (is_array($test)) {
     $test = array_map(__FUNCTION__, $test);
   }
   return $test;
@@ -212,8 +200,7 @@ function oauth_encode($test)
  * @param  string Token secret
  * @return void
  */
-function oauth_set($request, $token, $secret = NULL)
-{
+function oauth_set($request, $token, $secret = NULL) {
   $request->token = $token;
   $request->token_secret = $secret;
 }

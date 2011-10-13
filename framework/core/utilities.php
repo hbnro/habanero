@@ -19,8 +19,7 @@ define('SLUG_TRIM', 4);
  * @param  mixed  String
  * @return string
  */
-function char($text)
-{
+function char($text) {
   return ! is_num($text) ? substr((string) $text, 0, 1) : chr((int) $text);
 }
 
@@ -34,8 +33,7 @@ function char($text)
  * @staticvar array   Replacements
  * @return    string
  */
-function underscore($text, $ucwords = FALSE, $strict = FALSE)
-{
+function underscore($text, $ucwords = FALSE, $strict = FALSE) {
   static $repl = array(
     '/(^|\W)([A-Z])/e' => '"\\1_".strtolower("\\2");',
     '/[A-Z](?=\w)/' => '_\\0',
@@ -44,8 +42,7 @@ function underscore($text, $ucwords = FALSE, $strict = FALSE)
 
   $text = plain(unents($text));
 
-  if (is_true($ucwords))
-  {
+  if (is_true($ucwords)) {
     $text = ucwords($text);
   }
 
@@ -65,8 +62,7 @@ function underscore($text, $ucwords = FALSE, $strict = FALSE)
  * @param  string  Character separator
  * @return string
  */
-function camelcase($text, $ucfirst = FALSE, $glue = '')
-{
+function camelcase($text, $ucfirst = FALSE, $glue = '') {
   static $repl = array(
             '/[^a-z0-9]|\s+/i' => ' ',
             '/\s([a-z])/ie' => '$glue.ucfirst("\\1");',
@@ -75,8 +71,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '')
 
   $text = preg_replace(array_keys($repl), $repl, underscore($text));
 
-  if (is_true($ucfirst))
-  {
+  if (is_true($ucfirst)) {
     $text = ucfirst($text);
   }
 
@@ -91,8 +86,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '')
  * @staticvar string  Charset
  * @return    string
  */
-function salt($length = 8)
-{
+function salt($length = 8) {
   static $chars = '@ABCD,EFGH.IJKL-MNOP=QRST~UVWX$YZab/cdef*ghij;klmn:opqr_stuv(wxyz)0123!4567|89{}';
 
 
@@ -106,8 +100,7 @@ function salt($length = 8)
   {
     $index = substr($chars, mt_rand(0, 79), 1);
 
-    if ( ! strstr($out, $index))
-    {
+    if ( ! strstr($out, $index)) {
       $out .= $index;
     }
 
@@ -127,8 +120,7 @@ function salt($length = 8)
  * @param  mixed   SLUG_STRICT|SLUG_LOWER|SLUG_TRIM
  * @return string
  */
-function slug($text, $glue = '-', $options = NULL)
-{
+function slug($text, $glue = '-', $options = NULL) {
   $strict = ((int) $options & SLUG_STRICT) == 0 ? FALSE : TRUE;
   $lower = ((int) $options & SLUG_LOWER) == 0 ? FALSE : TRUE;
   $trim = ((int) $options & SLUG_TRIM) == 0 ? FALSE : TRUE;
@@ -138,8 +130,7 @@ function slug($text, $glue = '-', $options = NULL)
   $text = preg_replace("/$expr/", $glue, plain(unents($text)));
   $text = $lower ? strtolower($text) : $text;
 
-  if ($trim)
-  {
+  if ($trim) {
     $char = preg_quote($glue, '/');
     $text = preg_replace("/$char+/", $glue, $text);
     $text = trim($text, $glue);
@@ -157,28 +148,23 @@ function slug($text, $glue = '-', $options = NULL)
  * @staticvar array   Entities set
  * @return    string
  */
-function plain($text, $special = FALSE)
-{
+function plain($text, $special = FALSE) {
   static $set = NULL,
          $rev = NULL;
 
 
-  if (is_null($set))
-  {
+  if (is_null($set)) {
     $old  = $rev = array();
     $html = get_html_translation_table(HTML_ENTITIES);
 
-    foreach ($html as $char => $ord)
-    {
-      if (ord($char) >= 192)
-      {
+    foreach ($html as $char => $ord) {
+      if (ord($char) >= 192) {
         $char = utf8_encode($char);
         $key = substr($ord, 1, 1);
 
         $set[$char] = $key;
 
-        if ( ! isset($old[$key]))
-        {
+        if ( ! isset($old[$key])) {
           $old[$key] = (array) $key;
         }
 
@@ -187,8 +173,7 @@ function plain($text, $special = FALSE)
       }
     }
 
-    foreach ($old as $key => $val)
-    {
+    foreach ($old as $key => $val) {
       $rev[$key] = '(?:' . join('|', $val) . ')';
     }
   }
@@ -208,8 +193,7 @@ function plain($text, $special = FALSE)
  * @param  boolean Allow comments?
  * @return string
  */
-function strips($text, $comments = FALSE)
-{
+function strips($text, $comments = FALSE) {
   $out = preg_replace('/[<\{\[]\/*[^<\{\[!\]\}>]*[\]\}>]/Us', '', $text);
   $out = is_false($comments) ? strip_tags($out) : $out;
 
@@ -225,8 +209,7 @@ function strips($text, $comments = FALSE)
  * @staticvar array   Hex replacements
  * @return    string
  */
-function ents($text, $escape = FALSE)
-{
+function ents($text, $escape = FALSE) {
   static $expr = array(
             '/(&#?[0-9a-z]{2,})([\x00-\x20])*;?/i' => '\\1;\\2',
             '/&#x([0-9a-f]+);?/ei' => 'chr(hexdec("\\1"));',
@@ -242,8 +225,7 @@ function ents($text, $escape = FALSE)
   $text = preg_replace('/&(#?[a-z0-9]+);/i', "{$hash}\\1;", $text);
   $text = str_replace(array('&', '\\', $hash), array('&amp;', '&#92;', '&'), $text);
 
-  if (is_true($escape))
-  {
+  if (is_true($escape)) {
     $text = strtr($text, array(
         '<' => '&lt;',
         '>' => '&gt;',
@@ -267,8 +249,7 @@ function ents($text, $escape = FALSE)
  * @staticvar array  Replacements
  * @return    string
  */
-function unents($text)
-{
+function unents($text) {
   static $set = NULL,
          $expr = array(
             '/&amp;([a-z]+|(#\d+)|(#x[\da-f]+));/i' => '&\\1;',
@@ -276,8 +257,7 @@ function unents($text)
             '/&#([0-9]+);/e' => 'chr("\\1");',
           );
 
-  if (is_null($set))
-  {
+  if (is_null($set)) {
     $set = get_html_translation_table(HTML_ENTITIES);
     $set = array_flip($set);
 
@@ -299,27 +279,23 @@ function unents($text)
  * @param   mixed   Inner text value|Function callback
  * @return  string
  */
-function tag($name, $args = array(), $text = '')
-{
+function tag($name, $args = array(), $text = '') {
   static $set = NULL;
 
 
-  if (is_null($set))
-  {
+  if (is_null($set)) {
     $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
     $set  = $test['empty'];
   }
 
   $attrs = attrs($args);
 
-  if (in_array($name, $set))
-  {
+  if (in_array($name, $set)) {
     return "<$name$attrs>";
   }
 
 
-  if (is_closure($text))
-  {
+  if (is_closure($text)) {
     ob_start() && $text();
 
     $text = ob_get_clean();
@@ -338,13 +314,11 @@ function tag($name, $args = array(), $text = '')
  * @staticvar string  Selector regex
  * @return    string
  */
-function attrs($args, $html = FALSE)
-{
+function attrs($args, $html = FALSE) {
   static $global = NULL,
          $regex = '/(?:#([a-z_][\da-z_-]*))?(?:[\.,]?([\s\d\.,a-z_-]+))?(?:@([^"]+))?/i';
 
-  if (is_null($global))
-  {
+  if (is_null($global)) {
     $test   = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
     $global = array_merge($test['global'], $test['events']);
 
@@ -353,27 +327,22 @@ function attrs($args, $html = FALSE)
   }
 
 
-  if (is_string($args))
-  {
+  if (is_string($args)) {
     preg_match_all($regex, $args, $match);
 
 
     $args = array();
 
-    if ( ! empty($match[1][0]))
-    {
+    if ( ! empty($match[1][0])) {
       $args['id'] = $match[1][0];
     }
 
-    if ( ! empty($match[2][0]))
-    {
+    if ( ! empty($match[2][0])) {
       $args['class'] = strtr($match[2][0], ',.', ' ');
     }
 
-    if ( ! empty($match[3][0]))
-    {
-      foreach (explode('@', $match[3][0]) as $one)
-      {
+    if ( ! empty($match[3][0])) {
+      foreach (explode('@', $match[3][0]) as $one) {
         $test = explode('=', $one);
 
         $key  = ! empty($test[0]) ? $test[0] : $one;
@@ -387,31 +356,24 @@ function attrs($args, $html = FALSE)
 
   $out  = array('');
 
-  foreach ((array) $args as $key => $value)
-  {
+  foreach ((array) $args as $key => $value) {
     $key = preg_replace('/\W/', '-', trim($key));
 
-    if (is_true($html) && ! in_array($key, $global))
-    {
+    if (is_true($html) && ! in_array($key, $global)) {
       continue;
     }
 
 
-    if (is_bool($value))
-    {
-      if (is_true($value))
-      {
+    if (is_bool($value)) {
+      if (is_true($value)) {
         $out []= $key;
       }
     }
-    elseif (is_iterable($value))
-    {
-      if ($key === 'style')
-      {//FIX
+    elseif (is_iterable($value)) {
+      if ($key === 'style') {//FIX
         $props = array();
 
-        foreach ($value as $key => $val)
-        {//TODO: deep chained props?
+        foreach ($value as $key => $val) {//TODO: deep chained props?
           $props []= $key . ':' . trim($val);
         }
 
@@ -419,14 +381,12 @@ function attrs($args, $html = FALSE)
       }
       else
       {
-        foreach ((array) $value as $index => $test)
-        {
+        foreach ((array) $value as $index => $test) {
           $out []= sprintf('%s-%s="%s"', $key, $index, trim($test));
         }
       }
     }
-    elseif ( ! is_num($key) && is_scalar($value))
-    {
+    elseif ( ! is_num($key) && is_scalar($value)) {
       $out []= sprintf('%s="%s"', $key, ents($value, TRUE));
     }
   }
@@ -444,8 +404,7 @@ function attrs($args, $html = FALSE)
  * @staticvar string Match regex
  * @return    array
  */
-function args($text, $prefix = '')
-{
+function args($text, $prefix = '') {
   static $regex = '/(?:^|\s+)(?:([\w:-]+)\s*=\s*([\'"`]?)(.+?)\\2|[\w:-]+)(?=\s+|$)/';
 
 
@@ -453,10 +412,8 @@ function args($text, $prefix = '')
 
   preg_match_all($regex, $text, $match);
 
-  foreach ($match[1] as $i => $key)
-  {
-    if (empty($key))
-    {
+  foreach ($match[1] as $i => $key) {
+    if (empty($key)) {
       $out []= trim($match[0][$i]);
       continue;
     }

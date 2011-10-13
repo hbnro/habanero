@@ -23,17 +23,14 @@ class db_generator extends prototype
             'time',
           );
 
-  final private static function check_table($table)
-  {
+  final private static function check_table($table) {
     info(ln('db.verifying_structure'));
 
 
-    if ( ! $table)
-    {
+    if ( ! $table) {
       error(ln('db.table_name_missing'));
     }
-    elseif ( ! in_array($table, db::tables()))
-    {
+    elseif ( ! in_array($table, db::tables())) {
       error(ln('db.table_not_exists', array('name' => $table)));
     }
     else
@@ -42,8 +39,7 @@ class db_generator extends prototype
     }
   }
 
-  final private static function schema()
-  {
+  final private static function schema() {
     info(ln('db.verifying_schema'));
 
     $out = array();
@@ -52,12 +48,10 @@ class db_generator extends prototype
     $path = str_replace(CWD.DS, '', $schema_file);
     success(ln('db.updating_schema', array('path' => $path)));
 
-    foreach (db::tables() as $one)
-    {
+    foreach (db::tables() as $one) {
       $out []= sprintf("create_table('$one', array(");
 
-      foreach (db::columns($one) as $key => $val)
-      {
+      foreach (db::columns($one) as $key => $val) {
         $def = array("'{$val['type']}'");
 
         $val['length'] && $def []= $val['length'];
@@ -70,8 +64,7 @@ class db_generator extends prototype
 
     $out []= '';
 
-    foreach (db::indexes($one) as $key => $val)
-    {
+    foreach (db::indexes($one) as $key => $val) {
       $def  = array("'name' => '$key'");
       $cols = "'" . join("', '", $val['column']) . "'";
 
@@ -83,8 +76,7 @@ class db_generator extends prototype
     write($schema_file, sprintf("<?php\n/* %s */\n%s\n", date('Y-m-d H:i:s'), join("\n", $out)));
   }
 
-  final private static function migrate($callback)
-  {
+  final private static function migrate($callback) {
     $args = array_slice(func_get_args(), 1);
     $name = cli::flag('name', $callback);
     $time = time();
@@ -94,10 +86,8 @@ class db_generator extends prototype
     $migration_file = $migration_path.DS.$migration_name.EXT;
 
 
-    foreach ($args as $i => $one)
-    {
-      if (is_array($one))
-      {
+    foreach ($args as $i => $one) {
+      if (is_array($one)) {
         $text = var_export($one, TRUE);
 
         $text = preg_replace('/ \d+\s+=>/', '', $text);
@@ -119,8 +109,7 @@ class db_generator extends prototype
 
     $code = sprintf("$callback(%s);\n", join(', ', $args));
 
-    if ( ! is_file($migration_file))
-    {
+    if ( ! is_file($migration_file)) {
       $date = date('Y-m-d H:i:s', $time);
 
       write($migration_file, "<?php\n/* $date */\n$code");
@@ -135,23 +124,20 @@ class db_generator extends prototype
     static::schema();
   }
 
-  final public static function st()
-  {
+  final public static function st() {
     info(ln('db.verifying_database'));
     bold(DB_DSN);
 
     $test = db::tables();
 
-    if (empty($test))
-    {
+    if (empty($test)) {
       error(ln('db.without_tables'));
     }
     else
     {
       success(ln('db.tables'));
 
-      foreach ($test as $one)
-      {
+      foreach ($test as $one) {
         $count = (int) db::result(db::select($one, 'COUNT(*)'));
 
         $keys  = array_keys(db::columns($one));
@@ -166,10 +152,8 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function make()
-  {
-    if (cli::flag('schema'))
-    {
+  final public static function make() {
+    if (cli::flag('schema')) {
       info(ln('db.verifying_schema'));
 
       $schema_file = CWD.DS.'db'.DS.'schema'.EXT;
@@ -181,29 +165,24 @@ class db_generator extends prototype
     }
     else
     {
-      if ( ! cli::flag('seed'))
-      {
+      if ( ! cli::flag('seed')) {
         info(ln('db.verifying_database'));
         bold(DB_DSN);
 
-        if (cli::flag('drop-all'))
-        {
-          foreach (db::tables() as $one)
-          {
+        if (cli::flag('drop-all')) {
+          foreach (db::tables() as $one) {
             notice(ln('db.table_dropping', array('name' => $one)));
             drop_table($one);
           }
         }
 
 
-        if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT))
-        {
+        if ($test = findfile(CWD.DS.'db'.DS.'migrate', '*'.EXT)) {
           sort($test);
 
           success(ln('db.migrating_database'));
 
-          foreach ($test as $migration_file)
-          {
+          foreach ($test as $migration_file) {
             $path = str_replace(CWD.DS, '', $migration_file);
             notice(ln('db.run_migration', array('path' => $path)));
             require $migration_file;
@@ -221,8 +200,7 @@ class db_generator extends prototype
 
       $seed_file = CWD.DS.'db'.DS.'seeds'.EXT;
 
-      if ( ! is_file($seed_file))
-      {
+      if ( ! is_file($seed_file)) {
         error(ln('db.without_seed'));
       }
       else
@@ -236,19 +214,15 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function show($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function show($table = '') {
+    if (static::check_table($table)) {
       success(ln('db.table_show_columns', array('name' => $table)));
 
       $set =
       $heads = array();
 
-      foreach (db::columns($table) as $name => $one)
-      {
-        if (empty($heads))
-        {
+      foreach (db::columns($table) as $name => $one) {
+        if (empty($heads)) {
           $heads = array_keys($one);
         }
 
@@ -265,16 +239,14 @@ class db_generator extends prototype
       $idx = array();
       $all = db::indexes($table);
 
-      if ( ! $all)
-      {
+      if ( ! $all) {
         error(ln('db.without_indexes', array('name' => $table)));
       }
       else
       {
         $idx = array();
 
-        foreach ($all as $name => $one)
-        {
+        foreach ($all as $name => $one) {
           $idx []= array($name, join(', ', $one['column']), $one['unique']);
         }
         cli::table($idx, array('name', 'columns', 'unique'));
@@ -284,10 +256,8 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function drop($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function drop($table = '') {
+    if (static::check_table($table)) {
       success(ln('db.table_dropping', array('name' => $table)));
       static::migrate('drop_table', $table);
     }
@@ -295,16 +265,13 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function rename($table = '', $to = '')
-  {
+  final public static function rename($table = '', $to = '') {
     static::check_table($table);
 
-    if ( ! $to)
-    {
+    if ( ! $to) {
       error(ln('db.table_name_missing'));
     }
-    elseif (in_array($to, db::tables()))
-    {
+    elseif (in_array($to, db::tables())) {
       error(ln('db.table_already_exists', array('name' => $to)));
     }
     else
@@ -316,24 +283,20 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function create($table = '')
-  {
+  final public static function create($table = '') {
     info(ln('db.verifying_structure'));
 
     $args = array_slice(func_get_args(), 1);
 
-    if ( ! $table)
-    {
+    if ( ! $table) {
       error(ln('db.table_name_missing'));
     }
-    elseif (in_array($table, db::tables()))
-    {
+    elseif (in_array($table, db::tables())) {
       error(ln('db.table_already_exists', array('name' => $table)));
     }
     else
     {
-      if ( ! $args)
-      {
+      if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
       }
       else
@@ -342,12 +305,10 @@ class db_generator extends prototype
         $fail   = FALSE;
         $fields = array();
 
-        foreach ($args as $one)
-        {
+        foreach ($args as $one) {
           @list($name, $type, $length) = explode(':', $one);
 
-          if ( ! in_array($type, static::$types))
-          {
+          if ( ! in_array($type, static::$types)) {
             error(ln('db.unknown_field', array('type' => $type, 'name' => $name)));
 
             $fail = TRUE;
@@ -365,8 +326,7 @@ class db_generator extends prototype
         }
 
 
-        if (cli::flag('timestamps'))
-        {
+        if (cli::flag('timestamps')) {
           $fields['created_at']  =
           $fields['modified_at'] = array('timestamp');
         }
@@ -374,8 +334,7 @@ class db_generator extends prototype
         ! $pk && $fields['id'] = array('primary_key');
 
 
-        if ($fail)
-        {
+        if ($fail) {
           error(ln('db.table_fields_missing', array('name' => $table)));
         }
         else
@@ -383,12 +342,10 @@ class db_generator extends prototype
           success(ln('db.table_building', array('name' => $table)));
           static::migrate('create_table', $table, $fields, array('force' => TRUE));
 
-          if (cli::flag('model'))
-          {
+          if (cli::flag('model')) {
             $out_file = mkpath(option('mvc.models_path')).DS.$table.EXT;
 
-            if ( ! is_file($out_file))
-            {
+            if ( ! is_file($out_file)) {
               success(ln('db.model_class_building', array('name' => $table)));
 
               $code   = "<?php\n\nclass $table extends dbmodel"
@@ -404,33 +361,27 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function add_column($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function add_column($table = '') {
+    if (static::check_table($table)) {
       $fields = array_keys(db::columns($table));
       $args   = array_slice(func_get_args(), 1);
 
-      if ( ! $args)
-      {
+      if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
       }
       else
       {
-        foreach ($args as $one)
-        {
+        foreach ($args as $one) {
           @list($name, $type, $length) = explode(':', $one);
 
           $col = array($type);
 
           $length && $col []= $length;
 
-          if ( ! in_array($type, static::$types))
-          {
+          if ( ! in_array($type, static::$types)) {
             error(ln('db.unknown_field', array('type' => $type, 'name' => $name)));
           }
-          elseif (in_array($name, $fields))
-          {
+          elseif (in_array($name, $fields)) {
             error(ln('db.column_already_exists', array('name' => $name)));
           }
           else
@@ -445,23 +396,18 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function remove_column($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function remove_column($table = '') {
+    if (static::check_table($table)) {
       $fields = array_keys(db::columns($table));
       $args   = array_slice(func_get_args(), 1);
 
-      if ( ! $args)
-      {
+      if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
       }
       else
       {
-        foreach ($args as $one)
-        {
-          if ( ! in_array($one, $fields))
-          {
+        foreach ($args as $one) {
+          if ( ! in_array($one, $fields)) {
             error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
           }
           else
@@ -476,32 +422,26 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function rename_column($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function rename_column($table = '') {
+    if (static::check_table($table)) {
       $fields = array_keys(db::columns($table));
       $args   = array_slice(func_get_args(), 1);
 
-      if ( ! $args)
-      {
+      if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
       }
       else
       {
         $c = sizeof($args);
 
-        for ($i = 0; $i < $c; $i += 2)
-        {
+        for ($i = 0; $i < $c; $i += 2) {
           $one  = $args[$i];
           $next = isset($args[$i + 1]) ? $args[$i + 1] : NULL;
 
-          if ( ! in_array($one, $fields))
-          {
+          if ( ! in_array($one, $fields)) {
             error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
           }
-          elseif ( ! $next)
-          {
+          elseif ( ! $next) {
             error(ln('db.column_name_missing'));
           }
           else
@@ -516,32 +456,26 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function change_column($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function change_column($table = '') {
+    if (static::check_table($table)) {
       $fields = db::columns($table);
       $args   = array_slice(func_get_args(), 1);
 
-      if ( ! $args)
-      {
+      if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
       }
       else
       {
         $c = sizeof($args);
 
-        for ($i = 0; $i < $c; $i += 2)
-        {
+        for ($i = 0; $i < $c; $i += 2) {
           $one  = $args[$i];
           $next = isset($args[$i + 1]) ? $args[$i + 1] : NULL;
 
-          if ( ! array_key_exists($one, $fields))
-          {
+          if ( ! array_key_exists($one, $fields)) {
             error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
           }
-          elseif ( ! $next)
-          {
+          elseif ( ! $next) {
             error(ln('db.column_type_missing'));
           }
           else
@@ -552,12 +486,10 @@ class db_generator extends prototype
 
             $length && $col []= $length;
 
-            if ( ! in_array($type, static::$types))
-            {
+            if ( ! in_array($type, static::$types)) {
               error(ln('db.unknown_field', array('type' => $type, 'name' => $one)));
             }
-            elseif ($fields[$one]['type'] === $type)
-            {
+            elseif ($fields[$one]['type'] === $type) {
               error(ln('db.column_already_exists', array('name' => $one)));
             }
             else
@@ -573,12 +505,9 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function add_index($table = '', $name = '')
-  {
-    if (static::check_table($table))
-    {
-      if ( ! $name)
-      {
+  final public static function add_index($table = '', $name = '') {
+    if (static::check_table($table)) {
+      if ( ! $name) {
         error(ln('db.index_name_missing', array('name' => $table)));
       }
       else
@@ -587,12 +516,10 @@ class db_generator extends prototype
         $args   = array_slice(func_get_args(), 2);
         $idx    = db::indexes($table);
 
-        if ( ! $args)
-        {
+        if ( ! $args) {
           error(ln('db.index_columns_missing'));
         }
-        elseif (array_key_exists($name, $idx))
-        {
+        elseif (array_key_exists($name, $idx)) {
           error(ln('db.index_already_exists', array('name' => $name, 'table' => $table)));
         }
         else
@@ -600,10 +527,8 @@ class db_generator extends prototype
           $col    = array();
           $fields = array_keys(db::columns($table));
 
-          foreach ($args as $one)
-          {
-            if ( ! in_array($one, $fields))
-            {
+          foreach ($args as $one) {
+            if ( ! in_array($one, $fields)) {
               error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
             }
             else
@@ -614,8 +539,7 @@ class db_generator extends prototype
             }
           }
 
-          if (sizeof($col) === sizeof($args))
-          {
+          if (sizeof($col) === sizeof($args)) {
             success(ln('db.indexing_table', array('name' => $name, 'table' => $table)));
             static::migrate('add_index', $table, $col, array(
               'name' => $name,
@@ -629,24 +553,19 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function remove_index($table = '')
-  {
-    if (static::check_table($table))
-    {
+  final public static function remove_index($table = '') {
+    if (static::check_table($table)) {
       $args = array_slice(func_get_args(), 1);
 
-      if ( ! $args)
-      {
+      if ( ! $args) {
         error(ln('db.index_name_missing', array('name' => $table)));
       }
       else
       {
         $idx = db::indexes($table);
 
-        foreach ($args as $one)
-        {
-          if ( ! array_key_exists($one, $idx))
-          {
+        foreach ($args as $one) {
+          if ( ! array_key_exists($one, $idx)) {
             error(ln('db.index_not_exists', array('name' => $one, 'table' => $table)));
           }
           else
@@ -661,14 +580,11 @@ class db_generator extends prototype
     bold(ln('tetl.done'));
   }
 
-  final public static function backup($name = '')
-  {
-    if (cli::flag('import'))
-    {
+  final public static function backup($name = '') {
+    if (cli::flag('import')) {
       info(ln('db.verifying_import'));
 
-      if ( ! $name)
-      {
+      if ( ! $name) {
         error(ln('db.import_name_missing'));
       }
       else
@@ -678,8 +594,7 @@ class db_generator extends prototype
 
         $path = str_replace(CWD.DS, '', $inc_file);
 
-        if ( ! is_file($inc_file))
-        {
+        if ( ! is_file($inc_file)) {
           error(ln('db.import_file_missing', array('path' => $path)));
         }
         else
@@ -694,8 +609,7 @@ class db_generator extends prototype
     {
       info(ln('db.verifying_export'));
 
-      if ( ! $name)
-      {
+      if ( ! $name) {
         error(ln('db.export_name_missing'));
       }
       else
@@ -708,8 +622,7 @@ class db_generator extends prototype
 
         $out_file = mkpath(CWD.DS.'db'.DS.'backup').DS.$name.$ext;
 
-        if (is_file($out_file))
-        {
+        if (is_file($out_file)) {
           error(ln('db.export_already_exists'));
         }
         else

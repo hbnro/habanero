@@ -4,8 +4,7 @@
  * MVC initialization
  */
 
-call_user_func(function()
-{
+call_user_func(function () {
   import('tetl/server');
 
   define('CWD', dirname(APP_PATH));
@@ -16,21 +15,18 @@ call_user_func(function()
 
   $bootstrap = bootstrap::methods();
 
-  bootstrap::implement('raise', function($message)
-    use($bootstrap)
-  {
+  bootstrap::implement('raise', function ($message)
+    use($bootstrap) {
     $error_status = 500;
 
-    switch (option('environment'))
-    {
+    switch (option('environment')) {
       case 'development';
         $bootstrap['raise']($message);
       break;
       case 'production';
       case 'testing';
       default;
-        if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message))
-        {
+        if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message)) {
           $error_status = 404;
         }
       break;
@@ -46,8 +42,7 @@ call_user_func(function()
   });
 
 
-  bootstrap::bind(function($app)
-  {
+  bootstrap::bind(function ($app) {
     require __DIR__.DS.'controller'.EXT;
     require __DIR__.DS.'model'.EXT;
     require __DIR__.DS.'view'.EXT;
@@ -58,19 +53,16 @@ call_user_func(function()
 
     i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
-    view::register('taml', function($file, array $vars = array())
-    {
+    view::register('taml', function ($file, array $vars = array()) {
       return taml::render($file, $vars);
     });
 
 
     $request = request::methods();
 
-    request::implement('dispatch', function(array $params = array())
-      use($request)
-    {
-      if (is_callable($params['to']))
-      {
+    request::implement('dispatch', function (array $params = array())
+      use($request) {
+      if (is_callable($params['to'])) {
         $request['dispatch']($params);
       }
       else
@@ -79,8 +71,7 @@ call_user_func(function()
 
         $controller_file = CWD.DS.'app'.DS.'controllers'.DS.$controller.EXT;
 
-        if ( ! is_file($controller_file))
-        {
+        if ( ! is_file($controller_file)) {
           raise(ln('mvc.controller_missing', array('name' => $controller_file)));
         }
 
@@ -96,20 +87,17 @@ call_user_func(function()
         $class_name  = $controller . '_controller';
 
 
-        if ( ! class_exists($class_name))
-        {
+        if ( ! class_exists($class_name)) {
           raise(ln('mvc.class_missing', array('controller' => $class_name)));
         }
-        elseif ( ! $class_name::defined($action))
-        {
+        elseif ( ! $class_name::defined($action)) {
           raise(ln('mvc.action_missing', array('controller' => $class_name, 'action' => $action)));
         }
 
 
         $helper_file = CWD.DS.'app'.DS.'helpers'.DS.$controller.EXT;
 
-        if (is_file($helper_file))
-        {
+        if (is_file($helper_file)) {
           /**
            * @ignore
            */
@@ -119,15 +107,13 @@ call_user_func(function()
         $class_name::defined('init') && $class_name::init();
         $class_name::$action();
 
-        if ( ! is_false($class_name::$layout))
-        {
+        if ( ! is_false($class_name::$layout)) {
           $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
           $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css')));
 
           $layout_file = findfile(CWD.DS.'app'.DS.'views'.DS.'layouts', $class_name::$layout.'*', FALSE, 1);
 
-          if ( ! is_file($layout_file))
-          {
+          if ( ! is_file($layout_file)) {
             raise(ln('mvc.layout_missing', array('name' => $layout_file)));
           }
 
@@ -153,8 +139,7 @@ call_user_func(function()
   });
 
 
-  route('/all.:type', function()
-  {//TODO: ...
+  route('/all.:type', function () {//TODO: ...
     $type      = params('type');
 
     $minify    = option('environment') === 'production';
@@ -165,17 +150,15 @@ call_user_func(function()
 
     assets::setup('path', $base_path);
 
-    assets::compile('css', function($file)
-      use($base_path, $minify)
-    {
+    assets::compile('css', function ($file)
+      use($base_path, $minify) {
       import('tetl/css');
       css::setup('path', $base_path.DS.'css');
       return css::render($file, $minify);
     });
 
-    assets::compile('js', function($file)
-      use($minify)
-    {// TODO: use JSMin instead...
+    assets::compile('js', function ($file)
+      use($minify) {// TODO: use JSMin instead...
       static $regex = array(
                       '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
                       '/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
@@ -185,8 +168,7 @@ call_user_func(function()
 
       $text = read($file);
 
-      if ($minify)
-      {
+      if ($minify) {
         $text = preg_replace(array_keys($regex), $regex, $text);
         $text = str_replace('elseif', 'else if', $text);
       }
@@ -194,9 +176,8 @@ call_user_func(function()
     });
 
 
-    $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function($match)
-      use($type)
-    {
+    $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function ($match)
+      use($type) {
       assets::append("$match[1].$type");
     }, read($base_file));
 

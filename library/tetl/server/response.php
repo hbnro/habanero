@@ -12,20 +12,16 @@
  * @param  array  Options hash
  * @return void
  */
-function dispatch($to = NULL, array $params = array())
-{
-  if (is_assoc($to))
-  {
+function dispatch($to = NULL, array $params = array()) {
+  if (is_assoc($to)) {
     $params = array_merge($to, $params);
   }
-  elseif ( ! isset($params['to']))
-  {
+  elseif ( ! isset($params['to'])) {
     $params['to'] = $to;
   }
 
 
-  if (empty($params['to']))
-  {
+  if (empty($params['to'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
@@ -42,23 +38,18 @@ function dispatch($to = NULL, array $params = array())
 
   ob_start();
 
-  if (is_callable($params['to']))
-  {
+  if (is_callable($params['to'])) {
     $output = call_user_func_array($params['to'], (array) $params);
 
-    if (is_true($output))
-    {
+    if (is_true($output)) {
       return TRUE;
     }
   }
-  elseif (is_url($params['to']))
-  {
+  elseif (is_url($params['to'])) {
     redirect($params);
   }
-  elseif (is_file($params['to']))
-  {
-    if (ext($params['to'], TRUE) === EXT)
-    {
+  elseif (is_file($params['to'])) {
+    if (ext($params['to'], TRUE) === EXT) {
       $output = include $params['to'];
     }
     else
@@ -79,17 +70,14 @@ function dispatch($to = NULL, array $params = array())
 
   $content['output'] = ob_get_clean();
 
-  if ( ! empty($output))
-  {
+  if ( ! empty($output)) {
     @list($content['status'], $content['headers']) = (array) $output;
 
-    if ( ! empty($output['charset']))
-    {
+    if ( ! empty($output['charset'])) {
       $content['charset'] = $output['charset'];
     }
 
-    if ( ! empty($output['type']))
-    {
+    if ( ! empty($output['type'])) {
       $content['type'] = $output['type'];
     }
   }
@@ -105,25 +93,20 @@ function dispatch($to = NULL, array $params = array())
  * @param  array Options hash
  * @return void
  */
-function response($content, array $params = array())
-{
-  if (is_assoc($content))
-  {
+function response($content, array $params = array()) {
+  if (is_assoc($content)) {
     $params = array_merge($content, $params);
   }
-  elseif ( ! isset($params['output']))
-  {
+  elseif ( ! isset($params['output'])) {
     $params['output'] = $content;
   }
 
-  if ( ! empty($params['text']))
-  {
+  if ( ! empty($params['text'])) {
     $params['output'] = $params['text'];
   }
 
 
-  if (empty($params['output']))
-  {
+  if (empty($params['output'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
   }
 
@@ -138,14 +121,12 @@ function response($content, array $params = array())
 
   $params['type'] = $params['type'] ?: ini_get('default_mimetype');
 
-  if (is_mime($params['type']))
-  {
+  if (is_mime($params['type'])) {
     $params['headers']['content-type'] = $params['type'] . ($params['charset'] ? "; charset=$params[charset]" : '');
     $params['headers']['content-length'] = strlen((string) $params['output']);
   }
 
-  if (is_true($params['nocache']))
-  {
+  if (is_true($params['nocache'])) {
     $params['headers']['pragma']        = 'no-cache';
     $params['headers']['expires']       =
     $params['headers']['last-modified'] = date('D, m Y H:i:s \G\M\T', time());
@@ -170,29 +151,23 @@ function response($content, array $params = array())
  * @param  array Hash
  * @return void
  */
-function redirect($to = ROOT, $status = NULL, array $params = array())
-{
-  if (is_assoc($to))
-  {
+function redirect($to = ROOT, $status = NULL, array $params = array()) {
+  if (is_assoc($to)) {
     $params = array_merge($to, $params);
   }
-  elseif ( ! isset($params['to']))
-  {
+  elseif ( ! isset($params['to'])) {
     $params['to'] = $to;
   }
 
-  if (is_assoc($status))
-  {
+  if (is_assoc($status)) {
     $params = array_merge($status, $params);
   }
-  elseif ( ! isset($params['status']))
-  {
+  elseif ( ! isset($params['status'])) {
     $params['status'] = (int) $status;
   }
 
 
-  if (empty($params['to']))
-  {
+  if (empty($params['to'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
@@ -204,15 +179,12 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
   ), $params);
 
 
-  if ($params['to'] === 'back')
-  {
-    if ( ! ($params['to'] = referer()))
-    {
+  if ($params['to'] === 'back') {
+    if ( ! ($params['to'] = referer())) {
       return FALSE;
     }
   }
-  elseif ($params['locals'])
-  {
+  elseif ($params['locals']) {
     $params['to'] .= ! is_false(strrpos($params['to'], '?')) ? '&' : '?';
     $params['to'] .= http_build_query($params['locals'], NULL, '&');
   }
@@ -231,12 +203,10 @@ function redirect($to = ROOT, $status = NULL, array $params = array())
  * @param  array   Additional headers
  * @return mixed
  */
-function status($num = 200, array $headers = array())
-{
+function status($num = 200, array $headers = array()) {
   static $set = NULL;
 
-  if (is_null($set))
-  {
+  if (is_null($set)) {
     /**
      * @ignore
      */
@@ -244,19 +214,15 @@ function status($num = 200, array $headers = array())
   }
 
 
-  if (headers_sent() OR empty($set['reasons'][$num]))
-  {
+  if (headers_sent() OR empty($set['reasons'][$num])) {
     return FALSE;
   }
 
-  foreach ((array) $headers as $key => $val)
-  {
+  foreach ((array) $headers as $key => $val) {
     $key = camelcase($key, TRUE, '-');
 
-    if (is_array($val))
-    {
-      foreach ($val as $one)
-      {
+    if (is_array($val)) {
+      foreach ($val as $one) {
         header("$key: $one", FALSE);
       }
     }
@@ -267,8 +233,7 @@ function status($num = 200, array $headers = array())
   }
 
 
-  if (substr(strtoupper(PHP_SAPI), 0, 3) === 'CGI')
-  {
+  if (substr(strtoupper(PHP_SAPI), 0, 3) === 'CGI') {
     header("Status: $num {$set['reasons'][$num]}", TRUE);
   }
   else

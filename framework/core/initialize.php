@@ -4,8 +4,7 @@
  * Initialization script
  */
 
-call_user_func(function()
-{
+call_user_func(function () {
   // common spec chars
   define('RFC_CHARS', option('allowed_chars', "$-_.+!*'(),"));
 
@@ -29,10 +28,8 @@ call_user_func(function()
   // ----------------------------------------------------------------------------
 
   // OS temp path
-  if ( ! @is_dir($temporary_files = option('temporary_files')))
-  {
-    if (function_exists('sys_get_temp_dir'))
-    {
+  if ( ! @is_dir($temporary_files = option('temporary_files'))) {
+    if (function_exists('sys_get_temp_dir')) {
       $temporary_files = @sys_get_temp_dir();
     }
     else
@@ -55,15 +52,12 @@ call_user_func(function()
 
 
   // default error and exception hanlders
-  set_exception_handler(function($E)
-  {
+  set_exception_handler(function ($E) {
     raise(ln('exception_error', array('message' => $E->getMessage(), 'file' => $E->getFile(), 'number' => $E->getLine())));
   });
 
-  set_error_handler(function($errno, $errmsg, $file, $line, $trace)
-  {
-    if (($errno & error_reporting()) == $errno)
-    {
+  set_error_handler(function ($errno, $errmsg, $file, $line, $trace) {
+    if (($errno & error_reporting()) == $errno) {
       raise(ln('error_debug', array('error' => $errmsg, 'file' => $file, 'number' => $line)));
 
       return TRUE;

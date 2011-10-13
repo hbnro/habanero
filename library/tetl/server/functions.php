@@ -21,8 +21,7 @@ define('DELETE', 'DELETE');
  * @param  array  Options hash
  * @return void
  */
-function get($path, $to, array $params = array())
-{
+function get($path, $to, array $params = array()) {
   route("GET $path", $to, $params);
 }
 
@@ -35,8 +34,7 @@ function get($path, $to, array $params = array())
  * @param  array  Options hash
  * @return void
  */
-function put($path, $to, array $params = array())
-{
+function put($path, $to, array $params = array()) {
   route("PUT $path", $to, $params);
 }
 
@@ -49,8 +47,7 @@ function put($path, $to, array $params = array())
  * @param  array  Options hash
  * @return void
  */
-function post($path, $to, array $params = array())
-{
+function post($path, $to, array $params = array()) {
   route("POST $path", $to, $params);
 }
 
@@ -63,8 +60,7 @@ function post($path, $to, array $params = array())
  * @param  array  Options hash
  * @return void
  */
-function delete($path, $to, array $params = array())
-{
+function delete($path, $to, array $params = array()) {
   route("DELETE $path", $to, $params);
 }
 
@@ -76,8 +72,7 @@ function delete($path, $to, array $params = array())
  * @param  array  Options hash
  * @return void
  */
-function root($to, array $params = array())
-{
+function root($to, array $params = array()) {
   route('/', $to, $params);
 }
 
@@ -90,53 +85,43 @@ function root($to, array $params = array())
  * @param  array Options hash
  * @return mixed
  */
-function route($match, $to = NULL, array $params = array())
-{
-  if (is_assoc($match))
-  {
+function route($match, $to = NULL, array $params = array()) {
+  if (is_assoc($match)) {
     $params = array_merge($match, $params);
   }
-  elseif ( ! isset($params['match']))
-  {
+  elseif ( ! isset($params['match'])) {
     $params['match'] = $match;
   }
 
-  if (is_assoc($to))
-  {
+  if (is_assoc($to)) {
     $params = array_merge($to, $params);
   }
-  elseif ( ! isset($params['to']))
-  {
+  elseif ( ! isset($params['to'])) {
     $params['to'] = $to;
   }
 
 
-  foreach (array('GET', 'POST', 'PUT' , 'DELETE') as $method)
-  {
+  foreach (array('GET', 'POST', 'PUT' , 'DELETE') as $method) {
     $key = strtolower($method);
 
-    if ( ! empty($params[$key]))
-    {
+    if ( ! empty($params[$key])) {
       $params['match'] = $method . ' ' . $params[$key];
     }
   }
 
 
-  if (empty($params['match']))
-  {
+  if (empty($params['match'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'match')));
   }
 
 
   $params['match'] = trim($params['match']);
 
-  if (is_false(strpos($params['match'], ' ')))
-  {
+  if (is_false(strpos($params['match'], ' '))) {
     $params['match'] = 'GET ' . $params['match'];
   }
 
-  if ( ! empty($params['path']))
-  {
+  if ( ! empty($params['path'])) {
     url_for::register($params['path'], end(explode(' ', $params['match'])));
   }
 
@@ -151,20 +136,15 @@ function route($match, $to = NULL, array $params = array())
  * @param  mixed Default value
  * @return mixed
  */
-function params($key = NULL, $default = FALSE)
-{
+function params($key = NULL, $default = FALSE) {
   static $set = array();
 
-  if ( ! func_num_args())
-  {
+  if ( ! func_num_args()) {
     return $set;
   }
-  elseif (is_array($key))
-  {
-    foreach ($key as $a => $value)
-    {
-      if (is_num($a))
-      {
+  elseif (is_array($key)) {
+    foreach ($key as $a => $value) {
+      if (is_num($a)) {
         continue;
       }
 
@@ -173,8 +153,7 @@ function params($key = NULL, $default = FALSE)
 
     return TRUE;
   }
-  elseif ( ! is_num($key))
-  {
+  elseif ( ! is_num($key)) {
     return ! empty($set[$key]) ? $set[$key] : $default;
   }
 
@@ -188,17 +167,14 @@ function params($key = NULL, $default = FALSE)
  * @staticvar array Parts bag
  * @return    array
  */
-function parts()
-{
+function parts() {
   static $test = NULL;
 
-  if ( ! is_array($test))
-  {
+  if ( ! is_array($test)) {
     $test = explode('/', trim(URI, '/'));
 
 
-    foreach ($test as $key => $val)
-    {
+    foreach ($test as $key => $val) {
       $test[$key] = $val;
     }
   }
@@ -213,8 +189,7 @@ function parts()
  * @param  mixed   Default value
  * @return array
  */
-function assoc($index = 1, $default = FALSE)
-{
+function assoc($index = 1, $default = FALSE) {
   $set    = parts();
   $output = array();
 
@@ -222,8 +197,7 @@ function assoc($index = 1, $default = FALSE)
   $length = sizeof($set);
 
 
-  for (; $index < $length; $index += 2)
-  {
+  for (; $index < $length; $index += 2) {
     $value = isset($set[$index + 1]) ? $set[$index + 1] : $default;
     $output[$set[$index]] = $value;
   }
@@ -239,17 +213,14 @@ function assoc($index = 1, $default = FALSE)
  * @param  mixed   Default value
  * @return string
  */
-function segment($index = 1, $default = FALSE)
-{
+function segment($index = 1, $default = FALSE) {
   $set = parts();
 
 
-  if ( ! $index)
-  {
+  if ( ! $index) {
     return sizeof($set);
   }
-  elseif ($index < 0)
-  {
+  elseif ($index < 0) {
     $index = sizeof($set) + 1 + $index;
   }
 
@@ -267,28 +238,23 @@ function segment($index = 1, $default = FALSE)
  * @param  boolean Use full scheme?
  * @return mixed
  */
-function server($key = '', $default = FALSE, $complete = FALSE)
-{
+function server($key = '', $default = FALSE, $complete = FALSE) {
   global $_SERVER;
 
-  if (func_num_args() == 0)
-  {
+  if (func_num_args() == 0) {
     $test = explode('.', $_SERVER['SERVER_NAME']);
 
 
-    if ( ! empty($test[0]) && ($test[0] === 'www'))
-    {
+    if ( ! empty($test[0]) && ($test[0] === 'www')) {
       array_shift($test);
     }
 
     return join('.', $test);
   }
-  elseif (is_true($key))
-  {
+  elseif (is_true($key)) {
     $host = '';
 
-    if (is_true($complete))
-    {
+    if (is_true($complete)) {
       $pre   = explode('/', $_SERVER['SERVER_PROTOCOL']);
 
       $host .= strtolower(array_shift($pre));
@@ -302,12 +268,10 @@ function server($key = '', $default = FALSE, $complete = FALSE)
 
     return $host;
   }
-  elseif ( ! empty($_SERVER[$key]))
-  {
+  elseif ( ! empty($_SERVER[$key])) {
     return $_SERVER[$key];
   }
-  elseif ($test = getenv($key))
-  {
+  elseif ($test = getenv($key)) {
     return $test;
   }
 
@@ -325,15 +289,12 @@ function server($key = '', $default = FALSE, $complete = FALSE)
  * @param  integer Size limit
  * @return void
  */
-function download($path, $name = '', $mime = '', $kbps = 24)
-{
-  if (headers_sent($file, $line))
-  {
+function download($path, $name = '', $mime = '', $kbps = 24) {
+  if (headers_sent($file, $line)) {
     raise(ln('headers_sent', array('script' => $file, 'number' => $line)));
   }
 
-  if ( ! is_file($path))
-  {
+  if ( ! is_file($path)) {
     raise(ln('file_not_exists', array('name' => $file)));
   }
 
@@ -351,8 +312,7 @@ function download($path, $name = '', $mime = '', $kbps = 24)
   header('Pragma: no-cache');
   header('Expires: 0');
 
-  if (func_num_args() <= 3)
-  {
+  if (func_num_args() <= 3) {
     readfile($path);
     exit;
   }
@@ -360,12 +320,10 @@ function download($path, $name = '', $mime = '', $kbps = 24)
 
   $range  = 0;
 
-  if ($test = server('HTTP_RANGE'))
-  {
+  if ($test = server('HTTP_RANGE')) {
     list($unit, $orig) = @explode('=', $test, 2);
 
-    if ($unit == 'bytes')
-    {
+    if ($unit == 'bytes') {
       list($range, $extra) = @explode(',', $orig, 2);
     }
     else
@@ -380,8 +338,7 @@ function download($path, $name = '', $mime = '', $kbps = 24)
   $end   = empty($end) ? $length - 1 : min(abs((int) $end), $length - 1);
   $start = empty($start) || ($end < abs((int) $start)) ? 0 : max(abs((int) $start), 0);
 
-  if ($start > 0 || $end < ($length - 1))
-  {
+  if ($start > 0 || $end < ($length - 1)) {
     status(206);
   }
 
@@ -391,10 +348,8 @@ function download($path, $name = '', $mime = '', $kbps = 24)
   $tmp = fopen($path, 'rb');
   fseek($tmp, $start);
 
-  while ( ! feof($tmp))
-  {
-    if ($start >= $end)
-    {
+  while ( ! feof($tmp)) {
+    if ($start >= $end) {
       break;
     }
 

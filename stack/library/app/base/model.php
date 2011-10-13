@@ -42,59 +42,48 @@ class model extends prototype
    */
 
   // model constructor
-  protected function __construct(array $params = array(), $method = NULL, $new = FALSE)
-  {
+  protected function __construct(array $params = array(), $method = NULL, $new = FALSE) {
     $this->new_record = (bool) $new;
 
-    foreach (array_keys(static::columns()) as $key)
-    {
+    foreach (array_keys(static::columns()) as $key) {
       $this->props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
     }
     static::callback($this, $method);
   }
 
   // properties getter
-  public function __get($key)
-  {
-    if ( ! array_key_exists($key, $this->props))
-    {
+  public function __get($key) {
+    if ( ! array_key_exists($key, $this->props)) {
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     return $this->props[$key];
   }
 
   // properties setter
-  public function __set($key, $value)
-  {
-    if ( ! array_key_exists($key, $this->props))
-    {
+  public function __set($key, $value) {
+    if ( ! array_key_exists($key, $this->props)) {
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     $this->props[$key] = $value;
   }
 
   // relationships caller
-  public function __call($method, array $arguments = array())
-  {
+  public function __call($method, array $arguments = array()) {
     $what  = 'all';
     $where = array();
 
-    if (substr($method, 0, 6) === 'count_')
-    {
+    if (substr($method, 0, 6) === 'count_') {
       $method = substr($method, 6);
       $what   = 'count';
     }
-    elseif (preg_match('/^(first|last)_of_(\w+)$/', $method, $match))
-    {
+    elseif (preg_match('/^(first|last)_of_(\w+)$/', $method, $match)) {
       $method = $match[2];
       $what   = $match[1];
     }
-    elseif (preg_match('/^(create|build)_on_(.+?)$/', $method, $match))
-    {
+    elseif (preg_match('/^(create|build)_on_(.+?)$/', $method, $match)) {
       @list($method, $where) = explode('_from_', $match[2], 2);
 
-      if ($test = static::fetch_relation($method))
-      {
+      if ($test = static::fetch_relation($method)) {
         $where = array_merge(static::merge($where, $arguments), array(
           $test['on'] => $this->{$test['fk']},
         ));
@@ -105,8 +94,7 @@ class model extends prototype
     }
 
 
-    if (strpos($method, '_by_'))
-    {
+    if (strpos($method, '_by_')) {
       $params = explode('_by_', $method, 2);
 
       $params && $method = $params[0];
@@ -116,8 +104,7 @@ class model extends prototype
     }
 
 
-    if ($test = static::fetch_relation($method))
-    {
+    if ($test = static::fetch_relation($method)) {
       $params = (array) array_shift($arguments);
       $params = array_merge(array(
         'where' => array_merge(array(
@@ -141,8 +128,7 @@ class model extends prototype
    *
    * @return mixed
    */
-  function id()
-  {
+  function id() {
     return $this->props[static::pk()];
   }
 
@@ -152,8 +138,7 @@ class model extends prototype
    *
    * @return boolean
    */
-  final public function is_new()
-  {
+  final public function is_new() {
     return $this->new_record;
   }
 
@@ -163,14 +148,11 @@ class model extends prototype
    *
    * @return boolean
    */
-  final public function is_valid()
-  {
-    if ( ! static::$validate)
-    {
+  final public function is_valid() {
+    if ( ! static::$validate) {
       return TRUE;
     }
-    elseif (is_null($this->valid_record))
-    {
+    elseif (is_null($this->valid_record)) {
       valid::setup(static::$validate);
 
       $this->valid_record = valid::done($this->props);
@@ -185,8 +167,7 @@ class model extends prototype
    *
    * @return array
    */
-  final public function errors()
-  {
+  final public function errors() {
     return $this->error_list;
   }
 
@@ -197,8 +178,7 @@ class model extends prototype
    * @param  array Properties
    * @return model
    */
-  final public static function build(array $params = array())
-  {
+  final public static function build(array $params = array()) {
     $row = (object) $params;
 
     static::callback($row, 'before_create');
@@ -214,8 +194,7 @@ class model extends prototype
    * @param  boolean Skip validation?
    * @return model
    */
-  final public static function create(array $params = array(), $skip = FALSE)
-  {
+  final public static function create(array $params = array(), $skip = FALSE) {
     return static::build($params)->save($skip);
   }
 
@@ -225,8 +204,7 @@ class model extends prototype
    *
    * @return boolean
    */
-  final public static function exists($params = array())
-  {
+  final public static function exists($params = array()) {
     return static::count($params) > 0;
   }
 
@@ -236,8 +214,7 @@ class model extends prototype
    *
    * @return array
    */
-  final public static function table()
-  {
+  final public static function table() {
     return static::$table ?: get_called_class();
   }
 
@@ -248,16 +225,13 @@ class model extends prototype
    */
 
   // super method fake!
-  final protected static function super($method, $arguments)
-  {
-    if (in_array($method, array('first', 'last', 'all')))
-    {
+  final protected static function super($method, $arguments) {
+    if (in_array($method, array('first', 'last', 'all'))) {
       array_unshift($arguments, $method);
 
       return call_user_func_array(get_called_class() . '::find', $arguments);
     }
-    elseif (preg_match('/^(build|create)_from_(.+)$/', $method, $match))
-    {
+    elseif (preg_match('/^(build|create)_from_(.+)$/', $method, $match)) {
       return static::$match[1](static::merge($match[2], $arguments));
     }
 
@@ -265,10 +239,8 @@ class model extends prototype
   }
 
   // relationships
-  final protected static function fetch_relation($key)
-  {
-    if ( ! empty(static::$relations[$key]))
-    {
+  final protected static function fetch_relation($key) {
+    if ( ! empty(static::$relations[$key])) {
       return array_merge(array(
         'has_many' => FALSE,
         'from' => $key,
@@ -279,23 +251,19 @@ class model extends prototype
   }
 
   // execute callbacks
-  final protected static function callback($row, $method)
-  {
+  final protected static function callback($row, $method) {
     static::defined($method) && static::$method($row);
   }
 
   // make timestamps
-  final protected static function stamp($fields, $new)
-  {
+  final protected static function stamp($fields, $new) {
     $current = date('Y-m-d H:i:s');
 
-    if ($new && array_key_exists('created_at', $fields))
-    {
+    if ($new && array_key_exists('created_at', $fields)) {
       $fields['created_at'] = $current;
     }
 
-    if (array_key_exists('modified_at', $fields))
-    {
+    if (array_key_exists('modified_at', $fields)) {
       $fields['modified_at'] = $current;
     }
 
@@ -303,10 +271,8 @@ class model extends prototype
   }
 
   // merge fields
-  final protected static function merge($as, array $are = array())
-  {
-    if ( ! empty($are[0]) && is_assoc($are[0]))
-    {
+  final protected static function merge($as, array $are = array()) {
+    if ( ! empty($are[0]) && is_assoc($are[0])) {
       return $are[0];
     }
 
@@ -325,8 +291,7 @@ class model extends prototype
 
 
 // autoload
-rescue(function($class)
-{
+rescue(function ($class) {
   /**
     * @ignore
     */

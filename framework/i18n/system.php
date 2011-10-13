@@ -15,8 +15,7 @@ class i18n extends prototype
    * @param  array   Options hash
    * @return string
    */
-  final public static function pluralize($number, $string, array $params = array())
-  {
+  final public static function pluralize($number, $string, array $params = array()) {
     $decimal   = 0;// TODO: localize this?
     $separator = '.';
     $thousands = ' ';
@@ -36,23 +35,18 @@ class i18n extends prototype
    * @param  array  Options hash
    * @return string
    */
-  final public static function translate($string, $default = '', array $params = array())
-  {
-    if (is_assoc($string))
-    {
+  final public static function translate($string, $default = '', array $params = array()) {
+    if (is_assoc($string)) {
       $params = array_merge($params, $string);
     }
-    elseif ( ! isset($params['string']))
-    {
+    elseif ( ! isset($params['string'])) {
       $params['string'] = $string;
     }
 
-    if (is_assoc($default))
-    {
+    if (is_assoc($default)) {
       $params = array_merge($default, $params);
     }
-    elseif ( ! isset($params['default']))
-    {
+    elseif ( ! isset($params['default'])) {
       $params['default'] = (string) $default;
     }
 
@@ -66,12 +60,9 @@ class i18n extends prototype
 
     $params['default'] = (array) $params['default'];
 
-    if (is_array($params['default']))
-    {
-      foreach ($params['default'] as $one)
-      {
-        if ( ! preg_match('/^[a-z][a-z0-9_]+$/', $one))
-        {
+    if (is_array($params['default'])) {
+      foreach ($params['default'] as $one) {
+        if ( ! preg_match('/^[a-z][a-z0-9_]+$/', $one)) {
           $params['default'] = $one;
           break;
         }
@@ -79,8 +70,7 @@ class i18n extends prototype
         {
           $test = i18n::translate($one, array('scope' => $params['scope']));
 
-          if ( ! empty($test))
-          {
+          if ( ! empty($test)) {
             $params['default'] = $test;
             break;
           }
@@ -95,9 +85,8 @@ class i18n extends prototype
 
     $string  = value($from, "$prefix$params[string]", $default);
 
-    $string  = preg_replace_callback('/%\{(.+?)\}/', function($match)
-      use($params)
-    {
+    $string  = preg_replace_callback('/%\{(.+?)\}/', function ($match)
+      use($params) {
       return isset($params[$match[1]]) ? $params[$match[1]] : $match[1];
     }, $string);
 
@@ -112,10 +101,8 @@ class i18n extends prototype
    * @param  string Specific index
    * @return void
    */
-  final public static function load_path($from, $scope = '')
-  {
-    if (is_array($from))
-    {
+  final public static function load_path($from, $scope = '') {
+    if (is_array($from)) {
       return array_map('i18n::load_path', $from);
     }
 
@@ -124,8 +111,7 @@ class i18n extends prototype
     $set = (array) option('locale_path', array());
 
 
-    if ( ! is_dir($from) OR in_array($dir, $set))
-    {
+    if ( ! is_dir($from) OR in_array($dir, $set)) {
       return FALSE;
     }
 
@@ -143,17 +129,14 @@ class i18n extends prototype
       '.php' => 'array',
       '.csv' => 'csv',
       '.ini' => 'ini',
-    ) as $ext => $type)
-    {
+    ) as $ext => $type) {
       $callback = 'i18n::load_' . $type;
 
       foreach (array(
         $path.DS.join('_', $test).$ext,
         $path.DS.$test[0].$ext,
-      ) as $one)
-      {
-        if (is_file($one))
-        {// do not use lambda here
+      ) as $one) {
+        if (is_file($one)) {// do not use lambda here
           $lang = call_user_func($callback, $one);
           i18n::load_locale($lang, $scope);
           break;
@@ -170,15 +153,12 @@ class i18n extends prototype
    * @param  string Specific index
    * @return array
    */
-  final public static function load_locale(array $set = array(), $scope = '')
-  {
+  final public static function load_locale(array $set = array(), $scope = '') {
     static $tree = array();
 
 
-    if ( ! empty($set))
-    {
-      if ( ! empty($scope))
-      {
+    if ( ! empty($set)) {
+      if ( ! empty($scope)) {
         $old = isset($tree[$scope]) ? $tree[$scope] : array();
         $set = array($scope => array_merge($old, $set));
       }
@@ -196,22 +176,18 @@ class i18n extends prototype
    * @staticvar mixed  Bit callback
    * @return    mixed
    */
-  final public static function load_gettext($from)
-  {
+  final public static function load_gettext($from) {
     static $byte = NULL;
 
 
-    if (is_null($byte))
-    {
-      $byte = function($length, $endian, &$resource)
-      {
+    if (is_null($byte)) {
+      $byte = function ($length, $endian, &$resource) {
         return unpack(($endian ? 'N' : 'V') . $length, fread($resource, 4 * $length));
       };
     }
 
 
-    if ( ! is_file($from))
-    {
+    if ( ! is_file($from)) {
       return FALSE;
     }
 
@@ -241,18 +217,15 @@ class i18n extends prototype
     fseek($resource, $tmax);// translate
     $ttmp = $byte(2 *$all, $endian, $resource);
 
-    for ($i = 0; $i < $all; $i += 1)
-    {
+    for ($i = 0; $i < $all; $i += 1) {
       $orig = -1;
 
-      if ($otmp[$i * 2 + 1] <> 0)
-      {
+      if ($otmp[$i * 2 + 1] <> 0) {
         fseek($resource, $otmp[$i * 2 + 2]);
         $orig = fread($resource, $otmp[$i * 2 + 1]);
       }
 
-      if ($ttmp[$i * 2 + 1] <> 0)
-      {
+      if ($ttmp[$i * 2 + 1] <> 0) {
         fseek($resource, $ttmp[$i * 2 + 2]);
         $out[$orig] = fread($resource, $ttmp[$i * 2 + 1]);
       }
@@ -271,10 +244,8 @@ class i18n extends prototype
    * @param  string Path
    * @return mixed
    */
-  final public static function load_array($from)
-  {
-    if ( ! is_file($from))
-    {
+  final public static function load_array($from) {
+    if ( ! is_file($from)) {
       return FALSE;
     }
 
@@ -283,8 +254,7 @@ class i18n extends prototype
     $out = include $from;
     ob_end_clean();
 
-    if ( ! empty($lang))
-    {
+    if ( ! empty($lang)) {
       $out = $lang;
     }
 
@@ -299,10 +269,8 @@ class i18n extends prototype
    * @param  string Character separator
    * @return mixed
    */
-  final public static function load_csv($from, $split = ';')
-  {
-    if ( ! is_file($from))
-    {
+  final public static function load_csv($from, $split = ';') {
+    if ( ! is_file($from)) {
       return FALSE;
     }
 
@@ -312,10 +280,8 @@ class i18n extends prototype
 
     fseek($resource, 0);
 
-    while (FALSE !== ($old = fgetcsv($resource, 0, $split, '"')))
-    {
-      if ((substr($old[0], 0, 1) == '#') OR empty($old[1]))
-      {
+    while (FALSE !== ($old = fgetcsv($resource, 0, $split, '"'))) {
+      if ((substr($old[0], 0, 1) == '#') OR empty($old[1])) {
         continue;
       }
 
@@ -334,10 +300,8 @@ class i18n extends prototype
    * @param  string path
    * @return mixed
    */
-  final public static function load_ini($from)
-  {
-    if ( ! is_file($from))
-    {
+  final public static function load_ini($from) {
+    if ( ! is_file($from)) {
       return FALSE;
     }
 

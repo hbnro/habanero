@@ -67,31 +67,25 @@ class cli extends prototype
    *
    * @return array
    */
-  final public static function args()
-  {
-    if (is_null(static::$flags))
-    {
+  final public static function args() {
+    if (is_null(static::$flags)) {
       static::$flags = array();
 
       $test   = $_SERVER['argv'];
       $length = sizeof($test);
 
 
-      for ($i = 0; $i < $length; $i += 1)
-      {
+      for ($i = 0; $i < $length; $i += 1) {
         $str = $test[$i];
 
-        if ((strlen($str) > 2) && (substr($str, 0, 2) === '--'))
-        {// --does-nothing
+        if ((strlen($str) > 2) && (substr($str, 0, 2) === '--')) {// --does-nothing
           $str   = substr($str, 2);
           $parts = explode('=', $str);
 
           static::$flags[$parts[0]] = TRUE;
 
-          if ((sizeof($parts) === 1) && isset($test[$i + 1]))
-          {// --foo bar
-            if ( ! preg_match('/^--?.+/', $test[$i + 1]))
-            {
+          if ((sizeof($parts) === 1) && isset($test[$i + 1])) {// --foo bar
+            if ( ! preg_match('/^--?.+/', $test[$i + 1])) {
               static::$flags[$parts[0]] = $test[$i + 1];
             }
           }
@@ -100,33 +94,26 @@ class cli extends prototype
             static::$flags[$parts[0]] = isset($parts[1]) ? $parts[1] : TRUE;
           }
         }
-        elseif ((strlen($str) === 2) && ($str[0] === '-'))
-        {// -a
+        elseif ((strlen($str) === 2) && ($str[0] === '-')) {// -a
           static::$flags[$str[1]] = TRUE;
 
-          if (isset($test[$i + 1]))
-          {
-            if ( ! preg_match('/^--?.+/', $test[$i + 1]))
-            {
+          if (isset($test[$i + 1])) {
+            if ( ! preg_match('/^--?.+/', $test[$i + 1])) {
               static::$flags[$str[1]] = $test[$i + 1];
             }
           }
         }
-        elseif ((strlen($str) > 1) && ($str[0] === '-'))
-        {// -xyz
+        elseif ((strlen($str) > 1) && ($str[0] === '-')) {// -xyz
           $k = strlen($str);
 
-          for ($j = 1; $j < $k; $j += 1)
-          {
+          for ($j = 1; $j < $k; $j += 1) {
             static::$flags[substr($str, $j, 1)] = TRUE;
           }
         }
       }
 
-      foreach (array_reverse(array_slice($test, 1)) as $i => $val)
-      {
-        if ( ! is_num($i) OR (substr($val, 0, 1) === '-'))
-        {
+      foreach (array_reverse(array_slice($test, 1)) as $i => $val) {
+        if ( ! is_num($i) OR (substr($val, 0, 1) === '-')) {
           continue;
         }
 
@@ -145,8 +132,7 @@ class cli extends prototype
    * @param  mixed Function callback
    * @return void
    */
-  final public static function register($command, Closure $callback)
-  {
+  final public static function register($command, Closure $callback) {
     static::$set []= array(
       'aliases' => (array) $command,
       'callback' => $callback,
@@ -161,12 +147,9 @@ class cli extends prototype
    * @param  array  Arguments
    * @return void
    */
-  final public static function execute($command, array $args = array())
-  {
-    foreach (static::$set as $one)
-    {
-      if ( ! in_array($command, $one['aliases']))
-      {
+  final public static function execute($command, array $args = array()) {
+    foreach (static::$set as $one) {
+      if ( ! in_array($command, $one['aliases'])) {
         continue;
       }
 
@@ -184,12 +167,10 @@ class cli extends prototype
    * @param  mixed Function callback
    * @return void
    */
-  final public static function main(Closure $callback)
-  { // TODO: echo start?
+  final public static function main(Closure $callback) { // TODO: echo start?
     static::$loop = TRUE;
 
-    while (static::$loop)
-    {
+    while (static::$loop) {
       $callback();
     }
   }
@@ -200,8 +181,7 @@ class cli extends prototype
    *
    * @return void
    */
-  final public static function quit()
-  {
+  final public static function quit() {
     static::$loop = FALSE;
   }
 
@@ -212,14 +192,10 @@ class cli extends prototype
    * @param  mixed Message|Secs
    * @return void
    */
-  final public static function wait($text = 'press_any_key')
-  {
-    if (is_num($text))
-    {
-      while (1)
-      {
-        if (($text -= 1) < 0)
-        {
+  final public static function wait($text = 'press_any_key') {
+    if (is_num($text)) {
+      while (1) {
+        if (($text -= 1) < 0) {
           break;
         }
 
@@ -243,8 +219,7 @@ class cli extends prototype
    * @param  string Text to print out
    * @return void
    */
-  final public static function printf($text)
-  {
+  final public static function printf($text) {
     fwrite(STDOUT, vsprintf(static::format($text), array_slice(func_get_args(), 1)));
   }
 
@@ -255,12 +230,10 @@ class cli extends prototype
    * @param  string Text to prompt
    * @return mixed
    */
-  final public static function readln($text = "\n")
-  {
+  final public static function readln($text = "\n") {
     $args = func_get_args();
 
-    if (function_exists('readline'))
-    {
+    if (function_exists('readline')) {
       return trim(readline(join('', $args)));
     }
 
@@ -276,8 +249,7 @@ class cli extends prototype
    * @param  string Text to print out
    * @return void
    */
-  final public static function writeln($text = "\n")
-  {
+  final public static function writeln($text = "\n") {
     $args = func_get_args();
 
     static::printf(join('', $args) . "\n");
@@ -291,8 +263,7 @@ class cli extends prototype
    * @param  string Text to print out
    * @return void
    */
-  final public static function write($text = '')
-  {
+  final public static function write($text = '') {
     fwrite(STDOUT, $text);
     static::flush();
   }
@@ -305,8 +276,7 @@ class cli extends prototype
    * @param  boolean Plain output
    * @return void
    */
-  final public static function error($text, $plain = FALSE)
-  {
+  final public static function error($text, $plain = FALSE) {
     $error = static::ln('error');
     $text  = is_true($plain) ? $text : "\n\bred($error)\b $text\n";
 
@@ -322,22 +292,18 @@ class cli extends prototype
    * @param  integer Spaces to back
    * @return void
    */
-  final public static function clear($num = 0)
-  {
-    if ($num)
-    {
+  final public static function clear($num = 0) {
+    if ($num) {
       return static::write(str_repeat("\x08", $num));
     }
-    elseif ( ! IS_WIN)
-    {
+    elseif ( ! IS_WIN) {
       static::write("\033[H\033[2J");
     }
     else
     {
       $c = static::$height;
 
-      while($c -= 1)
-      {
+      while($c -= 1) {
         static::writeln();
       }
     }
@@ -353,49 +319,40 @@ class cli extends prototype
    * @staticvar string RegExp to match format
    * @return    string
    */
-  final public static function format($text)
-  {
+  final public static function format($text) {
     static $regex = NULL;
 
 
-    if (is_null($regex))
-    {
+    if (is_null($regex)) {
       $expr  = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\(\s*(.*?)\s*\)\\1/s';
       $regex = sprintf($expr, join('|', array_keys(static::$fgcolors)), join('|', array_keys(static::$bgcolors)));
     }
 
 
-    while (preg_match_all($regex, $text, $match))
-    {
-      foreach ($match[0] as $i => $val)
-      {
+    while (preg_match_all($regex, $text, $match)) {
+      foreach ($match[0] as $i => $val) {
         $out  = array();
         $test = explode(',', $match[2][$i]); // fg,bg
 
-        if ($key = array_shift($test))
-        {
+        if ($key = array_shift($test)) {
           $out []= static::$fgcolors[$key];
         }
 
 
-        if (strstr($match[1][$i], 'b'))
-        {
+        if (strstr($match[1][$i], 'b')) {
           $out []= 1;
         }
 
-        if (strstr($match[1][$i], 'u'))
-        {
+        if (strstr($match[1][$i], 'u')) {
           $out []= 4;
         }
 
-        if (strstr($match[1][$i], 'h'))
-        {
+        if (strstr($match[1][$i], 'h')) {
           $out []= 7;
         }
 
 
-        if ($key = array_shift($test))
-        {
+        if ($key = array_shift($test)) {
           $out []= static::$bgcolors[$key];
         }
 
@@ -415,15 +372,12 @@ class cli extends prototype
    * @param  mixed   Default value
    * @return boolean
    */
-  final public static function flag($name, $or = FALSE)
-  {
+  final public static function flag($name, $or = FALSE) {
     $set  = static::args();
     $name = ! is_array($name) ? explode(' ', $name) : $name;
 
-    foreach ($name as $one)
-    {
-      if ( ! empty($set[$one]))
-      {
+    foreach ($name as $one) {
+      if ( ! empty($set[$one])) {
         return $set[$one];
       }
     }
@@ -438,8 +392,7 @@ class cli extends prototype
    * @param  string Default
    * @return mixed
    */
-  final public static function prompt($text, $default = '')
-  {
+  final public static function prompt($text, $default = '') {
     $default && $text .= " [$default]";
 
     return static::readln($text, ': ') ?: $default;
@@ -454,8 +407,7 @@ class cli extends prototype
    * @param  string Default
    * @return mixed
    */
-  final public static function option($text, $value = 'yn', $default = 'n')
-  {
+  final public static function option($text, $value = 'yn', $default = 'n') {
     $value = strtolower(str_replace($default, '', $value)) . strtoupper($default);
     $value = str_replace('\\', '/', trim(addcslashes($value, $value), '\\'));
 
@@ -474,35 +426,29 @@ class cli extends prototype
    * @param  string Warn text
    * @return mixed
    */
-  final public static function menu(array $set, $default = '', $title = 'choose_one_option', $warn = 'unknown_option')
-  {
+  final public static function menu(array $set, $default = '', $title = 'choose_one_option', $warn = 'unknown_option') {
     $old = array_values($set);
     $pad = strlen(sizeof($set)) + 2;
 
-    foreach ($old as $i => $val)
-    {
+    foreach ($old as $i => $val) {
       $test = array_search($val, $set) == $default ? ' [*]' : '';
 
       static::writeln("\n", str_pad($i + 1, $pad, ' ', STR_PAD_LEFT), '. ', $val, $test);
     }
 
 
-    while (1)
-    {
+    while (1) {
       $val = static::readln("\n", static::ln($title), ': ');
 
-      if ( ! is_numeric($val))
-      {
+      if ( ! is_numeric($val)) {
         return $default;
       }
       else
       {
-        if (isset($old[$val -= 1]))
-        {
+        if (isset($old[$val -= 1])) {
           return array_search($old[$val], $set);
         }
-        elseif ($val < 0 OR $val >= sizeof($old))
-        {
+        elseif ($val < 0 OR $val >= sizeof($old)) {
           static::error(static::ln($warn));
         }
       }
@@ -520,10 +466,8 @@ class cli extends prototype
    * @param  string  Phrase separator
    * @return void
    */
-  final public static function wrap($text, $width = -1, $align = 1, $margin = 2, $separator = ' ')
-  {
-    if (is_array($text))
-    {
+  final public static function wrap($text, $width = -1, $align = 1, $margin = 2, $separator = ' ') {
+    if (is_array($text)) {
       $text = join("\n", $text);
     }
 
@@ -537,12 +481,9 @@ class cli extends prototype
     $pad  = $align < 0 ? 0 : ($align === 0 ? 2 : 1);
     $test = explode("\n", str_replace(' ', "\n", $text));
 
-    foreach ($test as $i => $str)
-    {
-      if (strlen($str) > $max)
-      {
-        if ( ! empty($cur))
-        {
+    foreach ($test as $i => $str) {
+      if (strlen($str) > $max) {
+        if ( ! empty($cur)) {
           $out []= $cur;
         }
         $out []= wordwrap($str, $max + 2, "\n$left", TRUE);
@@ -550,8 +491,7 @@ class cli extends prototype
       }
       else
       {
-        if ((strlen($cur) + strlen($str) + $sep) >= $max)
-        {
+        if ((strlen($cur) + strlen($str) + $sep) >= $max) {
           $cur   = trim($cur, $separator);
           $out []= str_pad($cur, $max, ' ', $pad);
           $cur   = '';
@@ -560,8 +500,7 @@ class cli extends prototype
       }
     }
 
-    if ( ! empty($cur))
-    {
+    if ( ! empty($cur)) {
       $out []= $cur;
     }
 
@@ -578,26 +517,22 @@ class cli extends prototype
    * @param  array  Options
    * @return void
    */
-  final public static function help($title, array $set = array())
-  {
+  final public static function help($title, array $set = array()) {
     static::write("\n$title");
 
     $max = 0;
 
-    foreach ($set as $one => $val)
-    {
+    foreach ($set as $one => $val) {
       $cur = ! empty($val['args']) ? strlen(join('> <', $val['args'])) : 0;
 
-      if (($cur += strlen($one)) > $max)
-      {
+      if (($cur += strlen($one)) > $max) {
         $max = $cur;
       }
     }
 
     $max += 4;
 
-    foreach ($set as $key => $val)
-    {
+    foreach ($set as $key => $val) {
       $args = $key . ( ! empty($val['args']) ? ' <' . join('> <', $val['args']) . '>' : '');
       $flag = ! empty($val['flag']) ? "-$val[flag]  " : '';
 
@@ -616,15 +551,13 @@ class cli extends prototype
    * @staticvar integer Timestamp
    * @return    void
    */
-  final public static function progress($current, $total = 100, $title = '')
-  {
+  final public static function progress($current, $total = 100, $title = '') {
     static $start = 0;
 
 
     $now = ticks();
 
-    if ($current == 0)
-    {
+    if ($current == 0) {
       $start = $now;
     }
 
@@ -637,13 +570,11 @@ class cli extends prototype
     $dummy  = static::strips($title = static::format($title));
     $length = static::$width - (strlen($dummy) + 7);
 
-    if ($current > 0)
-    {
+    if ($current > 0) {
       static::clear(static::$width);
     }
 
-    if ( ! empty($title))
-    {
+    if ( ! empty($title)) {
       static::write("$title ");
     }
 
@@ -651,10 +582,8 @@ class cli extends prototype
 
     $inc = 0;
 
-    for ($i = 0; $i <= $length; $i += 1)
-    {
-      if ($i <= ($current / $total * $length))
-      {
+    for ($i = 0; $i <= $length; $i += 1) {
+      if ($i <= ($current / $total * $length)) {
         $char = $i === 0 ? '[' : ($i == $length ? ']' : '*');
 
         static::write(static::format("\ccyan($char)\c"));
@@ -680,8 +609,7 @@ class cli extends prototype
    * @param  array Headers
    * @return void
    */
-  final public static function table(array $set, array $heads = array())
-  {
+  final public static function table(array $set, array $heads = array()) {
     // TODO: make it work on large amount of data?
     $set  = array_values($set);
     $max  = static::$width / sizeof($set[0]);
@@ -691,21 +619,17 @@ class cli extends prototype
     $sep  =
     $col  = array();
 
-    foreach ($set as $test)
-    {// columns
+    foreach ($set as $test) {// columns
       $key = 0;
 
-      foreach (array_values($test) as $one)
-      {
+      foreach (array_values($test) as $one) {
         $old = isset($col[$key]) ? $col[$key] : strlen($key);
 
-        if ( ! isset($col[$key]))
-        {
+        if ( ! isset($col[$key])) {
           $col[$key] = strlen($key);
         }
 
-        if (strlen($one) > $old)
-        {
+        if (strlen($one) > $old) {
           $num = strlen($one);
           $col[$key] = $num < $max ? $num : $max;
         }
@@ -718,13 +642,11 @@ class cli extends prototype
 
     $out = array();
 
-    foreach (array_values($heads) as $key => $one)
-    {
+    foreach (array_values($heads) as $key => $one) {
       $head []= str_pad($one, $col[$key], ' ', STR_PAD_RIGHT);
       $head []= ' ';
 
-      if (strlen($one) > $col[$key])
-      {
+      if (strlen($one) > $col[$key]) {
         $col[$key] = strlen($one);
       }
     }
@@ -734,8 +656,7 @@ class cli extends prototype
 
     static::writeln();
 
-    if ( ! empty($heads))
-    {
+    if ( ! empty($heads)) {
       $heads = join('', $head);
       $heads = preg_replace('/\b\w+\b/', '\cpurple(\\0)\c', $heads);
 
@@ -744,13 +665,11 @@ class cli extends prototype
     }
 
 
-    foreach ($set as $test)
-    { // data
+    foreach ($set as $test) { // data
       $key = 0;
       $row = array('');
 
-      foreach ($test as $one)
-      {
+      foreach ($test as $one) {
         $one   = substr($one, 0, strlen($one) > $max ? $max - 3 : $max) . (strlen($one) > $max ? '...' : '');
         $one   = str_pad($one, $col[$key], ' ', is_num($one) ? STR_PAD_LEFT : STR_PAD_RIGHT);
         $row []= preg_replace('/[\r\n\t]/', ' ', $one);
@@ -773,10 +692,8 @@ class cli extends prototype
    */
 
   // flush output to stdout
-  final private static function flush($test = 0)
-  {
-    if ($test > 0)
-    {
+  final private static function flush($test = 0) {
+    if ($test > 0) {
       static::write(str_repeat("\n", $test));
     }
 
@@ -786,22 +703,19 @@ class cli extends prototype
   }
 
   // remove color codes
-  final private static function strips($test)
-  {
+  final private static function strips($test) {
     return preg_replace("/\033\[.*?m/", '', $test);
   }
 
   // time formatting
-  final private static function duration($secs)
-  {
+  final private static function duration($secs) {
     $out = sprintf('%d:%02d:%02d', floor($secs / 3600), floor($secs % 3600 / 60), $secs % 60);
 
     return preg_replace('/^0+:/', '', $out);
   }
 
   // translations
-  final private static function ln($str)
-  {
+  final private static function ln($str) {
     return ln( ! is_false(strpos($str, '.')) ? $str : "cli.$str");
   }
 

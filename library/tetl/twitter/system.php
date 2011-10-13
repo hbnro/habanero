@@ -51,14 +51,11 @@ class twitter extends prototype
    * @param  mixed Value
    * @return void
    */
-  final public static function setup($key, $value = '')
-  {
-    if (is_assoc($key))
-    {
+  final public static function setup($key, $value = '') {
+    if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
     }
-    elseif (array_key_exists($key, static::$defs))
-    {
+    elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -69,10 +66,8 @@ class twitter extends prototype
    *
    * @return array
    */
-  final public static function credentials()
-  {
-    if ( ! static::$data)
-    {
+  final public static function credentials() {
+    if ( ! static::$data) {
       static::$data = static::api_call('account/verify_credentials');
     }
     return static::$data;
@@ -84,8 +79,7 @@ class twitter extends prototype
    *
    * @return string
    */
-  final public static function screen_name()
-  {
+  final public static function screen_name() {
     return static::$screen_name;
   }
 
@@ -95,8 +89,7 @@ class twitter extends prototype
    *
    * @return string
    */
-  final public static function user_id()
-  {
+  final public static function user_id() {
     return static::$user_id;
   }
 
@@ -106,16 +99,13 @@ class twitter extends prototype
    *
    * @return boolean
    */
-  final public static function is_logged()
-  {
-    if (is_null(static::$connected))
-    {
+  final public static function is_logged() {
+    if (is_null(static::$connected)) {
       extract(static::$defs);
 
       static::$req = oauth_init($consumer_key, $consumer_secret, $token, $token_secret);
 
-      if ($token = request::get('oauth_token'))
-      {
+      if ($token = request::get('oauth_token')) {
         oauth_set(static::$req, $token);
         parse_str(oauth_exec(static::$req, static::$access_token_url), $test);
         session('twitter_auth', $test);
@@ -128,8 +118,7 @@ class twitter extends prototype
       }
 
 
-      if ( ! empty($test['oauth_token']) && ! empty($test['oauth_token']))
-      {
+      if ( ! empty($test['oauth_token']) && ! empty($test['oauth_token'])) {
         oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
       }
 
@@ -147,8 +136,7 @@ class twitter extends prototype
    *
    * @return void
    */
-  final public static function logout()
-  {
+  final public static function logout() {
     session('twitter_auth', NULL);
   }
 
@@ -158,12 +146,10 @@ class twitter extends prototype
    *
    * @return mixed
    */
-  final public static function authorization_url()
-  {
+  final public static function authorization_url() {
     parse_str(oauth_exec(static::$req, static::$request_token_url), $test);
 
-    if ( ! empty($test['oauth_token']))
-    {
+    if ( ! empty($test['oauth_token'])) {
       return static::$authorize_url . '?oauth_token=' . $test['oauth_token'];
     }
   }
@@ -177,15 +163,12 @@ class twitter extends prototype
    * @param  string Method
    * @return mixed
    */
-  final public static function api_call($url, array $vars = array(), $method = GET)
-  {
-    if (static::is_logged())
-    {
+  final public static function api_call($url, array $vars = array(), $method = GET) {
+    if (static::is_logged()) {
       $url  = ! is_url($url) ? rtrim(static::$api_url, '/') . "/$url.json" : $url;
       $test = oauth_exec(static::$req, $url, $vars, $method, TRUE);
 
-      if (is_false(strpos($test, '"error"')))
-      {
+      if (is_false(strpos($test, '"error"'))) {
         $test = preg_replace('/(\w+)":(\d+)/', '\\1":"\\2"', $test);
 
         return json_decode($test);
@@ -201,8 +184,7 @@ class twitter extends prototype
    * @staticvar array  Replacements
    * @return    string
    */
-  final public static function linkify($text)
-  {
+  final public static function linkify($text) {
     static $set = array(// TODO: better unicode support?
               '/(\w{3,5}:\/\/([-\w\.]+)+(d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/' => '<a href="\\1">\\1</a>',
               '/(?<!\w)#([\wñáéíóú]+)(?=\b)/iu' => '<a href="http://twitter.com/search?q=%23\\1">#\\1</a>',
@@ -221,8 +203,7 @@ class twitter extends prototype
    *
    * @return mixed
    */
-  final public static function status_limit()
-  {
+  final public static function status_limit() {
     return static::api_call('account/rate_limit_status');
   }
 
@@ -234,8 +215,7 @@ class twitter extends prototype
    * @param  integer Limit
    * @return mixed
    */
-  final public static function search_by($text, $limit = 20)
-  {
+  final public static function search_by($text, $limit = 20) {
     $limit > 0 && $data['rpp'] = $limit;
 
     $data['q'] = $text;
@@ -251,8 +231,7 @@ class twitter extends prototype
    * @param  array  Arguments
    * @return mixed
    */
-  final public static function missing($method, $arguments)
-  {
+  final public static function missing($method, $arguments) {
     $type   = GET;
     $data   = array();
     $test   = array_pop($arguments);
@@ -260,12 +239,10 @@ class twitter extends prototype
 
     is_assoc($params) ? $data = $params : $params && $arguments []= $params;
 
-    if (is_assoc($test))
-    {
+    if (is_assoc($test)) {
       $data = $test;
     }
-    elseif ($test === POST)
-    {
+    elseif ($test === POST) {
       $type = $test;
     }
     else

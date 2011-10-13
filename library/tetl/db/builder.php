@@ -17,22 +17,18 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  final public static function select($table, $fields = ALL, array $where = array(), array $options = array(), $return = FALSE)
-  {
+  final public static function select($table, $fields = ALL, array $where = array(), array $options = array(), $return = FALSE) {
     $sql  = "SELECT\n" . sql::build_fields($fields);
     $sql .= "\nFROM\n" . sql::build_fields($table);
 
-    if ( ! empty($where))
-    {
+    if ( ! empty($where)) {
       $sql .= "\nWHERE\n" . sql::build_where($where);
     }
 
-    if ( ! empty($options['group']))
-    {
+    if ( ! empty($options['group'])) {
       $sql .= "\nGROUP BY";
 
-      if (is_array($options['group']))
-      {
+      if (is_array($options['group'])) {
         $sql .= "\n" . join(', ', array_map(array('sql', 'names'), $options['group']));
       }
       else
@@ -41,20 +37,16 @@ class db extends prototype
       }
     }
 
-    if ( ! empty($options['order']))
-    {
+    if ( ! empty($options['order'])) {
       $inc  = 0;
       $sql .= "\nORDER BY";
 
-      foreach ($options['order'] as $one => $set)
-      {
-        if (($inc += 1) > 1)
-        {
+      foreach ($options['order'] as $one => $set) {
+        if (($inc += 1) > 1) {
           $sql .= ', ';
         }
 
-        if (is_num($one))
-        {//FIX
+        if (is_num($one)) {//FIX
           $sql .= $set === RANDOM ? "\n$set" : "\n" . sql::names($set[0]) . " $set[1]";
           continue;
         }
@@ -67,8 +59,7 @@ class db extends prototype
     $limit  = ! empty($options['limit']) ? $options['limit'] : 0;
     $offset = ! empty($options['offset']) ? $options['offset'] : 0;
 
-    if ($limit > 0)
-    {
+    if ($limit > 0) {
       $sql .= "\nLIMIT " . ($offset > 0 ? "$offset," : '') . $limit;
     }
 
@@ -85,18 +76,15 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  final public static function insert($table, $values, $column = NULL, $return = FALSE)
-  {
+  final public static function insert($table, $values, $column = NULL, $return = FALSE) {
     $sql  = "INSERT INTO\n" . sql::build_fields($table);
     $sql .= sql::build_values($values, TRUE);
 
-    if (is_true($return))
-    {
+    if (is_true($return)) {
       return $sql;
     }
 
-    if (is_null($column))
-    {// TODO: experimental support for pgsql, try to use db_columns() instead?
+    if (is_null($column)) {// TODO: experimental support for pgsql, try to use db_columns() instead?
       $column = array_shift(array_keys($values));
     }
 
@@ -113,12 +101,10 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  final public static function delete($table, array $where = array(), $limit = 0, $return = FALSE)
-  {
+  final public static function delete($table, array $where = array(), $limit = 0, $return = FALSE) {
     $sql = "DELETE FROM\n" . sql::build_fields($table);
 
-    if ( ! empty($where))
-    {
+    if ( ! empty($where)) {
       $sql .= "\nWHERE\n" . sql::build_where($where);
     }
     $sql .= $limit > 0 ? "\nLIMIT $limit" : '';
@@ -137,8 +123,7 @@ class db extends prototype
    * @param  boolean Return SQL?
    * @return mixed
    */
-  final public static function update($table, $fields, array $where = array(), $limit = 0, $return = FALSE)
-  {
+  final public static function update($table, $fields, array $where = array(), $limit = 0, $return = FALSE) {
     $sql  = "UPDATE\n" . sql::build_fields($table);
     $sql .= "\nSET\n" . sql::build_values($fields, FALSE);
     $sql .= "\nWHERE\n" . sql::build_where($where);
@@ -155,14 +140,11 @@ class db extends prototype
    * @param  array  Params|Arguments
    * @return string
    */
-  final public static function prepare($sql, array $vars = array())
-  {
-    if (is_array($vars))
-    {
+  final public static function prepare($sql, array $vars = array()) {
+    if (is_array($vars)) {
       $sql = strtr($sql, sql::fixate_string($vars, FALSE));
     }
-    elseif (func_num_args() > 1)
-    {
+    elseif (func_num_args() > 1) {
       $args = sql::fixate_string(array_slice(func_get_args(), 1), FALSE);
       $sql  = preg_replace('/((?<!\\\)\?)/e', 'array_shift($args);', $sql);
     }
@@ -179,17 +161,13 @@ class db extends prototype
    * @staticvar mixed Function callback
    * @return    mixed
    */
-  final public static function escape($sql, $vars = array())
-  {
+  final public static function escape($sql, $vars = array()) {
     static $repl = NULL;
 
 
-    if (is_null($repl))
-    {
-      $repl = function($type, $value = NULL)
-      {
-        switch($type)
-        {
+    if (is_null($repl)) {
+      $repl = function ($type, $value = NULL) {
+        switch($type) {
           case '%n';
             return ! strlen(trim($value, "\\'")) ? 'NULL' : $value;
           break;
@@ -209,12 +187,10 @@ class db extends prototype
 
     $args = array_slice(func_get_args(), 1);
 
-    if (is_array($vars) && ! empty($vars))
-    {
+    if (is_array($vars) && ! empty($vars)) {
       $sql = strtr($sql, sql::fixate_string($vars, FALSE));
     }
-    elseif ( ! empty($args))
-    {
+    elseif ( ! empty($args)) {
       $vars = sql::fixate_string($args, FALSE);
       $sql  = preg_replace('/\b%[dsnf]\b/e', '$repl("\\0", array_shift($vars));', $sql);
     }
@@ -229,16 +205,14 @@ class db extends prototype
    * @param  string Query
    * @return mixed
    */
-  final public static function query($sql)
-  {
+  final public static function query($sql) {
     $args     = func_get_args();
     $callback = array('db', strpos($sql, '?') > 0 ? 'prep' : 'escape');
     $sql      = sizeof($args) > 1 ? call_user_func_array($callback, $args) : $sql;
 
     $out = sql::execute(sql::query_repare($sql));
 
-    if ($message = sql::error())
-    {// FIX
+    if ($message = sql::error()) {// FIX
       raise(ln('db.database_query_error', array('message' => $message, 'sql' => $sql)));
     }
     return $out;
@@ -252,15 +226,12 @@ class db extends prototype
    * @param  mixed Default value
    * @return mixed
    */
-  final public static function result($result, $default = FALSE)
-  {
-    if (is_string($result))
-    {
+  final public static function result($result, $default = FALSE) {
+    if (is_string($result)) {
       $res = static::query($result);
     }
 
-    if (static::numrows($result) > 0)
-    {
+    if (static::numrows($result) > 0) {
       return sql::result($result) ?: $default;
     }
     return $default;
@@ -274,20 +245,17 @@ class db extends prototype
    * @param  mixed AS_ARRAY|AS_OBJECT
    * @return array
    */
-  final public static function fetch_all($result, $output = AS_ARRAY)
-  {
+  final public static function fetch_all($result, $output = AS_ARRAY) {
     $out = array();
 
-    if (is_string($result))
-    {
+    if (is_string($result)) {
       $args     = func_get_args();
       $callback = strpos($result, ' ') ? 'query' : 'select';
       $result   = call_user_func_array("static::$callback", $args);
     }
 
 
-    while ($row = static::fetch($result, $output))
-    {
+    while ($row = static::fetch($result, $output)) {
       $out []= $row;
     }
     return $out;
@@ -301,8 +269,7 @@ class db extends prototype
    * @param  mixed AS_ARRAY|AS_OBJECT
    * @return array
    */
-  final public static function fetch($result, $output = AS_ARRAY)
-  {
+  final public static function fetch($result, $output = AS_ARRAY) {
     return $output === AS_OBJECT ? sql::fetch_object($result) : sql::fetch_assoc($result);
   }
 
@@ -313,8 +280,7 @@ class db extends prototype
    * @param  mixed SQL result
    * @return mixed
    */
-  final public static function numrows($result)
-  {
+  final public static function numrows($result) {
     return sql::count_rows($result);
   }
 
@@ -325,8 +291,7 @@ class db extends prototype
    * @param  mixed SQL result
    * @return mixed
    */
-  final public static function affected($result)
-  {
+  final public static function affected($result) {
     return sql::affected_rows($result);
   }
 
@@ -339,8 +304,7 @@ class db extends prototype
    * @param  mixed Primary key|Index
    * @return mixed
    */
-  final public static function inserted($result, $table = NULL, $column = NULL)
-  {
+  final public static function inserted($result, $table = NULL, $column = NULL) {
     return sql::last_id($result, $table, $column);
   }
 

@@ -11,8 +11,7 @@
  * @param  mixed  Token
  * @return integer
  */
-function numtok($text, $ord = 32)
-{
+function numtok($text, $ord = 32) {
   return substr_count($text, char($ord)) + 1;
 }
 
@@ -26,18 +25,14 @@ function numtok($text, $ord = 32)
  * @param  boolean Join again?
  * @return mixed
  */
-function gettok($text, $index = 0, $ord = 32, $join = TRUE)
-{
+function gettok($text, $index = 0, $ord = 32, $join = TRUE) {
   $test = explode(char($ord), $text);
 
-  if ( ! $index)
-  {
+  if ( ! $index) {
     return is_true($join) ? join(char($ord), $test) : $test;
   }
-  elseif (preg_match('/(\d+)-(\d*)/', $index, $match))
-  {
-    if ( ! empty($match[2]))
-    {
+  elseif (preg_match('/(\d+)-(\d*)/', $index, $match)) {
+    if ( ! empty($match[2])) {
       $test = array_slice($test, $match[1] - 1, $match[2] - ($match[1] - 1));
     }
     else
@@ -63,8 +58,7 @@ function gettok($text, $index = 0, $ord = 32, $join = TRUE)
  * @param  boolean Join again?
  * @return mixed
  */
-function addtok($text, $value = '', $ord = 32, $join = TRUE)
-{
+function addtok($text, $value = '', $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   
   array_splice($out, sizeof($out), 0, $value);
@@ -81,8 +75,7 @@ function addtok($text, $value = '', $ord = 32, $join = TRUE)
  * @param  mixed   Token
  * @return integer
  */
-function findtok($text, $value, $ord = 32)
-{
+function findtok($text, $value, $ord = 32) {
   return array_search($value, gettok($text, 0, $ord, FALSE)) + 1;
 }
 
@@ -95,8 +88,7 @@ function findtok($text, $value, $ord = 32)
  * @param  mixed   Token
  * @return boolean
  */
-function istok($text, $value, $ord = 32)
-{
+function istok($text, $value, $ord = 32) {
   return in_array($value, gettok($text, 0, $ord, FALSE));
 }
 
@@ -110,15 +102,12 @@ function istok($text, $value, $ord = 32)
  * @param  boolean Join again?
  * @return mixed
  */
-function remtok($text, $find, $ord = 32, $join = TRUE)
-{
+function remtok($text, $find, $ord = 32, $join = TRUE) {
   $out  = array();
   $find = (array) $find;
   
-  foreach (gettok($text, 0, $ord, FALSE) as $one)
-  {
-    if ( ! in_array($one, $find))
-    {
+  foreach (gettok($text, 0, $ord, FALSE) as $one) {
+    if ( ! in_array($one, $find)) {
       $out []= $one;
     }
   }
@@ -136,25 +125,20 @@ function remtok($text, $find, $ord = 32, $join = TRUE)
  * @param  boolean Join again?
  * @return mixed
  */
-function deltok($text, $index = 0, $ord = 32, $join = TRUE)
-{
+function deltok($text, $index = 0, $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   
-  if (preg_match('/(\d*)-(\d*)/', $index, $match))
-  {
-    if (empty($match[1]) && ! empty($match[2]))
-    {
+  if (preg_match('/(\d*)-(\d*)/', $index, $match)) {
+    if (empty($match[1]) && ! empty($match[2])) {
       $out = array_splice($out, - $match[2]);
     }
-    elseif ( ! empty($match[2]))
-    {
+    elseif ( ! empty($match[2])) {
       $out = array_splice($out, $match[1] - 1, $match[2] - ($match[1] - 1));
     }
     
     $out = array_splice($out, $match[1] - 1);
   }
-  elseif (($index > 0) && ($index <= sizeof($out)))
-  {
+  elseif (($index > 0) && ($index <= sizeof($out))) {
     unset($out[$index - 1]);
   }
   
@@ -172,12 +156,10 @@ function deltok($text, $index = 0, $ord = 32, $join = TRUE)
  * @param  boolean Join again?
  * @return mixed
  */
-function instok($text, $value = '', $index = 0, $ord = 32, $join = TRUE)
-{
+function instok($text, $value = '', $index = 0, $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   
-  if ($index <> 0)
-  {
+  if ($index <> 0) {
     array_splice($out, $index, 0, $value);
   }
   
@@ -194,19 +176,15 @@ function instok($text, $value = '', $index = 0, $ord = 32, $join = TRUE)
  * @param  boolean Join again?
  * @return mixed
  */
-function repltok($text, $repl, $ord = 32, $join = TRUE)
-{
-  if ( ! is_array($repl))
-  {
+function repltok($text, $repl, $ord = 32, $join = TRUE) {
+  if ( ! is_array($repl)) {
     return FALSE;
   }
   
   $out = gettok($text, 0, $ord, FALSE);
   
-  foreach ($out as $key => $val)
-  {
-    if (isset($repl[$key]))
-    {
+  foreach ($out as $key => $val) {
+    if (isset($repl[$key])) {
       $out[$key] = $repl[$key];
     }
   }
@@ -225,25 +203,20 @@ function repltok($text, $repl, $ord = 32, $join = TRUE)
  * @param  boolean Join again?
  * @return mixed
  */
-function settok($text, $value, $index = 0, $ord = 32, $join = TRUE)
-{
+function settok($text, $value, $index = 0, $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   
-  if (preg_match('/(\d*)-(\d*)/', $index, $match))
-  {
-    if (empty($match[1]) && ! empty($match[2]))
-    {
+  if (preg_match('/(\d*)-(\d*)/', $index, $match)) {
+    if (empty($match[1]) && ! empty($match[2])) {
       $out = array_splice($out, - $match[2], $match[2], $value);
     }
-    elseif ( ! empty($match[2]))
-    {
+    elseif ( ! empty($match[2])) {
       $out = array_splice($out, $match[1] - 1, $match[2] - ($match[1] - 1), $value);
     }
     
     $out = array_splice($out, $match[1] - 1, sizeof($out), $value);
   }
-  elseif ($index > 0)
-  {
+  elseif ($index > 0) {
     $out = array_splice($out, $index - 1, 1, $value);
   }
   
@@ -260,14 +233,11 @@ function settok($text, $value, $index = 0, $ord = 32, $join = TRUE)
  * @param  integer Index
  * @return integer
  */
-function matchtok($text, $regex, $index = 0, $ord = 32)
-{
+function matchtok($text, $regex, $index = 0, $ord = 32) {
   $regex = sprintf('/%s/', str_replace('/', '\\/', $regex));
   
-  foreach (gettok($text, 0, $ord, FALSE) as $key => $val)
-  {
-    if (@preg_match($regex, $val))
-    {
+  foreach (gettok($text, 0, $ord, FALSE) as $key => $val) {
+    if (@preg_match($regex, $val)) {
       return $key += 1;
     }
   }
@@ -283,12 +253,9 @@ function matchtok($text, $regex, $index = 0, $ord = 32)
  * @param  mixed  Token
  * @return mixed
  */
-function wildtok($text, $filter, $index = 0, $ord = 32)
-{
-  foreach (gettok($text, 0, $ord, FALSE) as $key => $val)
-  {
-    if (match($filter, $val))
-    {
+function wildtok($text, $filter, $index = 0, $ord = 32) {
+  foreach (gettok($text, 0, $ord, FALSE) as $key => $val) {
+    if (match($filter, $val)) {
       return $key += 1;
     }
   }
@@ -305,8 +272,7 @@ function wildtok($text, $filter, $index = 0, $ord = 32)
  * @param  boolean Join again?
  * @return mixed
  */
-function padtok($text, $length, $value = '', $ord = 32, $join = TRUE)
-{
+function padtok($text, $length, $value = '', $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   $out = array_pad($out, $length, $value);
   
@@ -323,15 +289,12 @@ function padtok($text, $length, $value = '', $ord = 32, $join = TRUE)
  * @param  boolean Join again?
  * @return mixed
  */
-function sorttok($text, $ord = 32, $mode = '', $join = TRUE)
-{
+function sorttok($text, $ord = 32, $mode = '', $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   $dec = strlen($mode);
 
-  while ($dec > 0)
-  {
-    switch (substr($mode, $dec -= 1, 1))
-    {
+  while ($dec > 0) {
+    switch (substr($mode, $dec -= 1, 1)) {
       case 'R';
         $out = array_reverse($out);
       break;

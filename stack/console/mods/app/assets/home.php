@@ -3,8 +3,7 @@
 class home_controller extends controller
 {
 
-  public static function index()
-  {
+  public static function index() {
   }
 
 }

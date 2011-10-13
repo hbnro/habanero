@@ -8,8 +8,7 @@
  */
 
 // do!
-call_user_func(function()
-{
+call_user_func(function () {
   // filename extension
   define('EXT', '.php');
 
@@ -88,24 +87,20 @@ call_user_func(function()
     APP_PATH.DS.'config'.EXT,
   );
 
-  foreach ($config_set as $config_file)
-  {
+  foreach ($config_set as $config_file) {
     is_file($config_file) && config($config_file);
   }
 
 
   // local
-  if ( ! empty($GLOBALS['config']))
-  {
+  if ( ! empty($GLOBALS['config'])) {
     config($GLOBALS['config']);
   }
 
 
   // lazy loading
-  spl_autoload_register(function($class)
-  {
-    foreach (rescue() as $test)
-    {
+  spl_autoload_register(function ($class) {
+    foreach (rescue() as $test) {
       is_closure($test) && $test($class);
       is_array($test) && ! empty($test[$class]) && require $test[$class];
     }

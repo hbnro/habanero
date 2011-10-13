@@ -10,15 +10,13 @@
  * @param  string Container
  * @return object
  */
-function registry($bag = '')
-{
+function registry($bag = '') {
   static $set = array();
 
   
   $bag = ($bag && ! is_num($bag)) ? $bag : '--registry-default';
 
-  if ( ! isset($set[$bag]))
-  {
+  if ( ! isset($set[$bag])) {
     $set[$bag] = new stdClass;
   }
 
@@ -34,12 +32,10 @@ function registry($bag = '')
  * @param  string Container
  * @return mixed
  */
-function registry_get($item, $or = NULL, $bag = '')
-{
+function registry_get($item, $or = NULL, $bag = '') {
   $bag = registry($bag);
 
-  if (is_num($item))
-  {
+  if (is_num($item)) {
     return FALSE;
   }
   
@@ -55,12 +51,10 @@ function registry_get($item, $or = NULL, $bag = '')
  * @param  string  Container
  * @return boolean
  */
-function registry_set($item, $value, $bag = '')
-{
+function registry_set($item, $value, $bag = '') {
   $bag = registry($bag);
 
-  if (is_num($item))
-  {
+  if (is_num($item)) {
     return FALSE;
   }
 
@@ -77,12 +71,10 @@ function registry_set($item, $value, $bag = '')
  * @param  string  Container
  * @return boolean
  */
-function registry_unset($item, $bag = '')
-{
+function registry_unset($item, $bag = '') {
   $bag = registry($bag);
 
-  if (is_num($item) OR ! isset($bag->$item))
-  {
+  if (is_num($item) OR ! isset($bag->$item)) {
     return FALSE;
   }
 
@@ -99,8 +91,7 @@ function registry_unset($item, $bag = '')
  * @param  string  Container
  * @return boolean
  */
-function registry_exists($item, $bag = '')
-{
+function registry_exists($item, $bag = '') {
   $bag = registry($bag);
   
   return isset($bag->$item);

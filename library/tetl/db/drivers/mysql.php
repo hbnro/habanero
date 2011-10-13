@@ -4,8 +4,7 @@
  * MySQL database adapter
  */
 
-if ( ! function_exists('mysql_connect'))
-{
+if ( ! function_exists('mysql_connect')) {
   raise(ln('extension_missing', array('name' => 'MySQL')));
 }
 
@@ -17,13 +16,11 @@ define('DB_DRIVER', 'MySQL');
 /**#@-*/
 
 
-sql::implement('connect', function()
-{
+sql::implement('connect', function () {
   static $resource = NULL;
   
   
-  if (is_null($resource))
-  {
+  if (is_null($resource)) {
     $parts = func_get_arg(0);
 
     $host  = $parts['host'];
@@ -36,53 +33,43 @@ sql::implement('connect', function()
   return $resource;
 });
 
-sql::implement('version', function()
-{
+sql::implement('version', function () {
   return mysql_result(mysql_query('SELECT version()', sql::connect()), 0);
 });
 
-sql::implement('execute', function($sql)
-{
+sql::implement('execute', function ($sql) {
   return mysql_query($sql, sql::connect());
 });
 
-sql::implement('escape', function($test)
-{
+sql::implement('escape', function ($test) {
   return str_replace("'", '\\\'', stripslashes($test));
 });
 
-sql::implement('error', function()
-{
+sql::implement('error', function () {
   return mysql_error(sql::connect());
 });
 
-sql::implement('result', function($res)
-{
+sql::implement('result', function ($res) {
   return mysql_result($res, 0);
 });
 
-sql::implement('fetch_assoc', function($res)
-{
+sql::implement('fetch_assoc', function ($res) {
   return mysql_fetch_assoc($res);
 });
 
-sql::implement('fetch_object', function($res)
-{
+sql::implement('fetch_object', function ($res) {
   return mysql_fetch_object($res);
 });
 
-sql::implement('count_rows', function($res)
-{
+sql::implement('count_rows', function ($res) {
   return mysql_num_rows($res);
 });
 
-sql::implement('affected_rows', function()
-{
+sql::implement('affected_rows', function () {
   return mysql_affected_rows(sql::connect());
 });
 
-sql::implement('last_id', function()
-{
+sql::implement('last_id', function () {
   return mysql_insert_id(sql::connect());
 });
 

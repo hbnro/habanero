@@ -10,8 +10,7 @@ $config['encoding'] = 'UTF-8';
 $config['perms'] = 0666;
 
 
-configure::filter('import_path', function($value)
-{
+configure::filter('import_path', function ($value) {
   $value = (array) $value;
   $value = array_unique($value);
 

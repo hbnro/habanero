@@ -27,28 +27,23 @@ final class bootstrap extends prototype
    * @param  string Module name
    * @return void
    */
-  final public static function enhance($lib)
-  {
+  final public static function enhance($lib) {
     $lib = strtr($lib, '\\/', DS.DS);
 
-    if ( ! in_array($lib, bootstrap::$library))
-    {
+    if ( ! in_array($lib, bootstrap::$library)) {
       $test   = (array) option('import_path', array());
 
-      foreach ($test as $dir)
-      {
+      foreach ($test as $dir) {
         $helper_path  = $dir.DS.$lib;
         $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
 
-        if (is_file($helper_path))
-        {
+        if (is_file($helper_path)) {
           break;
         }
       }
 
       // fallback, do not use i18n...
-      if ( ! is_loaded($helper_path))
-      {
+      if ( ! is_loaded($helper_path)) {
         /**
           * @ignore
           */
@@ -66,12 +61,10 @@ final class bootstrap extends prototype
    * @param  mixed Function callback
    * @return void
    */
-  final public static function execute(Closure $bootstrap)
-  {
+  final public static function execute(Closure $bootstrap) {
     require_once LIB.DS.'core'.DS.'initialize'.EXT;
 
-    if (defined('BEGIN'))
-    {
+    if (defined('BEGIN')) {
       raise(ln('application_error'));
     }
 
@@ -79,8 +72,7 @@ final class bootstrap extends prototype
     // start
     define('BEGIN', ticks());
 
-    foreach (bootstrap::$middleware as $callback)
-    {
+    foreach (bootstrap::$middleware as $callback) {
       $bootstrap = $callback($bootstrap);
     }
     $bootstrap();
@@ -93,8 +85,7 @@ final class bootstrap extends prototype
    * @param  mixed Function callback
    * @return void
    */
-  final public static function bind(Closure $middleware)
-  {
+  final public static function bind(Closure $middleware) {
     bootstrap::$middleware []= $middleware;
   }
 
@@ -102,28 +93,24 @@ final class bootstrap extends prototype
 
 
 // basic output
-bootstrap::implement('raise', function($message)
-{
+bootstrap::implement('raise', function ($message) {
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(FALSE), 1);
 
 
   // finalize opened buffers
-  while (ob_get_level())
-  {
+  while (ob_get_level()) {
     ob_end_clean();
   }
 
-  if ( ! empty($GLOBALS['--raise-message']))
-  {// this could be used in fatal error scenarios
+  if ( ! empty($GLOBALS['--raise-message'])) {// this could be used in fatal error scenarios
     $message = $GLOBALS['--raise-message'];
     unset($GLOBALS['--raise-message']);
   }
 
 
-  foreach ($trace as $i => $on)
-  {
+  foreach ($trace as $i => $on) {
     $type   = ! empty($on['type']) ? $on['type'] : '';
     $system = ! empty($on['file']) && strstr($on['file'], LIB) ?: FALSE;
     $prefix = ! empty($on['object']) ? get_class($on['object']) : ( ! empty($on['class']) ? $on['class'] : '');
@@ -145,11 +132,9 @@ bootstrap::implement('raise', function($message)
   $var['backtrace'] = array_reverse($trace);
   $var['route']     = IS_CLI ? @array_shift($_SERVER['argv']) : value($_SERVER, 'REQUEST_URI');
 
-  if ( ! IS_CLI)
-  {
+  if ( ! IS_CLI) {
     // raw headers
-    foreach (headers_list() as $one)
-    {
+    foreach (headers_list() as $one) {
       list($key, $val) = explode(':', $one);
 
       $var['headers'][$key] = trim($val);
@@ -161,10 +146,8 @@ bootstrap::implement('raise', function($message)
   $var['host'] = @php_uname('n') ?: sprintf('<%s>', ln('unknown'));
   $var['user'] = 'Unknown';
 
-  foreach (array('USER', 'LOGNAME', 'USERNAME', 'APACHE_RUN_USER') as $key)
-  {
-    if ($one = @getenv($key))
-    {
+  foreach (array('USER', 'LOGNAME', 'USERNAME', 'APACHE_RUN_USER') as $key) {
+    if ($one = @getenv($key)) {
       $var['user'] = $one;
     }
   }
@@ -173,21 +156,16 @@ bootstrap::implement('raise', function($message)
   // environment info
   $var['env'] = $_SERVER;
 
-  foreach (array('PATH_TRANSLATED', 'DOCUMENT_ROOT', 'REQUEST_TIME', 'argc', 'argv') as $key)
-  {
-    if (isset($var['env'][$key]))
-    {
+  foreach (array('PATH_TRANSLATED', 'DOCUMENT_ROOT', 'REQUEST_TIME', 'argc', 'argv') as $key) {
+    if (isset($var['env'][$key])) {
       unset($var['env'][$key]);
     }
   }
 
   // received headers
-  foreach ((array) $var['env'] as $key => $val)
-  {
-    if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key))
-    {
-      if ( ! IS_CLI && (substr($key, 0, 5) === 'HTTP_'))
-      {// there is no need to use request object since are not required
+  foreach ((array) $var['env'] as $key => $val) {
+    if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key)) {
+      if ( ! IS_CLI && (substr($key, 0, 5) === 'HTTP_')) {// there is no need to use request object since are not required
         $var['received'][camelcase(strtolower(substr($key, 5)), TRUE, '-')] = $val;
       }
       unset($var['env'][$key]);
@@ -198,9 +176,8 @@ bootstrap::implement('raise', function($message)
   $type     = IS_CLI ? 'txt' : 'html';
   $inc_file = LIB.DS.'assets'.DS.'views'.DS."raise.$type".EXT;
 
-  $output = call_user_func(function()
-    use($inc_file, $var)
-  {
+  $output = call_user_func(function ()
+    use($inc_file, $var) {
     ob_start();
     extract($var);
     require $inc_file;

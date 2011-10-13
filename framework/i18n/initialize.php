@@ -4,25 +4,21 @@
  * Intialize translation backend
  */
 
-call_user_func(function()
-{
+call_user_func(function () {
   $lang = option('language', 'en');
 
   // locales
-  if ( ! IS_CLI)
-  {
+  if ( ! IS_CLI) {
     $out  = array();
     $test = explode(',', value($_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
 
 
     $out[$lang] = 1;
 
-    foreach ($test as $one)
-    {
+    foreach ($test as $one) {
       $one = explode(';q=', $one);
 
-      if ($lang = trim($one[0]))
-      {//FIX
+      if ($lang = trim($one[0])) {//FIX
         $out[$lang] = ! empty($one[1]) ? (float) $one[1] : 1;
       }
     }

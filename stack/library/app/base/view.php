@@ -24,8 +24,7 @@ class view extends prototype
    * @param  mixed  Function callback
    * @return void
    */
-  final public static function register($type, Closure $lambda)
-  {
+  final public static function register($type, Closure $lambda) {
     static::$render[$type] = $lambda;
   }
 
@@ -37,12 +36,10 @@ class view extends prototype
    * @param  array  Local vars
    * @return string
    */
-  final public static function render($file, array $vars = array())
-  {
+  final public static function render($file, array $vars = array()) {
     $type = ext(basename($file, EXT));
 
-    if ($type && array_key_exists($type, static::$render))
-    {
+    if ($type && array_key_exists($type, static::$render)) {
       return call_user_func(static::$render[$type], $file, $vars);
     }
 
@@ -60,14 +57,12 @@ class view extends prototype
    * @param  array  Local vars
    * @return string
    */
-  final public static function load($path, array $vars = array())
-  {
+  final public static function load($path, array $vars = array()) {
     @list($action, $path) = array(basename($path), dirname($path));
 
     $view_file = findfile($path, "$action.*", FALSE, 1);
 
-    if ( ! is_file($view_file))
-    {
+    if ( ! is_file($view_file)) {
       raise(ln('mvc.view_missing', array('path' => $path, 'action' => $action)));
     }
     return static::render($view_file, $vars);

@@ -10,13 +10,11 @@
  * @param  string Path
  * @return string
  */
-css::implement('image', function($path)
-{
+css::implement('image', function ($path) {
   static $cache = array();
 
 
-  if (isset($cache[$path]))
-  {
+  if (isset($cache[$path])) {
     return $cache[$path];
   }
 
@@ -30,8 +28,7 @@ css::implement('image', function($path)
 
   $img_file = css::path($path);
 
-  if (is_file($img_file))
-  {
+  if (is_file($img_file)) {
     $test = getimagesize($img_file);
 
     $out['width']  = "$test[0]px";

@@ -77,13 +77,11 @@ You can write simple applications using code like this:
 
     require 'tetlphp/library/initialize.php';
 
-    run(function()
-    {
+    run(function () {
 
       import('tetl/server');
 
-      route('*', function()
-      {
+      route('*', function () {
         echo 'Hello world!';
       });
 

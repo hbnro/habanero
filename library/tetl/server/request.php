@@ -23,14 +23,10 @@ class request extends prototype
    *
    * @return array
    */
-  final public static function all_headers()
-  {
-    if ( ! static::$headers)
-    {
-      foreach ($_SERVER as $key => $val)
-      {
-        if (substr($key, 0, 5) === 'HTTP_')
-        {
+  final public static function all_headers() {
+    if ( ! static::$headers) {
+      foreach ($_SERVER as $key => $val) {
+        if (substr($key, 0, 5) === 'HTTP_') {
           $key = strtolower(substr($key, 5));
           $key = camelcase($key, TRUE, '-');
 
@@ -49,8 +45,7 @@ class request extends prototype
    * @param  mixed  Default value
    * @return mixed
    */
-  final public static function header($name, $default = FALSE)
-  {
+  final public static function header($name, $default = FALSE) {
     $set = static::all_headers();
 
     return ! empty($set[$name]) ? $set[$name] : $default;
@@ -63,18 +58,15 @@ class request extends prototype
    *
    * @return mixed
    */
-  final public static function put()
-  {
-    if ( ! static::is_put())
-    {
+  final public static function put() {
+    if ( ! static::is_put()) {
       return FALSE;
     }
 
 
     $out = (string) @file_get_contents('php://input');
 
-    if (static::header('content-type') === 'application/x-www-form-urlencoded')
-    {
+    if (static::header('content-type') === 'application/x-www-form-urlencoded') {
       parse_str($out, $out);
     }
     return $out;
@@ -88,8 +80,7 @@ class request extends prototype
   * @param  mixed  Default value
   * @return mixed
   */
-  final public static function get($key = '', $or = FALSE)
-  {
+  final public static function get($key = '', $or = FALSE) {
     return $key ? value($_GET, $key, $or) : $_GET;
   }
 
@@ -101,8 +92,7 @@ class request extends prototype
   * @param  mixed  Default value
   * @return mixed
   */
-  final public static function post($key = '', $or = FALSE)
-  {
+  final public static function post($key = '', $or = FALSE) {
     return $key ? value($_POST, $key, $or) : $_POST;
   }
 
@@ -113,8 +103,7 @@ class request extends prototype
   * @param  string Identifier
   * @return mixed
   */
-  final public static function upload($key = '')
-  {
+  final public static function upload($key = '') {
     return $key ? value($_FILES, $key, array()) : $_FILES;
   }
 
@@ -124,8 +113,7 @@ class request extends prototype
   *
   * @return string
   */
-  final public static function address()
-  {
+  final public static function address() {
     return is_callable('gethostbyaddr') ? gethostbyaddr(static::remote_ip()) : static::remote_ip();
   }
 
@@ -135,8 +123,7 @@ class request extends prototype
   *
   * @return integer
   */
-  final public static function port()
-  {
+  final public static function port() {
     return (int) server('REMOTE_PORT');
   }
 
@@ -146,8 +133,7 @@ class request extends prototype
   *
   * @return mixed
   */
-  final public static function agent()
-  {
+  final public static function agent() {
     return server('HTTP_USER_AGENT');
   }
 
@@ -157,8 +143,7 @@ class request extends prototype
   *
   * @return string
   */
-  final public static function method()
-  {
+  final public static function method() {
     return server('REQUEST_METHOD');
   }
 
@@ -169,8 +154,7 @@ class request extends prototype
   * @param  string Valor por defecto
   * @return mixed
   */
-  final public static function referer($or = FALSE)
-  {
+  final public static function referer($or = FALSE) {
     return server('HTTP_REFERER', $or);
   }
 
@@ -181,8 +165,7 @@ class request extends prototype
   * @param  string Default value
   * @return string
   */
-  final public static function remote_ip($or = FALSE)
-  {
+  final public static function remote_ip($or = FALSE) {
     return server('HTTP_X_FORWARDED_FOR', server('HTTP_CLIENT_IP', server('REMOTE_ADDR', $or)));
   }
 
@@ -192,8 +175,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  final public static function is_post()
-  {
+  final public static function is_post() {
     return static::method() === POST;
   }
 
@@ -203,8 +185,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  final public static function is_get()
-  {
+  final public static function is_get() {
     return static::method() === GET;
   }
 
@@ -214,8 +195,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  final public static function is_put()
-  {
+  final public static function is_put() {
     return static::method() === PUT;
   }
 
@@ -225,8 +205,7 @@ class request extends prototype
    *
    * @return boolean
    */
-  final public static function is_delete()
-  {
+  final public static function is_delete() {
     return static::method() === DELETE;
   }
 
@@ -237,22 +216,18 @@ class request extends prototype
    * @param  string  Key or name
    * @return boolean
    */
-  final public static function is_upload($key = NULL)
-  {
-    if (func_num_args() == 0)
-    {
+  final public static function is_upload($key = NULL) {
+    if (func_num_args() == 0) {
       return sizeof($_FILES) > 0;
     }
 
 
     $test = value($_FILES, $key);
 
-    if ( ! empty($test['name'][0]) && $test['error'][0] == 0)
-    {
+    if ( ! empty($test['name'][0]) && $test['error'][0] == 0) {
       return TRUE;
     }
-    elseif (is_array($test) && $test['error'] == 0)
-    {
+    elseif (is_array($test) && $test['error'] == 0) {
       return TRUE;
     }
 
@@ -266,14 +241,12 @@ class request extends prototype
    * @staticvar string  Token
    * @return    boolean
    */
-  final public static function is_safe()
-  {
+  final public static function is_safe() {
     static $check = NULL,
            $_token = NULL;
 
 
-    if (is_null($check))
-    {
+    if (is_null($check)) {
       $check  = defined('CHECK') ? CHECK : NULL;
       $_token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
     }
@@ -282,8 +255,7 @@ class request extends prototype
     @list($old_time, $old_token) = explode(' ', $check);
     @list($new_time, $new_token) = explode(' ', $_token);
 
-    if (((time() - $old_time) < option('csrf.expires', 300)) && ($old_token === $new_token))
-    {
+    if (((time() - $old_time) < option('csrf.expires', 300)) && ($old_token === $new_token)) {
       return TRUE;
     }
     return FALSE;
@@ -293,16 +265,13 @@ class request extends prototype
 
 
 // default output
-request::implement('dispatch', function(array $params = array())
-{
-  if (empty($params['to']))
-  {
+request::implement('dispatch', function (array $params = array()) {
+  if (empty($params['to'])) {
     raise(ln('function_param_missing', array('name' => 'dispatch', 'input' => 'to')));
   }
   elseif ( ! (is_callable($params['to']) OR
               is_file($params['to']) OR
-              is_url($params['to'])))
-  {
+              is_url($params['to']))) {
     raise($params['to']);
   }
 

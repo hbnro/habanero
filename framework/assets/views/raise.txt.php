@@ -6,8 +6,7 @@ printf("\n%s\n--\n", ln('includes'));
 dump(get_included_files(), TRUE);
 
 
-if (isset($backtrace))
-{
+if (isset($backtrace)) {
   printf("\n\n%s\n--\n", ln('backtrace'));
   dump($backtrace, TRUE);
 }
@@ -17,8 +16,7 @@ printf("\n\n%s\n--\n", ln('config'));
 dump(config(), TRUE);
 
 
-if (isset($env))
-{
+if (isset($env)) {
   printf("\n\n%s\n--\n", ln('environment'));
   dump($env, TRUE);
 }

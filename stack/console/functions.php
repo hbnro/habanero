@@ -1,11 +1,9 @@
 <?php
 
-function help($test)
-{
+function help($test) {
   $str  = sprintf("\n  %s\n", ln('tetl.generator_intro'));
 
-  foreach ($test as $one)
-  {
+  foreach ($test as $one) {
     $ns = basename($one);
 
     i18n::load_path($one.DS.'locale', $ns);
@@ -16,33 +14,27 @@ function help($test)
   cli::write(cli::format("$str\n\n"));
 }
 
-function error($text)
-{
+function error($text) {
   cli::writeln(cli::format("\bred($text)\b"));
 }
 
-function info($text)
-{
+function info($text) {
   cli::writeln(cli::format("\bcyan($text)\b"));
 }
 
-function bold($text)
-{
+function bold($text) {
   cli::writeln(cli::format("\bwhite($text)\b"));
 }
 
-function notice($text)
-{
+function notice($text) {
   cli::writeln(cli::format("\byellow($text)\b"));
 }
 
-function success($text)
-{
+function success($text) {
   cli::writeln(cli::format("\bgreen($text)\b"));
 }
 
-function pretty($text)
-{
+function pretty($text) {
   ob_start() && $text();
 
   $text = preg_replace('/\b([\w.-]+)(?=\s=>)/', '\bcyan(\\1)\b', ob_get_clean());
@@ -51,48 +43,40 @@ function pretty($text)
   cli::write(cli::format($text));
 }
 
-function copy_file($to, $from)
-{
+function copy_file($to, $from) {
   status('copy', rtrim($to, DS).DS.basename($from));
   copy($from, mkpath($to).DS.basename($from));
 }
 
-function create_file($path, $text = '')
-{
+function create_file($path, $text = '') {
   status('create', $path);
   write(mkpath(dirname($path)).DS.basename($path), $text);
 }
 
-function remove_file($path)
-{
+function remove_file($path) {
   status('remove', $path);
   is_file($path) && unlink($path);
 }
 
-function create_dir($path)
-{
+function create_dir($path) {
   status('create', $path);
   mkpath($path);
 }
 
-function copy_dir($to, $from)
-{
+function copy_dir($to, $from) {
   status('copy', rtrim($to, DS).DS.basename($from));
   cpfiles($from, $to, '*', TRUE);
 }
 
-function action($format, $text, $what)
-{
+function action($format, $text, $what) {
   $prefix = str_pad("\b$format($text)\b", 20 + strlen($format), ' ', STR_PAD_LEFT);
   $text   = str_replace(CWD.DS, '', "\clight_gray($what)\c");
 
   cli::write(cli::format("$prefix  $text\n"));
 }
 
-function status($type, $text = '')
-{
-  switch ($type)
-  {
+function status($type, $text = '') {
+  switch ($type) {
     case 'create';
       action('green', $type, $text);
     break;

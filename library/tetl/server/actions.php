@@ -11,24 +11,19 @@
  * @param  array  Options hash
  * @return string
  */
-function url_for($action, array $params = array())
-{
-  if (is_assoc($action))
-  {
+function url_for($action, array $params = array()) {
+  if (is_assoc($action)) {
     $params = array_merge($action, $params);
   }
-  elseif ( ! isset($params['action']))
-  {
+  elseif ( ! isset($params['action'])) {
     $params['action'] = $action;
   }
 
 
-  if (empty($params['action']))
-  {
+  if (empty($params['action'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'action')));
   }
-  elseif (is_url($params['action']))
-  {
+  elseif (is_url($params['action'])) {
     return $params['action'];
   }
 
@@ -53,22 +48,19 @@ function url_for($action, array $params = array())
   $anchor =
   $query  = '';
 
-  if ( ! empty($params['action']))
-  {
+  if ( ! empty($params['action'])) {
     @list($part, $anchor) = explode('#', $params['action']);
     @list($part, $query)  = explode('?', $part);
 
     $link .= ($rewrite ? '' : '/') . ltrim($part, '/');
   }
 
-  if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link))
-  {
+  if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link)) {
     $link .= option('suffix');
   }
 
 
-  if ( ! empty($params['locals']))
-  {
+  if ( ! empty($params['locals'])) {
     $hash  = uniqid('--query-prefix');
     $test  = http_build_query($params['locals'], $hash, '&amp;');
     $test  = preg_replace("/{$hash}\d+=/", '', $test);
@@ -90,33 +82,27 @@ function url_for($action, array $params = array())
  * @param  string Link|Email|Path
  * @return string
  */
-function pre_url($text)
-{
+function pre_url($text) {
   $text = str_replace('mailto:', '', $text);
 
-  if (preg_match('/[?#]/', $text) OR (substr($text, 0, 2) == '//'))
-  {
+  if (preg_match('/[?#]/', $text) OR (substr($text, 0, 2) == '//')) {
     return $text;
   }
 
 
-  if (is_email($text))
-  {
+  if (is_email($text)) {
     $text = 'mailto:' . rawurlencode($text);
   }
-  elseif (substr($text, 0, 1) === '/')
-  {
+  elseif (substr($text, 0, 1) === '/') {
     $text = url_for($text, array(
       'complete' => TRUE,
       'host' => TRUE,
     ));
   }
-  elseif (substr($text, 0, 2) == './')
-  {
+  elseif (substr($text, 0, 2) == './') {
     $text = server(TRUE, ROOT . substr($text, 2));
   }
-  elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text))
-  {
+  elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text)) {
     $text = "http://$text";
   }
 
@@ -132,50 +118,41 @@ function pre_url($text)
  * @param  mixed  Attributes|Function callback
  * @return string
  */
-function link_to($text, $url = NULL, $args = array())
-{
+function link_to($text, $url = NULL, $args = array()) {
   $attrs  =
   $params = array();
 
-  if (is_assoc($text))
-  {
+  if (is_assoc($text)) {
     $params = $text;
   }
-  elseif (is_assoc($url))
-  {
+  elseif (is_assoc($url)) {
     $params = array_merge($url, $params);
 
     $url = (string) $text;
   }
-  elseif (is_closure($url))
-  {
+  elseif (is_closure($url)) {
     $params['action'] = $text;
 
     $args = $url;
   }
-  elseif ( ! isset($params['text']))
-  {
+  elseif ( ! isset($params['text'])) {
     $params['text'] = $text;
   }
 
-  if (is_assoc($url))
-  {
+  if (is_assoc($url)) {
     $attrs = array_merge($url, $attrs);
   }
-  elseif ( ! isset($params['action']))
-  {
+  elseif ( ! isset($params['action'])) {
     $params['action'] = $url;
   }
 
 
-  if (empty($params['text']))
-  {
+  if (empty($params['text'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'text')));
   }
 
 
-  if (is_closure($args))
-  {
+  if (is_closure($args)) {
     ob_start() && $args();
 
     $params['text'] = trim(ob_get_clean());
@@ -215,32 +192,26 @@ function link_to($text, $url = NULL, $args = array())
  * @param  array  Options hash
  * @return string
  */
-function mail_to($address, $text = NULL, array $args = array())
-{
+function mail_to($address, $text = NULL, array $args = array()) {
   $vars   =
   $params = array();
 
-  if (is_assoc($address))
-  {
+  if (is_assoc($address)) {
     $params = $address;
   }
-  elseif ( ! isset($params['address']))
-  {
+  elseif ( ! isset($params['address'])) {
     $params['address'] = $address;
   }
 
-  if (is_assoc($text))
-  {
+  if (is_assoc($text)) {
     $params = array_merge($text, $params);
   }
-  elseif ( ! isset($params['text']))
-  {
+  elseif ( ! isset($params['text'])) {
     $params['text'] = $text;
   }
 
 
-  if (empty($params['text']))
-  {
+  if (empty($params['text'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'text')));
   }
 
@@ -256,10 +227,8 @@ function mail_to($address, $text = NULL, array $args = array())
     'cc'          => '',
   ), $params);
 
-  foreach (array('subject', 'body', 'bcc', 'cc') as $key)
-  {
-    if ( ! empty($params[$key]))
-    {
+  foreach (array('subject', 'body', 'bcc', 'cc') as $key) {
+    if ( ! empty($params[$key])) {
       $vars[$key] = $params[$key];
     }
   }
@@ -270,25 +239,21 @@ function mail_to($address, $text = NULL, array $args = array())
 
   $vars = $vars ? '?' . http_build_query($vars) : '';
 
-  if ($params['encode'] === 'hex')
-  {
+  if ($params['encode'] === 'hex') {
     $test   = '';
     $length = strlen($params['address']);
 
-    for ($i = 0; $i < $length; $i += 1)
-    {
+    for ($i = 0; $i < $length; $i += 1) {
       $char  = substr($params['address'], $i, 1);
       $test .= ! in_array($char, array('@', '.')) ? '%' . base_convert(ord($char), 10, 16) : $char;
     }
 
     $params['address'] = $test;
   }
-  elseif ($params['encode'] === 'javascript')
-  {
+  elseif ($params['encode'] === 'javascript') {
     return tag('script', array(
       'type' => 'text/javascript',
-    ), sprintf('document.write("%s")', preg_replace_callback('/./', function($match)
-    {
+    ), sprintf('document.write("%s")', preg_replace_callback('/./', function ($match) {
       return '\x' . base_convert(ord($match[0]), 10, 16);
     }, tag('a', array(
       'href' => "mailto:$params[address]$vars"
@@ -309,21 +274,17 @@ function mail_to($address, $text = NULL, array $args = array())
  * @staticvar string  Root
  * @return    string
  */
-function path_to($path = '.', $host = FALSE)
-{
+function path_to($path = '.', $host = FALSE) {
   static $root = NULL;
 
 
-  if (is_null($root))
-  {// only apply on real root-based files
+  if (is_null($root)) {// only apply on real root-based files
     $root = realpath($_SERVER['DOCUMENT_ROOT']);
   }
 
 
-  if ($path = realpath($path))
-  {
-    if ($root <> '/')
-    {
+  if ($path = realpath($path)) {
+    if ($root <> '/') {
       $path = str_replace($root, '', $path);
     }
 
@@ -343,35 +304,28 @@ function path_to($path = '.', $host = FALSE)
  * @param  array  Option hash
  * @return string
  */
-function button_to($name, $url = NULL, array $args = array())
-{
+function button_to($name, $url = NULL, array $args = array()) {
   $params = array();
 
-  if (is_assoc($name))
-  {
+  if (is_assoc($name)) {
     $params = $name;
   }
-  elseif (is_assoc($url))
-  {
+  elseif (is_assoc($url)) {
     $params['action'] = (string) $name;
   }
-  elseif ( ! isset($params['text']))
-  {
+  elseif ( ! isset($params['text'])) {
     $params['text'] = $name;
   }
 
-  if (is_string($name) && is_assoc($url))
-  {
+  if (is_string($name) && is_assoc($url)) {
     $params = array_merge($url, $params);
   }
-  elseif ( ! isset($params['action']))
-  {
+  elseif ( ! isset($params['action'])) {
     $params['action'] = $url;
   }
 
 
-  if (empty($params['text']))
-  {
+  if (empty($params['text'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'text')));
   }
 
@@ -397,8 +351,7 @@ function button_to($name, $url = NULL, array $args = array())
 
   $extra = '';
 
-  if ($params['method'] <> POST)
-  {
+  if ($params['method'] <> POST) {
     $extra = tag('input', array(
       'type' => 'hidden',
       'name' => '_method',

@@ -12,10 +12,8 @@
  * @param  string  Character separator
  * @return string
  */
-function secs($from, $or = 'YMWD', $glue = ' ')
-{
-  if ($from >= 86400)
-  {
+function secs($from, $or = 'YMWD', $glue = ' ') {
+  if ($from >= 86400) {
     return join($glue, duration($from, $or));
   }
   
@@ -34,8 +32,7 @@ function secs($from, $or = 'YMWD', $glue = ' ')
  * @param  integer Timestamp
  * @return string
  */
-function gmt($of)
-{
+function gmt($of) {
   return date('D, d M Y H:i:s \G\M\T', $of);
 }
 
@@ -46,8 +43,7 @@ function gmt($of)
  * @param  integer Timestamp
  * @return integer
  */
-function gmtime($from = 0)
-{
+function gmtime($from = 0) {
   $from = $from > 0 ? $from : time();
 
   $out  = gmdate('D M ', $from);
@@ -63,8 +59,7 @@ function gmtime($from = 0)
  *
  * @return integer
  */
-function now()
-{
+function now() {
   return strtoupper(option('timezone')) == 'GMT' ? gmtime() : time();
 }
 
@@ -77,14 +72,12 @@ function now()
  * @staticvar string  Allowed formats regex
  * @return    string
  */
-function mdate($with, $of = 0)
-{
+function mdate($with, $of = 0) {
   static $expr = '/(?<!%)%([dDjlNSwzWFmMntLoYyaABgGhHisueIOPTZcrU])/';
   
   
-  $with = preg_replace_callback($expr, function($match)
-    use($of)
-  {
+  $with = preg_replace_callback($expr, function ($match)
+    use($of) {
     $test = date($match[1], $of > 0 ? $of : now());
     $test = is_num($test) ? $test : ln('date.' . strtolower($test));
     
@@ -103,8 +96,7 @@ function mdate($with, $of = 0)
  * @staticvar array   Formats
  * @return    string
  */
-function strdate($to, $from = 0)
-{
+function strdate($to, $from = 0) {
   static $set = array(
             '/\bDDDD\b/' => '%l',
             '/\bDDD\b/' => '%D',
@@ -138,8 +130,7 @@ function strdate($to, $from = 0)
  *                        DATE_RFC2822|DATE_RSS|DATE_W3C
  * @return string
  */
-function fmtdate($time, $format = DATE_RFC822)
-{
+function fmtdate($time, $format = DATE_RFC822) {
   return date($format, is_timestamp($time) ? strtotime($time) : $time);
 }
 
@@ -154,8 +145,7 @@ function fmtdate($time, $format = DATE_RFC822)
  * @staticvar array   Conversion set
  * @return    string
  */
-function duration($secs, $used = 'hms', $zero = FALSE)
-{
+function duration($secs, $used = 'hms', $zero = FALSE) {
   static $period = array(
             'Years' => 31556926,
             'Months' => 2629743,
@@ -171,17 +161,14 @@ function duration($secs, $used = 'hms', $zero = FALSE)
   $parts = array();
   $secs  = (float) $secs;
   
-  foreach ($period as $key => $value)
-  {
-    if ( ! empty($used) && is_false(strpos($used, substr($key, 0, 1))))
-    {
+  foreach ($period as $key => $value) {
+    if ( ! empty($used) && is_false(strpos($used, substr($key, 0, 1)))) {
       continue;
     }
 
     $count = floor($secs / $value);
     
-    if ($count == 0 && is_false($zero))
-    {
+    if ($count == 0 && is_false($zero)) {
       continue;
     }
 
@@ -189,8 +176,7 @@ function duration($secs, $used = 'hms', $zero = FALSE)
     $parts[$key] = abs($count);
   }
 
-  foreach ($parts as $key => $value)
-  {
+  foreach ($parts as $key => $value) {
     $out []= ln($value, 'date.' . strtolower($key));
   }
   
@@ -206,69 +192,55 @@ function duration($secs, $used = 'hms', $zero = FALSE)
  * @param  string  Default format
  * @return string
  */
-function distance($since, $to = 0, $or = '%F %Y')
-{
-  if (is_timestamp($since))
-  {
+function distance($since, $to = 0, $or = '%F %Y') {
+  if (is_timestamp($since)) {
     $since = strtotime($since);
   }
   
-  if ($to <= 0)
-  {
+  if ($to <= 0) {
     $to = time();
   }
 
   
   $diff = $to - $since;
   
-  if (($diff >= 0) && ($diff <= 2))
-  {
+  if (($diff >= 0) && ($diff <= 2)) {
     return ln('date.now');
   }
-  elseif ($diff > 0)
-  {
+  elseif ($diff > 0) {
     $day_diff = floor($diff / 86400);
     
-    if ($day_diff == 0)
-    {
-      if ($diff < 120)
-      {
+    if ($day_diff == 0) {
+      if ($diff < 120) {
         return ln('date.less_than_minute');
       }
       
-      if ($diff < 3600)
-      {
+      if ($diff < 3600) {
         return sprintf(ln('date.minutes_ago'), floor($diff / 60));
       }
       
-      if ($diff < 7200)
-      {
+      if ($diff < 7200) {
         return ln('date.hour_ago');
       }
       
-      if ($diff < 86400)
-      {
+      if ($diff < 86400) {
         return sprintf(ln('date.hours_ago'), floor($diff / 3600));
       }
     }
     
-    if ($day_diff == 1)
-    {
+    if ($day_diff == 1) {
       return ln('date.yesterday');
     }
     
-    if ($day_diff < 7)
-    {
+    if ($day_diff < 7) {
       return sprintf(ln('date.days_ago'), $day_diff);
     }
     
-    if ($day_diff < 31)
-    {
+    if ($day_diff < 31) {
       return sprintf(ln('date.weeks_ago'), ceil($day_diff / 7));
     }
     
-    if ($day_diff < 60)
-    {
+    if ($day_diff < 60) {
       return ln('date.last_month');
     }
     
@@ -279,51 +251,41 @@ function distance($since, $to = 0, $or = '%F %Y')
     $diff     = abs($diff);
     $day_diff = floor($diff / 86400);
     
-    if ($day_diff == 0)
-    {
-      if ($diff < 120)
-      {
+    if ($day_diff == 0) {
+      if ($diff < 120) {
         return ln('date.in_a_minute');
       }
       
-      if ($diff < 3600)
-      {
+      if ($diff < 3600) {
         return sprintf(ln('date.in_minutes'), floor($diff / 60));
       }
       
-      if ($diff < 7200)
-      {
+      if ($diff < 7200) {
         return ln('date.in_a_hour');
       }
       
-      if ($diff < 86400)
-      {
+      if ($diff < 86400) {
         return sprintf(ln('date.in_hours'), floor($diff / 3600));
       }
     }
     
-    if ($day_diff == 1)
-    {
+    if ($day_diff == 1) {
       return ln('date.tomorrow');
     }
     
-    if ($day_diff < 4)
-    {
+    if ($day_diff < 4) {
       return mdate('%l', $since);
     }
     
-    if ($day_diff < (7 + (7 - date('w'))))
-    {
+    if ($day_diff < (7 + (7 - date('w')))) {
       return ln('date.next_week');
     }
     
-    if (ceil($day_diff / 7) < 4)
-    {
+    if (ceil($day_diff / 7) < 4) {
       return sprintf(ln('date.in_weeks'), ceil($day_diff / 7));
     }
     
-    if (date('n', $since) == (date('n') + 1))
-    {
+    if (date('n', $since) == (date('n') + 1)) {
       return ln('date.next_month');
     }
     
@@ -340,24 +302,19 @@ function distance($since, $to = 0, $or = '%F %Y')
  * @staticvar array   Days
  * @return    integer
  */
-function days($month, $from = 1970)
-{
+function days($month, $from = 1970) {
   static $num = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 
   
-  if (($month < 1) OR ($month > 12))
-  {
+  if (($month < 1) OR ($month > 12)) {
     return FALSE;
   }
-  elseif ( ! is_num($year) OR (strlen($year) <> 4))
-  {
+  elseif ( ! is_num($year) OR (strlen($year) <> 4)) {
     $year = date('Y');
   }
 
-  if ($month == 2)
-  {
-    if ((($year % 400) == 0) OR ((($year % 4) == 0) AND (($year % 100) <> 0)))
-    {
+  if ($month == 2) {
+    if ((($year % 400) == 0) OR ((($year % 4) == 0) AND (($year % 100) <> 0))) {
       return 29;
     }
   }
@@ -371,13 +328,11 @@ function days($month, $from = 1970)
  *
  * @return array
  */
-function utc_list()
-{
+function utc_list() {
   static $set = NULL;
   
   
-  if (is_null($set))
-  {
+  if (is_null($set)) {
     /**
      * @ignore
      */
@@ -393,13 +348,11 @@ function utc_list()
  *
  * @return array
  */
-function timezone_list($key = NULL)
-{
+function timezone_list($key = NULL) {
   static $set = NULL;
   
   
-  if (is_null($set))
-  {
+  if (is_null($set)) {
     /**
      * @ignore
      */

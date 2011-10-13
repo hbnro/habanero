@@ -40,15 +40,13 @@ class xss extends prototype
    * @param  boolean Strip tags?
    * @return string
    */
-  final public static function clean($text, $strip = FALSE)
-  {
+  final public static function clean($text, $strip = FALSE) {
     static::init();
 
 
     $text = self::fix_white(urldecode($text));
 
-    if (is_true($strip))
-    {
+    if (is_true($strip)) {
       $text = strip_tags($text, sprintf('<%s>', join('><', static::$defs['allow']['tags'])));
       $text = preg_replace(static::$regex['clear_tags'], '', $text);
       $text = preg_replace(static::$regex['clean_tags'], '', $text);
@@ -57,13 +55,11 @@ class xss extends prototype
 
     $text = preg_replace_callback(static::$tags, array('xss', 'fix_attributes'), $text);
 
-    if (preg_match_all('/<[^>]+>/', $text, $matches))
-    {
+    if (preg_match_all('/<[^>]+>/', $text, $matches)) {
       $hash = uniqid('--place-holder');
       $text = htmlspecialchars(str_replace($matches[0], $hash, $text));
 
-      foreach ($matches[0] as $val)
-      {
+      foreach ($matches[0] as $val) {
         $offset = strpos($text, $hash);
         $length = $offset + strlen($hash);
         $text   = substr($text, 0, $offset) . $val . substr($text, $length);
@@ -80,33 +76,25 @@ class xss extends prototype
    */
 
   // startup
-  final private static function init()
-  {
-    if (is_empty(static::$defs))
-    {
+  final private static function init() {
+    if (is_empty(static::$defs)) {
       static::$defs = include __DIR__.DS.'assets'.DS.'scripts'.DS.'clean_vars'.EXT;
 
 
-      if ( ! empty(static::$defs['remove']['content']))
-      {
-        foreach (static::$defs['remove']['content'] as $key)
-        {
+      if ( ! empty(static::$defs['remove']['content'])) {
+        foreach (static::$defs['remove']['content'] as $key) {
           static::$regex['clear_tags'] []= "/<[\s\n]*$key.*<[\s\n]*\/{$key}[\s\n]*>/is";
         }
       }
 
-      if  ( !empty(static::$defs['remove']['tags']))
-      {
-        foreach (static::$defs['remove']['tags'] as $key)
-        {
+      if  ( !empty(static::$defs['remove']['tags'])) {
+        foreach (static::$defs['remove']['tags'] as $key) {
           static::$regex['clean_tags'] []= "/<\/?[\s\n]*{$key}[^>]*>/i";
         }
       }
 
-      if ( ! empty(static::$defs['remove']['css']))
-      {
-        foreach (static::$defs['remove']['css'] as $key)
-        {
+      if ( ! empty(static::$defs['remove']['css'])) {
+        foreach (static::$defs['remove']['css'] as $key) {
           $key = static::fix_space($key);
 
           static::$regex['clean_css'] []= "/;?$key:[^;]*;?/i";
@@ -116,19 +104,16 @@ class xss extends prototype
   }
 
   // fixate white space
-  final private static function fix_white($text)
-  {
+  final private static function fix_white($text) {
     return preg_replace(static::$null, '', $text);
   }
 
   // fixate spaced text
-  final private static function fix_space($text)
-  {
+  final private static function fix_space($text) {
     $out = '[\s\x01-\x1F]*';
     $len = strlen($text);
 
-    for ($i = 0; $i < $len; $i += 1)
-    {
+    for ($i = 0; $i < $len; $i += 1) {
       $out .= substr($text, $i, 1);
       $out .= '[\s\x01-\x1F]*';
     }
@@ -137,8 +122,7 @@ class xss extends prototype
   }
 
   // fixate mixed entities
-  final private static function fix_entities($text)
-  {
+  final private static function fix_entities($text) {
     $hash = uniqid('--entity-fix');
 
     $text = preg_replace('/&([a-z_0-9;]+)=([a-z_0-9]+)/i', "$hash\\1=\\2", $text);
@@ -148,13 +132,11 @@ class xss extends prototype
   }
 
   // attributes cleanup callback
-  final private static function fix_attributes($match)
-  {
+  final private static function fix_attributes($match) {
     $tag  = strtolower($match[1]);
     $text = $match[2];
 
-    if ( ! in_array($tag, static::$defs['allow']['tags']))
-    {
+    if ( ! in_array($tag, static::$defs['allow']['tags'])) {
       return "[$tag]";
     }
 
@@ -162,15 +144,12 @@ class xss extends prototype
     $out  = array();
     $test = args($text);
 
-    foreach ($test as $key => $val)
-    {
-      if (in_array($key, static::$defs['allow']['attributes']))
-      {
+    foreach ($test as $key => $val) {
+      if (in_array($key, static::$defs['allow']['attributes'])) {
         $val = static::fix_white(stripslashes($val));
         $val = static::fix_entities($val);
 
-        if ($key == 'style')
-        {
+        if ($key == 'style') {
           do
           {
             $old = $val;
@@ -180,10 +159,8 @@ class xss extends prototype
           $val = preg_replace(static::$regex['clean_css'], '', $val);
           $val = preg_replace(sprintf('/;?(?:[a-z]*:?)?%s(?::?\(?[^;]*\)?)?;?/i', static::fix_space('expression')), '', $val);
         }
-        elseif (($key == 'href' OR $key == 'src') && preg_match('/^([^:]*):/', $val, $test))
-        {
-          if ( ! in_array($test[1], static::$defs['allow']['protocols']))
-          {
+        elseif (($key == 'href' OR $key == 'src') && preg_match('/^([^:]*):/', $val, $test)) {
+          if ( ! in_array($test[1], static::$defs['allow']['protocols'])) {
             continue;
           }
         }

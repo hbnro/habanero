@@ -20,22 +20,19 @@ define('URL_EXTERNAL', 2);
  * @staticvar string Match url
  * @return    string
  */
-function urlify($text, $options = FALSE)
-{
+function urlify($text, $options = FALSE) {
   static $expr = NULL;
 
 
-  if (is_null($expr))
-  {
+  if (is_null($expr)) {
     $expr = '/(?:^|\b)(?:[a-z]{3,7}:\/\/|\w+@|www\.)'
           . '[-\.\w]+(?::\d{1,5})?[\/\w?:;+=#!%.-]+(?:\b|$)/i';
   }
 
   $hash = uniqid('--amp-entity');
   $text = str_replace('&amp;', $hash, $text);
-  $text = preg_replace_callback($expr, function($matches)
-    use($options)
-  {
+  $text = preg_replace_callback($expr, function ($matches)
+    use($options) {
     $args['href'] = $matches[0];
 
     $nofollow = ((int) $options & URL_NO_FOLLOW) == 0 ? FALSE : TRUE;
@@ -43,8 +40,7 @@ function urlify($text, $options = FALSE)
 
     $args['href'] = pre_url($args['href']);
 
-    if ($external && ! is_local($args['href']))
-    {
+    if ($external && ! is_local($args['href'])) {
       $args['rel']  = $nofollow ? 'nofollow ' : '';
       $args['rel'] .= 'external';
     }
@@ -66,24 +62,20 @@ function urlify($text, $options = FALSE)
  * @param  string Input string
  * @return string
  */
-function encode($text)
-{
+function encode($text) {
   $out    = '';
   $length = strlen($text);
 
 
-  for ($i = 0; $i < $length; $i += 1)
-  {
+  for ($i = 0; $i < $length; $i += 1) {
     $rand = mt_rand(0, 100);
     $char = substr($text, $i, 1);
 
 
-    if ($ran < 45)
-    {
+    if ($ran < 45) {
       $out .= '&#x' . dechex(ord($char)) . ';';
     }
-    elseif ($ran > 90 && ! preg_match('/[@:.]/', $char))
-    {
+    elseif ($ran > 90 && ! preg_match('/[@:.]/', $char)) {
       $out .= $char;
     }
     else
@@ -105,15 +97,12 @@ function encode($text)
  * @param  boolean It is odd?
  * @return string
  */
-function even($text, $repl = '%s', $ord = 124, $odd = FALSE)
-{
+function even($text, $repl = '%s', $ord = 124, $odd = FALSE) {
   $chr = char($ord);
   $str = explode($chr, $text);
 
-  foreach ($str as $key => $val)
-  {
-    if (($key % 2) <> $odd)
-    {
+  foreach ($str as $key => $val) {
+    if (($key % 2) <> $odd) {
       $str[$key] =  sprintf($repl, $val);
     }
     else
@@ -132,13 +121,11 @@ function even($text, $repl = '%s', $ord = 124, $odd = FALSE)
  * @param  array  Array|...
  * @return string
  */
-function alt(array $set = array())
-{
+function alt(array $set = array()) {
   static $index = 0;
 
 
-  if (func_get_args() == 0)
-  {
+  if (func_get_args() == 0) {
     $index = 0;
     return FALSE;
   }
@@ -164,8 +151,7 @@ function alt(array $set = array())
  * @param  mixed   Character separator
  * @return string
  */
-function delim($text, $max = 3, $ord = 160)
-{
+function delim($text, $max = 3, $ord = 160) {
   $meta = str_repeat('.', $max);
   $expr = "/(.)(?=($meta)+(?!.))/";
 
@@ -180,8 +166,7 @@ function delim($text, $max = 3, $ord = 160)
  * @param  integer Characters length
  * @return string
  */
-function left($text, $max = 0)
-{
+function left($text, $max = 0) {
   return $max > 0 ? substr($text, 0, $max) : substr($text, $max * -1);
 }
 
@@ -193,8 +178,7 @@ function left($text, $max = 0)
  * @param  integer Characters length
  * @return string
  */
-function right($text, $max = 0)
-{
+function right($text, $max = 0) {
   return $max > 0 ? substr($text, -$max) : substr($text, 0, $max);
 }
 
@@ -208,14 +192,11 @@ function right($text, $max = 0)
  * @param  string  Character separator
  * @return string
  */
-function words($text, $left = 100, $right = 0, $char = '&hellip;')
-{
-  if ( ! empty($text))
-  {
+function words($text, $left = 100, $right = 0, $char = '&hellip;') {
+  if ( ! empty($text)) {
     preg_match_all('/\s*(\S+\s+)\s*/', $text, $match);
 
-    if (($left + $right) >= str_word_count($text))
-    {
+    if (($left + $right) >= str_word_count($text)) {
       return $text;
     }
 
@@ -236,13 +217,11 @@ function words($text, $left = 100, $right = 0, $char = '&hellip;')
  * @staticvar string Words match
  * @return    array
  */
-function freq($text)
-{
+function freq($text) {
   static $expr = NULL;
 
 
-  if (is_null($expr))
-  {
+  if (is_null($expr)) {
     $expr = match('%G|\s+');
   }
 
@@ -251,10 +230,8 @@ function freq($text)
   $text = is_utf8($text) ? utf8_decode($text) : $text;
   $text = preg_replace($expr, ' ', $text);
 
-  foreach (array_filter(explode(' ', $text)) as $word)
-  {
-    if (array_key_exists($word, $set))
-    {
+  foreach (array_filter(explode(' ', $text)) as $word) {
+    if (array_key_exists($word, $set)) {
       $set[$word] += 1;
     }
     else
@@ -276,8 +253,7 @@ function freq($text)
  * @param  string Character separator
  * @return string
  */
-function short($text, $left = 33, $right = 0, $glue = '&hellip;')
-{
+function short($text, $left = 33, $right = 0, $glue = '&hellip;') {
   $prefix =
   $suffix = '';
 
@@ -285,18 +261,15 @@ function short($text, $left = 33, $right = 0, $glue = '&hellip;')
   $max    = char($glue) === '&' ? 1 : strlen($glue);
 
 
-  if (preg_match('/&#?[a-zA-Z0-9];/', $text))
-  {
+  if (preg_match('/&#?[a-zA-Z0-9];/', $text)) {
     $text = unents($text);
   }
 
-  if ((strlen($text) + $max) > ($left + $right))
-  {
+  if ((strlen($text) + $max) > ($left + $right)) {
     $prefix = trim(substr($text, 0, $left - $max));
     $prefix = preg_replace('/^#?\w*;/', '', $prefix);
 
-    if ($right > 0)
-    {
+    if ($right > 0) {
       $suffix = trim(substr($text, - $right));
     }
 
@@ -321,13 +294,11 @@ function short($text, $left = 33, $right = 0, $glue = '&hellip;')
  * @staticvar string Latin charset match
  * @return    string
  */
-function search($text, $find, $repl = '<strong>%s</strong>', $ord = 32)
-{
+function search($text, $find, $repl = '<strong>%s</strong>', $ord = 32) {
   static $latin = NULL;
 
 
-  if (is_null($latin))
-  {
+  if (is_null($latin)) {
     $latin = substr(match('%L'), 1, -1);
   }
 
@@ -335,20 +306,17 @@ function search($text, $find, $repl = '<strong>%s</strong>', $ord = 32)
   $found = array();
   $word  = ! is_array($find) ? explode(char($ord), $find) : $find;
 
-  foreach (array_unique(array_filter($word)) as $test)
-  {
+  foreach (array_unique(array_filter($word)) as $test) {
     $test    = preg_quote(strips($test, TRUE), '/');
     $found []= plain($test, TRUE);
   }
 
-  if ( ! empty($found))
-  {
+  if ( ! empty($found)) {
     $expr  = join('|', $found);
     $regex = "/(([<][^>]*)|(?<!&|#|\w)[$latin]*{$expr}(?:$latin*|[^\W<>]*)?(?=\s|\b))/i";
 
-    $text  = preg_replace_callback($regex, function($match)
-      use($repl)
-    {
+    $text  = preg_replace_callback($regex, function ($match)
+      use($repl) {
       return ! isset($match[2]) ? sprintf($repl, $match[0]) : $match[0];
     }, $text);
   }
@@ -366,33 +334,27 @@ function search($text, $find, $repl = '<strong>%s</strong>', $ord = 32)
  * @param  integer Character bounds
  * @return array
  */
-function find($text, $query = '', $chunk = '..', $length = 30)
-{
+function find($text, $query = '', $chunk = '..', $length = 30) {
   $bad   =
   $good  = array();
   $query = strtolower(plain($query));
 
 
-  $query = preg_replace_callback('/"([^"]+?)"/', function($match)
-    use(&$good)
-  {
+  $query = preg_replace_callback('/"([^"]+?)"/', function ($match)
+    use(&$good) {
     $good []= preg_quote($match[1]);
   }, $query);
 
 
-  foreach (preg_split('/\s+/', $query) as $one)
-  {
-    switch(substr($one, 0, 1))
-    {
+  foreach (preg_split('/\s+/', $query) as $one) {
+    switch(substr($one, 0, 1)) {
       case '-':
-        if(strlen($one) > 1)
-        {
+        if(strlen($one) > 1) {
           $bad []= preg_quote(substr($one, 1), '/');
         }
       break;
       case '+':
-        if(strlen($one) > 1)
-        {
+        if(strlen($one) > 1) {
           $good []= preg_quote(substr($one, 1), '/');
         }
       break;
@@ -405,18 +367,15 @@ function find($text, $query = '', $chunk = '..', $length = 30)
 
   $good = array_filter($good);
 
-  if (sizeof($good) > 0)
-  {
+  if (sizeof($good) > 0) {
     $regex  = sprintf('(?<!&|#|\w)\w*(?:%s)(?=', plain(join('|', $good), TRUE));
     $regex .= $bad ? '(?!' . plain(join('|', $bad), TRUE) . ')' : '';
     $regex .= '.*?(?=\b))';
 
-    if (preg_match_all("/$regex/uis", $text, $match, PREG_OFFSET_CAPTURE))
-    {
+    if (preg_match_all("/$regex/uis", $text, $match, PREG_OFFSET_CAPTURE)) {
       $out = array();
 
-      foreach ($match[0] as $key => $val)
-      {
+      foreach ($match[0] as $key => $val) {
         $tmp = substr($text, $val[1] - ($length / 2), $length);
         $tmp = preg_replace('/^#?\w*;|(&|&amp;)#?\w*$/', '', $chunk . trim($tmp) . $chunk);
 

@@ -11,13 +11,11 @@
  * @staticvar array Patch stack
  * @return    void
  */
-function rescue($with = NULL)
-{
+function rescue($with = NULL) {
   static $patch = array();
 
 
-  if (func_num_args() === 0)
-  {
+  if (func_num_args() === 0) {
     return $patch;
   }
 
@@ -32,8 +30,7 @@ function rescue($with = NULL)
  * @staticvar array  Helper bag
  * @return    void
  */
-function import($lib)
-{
+function import($lib) {
   bootstrap::enhance($lib);
 }
 
@@ -44,8 +41,7 @@ function import($lib)
  * @param  mixed Function callback
  * @return void
  */
-function run(Closure $bootstrap)
-{
+function run(Closure $bootstrap) {
   bootstrap::execute($bootstrap);
 }
 
@@ -58,23 +54,18 @@ function run(Closure $bootstrap)
  * @param  array Options hash
  * @return mixed
  */
-function render($content, $partial = FALSE, array $params = array())
-{
-  if (is_assoc($content))
-  {
+function render($content, $partial = FALSE, array $params = array()) {
+  if (is_assoc($content)) {
     $params = array_merge($content, $params);
   }
-  elseif ( ! isset($params['content']))
-  {
+  elseif ( ! isset($params['content'])) {
     $params['content'] = $content;
   }
 
-  if (is_assoc($partial))
-  {
+  if (is_assoc($partial)) {
     $params = array_merge($partial, $params);
   }
-  elseif ( ! isset($params['partial']))
-  {
+  elseif ( ! isset($params['partial'])) {
     $params['partial'] = $partial;
   }
 
@@ -86,26 +77,22 @@ function render($content, $partial = FALSE, array $params = array())
     'locals'  => array(),
   ), $params);
 
-  if ( ! is_bool($params['partial']))
-  {
+  if ( ! is_bool($params['partial'])) {
     $params['content'] = $params['partial'];
     $params['partial'] = TRUE;
   }
 
 
-  if ( ! empty($params['output']))
-  {// intentionally plain response
+  if ( ! empty($params['output'])) {// intentionally plain response
     die($params['output']);
   }
-  elseif ( ! is_file($params['content']))
-  {
+  elseif ( ! is_file($params['content'])) {
     raise(ln('file_not_exists', array('name' => $params['content'])));
   }
 
 
-  $output = function()
-    use($params)
-  {
+  $output = function ()
+    use($params) {
     ob_start();
 
     extract($params['locals'], EXTR_SKIP | EXTR_REFS);
@@ -114,8 +101,7 @@ function render($content, $partial = FALSE, array $params = array())
     return ob_get_clean();
   };
 
-  if (is_true($params['partial']))
-  {
+  if (is_true($params['partial'])) {
     return $output($params['content']);
   }
   echo $output($params['content']);
@@ -128,10 +114,8 @@ function render($content, $partial = FALSE, array $params = array())
  * @param  array Description or exception
  * @return void
  */
-function raise($message)
-{
-  if (is_closure($message))
-  {// TODO: there is another way?
+function raise($message) {
+  if (is_closure($message)) {// TODO: there is another way?
     return bootstrap::implement('raise', $message);
   }
 
@@ -147,8 +131,7 @@ function raise($message)
  * @param  mixed Default value
  * @return mixed
  */
-function option($get, $or = FALSE)
-{
+function option($get, $or = FALSE) {
   return configure::get($get, $or);
 }
 
@@ -161,16 +144,13 @@ function option($get, $or = FALSE)
  * @staticvar array Config bag
  * @return    mixed
  */
-function config($set = NULL, $value = NULL)
-{
-  if ( ! is_null($value))
-  {
+function config($set = NULL, $value = NULL) {
+  if ( ! is_null($value)) {
     configure::set($set, $value);
   }
   else
   {
-    if ( ! is_assoc($set) && ! is_file($set))
-    {
+    if ( ! is_assoc($set) && ! is_file($set)) {
       return configure::get($set);
     }
     configure::add($set);
@@ -187,17 +167,14 @@ function config($set = NULL, $value = NULL)
  * @staticvar array  Token bag
  * @return    mixed
  */
-function match($expr, $subject = NULL, array $constraints = array())
-{
+function match($expr, $subject = NULL, array $constraints = array()) {
   static $tokens = NULL;
 
 
-  if (is_null($tokens))
-  {
+  if (is_null($tokens)) {
     $latin = '\pL';
 
-    if ( ! IS_UNICODE)
-    {
+    if ( ! IS_UNICODE) {
       $latin  = 'a-zA-Z€$';
       $latin .= 'âêîôûÂÊÎÔÛÄËÏÖÜäëïöü';
       $latin .= 'áéíóúÁÉÍÓÚñÑÙÒÌÈÀùòìèàŷŶŸÿ';
@@ -228,14 +205,11 @@ function match($expr, $subject = NULL, array $constraints = array())
 
   $expr = preg_quote($expr, '/');
 
-  if (is_array($constraints))
-  {
+  if (is_array($constraints)) {
     $test = array();
 
-    foreach ($constraints as $item => $value)
-    {
-      if (is_num($as = preg_replace('/[^a-z\d_]/', '', $item)))
-      {
+    foreach ($constraints as $item => $value) {
+      if (is_num($as = preg_replace('/[^a-z\d_]/', '', $item))) {
         continue;
       }
 
@@ -248,12 +222,10 @@ function match($expr, $subject = NULL, array $constraints = array())
 
   $regex = preg_replace(array_keys($tokens), $tokens, $expr);
 
-  if (func_num_args() === 1)
-  {
+  if (func_num_args() === 1) {
     return "/$regex/";
   }
-  elseif (@preg_match("/$regex/u", $subject, $matches))
-  {
+  elseif (@preg_match("/$regex/u", $subject, $matches)) {
     return $matches;
   }
 
@@ -269,23 +241,18 @@ function match($expr, $subject = NULL, array $constraints = array())
  * @param  mixed  Default value
  * @return mixed
  */
-function value($from, $that = NULL, $or = FALSE)
-{
-  if ( ! is_iterable($from))
-  {
+function value($from, $that = NULL, $or = FALSE) {
+  if ( ! is_iterable($from)) {
     return $or;
   }
-  elseif (($from = (array) $from) && isset($from[$that]))
-  {//FIX
+  elseif (($from = (array) $from) && isset($from[$that])) {//FIX
     return $from[$that] ?: $or;
   }
   elseif (preg_match_all('/\[([^\[\]]*)\]/U', $that, $matches) OR
-         ($matches[1] = explode('.', $that)))
-  {
+         ($matches[1] = explode('.', $that))) {
     $key = ($offset = strpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
 
-    if ( ! empty($key))
-    {
+    if ( ! empty($key)) {
       array_unshift($matches[1], $key);
     }
 
@@ -293,12 +260,10 @@ function value($from, $that = NULL, $or = FALSE)
     $get   = join('.', $matches[1]);
     $depth = sizeof($matches[1]);
 
-    if (is_object($from) && isset($from->$key))
-    {
+    if (is_object($from) && isset($from->$key)) {
       $tmp = $from->$key;
     }
-    elseif (is_array($from) && isset($from[$key]))
-    {
+    elseif (is_array($from) && isset($from[$key])) {
       $tmp = $from[$key];
     }
     else
@@ -320,25 +285,21 @@ function value($from, $that = NULL, $or = FALSE)
  * @param  mixed Function callback
  * @return string
  **/
-function reflection($lambda)
-{
-  if (is_array($lambda))
-  {
+function reflection($lambda) {
+  if (is_array($lambda)) {
     list($class, $method) = $lambda;
     return new ReflectionMethod($class, $method);
   }
 
-  if (is_string($lambda) && ! is_false(strpos($lambda, ':')))
-  {
+  if (is_string($lambda) && ! is_false(strpos($lambda, ':'))) {
     list($class, $method) = explode(':', $lambda);
     return new ReflectionMethod($class, $method);
   }
 
-  if (method_exists($lambda, '__invoke'))
-  {
+  if (method_exists($lambda, '__invoke')) {
     return new ReflectionMethod($lambda, '__invoke');
   }
-  return new ReflectionFunction($lambda);
+  return new Reflectionfunction ($lambda);
 }
 
 
@@ -351,8 +312,7 @@ function reflection($lambda)
  * @staticvar array   Replace set
  * @return    mixed
  */
-function dump($var, $show = FALSE, $deep = 99)
-{
+function dump($var, $show = FALSE, $deep = 99) {
   static $repl = array(
             "\r" => '\r',
             "\n" => '\n',
@@ -360,8 +320,7 @@ function dump($var, $show = FALSE, $deep = 99)
           );
 
 
-  if ( ! $deep)
-  {
+  if ( ! $deep) {
     return FALSE;
   }
 
@@ -376,55 +335,45 @@ function dump($var, $show = FALSE, $deep = 99)
   $out       = array();
 
 
-  if (is_null($var))
-  {
+  if (is_null($var)) {
     $out []= 'NULL';
   }
-  elseif (is_bool($var))
-  {
+  elseif (is_bool($var)) {
     $out []= is_true($var) ? 'TRUE' : 'FALSE';
   }
-  elseif (is_scalar($var))
-  {
+  elseif (is_scalar($var)) {
     $out []= strtr($var, $repl);
   }
-  elseif (is_callable($var))
-  {
+  elseif (is_callable($var)) {
     $args = array();
     $code = reflection($var);
 
-    foreach ($code->getParameters() as $one)
-    {
+    foreach ($code->getParameters() as $one) {
       $args []= "\${$one->name}";
     }
 
     $out []= 'Args[ ' . join(', ', $args) . ' ]';
   }
-  elseif (is_iterable($var))
-  {
+  elseif (is_iterable($var)) {
     $width = 0;
     $test  = (array) $var;
     $max   = sizeof($test);
 
-    if ( ! $show)
-    {
+    if ( ! $show) {
       $tab = '';
     }
     else
     {
-      foreach ($test as $key => $val)
-      {
+      foreach ($test as $key => $val) {
         $key = preg_replace('/^\W.*?\W/', '', $key);
 
-        if (($cur = strlen($key)) > $width)
-        {
+        if (($cur = strlen($key)) > $width) {
           $width = $cur;
         }
       }
     }
 
-    foreach ($test as $key => $val)
-    {
+    foreach ($test as $key => $val) {
       $key = preg_replace('/^\W.*?\W/', '', $key);
 
       $old = dump($val, FALSE, $deep - 1, $depth + 1);
@@ -438,18 +387,15 @@ function dump($var, $show = FALSE, $deep = 99)
   $type  = sprintf('#<%s%s!empty>', gettype($var), $class ? ":$class" : '');
   $out   = sizeof($out) ? (($str = join($separator, $out)) === '' ? $type : $str) : ($show ? $type : '');
 
-  if (is_object($var) && ! $show)
-  {
+  if (is_object($var) && ! $show) {
     $out = sprintf("{{$newline}%s$newline}(%s)", $out, get_class($var));
   }
-  elseif (is_array($var) && ! $show)
-  {
+  elseif (is_array($var) && ! $show) {
     $out = "[$newline$out$newline]";
   }
 
 
-  if ($show && $depth <= 0)
-  {
+  if ($show && $depth <= 0) {
     $out = IS_CLI ? $out : htmlspecialchars($out);
     echo IS_CLI ? $out : "\n<pre>$out</pre>";
     return TRUE;
@@ -466,14 +412,11 @@ function dump($var, $show = FALSE, $deep = 99)
  * @param  integer Decimal
  * @return float
  */
-function ticks($start = NULL, $end = FALSE, $round = 4)
-{
-  if (func_num_args() == 0)
-  {
+function ticks($start = NULL, $end = FALSE, $round = 4) {
+  if (func_num_args() == 0) {
     return microtime(TRUE);
   }
-  elseif (func_num_args() == 1)
-  {
+  elseif (func_num_args() == 1) {
     $end = microtime(TRUE);
   }
 

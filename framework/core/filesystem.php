@@ -22,15 +22,12 @@ define('DIR_MAP', 8);
  * @param  boolean DIR_RECURSIVE|DIR_EMPTY
  * @return boolean
  */
-function unfile($path, $filter = '*', $options = FALSE)
-{
-  if (is_dir($path))
-  {
+function unfile($path, $filter = '*', $options = FALSE) {
+  if (is_dir($path)) {
     $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
     $test  = dir2arr($path, $filter, $options | DIR_MAP | DIR_SORT);
 
-    foreach ($test as $file)
-    {
+    foreach ($test as $file) {
       is_file($file) && unlink($file);
       is_dir($file) && rmdir($file);
     }
@@ -50,15 +47,12 @@ function unfile($path, $filter = '*', $options = FALSE)
  * @param  boolean Employ recursively?
  * @return mixed
  */
-function dirsize($of, $recursive = FALSE)
-{
-  if (is_dir($of))
-  {
+function dirsize($of, $recursive = FALSE) {
+  if (is_dir($of)) {
     $length    = 0;
     $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
 
-    foreach (dir2arr($of, '*', DIR_MAP | $recursive) as $old)
-    {
+    foreach (dir2arr($of, '*', DIR_MAP | $recursive) as $old) {
       $length += is_file($old) ? filesize($old) : 0;
     }
 
@@ -77,16 +71,13 @@ function dirsize($of, $recursive = FALSE)
  * @staticvar mixed  Function callback
  * @return    mixed
 */
-function dir2arr($from, $filter = '*', $options = FALSE)
-{
+function dir2arr($from, $filter = '*', $options = FALSE) {
   static $extra  = array(),
          $lambda = NULL;
 
 
-  if (is_null($lambda))
-  {
-    $lambda = function($a, $b)
-    {
+  if (is_null($lambda)) {
+    $lambda = function ($a, $b) {
       $a_depth = substr_count($a, DS);
       $b_depth = substr_count($b, DS);
 
@@ -103,27 +94,22 @@ function dir2arr($from, $filter = '*', $options = FALSE)
 
   $from = realpath($from);
 
-  if ( ! is_dir($from))
-  {
+  if ( ! is_dir($from)) {
     return FALSE;
   }
 
   $items = glob(rtrim($from, DS).DS.'*') ?: array();
 
-  array_walk_recursive($items, function($value, $old)
-    use(&$items, &$extra, $filter, $options, $recursive, $empty, $map)
-  {
-    if (is_dir($value) && $recursive)
-    {
+  array_walk_recursive($items, function ($value, $old)
+    use(&$items, &$extra, $filter, $options, $recursive, $empty, $map) {
+    if (is_dir($value) && $recursive) {
       $key = ! $map ? basename($value) : $value;
 
-      if ($map && ! in_array($key, $extra))
-      {//FIX
+      if ($map && ! in_array($key, $extra)) {//FIX
         $extra []= $key;
       }
 
-      if (($test = dir2arr($value, $filter, $options, TRUE)) OR $empty)
-      {
+      if (($test = dir2arr($value, $filter, $options, TRUE)) OR $empty) {
         $items[$key] = $test;
       }
 
@@ -131,8 +117,7 @@ function dir2arr($from, $filter = '*', $options = FALSE)
 
       ! $map && ksort($items);
     }
-    elseif ( ! match($filter, $value))
-    {
+    elseif ( ! match($filter, $value)) {
       unset($items[$old]);
     }
     else
@@ -142,21 +127,17 @@ function dir2arr($from, $filter = '*', $options = FALSE)
   }, $items);
 
 
-  if (func_num_args() < 4)
-  {
+  if (func_num_args() < 4) {
     $items = array_merge($items, $extra);
     $extra = array();
   }
 
 
-  if ($map)
-  {
+  if ($map) {
     $output = array();
 
-    foreach ($items as $value)
-    {
-      if (is_scalar($value))
-      {
+    foreach ($items as $value) {
+      if (is_scalar($value)) {
         $output []= $value;
       }
       else
@@ -183,21 +164,17 @@ function dir2arr($from, $filter = '*', $options = FALSE)
  * @param  string Employ recursively?
  * @return mixed
  */
-function cpfiles($from, $to, $filter = '*', $recursive = FALSE)
-{
-  if (is_dir($from))
-  {
+function cpfiles($from, $to, $filter = '*', $recursive = FALSE) {
+  if (is_dir($from)) {
     ! is_dir($to) && mkpath($to);
 
     $options = (is_true($recursive) ? DIR_RECURSIVE : 0) | DIR_EMPTY;
     $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
 
-    foreach ($test as $file)
-    {
+    foreach ($test as $file) {
       $new = str_replace(realpath($from), $to, $file);
 
-      if ( ! file_exists($new))
-      {
+      if ( ! file_exists($new)) {
         is_file($file) && copy($file, $new);
         is_dir($file) && mkdir($new, PERMS);
       }
@@ -213,23 +190,19 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE)
  * @param  octal  Individual permissions
  * @return string
  */
-function mkpath($dir, $perms = FALSE)
-{
+function mkpath($dir, $perms = FALSE) {
   $path  = strtr($dir, '\\/', DS.DS);
   $perms = $perms ?: PERMS;
 
 
-  if ( ! is_file($path) && ! is_dir($path))
-  {
+  if ( ! is_file($path) && ! is_dir($path)) {
     $test = explode(DS, $path);
     $path = '';
 
-    foreach ($test as $one)
-    {
+    foreach ($test as $one) {
       $path .= $one.DS;
 
-      if (($path <> DS) && ! @is_dir($path))
-      {
+      if (($path <> DS) && ! @is_dir($path)) {
         // http://www.php.net/manual/es/function.mkdir.php#96990
         mkdir(rtrim($path, DS), $perms);
         chmod($path, $perms);
@@ -249,18 +222,15 @@ function mkpath($dir, $perms = FALSE)
  * @param  integer Especific index
  * @return mixed
  */
-function findfile($path, $filter = '*', $recursive = FALSE, $index = 0)
-{
-  if (is_dir($path))
-  {
+function findfile($path, $filter = '*', $recursive = FALSE, $index = 0) {
+  if (is_dir($path)) {
     $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
     $output    = array_filter(dir2arr($path, $filter, $recursive | DIR_MAP), 'is_file');
 
     sort($output);
 
 
-    if ($index > 0)
-    {
+    if ($index > 0) {
       return isset($output[$index - 1]) ? $output[$index - 1] : FALSE;
     }
 
@@ -275,12 +245,10 @@ function findfile($path, $filter = '*', $recursive = FALSE, $index = 0)
  * @param  string Filepath|URL
  * @return mixed
  */
-function read($path)
-{
+function read($path) {
   $output = FALSE;
 
-  if (is_url($path))
-  {
+  if (is_url($path)) {
     $test = @parse_url($path);
 
     $port  = ! empty($test['port']) ? $test['port'] : 80;
@@ -291,17 +259,14 @@ function read($path)
     $agent   = 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)';
 
 
-    if ($test['scheme'] === 'https')
-    {
+    if ($test['scheme'] === 'https') {
       $port = 433;
     }
 
-    if (function_exists('fsockopen'))
-    {
+    if (function_exists('fsockopen')) {
       $resource = @fsockopen($test['host'], $port, $errno, $errstr, 90);
 
-      if (is_resource($resource))
-      {
+      if (is_resource($resource)) {
         fputs($resource, "GET $guri HTTP/1.0\r\n");
         fputs($resource, "Host: $test[host]\r\n");
         fputs($resource, "User-Agent: $agent\r\n");
@@ -314,25 +279,21 @@ function read($path)
 
         $end = FALSE;
 
-        while ( ! feof($resource))
-        {// http://www.php.net/manual/en/function.fsockopen.php#87144
+        while ( ! feof($resource)) {// http://www.php.net/manual/en/function.fsockopen.php#87144
           $tmp = @fgets($resource, 128);
 
-          if ($tmp === "\r\n")
-          {
+          if ($tmp === "\r\n") {
             $end = TRUE;
           }
 
-          if (is_true($end))
-          {
+          if (is_true($end)) {
             $output .= $tmp;
           }
         }
         fclose($resource);
       }
     }
-    elseif (function_exists('curl_init'))
-    {
+    elseif (function_exists('curl_init')) {
       $resource = curl_init();
 
       curl_setopt($resource, CURLOPT_URL, "$test[scheme]://$test[host]$guri");
@@ -345,23 +306,19 @@ function read($path)
 
       $output = curl_exec($resource);
     }
-    elseif (ini_get('allow_url_fopen'))
-    {
-      if ($tmp = @fopen($path, 'r'))
-      {// tricky
+    elseif (ini_get('allow_url_fopen')) {
+      if ($tmp = @fopen($path, 'r')) {// tricky
         while ($output .= fread($tmp, 1024));
         fclose($tmp);
       }
     }
   }
-  elseif (is_file($path))
-  {
+  elseif (is_file($path)) {
     $output = file_get_contents($path);
   }
 
 
-  if (substr($output, 0, 3) === "\xEF\xBB\xBF")
-  {// TODO: possible BOM issue?
+  if (substr($output, 0, 3) === "\xEF\xBB\xBF") {// TODO: possible BOM issue?
     $output = substr($output, 3);
   }
 
@@ -378,14 +335,11 @@ function read($path)
  * @param  octal   Individual permissions
  * @return boolean
  */
-function write($to, $content = '', $type = 0, $perms = FALSE)
-{
+function write($to, $content = '', $type = 0, $perms = FALSE) {
   $output = FALSE;
 
-  if (is_dir(dirname($to)))
-  {
-    if ( ! is_file($to))
-    {
+  if (is_dir(dirname($to))) {
+    if ( ! is_file($to)) {
       touch($to);
       chmod($to, ! is_false($perms) ? $perms : PERMS);
     }
@@ -394,10 +348,8 @@ function write($to, $content = '', $type = 0, $perms = FALSE)
     $old  = $type < 0 ? read($to) : '';
     $mode = $type > 0 ? 'a+b' : 'w+b';
 
-    if ($tmp = fopen($to, is_string($type) ? $type : $mode))
-    {
-      if (flock($tmp, LOCK_EX))
-      {
+    if ($tmp = fopen($to, is_string($type) ? $type : $mode)) {
+      if (flock($tmp, LOCK_EX)) {
         fwrite($tmp, $content . $old);
         flock($tmp, LOCK_UN);
         $output = TRUE;
@@ -417,14 +369,11 @@ function write($to, $content = '', $type = 0, $perms = FALSE)
  * @param  boolean Prefix dot?
  * @return mixed
  */
-function ext($from, $dot = FALSE)
-{
-  if (substr_count($from, '.') > 0)
-  {
+function ext($from, $dot = FALSE) {
+  if (substr_count($from, '.') > 0) {
     $from = substr($from, strrpos($from, '.'));
 
-    if (is_false($dot))
-    {
+    if (is_false($dot)) {
       $from = substr($from, 1);
     }
 
@@ -444,12 +393,10 @@ function ext($from, $dot = FALSE)
  * @param  boolean Remove path?
  * @return string
  */
-function extn($from, $base = FALSE)
-{
+function extn($from, $base = FALSE) {
   $offset = strrpos($from, '.');
 
-  if ( ! is_false($offset))
-  {
+  if ( ! is_false($offset)) {
     $from = substr($from, 0, $offset);
     $from = is_true($base) ? basename($from) : $from;
   }
@@ -467,15 +414,13 @@ function extn($from, $base = FALSE)
  * @staticvar array   Units array
  * @return    string
  */
-function fmtsize($of = 0, $text = '%d %s', $lower = FALSE)
-{
+function fmtsize($of = 0, $text = '%d %s', $lower = FALSE) {
   static $test = array('', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y');
 
 
   $key  = 0;
 
-  while ($of >= 1024)
-  {
+  while ($of >= 1024) {
     $of   = $of / 1024;
     $key += 1;
   }
@@ -499,13 +444,11 @@ function fmtsize($of = 0, $text = '%d %s', $lower = FALSE)
  * @staticvar array  Types hash
  * @return    string
  */
-function mime($of)
-{
+function mime($of) {
   static $types = NULL;
 
 
-  if (is_null($types))
-  {
+  if (is_null($types)) {
     /**
      * @ignore
      */
@@ -513,29 +456,23 @@ function mime($of)
   }
 
 
-  if (is_file($of))
-  {
-    if (is_callable('finfo_open'))
-    {
+  if (is_file($of)) {
+    if (is_callable('finfo_open')) {
       return finfo_file(finfo_open(FILEINFO_MIME), $of);
     }
-    elseif (is_callable('mime_content_type'))
-    {
+    elseif (is_callable('mime_content_type')) {
       return mime_content_type($of);
     }
 
     $data = read($of);
 
-    if ( ! strncmp($data, "\xff\xd8", 2))
-    {
+    if ( ! strncmp($data, "\xff\xd8", 2)) {
       return 'image/jpeg';
     }
-    elseif ( ! strncmp($data, "\x89PNG", 4))
-    {
+    elseif ( ! strncmp($data, "\x89PNG", 4)) {
       return 'image/png';
     }
-    elseif ( ! strncmp($data, "GIF", 3))
-    {
+    elseif ( ! strncmp($data, "GIF", 3)) {
       return 'image/gif';
     }
   }
@@ -543,8 +480,7 @@ function mime($of)
 
   $ext = ext($of) ?: $of;
 
-  if ( ! array_key_exists($ext, $types))
-  {
+  if ( ! array_key_exists($ext, $types)) {
     return 'application/octet-stream';
   }
 

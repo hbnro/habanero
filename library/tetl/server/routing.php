@@ -30,8 +30,7 @@ class routing extends prototype
    * @param  array Options hash
    * @return void
    */
-  final public static function bind(array $params = array())
-  {
+  final public static function bind(array $params = array()) {
     $params = array_merge(array(
       'constraints' => array(),
       'defaults'    => array(),
@@ -56,11 +55,9 @@ class routing extends prototype
    * @param  array  Options hash
    * @return void
    */
-  final public static function load($path, array $params = array())
-  {
-    is_file($path) && static::mount(function()
-      use($path)
-    {
+  final public static function load($path, array $params = array()) {
+    is_file($path) && static::mount(function ()
+      use($path) {
       require $path;
     }, $params);
   }
@@ -73,8 +70,7 @@ class routing extends prototype
    * @param  array Options hash
    * @return void
    */
-  final public static function mount(Closure $group, array $params = array())
-  {
+  final public static function mount(Closure $group, array $params = array()) {
     $params = array_merge(array(
       'root' => '/',
       'safe' => FALSE,
@@ -95,19 +91,15 @@ class routing extends prototype
    *
    * @return void
    */
-  final public static function execute()
-  {
-    foreach (static::$routes as $params)
-    {
+  final public static function execute() {
+    foreach (static::$routes as $params) {
       $expr = "^$params[match]$";
       $test = request::method() . ' ' . URI;
 
       $params['matches'] = match($expr, $test, (array) $params['constraints']);
 
-      if ($params['matches'])
-      {
-        if ($params['to'] === '.')
-        {
+      if ($params['matches']) {
+        if ($params['to'] === '.') {
           $params['to'] = ROOT;
         }
 

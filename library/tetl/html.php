@@ -14,10 +14,8 @@ class html extends prototype
    * @param  boolean Treat as comment?
    * @return string
    */
-  final public static function cdata($text, $comment = FALSE)
-  {
-    if (is_true($comment))
-    {
+  final public static function cdata($text, $comment = FALSE) {
+    if (is_true($comment)) {
       return "/*<![CDATA[*/\n$text\n/*]]]>*/";
     }
     return "<![CDATA[$text]]]>";
@@ -32,12 +30,10 @@ class html extends prototype
    * @param  boolean Use chunk_split()?
    * @return string
    */
-  final public static function data($text, $mime = 'text/plain', $chunk = FALSE)
-  {
+  final public static function data($text, $mime = 'text/plain', $chunk = FALSE) {
     $text = base64_encode($text);
 
-    if (is_true($chunk))
-    {
+    if (is_true($chunk)) {
       $text = chunk_split($text);
     }
 
@@ -53,16 +49,14 @@ class html extends prototype
    * @param  boolean Force CDATA block
    * @return string
    */
-  final public static function script($url, $text = '', $force = FALSE)
-  {
+  final public static function script($url, $text = '', $force = FALSE) {
     $url  = ! is_url($url) ? '' : $url;
     $text = ! is_url($url) ? $url : $text;
 
 
     $attrs['type'] = 'text/javascript';
 
-    if ( ! empty($url))
-    {
+    if ( ! empty($url)) {
       $attrs['src'] = $url;
     }
 
@@ -77,12 +71,10 @@ class html extends prototype
    * @param  boolean Force CDATA block
    * @return string
    */
-  final public static function style($text, $force = FALSE)
-  {
+  final public static function style($text, $force = FALSE) {
     $attrs['type'] = 'text/css';
 
-    if (is_url($text))
-    {
+    if (is_url($text)) {
       $attrs['src'] = $text;
       $text = '';
     }
@@ -99,8 +91,7 @@ class html extends prototype
    * @param  boolean Employ http-equiv?
    * @return string
    */
-  final public static function meta($name, $content, $http = FALSE)
-  {
+  final public static function meta($name, $content, $http = FALSE) {
     $attrs = compact('content');
 
     $attrs[is_true($http) ? 'http-equiv' : 'name'] = $name;
@@ -115,8 +106,7 @@ class html extends prototype
    * @param  integer Repetitions
    * @return string
    */
-  final public static function nbsp($num = 1)
-  {
+  final public static function nbsp($num = 1) {
     return str_repeat('&nbsp;', $num);
   }
 
@@ -130,35 +120,28 @@ class html extends prototype
    * @param  string Tag name
    * @return string
    */
-  final public static function block($text, $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote')
-  {
-    if (is_string($args))
-    {
+  final public static function block($text, $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote') {
+    if (is_string($args)) {
       $args = args(attrs($args));
     }
 
-      if (is_scalar($text))
-    {
+      if (is_scalar($text)) {
       return tag($tag, $args, sprintf($wrap, $text));
     }
-    elseif (is_array($text))
-    {
+    elseif (is_array($text)) {
       $test   = array_values($text);
       $length = sizeof($test);
       $out    = array();
       $cite   = FALSE;
 
 
-      for ($i = 0; $i < $length; $i += 1)
-      {
+      for ($i = 0; $i < $length; $i += 1) {
         $next = isset($test[$i + 1]) ? $test[$i + 1]: NULL;
 
-        if (is_array($test[$i]))
-        {
+        if (is_array($test[$i])) {
           $out []= block($test[$i], $args, $wrap, $tag);
         }
-        elseif (is_array($next))
-        {
+        elseif (is_array($next)) {
           $inner = block($next, $args, $wrap, $tag);
           $out []= block(sprintf($wrap, $test[$i]) . $inner, $args, '%s', $tag);
 
@@ -166,12 +149,10 @@ class html extends prototype
           $i   += 1;
         }
 
-        if (is_string($test[$i]))
-        {
+        if (is_string($test[$i])) {
           $out []= tag($tag, $args, sprintf($wrap, $test[$i]));
 
-          if (is_true($cite))
-          {
+          if (is_true($cite)) {
             $cite = FALSE;
           }
         }
@@ -190,15 +171,12 @@ class html extends prototype
    * @param  mixed  Attributes
    * @return string
    */
-  final public static function fieldset($text, $title = '', $args = array())
-  {
-    if (is_string($args))
-    {
+  final public static function fieldset($text, $title = '', $args = array()) {
+    if (is_string($args)) {
       $args = args(attrs($args));
     }
 
-    if (is_assoc($title))
-    {
+    if (is_assoc($title)) {
       $args  += $title;
       $title  = '';
     }
@@ -218,42 +196,35 @@ class html extends prototype
    * @return string
    *
    */
-  final public static function table($head, array $body, $foot = array(), $args = array(), Closure $filter = NULL)
-  {
+  final public static function table($head, array $body, $foot = array(), $args = array(), Closure $filter = NULL) {
     $thead =
     $tbody =
     $tfoot = '';
 
-    if ( ! empty($head))
-    {
+    if ( ! empty($head)) {
       $head = ! is_string($head) ? (array) $head : explode('|', $head);
 
-      foreach ($head as $col)
-      {
+      foreach ($head as $col) {
         $thead .= tag('th', '', $col);
       }
       $thead = tag('thead', '', tag('tr', '', $thead));
     }
 
-    if ( ! empty($foot))
-    {
+    if ( ! empty($foot)) {
       $foot  = ! is_string($foot) ? (array) $foot : explode('|', $foot);
       $attrs = array(
         'colspan' => sizeof($foot) > 1 ? 99 : FALSE,
       );
 
-      foreach ($foot as $col)
-      {
+      foreach ($foot as $col) {
         $tfoot .= tag('th', $attrs, $col);
       }
       $tfoot = tag('tfoot', '', tag('tr', '', $tfoot));
     }
 
 
-    foreach ((array) $body as $cols => $rows)
-    {
-      if ( ! is_array($rows))
-      {
+    foreach ((array) $body as $cols => $rows) {
+      if ( ! is_array($rows)) {
         $tbody .= tag('tr', '', tag('td', array('colspan' => 99), $rows));
         continue;
       }
@@ -261,15 +232,12 @@ class html extends prototype
 
       $row = '';
 
-      foreach ($rows as $cell)
-      {
-        if (is_callable($filter))
-        {
+      foreach ($rows as $cell) {
+        if (is_callable($filter)) {
           $cell = $filter($cell);
         }
 
-        if (is_array($cell))
-        {
+        if (is_array($cell)) {
           $cell = static::table('', $cell);
         }
         $row .= tag('td', '', $cell);
@@ -293,8 +261,7 @@ class html extends prototype
    * @param  string  Default size unit
    * @return string
    */
-  final public static function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 12, $max = 30, $unit = 'px')
-  {
+  final public static function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 12, $max = 30, $unit = 'px') {
     $min_count = min(array_values($set));
     $max_count = max(array_values($set));
 
@@ -304,8 +271,7 @@ class html extends prototype
 
     ! $spread && $spread = 1;
 
-    foreach ($from as $tag => $count)
-    {
+    foreach ($from as $tag => $count) {
       $size  = floor($min + ($count - $min_count) * ($max - $min) / $spread);
       $set []= static::a(sprintf($href, $tag), $tag, array(
         'style' => "font-size:$size$unit",
@@ -325,22 +291,18 @@ class html extends prototype
    * @param  string CSS marker class
    * @return string
    */
-  final public static function navlist(array $set, $args = array(), $default = URI, $class = 'here')
-  {
-    if (is_string($args))
-    {
+  final public static function navlist(array $set, $args = array(), $default = URI, $class = 'here') {
+    if (is_string($args)) {
       $args = args(attrs($args));
     }
 
 
     $out = array();
 
-    foreach ($set as $key => $val)
-    {
+    foreach ($set as $key => $val) {
       $attrs = array();
 
-      if ($default === $key)
-      {
+      if ($default === $key) {
         $attrs['class'] = $class;
       }
 
@@ -359,8 +321,7 @@ class html extends prototype
    * @param  mixed  Function callback
    * @return string
    */
-  final public static function dl(array $set, $args = array(), $filter = FALSE)
-  {
+  final public static function dl(array $set, $args = array(), $filter = FALSE) {
     return static::ul($set, $args, $filter, 0, 0);
   }
 
@@ -373,8 +334,7 @@ class html extends prototype
    * @param  mixed  Function callback
    * @return string
    */
-  final public static function ol(array $set, $args = array(), $filter = FALSE)
-  {
+  final public static function ol(array $set, $args = array(), $filter = FALSE) {
     return static::ul($set, $args, $filter, 0);
   }
 
@@ -387,8 +347,7 @@ class html extends prototype
    * @param  mixed  Function callback
    * @return string
    */
-  final public static function ul(array $set, $args = array(), Closure $filter = NULL)
-  {
+  final public static function ul(array $set, $args = array(), Closure $filter = NULL) {
     $ol = func_num_args() == 4;
     $dl = func_num_args() == 5;
 
@@ -397,44 +356,36 @@ class html extends prototype
     $el    = 'li';
     $out   = '';
 
-    if (is_true($dl))
-    {
+    if (is_true($dl)) {
       $tag = 'dl';
       $el  = 'dd';
     }
-    elseif (is_true($ol))
-    {
+    elseif (is_true($ol)) {
       $tag = 'ol';
     }
 
 
 
-    foreach ((array) $set as $item => $value)
-    {
+    foreach ((array) $set as $item => $value) {
       $test = is_callable($filter) ? $filter($item, $value) : array($item, $value);
 
-      if ( ! isset($test[1]))
-      {
+      if ( ! isset($test[1])) {
         continue;
       }
-      elseif (is_true($dl))
-      {
+      elseif (is_true($dl)) {
         $out .= tag('dt', '', $test[0]);
       }
 
-      if (is_array($test[1]))
-      {
+      if (is_array($test[1])) {
         $item = ! is_num($test[0]) ? $test[0] : '';
         $tmp  = array($test[1], $args, $filter);
 
-        if (is_callable($filter))
-        {
+        if (is_callable($filter)) {
           $item = $filter(-1, $item);
           $item = array_pop($item);
         }
 
-        if (is_true($ol))
-        {
+        if (is_true($ol)) {
           $tmp []= '';
         }
 
@@ -458,10 +409,8 @@ class html extends prototype
    * @param  mixed  Attributes|Title value
    * @return string
    */
-  final public static function a($href, $text = '', $title = array())
-  {
-    if (is_array($href))
-    {
+  final public static function a($href, $text = '', $title = array()) {
+    if (is_array($href)) {
       $href = http_build_query($href, NULL, '&amp;');
       $href = ! empty($href) ? "?$href" : '';
     }
@@ -469,19 +418,15 @@ class html extends prototype
 
     $attrs = array();
 
-    if ( ! empty($href))
-    {
+    if ( ! empty($href)) {
       $attrs['href'] = $href;
     }
 
-    if (is_assoc($title))
-    {
+    if (is_assoc($title)) {
       $attrs = array_merge($title, $attrs);
     }
-    elseif ( ! empty($title))
-    {
-      if (empty($text))
-      {
+    elseif ( ! empty($title)) {
+      if (empty($text)) {
         $text = $title;
       }
       $attrs['title'] = $title;
@@ -499,8 +444,7 @@ class html extends prototype
    * @param  mixed  Attributes
    * @return string
    */
-  final public static function anchor($name, $text = '', $args = array())
-  {
+  final public static function anchor($name, $text = '', $args = array()) {
     $attrs = array();
 
     $attrs['id'] = preg_replace('/[^\w-]/', '', $name);
@@ -516,19 +460,16 @@ class html extends prototype
    * @param  mixed  Image title|Attributes
    * @return string
    */
-  final public static function img($url, $alt = '')
-  {
+  final public static function img($url, $alt = '') {
     $default = extn($url, TRUE);
 
-    if (is_assoc($alt))
-    {
+    if (is_assoc($alt)) {
       $attrs = $alt;
       $alt   = '';
 
       $default = isset($attrs['alt']) ? $attrs['alt'] : $default;
     }
-    elseif ( ! empty($alt))
-    {
+    elseif ( ! empty($alt)) {
       $default = $alt;
     }
 
@@ -548,20 +489,17 @@ class html extends prototype
    * @staticvar array  HTML tags
    * @return    string
    */
-  final public static function missing($method, $arguments)
-  {
+  final public static function missing($method, $arguments) {
     static $test = NULL;
 
 
-    if (is_null($test))
-    {
+    if (is_null($test)) {
       $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
       $test = array_merge($test['complete'], $test['empty']);
     }
 
 
-    if ( ! in_array($method, $test))
-    {
+    if ( ! in_array($method, $test)) {
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
 

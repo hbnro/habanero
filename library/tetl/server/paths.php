@@ -24,8 +24,7 @@ class url_for extends prototype
    * @param  string Real path
    * @return void
    */
-  public static function register($path, $to)
-  {
+  public static function register($path, $to) {
     static::$map[$path] = $to;
   }
 
@@ -35,14 +34,12 @@ class url_for extends prototype
    *
    * @return string
    */
-  public static function missing($method, $arguments)
-  {
+  public static function missing($method, $arguments) {
     $params = array();
 
     $test = array_pop($arguments);
 
-    if (is_assoc($test))
-    {
+    if (is_assoc($test)) {
       $params = $test;
     }
     else

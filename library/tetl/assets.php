@@ -38,14 +38,11 @@ class assets extends prototype
    * @param  mixed Value
    * @return void
    */
-  final public static function setup($key, $value = '')
-  {
-    if (is_assoc($key))
-    {
+  final public static function setup($key, $value = '') {
+    if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
     }
-    elseif (array_key_exists($key, static::$defs))
-    {
+    elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -54,8 +51,7 @@ class assets extends prototype
   /**
    * @return void
    */
-  final public static function inline($code, $to = '', $before = FALSE)
-  {
+  final public static function inline($code, $to = '', $before = FALSE) {
     static::push($to ?: 'head', $code, $before);
   }
 
@@ -63,8 +59,7 @@ class assets extends prototype
   /**
    * @return void
    */
-  final public static function script($path, $to = '', $before = FALSE)
-  {
+  final public static function script($path, $to = '', $before = FALSE) {
     static::push($to ?: 'head', tag('script', array('src' => pre_url($path))), $before);
   }
 
@@ -72,8 +67,7 @@ class assets extends prototype
   /**
    * @return void
    */
-  final public static function append($path, $to = '')
-  {
+  final public static function append($path, $to = '') {
     is_url($path) ? static::script($path, $to) : static::push($to ?: ext($path), $path);
   }
 
@@ -81,8 +75,7 @@ class assets extends prototype
   /**
    * @return void
    */
-  final public static function prepend($path, $to = '')
-  {
+  final public static function prepend($path, $to = '') {
     is_url($path) ? static::script($path, $to, TRUE) : static::push($to ?: ext($path), $path, TRUE);
   }
 
@@ -90,8 +83,7 @@ class assets extends prototype
   /**
    * @return string
    */
-  final public static function favicon($path = '')
-  {
+  final public static function favicon($path = '') {
     return tag('link', array('rel' => pre_url($path ?: './favicon.ico')));
   }
 
@@ -99,8 +91,7 @@ class assets extends prototype
   /**
    * @return string
    */
-  final public static function image($path)
-  {
+  final public static function image($path) {
     return tag('img', array('alt' => $path));
   }
 
@@ -108,8 +99,7 @@ class assets extends prototype
   /**
    * @return string
    */
-  final public static function before()
-  {
+  final public static function before() {
     return join("\n", static::$set['head']);
   }
 
@@ -117,8 +107,7 @@ class assets extends prototype
   /**
    * @return string
    */
-  final public static function after()
-  {
+  final public static function after() {
     return join("\n", static::$set['body']);
   }
 
@@ -126,8 +115,7 @@ class assets extends prototype
   /**
    * @return void
    */
-  final public static function compile($type, Closure $lambda)
-  {
+  final public static function compile($type, Closure $lambda) {
     static::$filter[$type] = $lambda;
   }
 
@@ -135,20 +123,16 @@ class assets extends prototype
   /**
    * @return void
    */
-  final public static function missing($method, $arguments)
-  {
-    switch ($method)
-    {// TODO: caching
+  final public static function missing($method, $arguments) {
+    switch ($method) {// TODO: caching
       case 'css';
       case 'js';
         $out = array();
 
-        foreach (static::$set[$method] as $one)
-        {
+        foreach (static::$set[$method] as $one) {
           $file = realpath(static::$defs['path'].DS.$method.DS.$one);
 
-          if (is_file($file))
-          {
+          if (is_file($file)) {
             $path = str_replace(dirname(APP_PATH).DS, '', $file);
             $now  = date('Y-m-d H:i:s', filemtime($file));
             $text = static::process($file);
@@ -174,16 +158,13 @@ class assets extends prototype
    */
 
   // type compiler
-  final private static function process($file)
-  {
+  final private static function process($file) {
     $type = ext($file);
 
-    if ( ! empty(static::$filter[$type]))
-    {
+    if ( ! empty(static::$filter[$type])) {
       $compiled = TMP.DS.'_'.basename($file);
 
-      if ( ! is_file($compiled) OR (filemtime($file) > filemtime($compiled)))
-      {
+      if ( ! is_file($compiled) OR (filemtime($file) > filemtime($compiled))) {
         write($compiled, call_user_func(static::$filter[$type], $file));
       };
       return read($compiled);
@@ -192,8 +173,7 @@ class assets extends prototype
   }
 
   // generic aggregator
-  final private static function push($on, $test, $prepend = FALSE)
-  {
+  final private static function push($on, $test, $prepend = FALSE) {
     $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
   }
 

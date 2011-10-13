@@ -24,10 +24,8 @@ define('NOW', - 300);
  * @param  integer Expiration time
  * @return mixed
  */
-function cookie($key, $value = NULL, $expires = NEVER)
-{
-  if (func_num_args() === 1)
-  {
+function cookie($key, $value = NULL, $expires = NEVER) {
+  if (func_num_args() === 1) {
     return value($_COOKIE, $key);
   }
 
@@ -43,37 +41,29 @@ function cookie($key, $value = NULL, $expires = NEVER)
  * @param  array  Options
  * @return mixed
  */
-function session($key, $value = '', array $option = array())
-{
+function session($key, $value = '', array $option = array()) {
   $hash =  "--a-session$$key";
 
-  if (func_num_args() === 1)
-  {
-    if ( ! is_array($test = value($_SESSION, $hash)))
-    {
+  if (func_num_args() === 1) {
+    if ( ! is_array($test = value($_SESSION, $hash))) {
       return FALSE;
     }
-    elseif (array_key_exists('value', $test))
-    {
+    elseif (array_key_exists('value', $test)) {
       return $test['value'];
     }
     return FALSE;
   }
-  elseif (is_string($hash) && ! is_num($hash))
-  {
-    if (is_null($value) && isset($_SESSION[$hash]))
-    {
+  elseif (is_string($hash) && ! is_num($hash)) {
+    if (is_null($value) && isset($_SESSION[$hash])) {
       unset($_SESSION[$hash]);
     }
     else
     {
-      if ( ! is_array($option))
-      {
+      if ( ! is_array($option)) {
         $option = array('expires' => (int) $option);
       }
 
-      if ( ! empty($option['expires']))
-      {
+      if ( ! empty($option['expires'])) {
         $plus = $option['expires'] < time() ? time() : 0;
         $option['expires'] += $plus;
       }
@@ -93,20 +83,16 @@ function session($key, $value = '', array $option = array())
  * @staticvar array  Vars bag
  * @return    void
  */
-function flash($key = -1, $value = FALSE)
-{
+function flash($key = -1, $value = FALSE) {
   static $output = NULL,
          $set = array();
 
 
-  if (func_num_args() <= 1)
-  {
-    if (isset($output[$key]))
-    {
+  if (func_num_args() <= 1) {
+    if (isset($output[$key])) {
       return $output[$key];
     }
-    elseif ( ! is_null($output) && ! func_num_args())
-    {
+    elseif ( ! is_null($output) && ! func_num_args()) {
       return $output;
     }
 
@@ -118,13 +104,11 @@ function flash($key = -1, $value = FALSE)
   }
 
 
-  if (is_num($key))
-  {
+  if (is_num($key)) {
     return FALSE;
   }
 
-  if ( ! isset($set[$key]))
-  {
+  if ( ! isset($set[$key])) {
     $set[$key] = $value;
   }
   else

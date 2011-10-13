@@ -37,14 +37,11 @@ class pager extends prototype
    * @param  mixed Value
    * @return void
    */
-  final public static function setup($key, $value = '')
-  {
-    if (is_assoc($key))
-    {
+  final public static function setup($key, $value = '') {
+    if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
     }
-    elseif (array_key_exists($key, static::$defs))
-    {
+    elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -56,8 +53,7 @@ class pager extends prototype
    * @param  array Result set
    * @return array
    */
-  final public static function set_array(array $set)
-  {
+  final public static function set_array(array $set) {
     $index = static::offset(sizeof($set));
     $set   = array_slice($set, $index, static::count_page());
 
@@ -70,8 +66,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  final public static function total()
-  {
+  final public static function total() {
     return (int) static::$count;
   }
 
@@ -81,8 +76,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  final public static function pages()
-  {
+  final public static function pages() {
     return ceil(static::$count / static::$defs['count_page']);
   }
 
@@ -92,8 +86,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  final public static function count_page()
-  {
+  final public static function count_page() {
     return (int) static::$defs['count_page'];
   }
 
@@ -103,8 +96,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  final public static function count_max()
-  {
+  final public static function count_max() {
     return (int) static::$defs['count_max'];
   }
 
@@ -114,8 +106,7 @@ class pager extends prototype
    *
    * @return integer
    */
-  final public static function current()
-  {
+  final public static function current() {
     return static::$current ?  (int) static::$current : 1;
   }
 
@@ -125,8 +116,7 @@ class pager extends prototype
    *
    * @return void
    */
-  final public static function index($num)
-  {
+  final public static function index($num) {
     static::$current = (int) $num;
   }
 
@@ -138,12 +128,10 @@ class pager extends prototype
    * @param  integer Number of current page
    * @return integer
    */
-  final public static function offset($count, $current = FALSE)
-  {
+  final public static function offset($count, $current = FALSE) {
     static::$count = (int) $count;
 
-    if ( ! is_false($current))
-    {
+    if ( ! is_false($current)) {
       static::$current = (int) $current;
     }
 
@@ -160,18 +148,15 @@ class pager extends prototype
    * @param  string Wrapper
    * @return array
    */
-  final public static function page_all($wrap = '[%s]')
-  {
+  final public static function page_all($wrap = '[%s]') {
     $out = array();
     $end = static::pages();
     $cur = static::current();
 
-    for ($i = 1; $i <= $end; $i += 1)
-    {
+    for ($i = 1; $i <= $end; $i += 1) {
       $link = static::page_link($i, static::$defs['link_text']);
 
-      if ($cur === $i)
-      {
+      if ($cur === $i) {
         $link = sprintf($wrap, $link);
       }
       $out []= $link;
@@ -188,10 +173,8 @@ class pager extends prototype
    * @param  array   Attributes
    * @return string
    */
-  final public static function page_link($num, $text = '', $args = array())
-  {
-    if (is_string($args))
-    {
+  final public static function page_link($num, $text = '', $args = array()) {
+    if (is_string($args)) {
       $args = args(attrs($args));
     }
 
@@ -208,22 +191,18 @@ class pager extends prototype
    *
    * @return integer
    */
-  final public static function page_step($from = 0)
-  {
+  final public static function page_step($from = 0) {
     $out = 0;
     $max = static::count_max();
     $end = static::current() + $from;
 
-    for ($i = 0; $i < $end; $i += 1)
-    {
-      if (($i % $max) === 1)
-      {
+    for ($i = 0; $i < $end; $i += 1) {
+      if (($i % $max) === 1) {
         $out += 1;
       }
     }
 
-    if ($out > 0)
-    {
+    if ($out > 0) {
       $out -= 1;
     }
 
@@ -234,15 +213,12 @@ class pager extends prototype
 
 
 // database hooks
-if (class_exists('db'))
-{
-  pager::implement('select', function($table, $fields = ALL, array $where = array(), array $options = array())
-  {
+if (class_exists('db')) {
+  pager::implement('select', function ($table, $fields = ALL, array $where = array(), array $options = array()) {
     return db::paginate(db::select($table, $fields, $where, $options, TRUE));
   });
 
-  db::implement('paginate', function($sql, $offset = 0, $limit = 10)
-  {
+  db::implement('paginate', function ($sql, $offset = 0, $limit = 10) {
     $sql  = sql::query_repare(preg_replace('/\bLIMIT\s+[\d,]+\s*$/s', '', $sql));
     $tmp  = sql::execute("SELECT COUNT(*) FROM ($sql) AS c");
 

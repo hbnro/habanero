@@ -16,29 +16,23 @@ class form extends prototype
    * @staticvar array  Defaults
    * @return    string
    */
-  final public static function to($action, $content, array $params = array())
-  {
-    if (is_assoc($action))
-    {
+  final public static function to($action, $content, array $params = array()) {
+    if (is_assoc($action)) {
       $params = array_merge($action, $params);
     }
-    elseif ( ! isset($params['action']))
-    {
+    elseif ( ! isset($params['action'])) {
       $params['action'] = $action;
     }
 
-    if (is_assoc($content))
-    {
+    if (is_assoc($content)) {
       $params = array_merge($content, $params);
     }
-    elseif ( ! isset($params['content']))
-    {
+    elseif ( ! isset($params['content'])) {
       $params['content'] = $content;
     }
 
 
-    if (empty($params['action']))
-    {
+    if (empty($params['action'])) {
       raise(ln('function_param_missing', array('name' => 'form::to', 'input' => 'action')));
     }
 
@@ -50,16 +44,13 @@ class form extends prototype
       'multipart' => FALSE,
     ), $params);
 
-    if ( ! is_closure($params['content']))
-    {
+    if ( ! is_closure($params['content'])) {
       raise(ln('failed_to_execute', array('callback' => $params['content'])));
     }
 
 
-    if ( ! empty($params['method']) && ($params['method'] <> GET))
-    {
-      if (is_true($params['multipart']))
-      {
+    if ( ! empty($params['method']) && ($params['method'] <> GET)) {
+      if (is_true($params['multipart'])) {
         $params['enctype'] = 'multipart/form-data';
       }
     }
@@ -76,8 +67,7 @@ class form extends prototype
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
 
 
-    if (preg_match('/^(put|get|post|delete)\s+(.+?)$/i', $params['action'], $match))
-    {
+    if (preg_match('/^(put|get|post|delete)\s+(.+?)$/i', $params['action'], $match)) {
       $params['method'] = strtolower($match[1]);
       $params['action'] = $match[2];
     }
@@ -89,8 +79,7 @@ class form extends prototype
     ));
 
 
-    if (preg_match('/^(?:put|delete)$/', $params['method']))
-    {
+    if (preg_match('/^(?:put|delete)$/', $params['method'])) {
       $input .= tag('input', array(
         'type' => 'hidden',
         'name' => '_method',
@@ -120,8 +109,7 @@ class form extends prototype
   * @param  mixed  Attributes
   * @return string
   */
-  final public static function file($name, $args = array())
-  {
+  final public static function file($name, $args = array()) {
     return static::input('file', $name, '', $args);
   }
 
@@ -133,16 +121,13 @@ class form extends prototype
   * @staticvar array  Defaults
   * @return    string
   */
-  final public static function field($params)
-  {
+  final public static function field($params) {
     $out  = array();
     $args = func_get_args();
 
 
-    foreach ($args as $one)
-    {
-      if (is_assoc($one))
-      {
+    foreach ($args as $one) {
+      if (is_assoc($one)) {
         $one = array_merge(array(
           'type'    => '',
           'name'    => '',
@@ -154,8 +139,7 @@ class form extends prototype
           'div'     => '',
         ), $one);
 
-        switch ($one['type'])
-        {
+        switch ($one['type']) {
           case 'file';
             $input = static::file($one['name'], (array) $one['options']);
           break;
@@ -174,12 +158,10 @@ class form extends prototype
 
         $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
       }
-      elseif (is_array($one))
-      {
+      elseif (is_array($one)) {
         $out []= call_user_func_array('form::input', $one);
       }
-      elseif (is_scalar($one))
-      {
+      elseif (is_scalar($one)) {
         $out []= $one;
       }
     }
@@ -198,38 +180,30 @@ class form extends prototype
   * @staticvar array  Defaults
   * @return    string
   */
-  final public static function input($type, $name, $value = '', array $params = array())
-  {
-    if (is_assoc($type))
-    {
+  final public static function input($type, $name, $value = '', array $params = array()) {
+    if (is_assoc($type)) {
       $params = array_merge($type, $params);
     }
-    elseif ( ! isset($params['type']))
-    {
+    elseif ( ! isset($params['type'])) {
       $params['type'] = $type;
     }
 
-    if (is_assoc($name))
-    {
+    if (is_assoc($name)) {
       $params = array_merge($name, $params);
     }
-    elseif ( ! isset($params['name']))
-    {
+    elseif ( ! isset($params['name'])) {
       $params['name'] = $name;
     }
 
-    if (is_assoc($value))
-    {
+    if (is_assoc($value)) {
       $params = array_merge($value, $params);
     }
-    elseif ( ! isset($params['value']))
-    {
+    elseif ( ! isset($params['value'])) {
       $params['value'] = $value;
     }
 
 
-    if (empty($params['type']))
-    {
+    if (empty($params['type'])) {
       raise(ln('function_param_missing', array('name' => 'form::input', 'input' => 'type')));
     }
 
@@ -244,8 +218,7 @@ class form extends prototype
     $key    = static::index($params['name'], TRUE);
 
 
-    if ( ! preg_match('/^(?:radio|checkbox)$/', $params['type']))
-    {
+    if ( ! preg_match('/^(?:radio|checkbox)$/', $params['type'])) {
       $params['value'] = static::value($key, $params['value']);
     }
     else
@@ -255,15 +228,12 @@ class form extends prototype
       $params['checked'] = is_array($default) ? in_array($params['value'], $default) : $default === $params['value'];
     }
 
-    if (empty($params['id']))
-    {
+    if (empty($params['id'])) {
       $params['id'] = strtr($key, '.', '_');
     }
 
-    foreach (array_keys($params) as $key)
-    {
-      if (is_empty($params[$key]))
-      {
+    foreach (array_keys($params) as $key) {
+      if (is_empty($params[$key])) {
         unset($params[$key]);
       }
     }
@@ -280,26 +250,21 @@ class form extends prototype
   * @param  array  Options hash
   * @return string
   */
-  final public static function select($name, array $options, array $params = array())
-  {
-    if (is_assoc($name))
-    {
+  final public static function select($name, array $options, array $params = array()) {
+    if (is_assoc($name)) {
       $params = array_merge($name, $params);
     }
-    elseif ( ! isset($params['name']))
-    {
+    elseif ( ! isset($params['name'])) {
       $params['name'] = $name;
     }
 
 
-    if (empty($params['name']))
-    {
+    if (empty($params['name'])) {
       raise(ln('function_param_missing', array('name' => 'form::select', 'input' => 'name')));
     }
 
 
-    if ( ! isset($params['default']))
-    {
+    if ( ! isset($params['default'])) {
       $params['default'] = key($options);
     }
 
@@ -316,14 +281,11 @@ class form extends prototype
     unset($params['type']);
 
 
-    foreach ($options as $key => $value)
-    {
-      if (is_array($value))
-      {
+    foreach ($options as $key => $value) {
+      if (is_array($value)) {
         $sub = '';
 
-        foreach ($value as $key => $val)
-        {
+        foreach ($value as $key => $val) {
           $sub .= tag('option', array(
             'value' => $key,
             'selected' => is_array($default) ? in_array($key, $default, TRUE) : ! strcmp($key, $default),
@@ -344,13 +306,11 @@ class form extends prototype
     }
 
 
-    if ( ! empty($params['multiple']) && (substr($params['name'], -2) <> '[]'))
-    {
+    if ( ! empty($params['multiple']) && (substr($params['name'], -2) <> '[]')) {
       $params['name'] .= is_true($params['multiple']) ? '[]' : '';
     }
 
-    if (empty($params['id']))
-    {
+    if (empty($params['id'])) {
       $args['id']   = strtr($key, '.', '_');
     }
     $args['name'] = $params['name'];
@@ -370,20 +330,16 @@ class form extends prototype
   * @staticvar array  Defaults
   * @return    string
   */
-  final public static function group($name, array $options, array $params = array())
-  {
-    if (is_assoc($name))
-    {
+  final public static function group($name, array $options, array $params = array()) {
+    if (is_assoc($name)) {
       $params = array_merge($name, $params);
     }
-    elseif ( ! isset($params['name']))
-    {
+    elseif ( ! isset($params['name'])) {
       $params['name'] = $name;
     }
 
 
-    if (empty($params['name']))
-    {
+    if (empty($params['name'])) {
       raise(ln('function_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
 
@@ -407,15 +363,12 @@ class form extends prototype
 
     unset($old['name']);
 
-    if (is_true($params['multiple']) && (substr($params['name'], -2) <> '[]'))
-    {
+    if (is_true($params['multiple']) && (substr($params['name'], -2) <> '[]')) {
       $params['name'] .= '[]';
     }
 
-    foreach ($options as $key => $value)
-    {
-      if (is_array($value))
-      {
+    foreach ($options as $key => $value) {
+      if (is_array($value)) {
         $out .= sprintf($params['wrapper'], ents($key, TRUE), static::group($name, $value, $params));
         continue;
       }
@@ -453,34 +406,27 @@ class form extends prototype
   * @param  mixed  Attributes
   * @return string
   */
-  final public static function textarea($name, $value = '', $args = array())
-  {
-    if (is_string($args))
-    {
+  final public static function textarea($name, $value = '', $args = array()) {
+    if (is_string($args)) {
       $args = args(attrs($args));
     }
 
-    if (is_assoc($name))
-    {
+    if (is_assoc($name)) {
       $args = array_merge($name, $args);
     }
-    elseif ( ! isset($args['name']))
-    {
+    elseif ( ! isset($args['name'])) {
       $args['name'] = $name;
     }
 
-    if (is_assoc($value))
-    {
+    if (is_assoc($value)) {
       $args = array_merge($value, $args);
     }
-    elseif ( ! isset($params['text']))
-    {
+    elseif ( ! isset($params['text'])) {
       $args['text'] = $value;
     }
 
 
-    if (empty($args['name']))
-    {
+    if (empty($args['name'])) {
       raise(ln('function_param_missing', array('name' => 'form::group', 'input' => 'name')));
     }
 
@@ -491,8 +437,7 @@ class form extends prototype
 
     unset($args['type']);
 
-    if ($id = static::index($args['name'], TRUE))
-    {
+    if ($id = static::index($args['name'], TRUE)) {
       $args['text'] = static::value($id, $value);
       $args['id']   = strtr($id, '.', '_');
       $args['name'] = $args['name'];
@@ -519,42 +464,34 @@ class form extends prototype
   * @param  mixed  Attributes
   * @return void
   */
-  final public static function label($for, $text = '', $args = array())
-  {
-    if (is_string($args))
-    {
+  final public static function label($for, $text = '', $args = array()) {
+    if (is_string($args)) {
       $args = args(attrs($args));
     }
 
-    if (is_assoc($for))
-    {
+    if (is_assoc($for)) {
       $args = array_merge($for, $args);
     }
-    elseif ( ! isset($args['for']))
-    {
+    elseif ( ! isset($args['for'])) {
       $args['for'] = $for;
     }
 
-    if (is_assoc($text))
-    {
+    if (is_assoc($text)) {
       $args = array_merge($text, $args);
     }
-    elseif ( ! isset($args['text']))
-    {
+    elseif ( ! isset($args['text'])) {
       $args['text'] = $text;
     }
 
 
-    if (empty($args['text']))
-    {
+    if (empty($args['text'])) {
       raise(ln('function_param_missing', array('name' => 'form::label', 'input' => 'text')));
     }
 
     $text = $args['text'];
     unset($args['text']);
 
-    if ($id = static::index($for, TRUE))
-    {
+    if ($id = static::index($for, TRUE)) {
       $args['for'] = strtr($id, '.', '_');
     }
 
@@ -569,8 +506,7 @@ class form extends prototype
   * @param  mixed  Default value
   * @return string
   */
-  final public static function value($from, $or = FALSE)
-  {
+  final public static function value($from, $or = FALSE) {
     $set   = value($_SERVER, 'REQUEST_METHOD') <> GET ? $_POST : $_GET;
     $value = value($set, $from, $or);
 
@@ -586,13 +522,11 @@ class form extends prototype
    * @staticvar array  Input types
    * @return    string
    */
-  final public static function missing($method, $arguments)
-  {
+  final public static function missing($method, $arguments) {
     static $test = NULL;
 
 
-    if (is_null($test))
-    {
+    if (is_null($test)) {
       $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
       $test = $test['types'];
     }
@@ -600,8 +534,7 @@ class form extends prototype
 
     $type = strtr($method, '_', '-');
 
-    if ( ! in_array($type, $test))
-    {
+    if ( ! in_array($type, $test)) {
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
 
@@ -617,17 +550,14 @@ class form extends prototype
    */
 
   // dynamic input identifier
-  final private static function index($name = '', $inc = FALSE)
-  {
+  final private static function index($name = '', $inc = FALSE) {
     static $num = 0;
 
 
-    if ( ! empty($name))
-    {
+    if ( ! empty($name)) {
       $name = preg_replace('/\[([^\[\]]+)\]/', '.\\1', $name);
-      $name = preg_replace_callback('/\[\]/', function($match)
-        use($inc, &$num)
-      {
+      $name = preg_replace_callback('/\[\]/', function ($match)
+        use($inc, &$num) {
         return sprintf('.%d', is_true($inc) ? $num++ : $num);
       }, $name);
     }
@@ -636,8 +566,7 @@ class form extends prototype
   }
 
   // unobstrusive javascript
-  final private static function ujs($params, $form = FALSE)
-  {
+  final private static function ujs($params, $form = FALSE) {
     $params = array_merge(array(
       'url'          => FALSE,
       'type'         => FALSE,
@@ -658,8 +587,7 @@ class form extends prototype
 
     unset($params['disable_with'], $params['confirm'], $params['remote'], $params['url']);
 
-    if (is_false($form))
-    {
+    if (is_false($form)) {
       $params['method'] && $params['data']['method'] = $params['method'];
       unset($params['method']);
     }
