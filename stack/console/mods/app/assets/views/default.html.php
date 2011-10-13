@@ -11,18 +11,27 @@
 
     <title><?php echo $title; ?></title>
 
-    <?php echo assets::tag_for('modernizr-1.7.min.js'); ?>
-    <?php echo assets::favicon(); ?>
-    <?php echo assets::before(); ?>
-    <?php echo $head; ?>
+<?php echo assets::tag_for('http://fonts.googleapis.com/css?family=Days+One', 'css'); ?>
+<?php echo assets::tag_for('modernizr-1.7.min.js'); ?>
+<?php echo assets::favicon(); ?>
+<?php echo assets::before(); ?>
+<?php echo $head; ?>
 
   </head>
   <body>
+  <div id="wrapper">
+    <header>
+      tetl::php
+    </header>
 <?php echo $body; ?>
+    <footer>
+      &mdash; <?php echo ticks(BEGIN); ?>s
+    </footer>
+  </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script>window.jQuery || document.write("<script src='<?php echo assets::url_for('jquery-1.5.1.min.js'); ?>'>\x3C/script>")</script>
-    <?php echo assets::after(); ?>
+<?php echo assets::after(); ?>
 
 <!--
     <script>

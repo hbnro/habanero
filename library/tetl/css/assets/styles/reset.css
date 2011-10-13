@@ -88,4 +88,26 @@ input, select {
   vertical-align: middle;
 }
 
+html {
+  font-size: 100%;
+  overflow-y: scroll;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+::-moz-selection {
+  background: #90bed5;
+  text-shadow: none;
+  color: #fff;
+}
+::selection {
+  background: #90bed5;
+  text-shadow: none;
+  color: #fff;
+}
+
+img {
+  -ms-interpolation-mode: bicubic;
+}
+
 /* EOF: ./library/tetl/css/assets/styles/reset.css */

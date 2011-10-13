@@ -52,17 +52,21 @@ class assets extends prototype
    * @return void
    */
   final public static function url_for($path, $prefix = '', $host = FALSE) {
-    return path_to(static::$defs['path'].($prefix ? DS.$prefix : '').DS.$path, $host);
+    return is_url($path) ? $path : path_to(static::$defs['path'].($prefix ? DS.$prefix : '').DS.$path, $host);
   }
 
 
   /**
    * @return void
    */
-  final public static function tag_for($path) {
-    switch (ext($path)) {
+  final public static function tag_for($path, $type = '') {
+    switch ($type ?: ext($path)) {
       case 'css';
-        return tag('link', array('rel' => 'stylesheet', 'href' => static::url_for($path, 'css')));
+        return tag('link', array(
+          'rel' => 'stylesheet',
+          'type' => 'text/css',
+          'href' => static::url_for($path, 'css'),
+        ));
       break;
       case 'js';
         return tag('script', array('src' => static::url_for($path, 'js')));

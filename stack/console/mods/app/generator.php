@@ -106,8 +106,8 @@ class app_generator extends prototype
               if (cli::flag('view')) {
                 success(ln('app.controller_view_building', array('name' => $name)));
 
-                $text = "<h1>$name#index.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
-                write(mkpath(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$name).DS.'index'.EXT, $text);
+                $text = "<section>\n  <header>$name#index.view</header>\n  <pre><?php echo __FILE__; ?></pre>\n</section>\n";
+                write(mkpath(CWD.DS.'app'.DS.'views'.DS.$name).DS.'index'.EXT, $text);
               }
             }
           break;
@@ -147,8 +147,8 @@ class app_generator extends prototype
                 if (cli::flag('view')) {
                   success(ln('app.action_view_building', array('name' => $name, 'controller' => $parent)));
 
-                  $text = "<h1>$parent#$name.view</h1>\n<p><?php echo __FILE__; ?><br>\n<?php echo ticks(BEGIN), 's'; ?></p>\n";
-                  write(mkpath(CWD.DS.'app'.DS.'views'.DS.'scripts'.DS.$parent).DS.$name.EXT, $text);
+                  $text = "<section>\n  <header>$parent#$name.view</header>\n  <pre><?php echo __FILE__; ?></pre>\n</section>\n";
+                  write(mkpath(CWD.DS.'app'.DS.'views'.DS.$parent).DS.$name.EXT, $text);
                 }
               }
             }

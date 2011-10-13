@@ -145,7 +145,7 @@ bootstrap::bind(function ($app) {
     }, function ($max) {
       foreach (dir2arr(TMP, "sess_*") as $one) {
         if ((@filemtime(TMP.DS.$one) + $max) < time()) {
-          unlink(TMP.DS.$one);
+          @unlink(TMP.DS.$one);
         }
       }
     });

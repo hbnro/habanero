@@ -23,7 +23,7 @@ cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css');
   create_file(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */");
-  create_file(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css'.DS.'base.css', "@use 'reset'\n");
+    copy_file(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css');
 
    create_dir(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'js');
   create_file(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', "/**\n *= lib/jquery-ujs\n */\n");
