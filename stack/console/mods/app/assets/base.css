@@ -17,8 +17,8 @@ body {
 
   > section {
     padding: .8em;
-    background: #edf4f8;
-    border: 1px solid #e5eff5;
+    background: #f4f4f4;
+    border: 1px solid #ededed;
     @include radius(7px);
   }
 
@@ -26,7 +26,7 @@ body {
     font-weight: bold;
     margin-bottom: .5em;
     padding-bottom: .5em;
-    border-bottom: 1px solid #e5eff5;
+    border-bottom: 1px solid #ededed;
   }
 
   > section > pre {
