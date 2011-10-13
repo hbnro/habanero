@@ -15,17 +15,17 @@ body {
     background: #f4f4f4;
     border: 1px solid #ededed;
     @include radius(7px);
-  }
 
-  > section > header {
-    font-weight: bold;
-    margin-bottom: .5em;
-    padding-bottom: .5em;
-    border-bottom: 1px solid #ededed;
-  }
+    > header {
+      font-weight: bold;
+      margin-bottom: .5em;
+      padding-bottom: .5em;
+      border-bottom: 1px solid #ededed;
+    }
 
-  > section > pre {
-    color: #6c6c59;
+    > pre {
+      color: #6c6c59;
+    }
   }
 
   > footer {

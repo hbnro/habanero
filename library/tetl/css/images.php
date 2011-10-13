@@ -36,8 +36,6 @@ css::implement('image', function ($path) {
 
     $out['data']   = 'data:image/' . str_replace('jpg', 'jpeg', ext($img_file));
     $out['data']  .= ';base64,' . base64_encode(read($img_file));
-
-    $out['url']    = url_for(css::path($path));
   }
 
   $cache[$path] = $out;

@@ -154,9 +154,8 @@ class css extends prototype
         $root = dirname($root);
       }
 
-      if ( ! is_file($path)) {
-        $path = $root.DS.ltrim($path, DS);
-      }
+      $abs  = APP_PATH.DS.ltrim($path, DS);
+      $path = is_file($abs) ? $abs : $root.DS.ltrim($path, DS);
     }
     return $path;
   }
