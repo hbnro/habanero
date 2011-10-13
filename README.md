@@ -107,10 +107,10 @@ Within bundled `app/base` everything is organized into conventional paths:
       /backup
       /migrate
     /lib
+      /tasks
+        /rsync
     /public
       /js
-    /tasks
-      /rsync
 
 To start navigating just open your browser pointing to the virtual host you created.
 
