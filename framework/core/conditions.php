@@ -72,11 +72,9 @@ function is_mime($test) {
 function is_num($test, $min = NULL, $max = NULL) {
   if ( ! is_scalar($test)) {
     return FALSE;
-  }
-  elseif (func_num_args() == 1) {
+  } elseif (func_num_args() == 1) {
     return is_numeric($test);
-  }
-  elseif (func_num_args() == 2) {
+  } elseif (func_num_args() == 2) {
     return ! is_false(strpos($min, $test));
   }
 
@@ -156,8 +154,7 @@ function is_lower($test, $offset = 0, $length = 0) {
 function is_assoc($set) {
   if ( ! is_array($set)) {
     return FALSE;
-  }
-  elseif (is_string(key($set))) {//FIX
+  } elseif (is_string(key($set))) {//FIX
     return TRUE;
   }
 
@@ -349,8 +346,7 @@ function is_email($test, $multi = FALSE, $check = FALSE) {
 
   if ( ! $multi && (sizeof($test) > 1)) {
     return FALSE;
-  }
-  elseif (empty($test)) {
+  } elseif (empty($test)) {
     return FALSE;
   }
 
@@ -358,8 +354,7 @@ function is_email($test, $multi = FALSE, $check = FALSE) {
   foreach ($test as $value) {
     if ( ! preg_match($regex, $value)) {
       return FALSE;
-    }
-    elseif (is_true($check) && ! checkdnsrr(substr($value, strpos($value, '@') + 1), 'MX')) {
+    } elseif (is_true($check) && ! checkdnsrr(substr($value, strpos($value, '@') + 1), 'MX')) {
       return FALSE;
     }
   }
@@ -485,13 +480,11 @@ function is_range($test, array $ranges = array()) {
           if (is_num($par[$i], $match[1], $match[2])) {
             $check += 1;
           }
-        }
-        elseif (is_num($seg)) { // exactly
+        } elseif (is_num($seg)) { // exactly
           if ($par[$i] == $seg) {
             $check += 1;
           }
-        }
-        elseif ($seg === '*') {// 0-255
+        } elseif ($seg === '*') {// 0-255
           if (is_num($par[$i], 0, 255)) {
             $check += 1;
           }
@@ -557,8 +550,7 @@ function is_serialized($test) {
 
   if ($test == 'N;') {
     return TRUE;
-  }
-  elseif ( ! preg_match('/^([adObis]):/', $test, $match)) {
+  } elseif ( ! preg_match('/^([adObis]):/', $test, $match)) {
     return FALSE;
   }
 
@@ -573,7 +565,7 @@ function is_serialized($test) {
         return TRUE;
       }
     break;
-    default: break;
+    default; break;
   }
 
   return FALSE;
@@ -677,12 +669,10 @@ function is_ssl() {
   if (isset($_SERVER['HTTPS'])) {
     if (strtolower($_SERVER['HTTPS']) == 'on') {
       return TRUE;
-    }
-    elseif ((int) $_SERVER['HTTPS'] > 0) {
+    } elseif ((int) $_SERVER['HTTPS'] > 0) {
       return TRUE;
     }
-  }
-  elseif (isset($_SERVER['SERVER_PORT']) && ((int) $_SERVER['SERVER_PORT'] == 443)) {
+  } elseif (isset($_SERVER['SERVER_PORT']) && ((int) $_SERVER['SERVER_PORT'] == 443)) {
     return TRUE;
   }
 

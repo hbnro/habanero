@@ -38,15 +38,13 @@ class i18n extends prototype
   final public static function translate($string, $default = '', array $params = array()) {
     if (is_assoc($string)) {
       $params = array_merge($params, $string);
-    }
-    elseif ( ! isset($params['string'])) {
+    } elseif ( ! isset($params['string'])) {
       $params['string'] = $string;
     }
 
     if (is_assoc($default)) {
       $params = array_merge($default, $params);
-    }
-    elseif ( ! isset($params['default'])) {
+    } elseif ( ! isset($params['default'])) {
       $params['default'] = (string) $default;
     }
 
@@ -65,9 +63,7 @@ class i18n extends prototype
         if ( ! preg_match('/^[a-z][a-z0-9_]+$/', $one)) {
           $params['default'] = $one;
           break;
-        }
-        else
-        {
+        } else {
           $test = i18n::translate($one, array('scope' => $params['scope']));
 
           if ( ! empty($test)) {

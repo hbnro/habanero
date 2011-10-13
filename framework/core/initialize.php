@@ -31,9 +31,7 @@ call_user_func(function () {
   if ( ! @is_dir($temporary_files = option('temporary_files'))) {
     if (function_exists('sys_get_temp_dir')) {
       $temporary_files = @sys_get_temp_dir();
-    }
-    else
-    {
+    } else {
       $old = @tempnam('E', '');
       $temporary_files = @dirname($old);
       @unlink($old);

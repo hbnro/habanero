@@ -368,8 +368,7 @@ function attrs($args, $html = FALSE) {
       if (is_true($value)) {
         $out []= $key;
       }
-    }
-    elseif (is_iterable($value)) {
+    } elseif (is_iterable($value)) {
       if ($key === 'style') {//FIX
         $props = array();
 
@@ -378,15 +377,12 @@ function attrs($args, $html = FALSE) {
         }
 
         $out []= sprintf('style="%s"', join(';', $props));
-      }
-      else
-      {
+      } else {
         foreach ((array) $value as $index => $test) {
           $out []= sprintf('%s-%s="%s"', $key, $index, trim($test));
         }
       }
-    }
-    elseif ( ! is_num($key) && is_scalar($value)) {
+    } elseif ( ! is_num($key) && is_scalar($value)) {
       $out []= sprintf('%s="%s"', $key, ents($value, TRUE));
     }
   }

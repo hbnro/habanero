@@ -57,15 +57,13 @@ function run(Closure $bootstrap) {
 function render($content, $partial = FALSE, array $params = array()) {
   if (is_assoc($content)) {
     $params = array_merge($content, $params);
-  }
-  elseif ( ! isset($params['content'])) {
+  } elseif ( ! isset($params['content'])) {
     $params['content'] = $content;
   }
 
   if (is_assoc($partial)) {
     $params = array_merge($partial, $params);
-  }
-  elseif ( ! isset($params['partial'])) {
+  } elseif ( ! isset($params['partial'])) {
     $params['partial'] = $partial;
   }
 
@@ -85,8 +83,7 @@ function render($content, $partial = FALSE, array $params = array()) {
 
   if ( ! empty($params['output'])) {// intentionally plain response
     die($params['output']);
-  }
-  elseif ( ! is_file($params['content'])) {
+  } elseif ( ! is_file($params['content'])) {
     raise(ln('file_not_exists', array('name' => $params['content'])));
   }
 
@@ -147,9 +144,7 @@ function option($get, $or = FALSE) {
 function config($set = NULL, $value = NULL) {
   if ( ! is_null($value)) {
     configure::set($set, $value);
-  }
-  else
-  {
+  } else {
     if ( ! is_assoc($set) && ! is_file($set)) {
       return configure::get($set);
     }
@@ -224,8 +219,7 @@ function match($expr, $subject = NULL, array $constraints = array()) {
 
   if (func_num_args() === 1) {
     return "/$regex/";
-  }
-  elseif (@preg_match("/$regex/u", $subject, $matches)) {
+  } elseif (@preg_match("/$regex/u", $subject, $matches)) {
     return $matches;
   }
 
@@ -244,11 +238,9 @@ function match($expr, $subject = NULL, array $constraints = array()) {
 function value($from, $that = NULL, $or = FALSE) {
   if ( ! is_iterable($from)) {
     return $or;
-  }
-  elseif (($from = (array) $from) && isset($from[$that])) {//FIX
+  } elseif (($from = (array) $from) && isset($from[$that])) {//FIX
     return $from[$that] ?: $or;
-  }
-  elseif (preg_match_all('/\[([^\[\]]*)\]/U', $that, $matches) OR
+  } elseif (preg_match_all('/\[([^\[\]]*)\]/U', $that, $matches) OR
          ($matches[1] = explode('.', $that))) {
     $key = ($offset = strpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
 
@@ -262,12 +254,9 @@ function value($from, $that = NULL, $or = FALSE) {
 
     if (is_object($from) && isset($from->$key)) {
       $tmp = $from->$key;
-    }
-    elseif (is_array($from) && isset($from[$key])) {
+    } elseif (is_array($from) && isset($from[$key])) {
       $tmp = $from[$key];
-    }
-    else
-    {
+    } else {
       $tmp = $or;
     }
 
@@ -337,14 +326,11 @@ function dump($var, $show = FALSE, $deep = 99) {
 
   if (is_null($var)) {
     $out []= 'NULL';
-  }
-  elseif (is_bool($var)) {
+  } elseif (is_bool($var)) {
     $out []= is_true($var) ? 'TRUE' : 'FALSE';
-  }
-  elseif (is_scalar($var)) {
+  } elseif (is_scalar($var)) {
     $out []= strtr($var, $repl);
-  }
-  elseif (is_callable($var)) {
+  } elseif (is_callable($var)) {
     $args = array();
     $code = reflection($var);
 
@@ -353,17 +339,14 @@ function dump($var, $show = FALSE, $deep = 99) {
     }
 
     $out []= 'Args[ ' . join(', ', $args) . ' ]';
-  }
-  elseif (is_iterable($var)) {
+  } elseif (is_iterable($var)) {
     $width = 0;
     $test  = (array) $var;
     $max   = sizeof($test);
 
     if ( ! $show) {
       $tab = '';
-    }
-    else
-    {
+    } else {
       foreach ($test as $key => $val) {
         $key = preg_replace('/^\W.*?\W/', '', $key);
 
@@ -389,8 +372,7 @@ function dump($var, $show = FALSE, $deep = 99) {
 
   if (is_object($var) && ! $show) {
     $out = sprintf("{{$newline}%s$newline}(%s)", $out, get_class($var));
-  }
-  elseif (is_array($var) && ! $show) {
+  } elseif (is_array($var) && ! $show) {
     $out = "[$newline$out$newline]";
   }
 
@@ -415,8 +397,7 @@ function dump($var, $show = FALSE, $deep = 99) {
 function ticks($start = NULL, $end = FALSE, $round = 4) {
   if (func_num_args() == 0) {
     return microtime(TRUE);
-  }
-  elseif (func_num_args() == 1) {
+  } elseif (func_num_args() == 1) {
     $end = microtime(TRUE);
   }
 

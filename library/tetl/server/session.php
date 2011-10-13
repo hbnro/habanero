@@ -47,18 +47,14 @@ function session($key, $value = '', array $option = array()) {
   if (func_num_args() === 1) {
     if ( ! is_array($test = value($_SESSION, $hash))) {
       return FALSE;
-    }
-    elseif (array_key_exists('value', $test)) {
+    } elseif (array_key_exists('value', $test)) {
       return $test['value'];
     }
     return FALSE;
-  }
-  elseif (is_string($hash) && ! is_num($hash)) {
+  } elseif (is_string($hash) && ! is_num($hash)) {
     if (is_null($value) && isset($_SESSION[$hash])) {
       unset($_SESSION[$hash]);
-    }
-    else
-    {
+    } else {
       if ( ! is_array($option)) {
         $option = array('expires' => (int) $option);
       }
@@ -91,8 +87,7 @@ function flash($key = -1, $value = FALSE) {
   if (func_num_args() <= 1) {
     if (isset($output[$key])) {
       return $output[$key];
-    }
-    elseif ( ! is_null($output) && ! func_num_args()) {
+    } elseif ( ! is_null($output) && ! func_num_args()) {
       return $output;
     }
 
@@ -110,9 +105,7 @@ function flash($key = -1, $value = FALSE) {
 
   if ( ! isset($set[$key])) {
     $set[$key] = $value;
-  }
-  else
-  {
+  } else {
     $set[$key]   = (array) $set[$key];
     $set[$key] []= $value;
   }

@@ -76,9 +76,7 @@ sql::implement('columns', function ($test) {
   while ($row = sql::fetch_assoc($old)) {
     if (preg_match('/^nextval\(.+$/', $row['d'], $id)) {
       $row['d'] = NULL;
-    }
-    else
-    {
+    } else {
       $row['d'] = trim(preg_replace('/::.+$/', '', $row['d']), "'");
     }
 

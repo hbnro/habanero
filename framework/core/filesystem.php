@@ -116,12 +116,9 @@ function dir2arr($from, $filter = '*', $options = FALSE) {
       unset($items[$old]);
 
       ! $map && ksort($items);
-    }
-    elseif ( ! match($filter, $value)) {
+    } elseif ( ! match($filter, $value)) {
       unset($items[$old]);
-    }
-    else
-    {
+    } else {
       $value = ! $map ? basename($value) : $value;
     }
   }, $items);
@@ -139,9 +136,7 @@ function dir2arr($from, $filter = '*', $options = FALSE) {
     foreach ($items as $value) {
       if (is_scalar($value)) {
         $output []= $value;
-      }
-      else
-      {
+      } else {
         $output = array_merge($output, $value);
       }
     }
@@ -292,8 +287,7 @@ function read($path) {
         }
         fclose($resource);
       }
-    }
-    elseif (function_exists('curl_init')) {
+    } elseif (function_exists('curl_init')) {
       $resource = curl_init();
 
       curl_setopt($resource, CURLOPT_URL, "$test[scheme]://$test[host]$guri");
@@ -305,15 +299,13 @@ function read($path) {
       curl_setopt($resource, CURLOPT_USERAGENT, $agent);
 
       $output = curl_exec($resource);
-    }
-    elseif (ini_get('allow_url_fopen')) {
+    } elseif (ini_get('allow_url_fopen')) {
       if ($tmp = @fopen($path, 'r')) {// tricky
         while ($output .= fread($tmp, 1024));
         fclose($tmp);
       }
     }
-  }
-  elseif (is_file($path)) {
+  } elseif (is_file($path)) {
     $output = file_get_contents($path);
   }
 
@@ -459,8 +451,7 @@ function mime($of) {
   if (is_file($of)) {
     if (is_callable('finfo_open')) {
       return finfo_file(finfo_open(FILEINFO_MIME), $of);
-    }
-    elseif (is_callable('mime_content_type')) {
+    } elseif (is_callable('mime_content_type')) {
       return mime_content_type($of);
     }
 
@@ -468,11 +459,9 @@ function mime($of) {
 
     if ( ! strncmp($data, "\xff\xd8", 2)) {
       return 'image/jpeg';
-    }
-    elseif ( ! strncmp($data, "\x89PNG", 4)) {
+    } elseif ( ! strncmp($data, "\x89PNG", 4)) {
       return 'image/png';
-    }
-    elseif ( ! strncmp($data, "GIF", 3)) {
+    } elseif ( ! strncmp($data, "GIF", 3)) {
       return 'image/gif';
     }
   }

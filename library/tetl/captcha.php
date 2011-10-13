@@ -24,9 +24,7 @@ function captcha_id($test = 6, $key = 0) {
     $test = preg_split('/\b|[\s\t]+/', read($test));
     $test = array_filter(array_unique($test));
     $hash = $test[array_rand($test, 1)];
-  }
-  else
-  {
+  } else {
     $hash = '';
     $max  = strlen($chars) - 1;
     
@@ -88,9 +86,7 @@ function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FA
     $bgcolor = imagecolorallocatealpha($resource, 0, 0, 0, 0);
     $light   = array_map($negative, $light);
     $dark    = array_map($negative, $dark);
-  }
-  else
-  {
+  } else {
     $bgcolor = imagecolorallocatealpha($resource, 255, 255, 255, 127);
   }
   
@@ -120,9 +116,7 @@ function captcha_src($hash, $width = 120, $height = 24, $font = '', $invert = FA
         $img = imagerotate($resource, is_odd($i) ? - .8 : .7, $bgcolor);
       }
     }
-  }
-  else
-  {
+  } else {
     $box = imageftbbox($factor, 0, $font, 'Q');
     
     $w   = max(abs($box[2]) - abs($box[0]), 1);

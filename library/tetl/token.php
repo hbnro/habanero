@@ -30,13 +30,10 @@ function gettok($text, $index = 0, $ord = 32, $join = TRUE) {
 
   if ( ! $index) {
     return is_true($join) ? join(char($ord), $test) : $test;
-  }
-  elseif (preg_match('/(\d+)-(\d*)/', $index, $match)) {
+  } elseif (preg_match('/(\d+)-(\d*)/', $index, $match)) {
     if ( ! empty($match[2])) {
       $test = array_slice($test, $match[1] - 1, $match[2] - ($match[1] - 1));
-    }
-    else
-    {
+    } else {
       $test = array_slice($test, $match[1] - 1);
     }
     return $join ? join(char($ord), $test) : $test;
@@ -131,14 +128,12 @@ function deltok($text, $index = 0, $ord = 32, $join = TRUE) {
   if (preg_match('/(\d*)-(\d*)/', $index, $match)) {
     if (empty($match[1]) && ! empty($match[2])) {
       $out = array_splice($out, - $match[2]);
-    }
-    elseif ( ! empty($match[2])) {
+    } elseif ( ! empty($match[2])) {
       $out = array_splice($out, $match[1] - 1, $match[2] - ($match[1] - 1));
     }
     
     $out = array_splice($out, $match[1] - 1);
-  }
-  elseif (($index > 0) && ($index <= sizeof($out))) {
+  } elseif (($index > 0) && ($index <= sizeof($out))) {
     unset($out[$index - 1]);
   }
   
@@ -209,14 +204,12 @@ function settok($text, $value, $index = 0, $ord = 32, $join = TRUE) {
   if (preg_match('/(\d*)-(\d*)/', $index, $match)) {
     if (empty($match[1]) && ! empty($match[2])) {
       $out = array_splice($out, - $match[2], $match[2], $value);
-    }
-    elseif ( ! empty($match[2])) {
+    } elseif ( ! empty($match[2])) {
       $out = array_splice($out, $match[1] - 1, $match[2] - ($match[1] - 1), $value);
     }
     
     $out = array_splice($out, $match[1] - 1, sizeof($out), $value);
-  }
-  elseif ($index > 0) {
+  } elseif ($index > 0) {
     $out = array_splice($out, $index - 1, 1, $value);
   }
   

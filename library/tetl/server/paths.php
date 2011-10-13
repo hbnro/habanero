@@ -41,9 +41,7 @@ class url_for extends prototype
 
     if (is_assoc($test)) {
       $params = $test;
-    }
-    else
-    {
+    } else {
       $test && $arguments []= $test;
     }
 

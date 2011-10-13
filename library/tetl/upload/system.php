@@ -77,8 +77,7 @@ class upload extends prototype
   final public static function setup($key, $value = '') {
     if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
-    }
-    elseif (array_key_exists($key, static::$defs)) {
+    } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -108,8 +107,7 @@ class upload extends prototype
 
     if (empty($set)) {
       return static::set_error(UPLOAD_ERR_NO_FILE);
-    }
-    elseif (is_false(static::$defs['multiple']) && (sizeof($set['name']) > 1)) {
+    } elseif (is_false(static::$defs['multiple']) && (sizeof($set['name']) > 1)) {
       return static::set_error(UPLOAD_ERR_MULTI);
     }
 
@@ -125,8 +123,7 @@ class upload extends prototype
 
       if ($set['size'][$i] > static::$defs['max_size']) {
         return static::set_error(UPLOAD_ERR_MAX_SIZE);
-      }
-      elseif ($set['size'][$i] < static::$defs['min_size']) {
+      } elseif ($set['size'][$i] < static::$defs['min_size']) {
         return static::set_error(UPLOAD_ERR_MIN_SIZE);
       }
 

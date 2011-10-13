@@ -54,8 +54,7 @@ class twitter extends prototype
   final public static function setup($key, $value = '') {
     if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
-    }
-    elseif (array_key_exists($key, static::$defs)) {
+    } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -111,9 +110,7 @@ class twitter extends prototype
         session('twitter_auth', $test);
 
         oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
-      }
-      else
-      {
+      } else {
         $test = session('twitter_auth');
       }
 
@@ -241,12 +238,9 @@ class twitter extends prototype
 
     if (is_assoc($test)) {
       $data = $test;
-    }
-    elseif ($test === POST) {
+    } elseif ($test === POST) {
       $type = $test;
-    }
-    else
-    {
+    } else {
       $test && $arguments []= $test;
     }
 

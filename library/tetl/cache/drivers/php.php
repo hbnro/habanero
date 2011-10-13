@@ -23,8 +23,7 @@ cache::implement('fetch_item', function ($key) {
     
     if ( ! is_array($test)) {
       return @unlink($path);
-    }
-    elseif (time() < $test[0]) {
+    } elseif (time() < $test[0]) {
       return $test[1];
     }
     @unlink($cache_file);

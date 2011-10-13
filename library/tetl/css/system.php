@@ -68,8 +68,7 @@ class css extends prototype
   final public static function setup($key, $value = '') {
     if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
-    }
-    elseif (array_key_exists($key, static::$defs)) {
+    } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -258,17 +257,13 @@ class css extends prototype
             $args[substr($key, 1)] = trim($val);
           }
         }
-      }
-      else
-      {
+      } else {
         $name = end(explode(' ', trim($match[1])));
       }
 
       static::$mixins[$name]['props'] = static::parse_properties($match[2]);
       static::$mixins[$name]['args']  = $args;
-    }
-    else
-    {
+    } else {
       $props  = static::parse_properties($match[2]);
       $parent = array_map('trim', array_filter($test));
 
@@ -336,9 +331,7 @@ class css extends prototype
 
       if (is_array($val)) {//FIX
         static::build_properties($val, str_replace(' &', '', trim("$parent $key")));
-      }
-      else
-      {
+      } else {
         switch($key) {
           case '@extend';
             foreach (array_filter(explode(',', $val)) as $part) {
@@ -372,16 +365,13 @@ class css extends prototype
 
       if (substr($key, -1) === ':') {
         $out []= static::make_properties($val, $key);
-      }
-      elseif (is_array($val)) {
+      } elseif (is_array($val)) {
         if (substr($parent, 0, 1) === '@') {
           $out []= static::build_rules($val, $key);
-        }
-        elseif ($tmp = static::build_rules($val, str_replace(' &', '', "$parent $key"))) {
+        } elseif ($tmp = static::build_rules($val, str_replace(' &', '', "$parent $key"))) {
           static::$css []= $tmp;
         }
-      }
-      elseif (substr($key, 0, 1) <> '@') {
+      } elseif (substr($key, 0, 1) <> '@') {
         $out []= "  $key: $val;";
       }
     }
@@ -414,9 +404,7 @@ class css extends prototype
 
       if ( ! is_array($val)) {
         $out []= str_replace(':', '-', "  $old$key: $val;");
-      }
-      else
-      {
+      } else {
         $out []= static::make_properties($val, $old . $key);
       }
     }
@@ -496,9 +484,7 @@ class css extends prototype
       foreach ($text as $key => $val) {
         $text[$key] = static::do_solve($val);
       }
-    }
-    else
-    {//FIX
+    } else {//FIX
       do
       {
         $old  = strlen($text);

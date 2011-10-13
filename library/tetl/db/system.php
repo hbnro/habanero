@@ -72,18 +72,13 @@ class sql extends prototype
 
         if ( ! is_num($col)) {
           return static::names("$val.$col");
-        }
-        else
-        {
+        } else {
           return static::fixate_string($val, TRUE);
         }
-      }
-      else
-      {
+      } else {
         return array_map(array('sql', 'fixate_string'), $test);
       }
-    }
-    elseif (is_string($test)) {
+    } elseif (is_string($test)) {
       $test = "'" . static::escape($test) . "'";
     }
     return $test;
@@ -95,8 +90,7 @@ class sql extends prototype
     foreach ((array) $values as $key => $val) {
       if (strlen(trim($val)) == 0) {
         continue;
-      }
-      elseif (is_num($key)) {
+      } elseif (is_num($key)) {
         $sql []= ' ' . static::names($val);
         continue;
       }
@@ -127,15 +121,12 @@ class sql extends prototype
     foreach ($fields as $key => $val) {
       if (is_num($key)) {
         $sql []= $val;
-      }
-      else
-      {
+      } else {
         $val = static::fixate_string($val, TRUE);
 
         if (is_true($insert)) {
           $sql []= $val ?: 'NULL';
-        }
-        elseif ( ! empty($val)) {
+        } elseif ( ! empty($val)) {
           $sql []= sprintf('%s = %s', static::names($key), $val ?: "''");
         }
       }
@@ -163,36 +154,29 @@ class sql extends prototype
 
           $count += 1;
           continue;
-        }
-        elseif (is_keyword($key)) {
+        } elseif (is_keyword($key)) {
           $out  = static::build_where($val, $key);
           $sql .= strtoupper($key) . "\n$out";
 
           $count += 1;
           continue;
-        }
-        elseif (($inc += 1) > 1) {
+        } elseif (($inc += 1) > 1) {
           $sql .= "$operator\n";
         }
 
         if (is_num($key)) {
           if (is_string($val)) {
             $sql .= "$val\n";
-          }
-          else
-          {
+          } else {
             $sql .= static::build_where($val, $operator);
           }
-        }
-        elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
+        } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
           $oper = '';
           $key  = static::names($match[1]);
 
           if (is_null($val)) {
             $oper = 'IS NULL';
-          }
-          else
-          {
+          } else {
             $val = static::fixate_string($val, FALSE);
             $oper = ! empty($match[2]) ? ($match[2] == '!' ? '!=' : $match[2]) : '=';
           }
@@ -204,9 +188,7 @@ class sql extends prototype
           if (is_array($val) && (sizeof($val) > 1)) {
             $key .= in_array($oper, array('!=', '<>')) ? ' NOT' : '';
             $sql .= " $key IN(" . join(', ', $val) . ")\n";
-          }
-          else
-          {
+          } else {
             $val = is_array($val) ? array_shift($val) : $val;
             $sql .= " $key $oper $val\n";
           }
@@ -246,12 +228,9 @@ class sql extends prototype
 
     if ($last === '\t') {
       $separator = "\t";
-    }
-    elseif ($last === '\n') {
+    } elseif ($last === '\n') {
       $separator = "\n";
-    }
-    else
-    {
+    } else {
       $separator = char($last);
     }
 
@@ -274,12 +253,10 @@ class sql extends prototype
       $char = substr($test, $i, 1);
 
       switch ($char) {
-        case $separator:
+        case $separator;
           if ( ! is_false($str)) {
             $query .= $char;
-          }
-          else
-          {
+          } else {
             if (strlen(trim($query)) == 0) {
               continue;
             }
@@ -289,11 +266,11 @@ class sql extends prototype
             $query = '';
           }
         break;
-        case "'":
+        case "'";
           $str    = ! $str;
           $query .= $char;
         break;
-        default:
+        default;
           $query .= $char;
         break;
       }

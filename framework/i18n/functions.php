@@ -18,9 +18,7 @@ function ln($input) {
       $args[0]     = $value;
       $input[$key] = call_user_func_array(__FUNCTION__, $args);
     }
-  }
-  else
-  {
+  } else {
     $callback = is_num($input) ? 'pluralize' : 'translate';
     $input    = call_user_func_array("i18n::$callback", $args);
   }

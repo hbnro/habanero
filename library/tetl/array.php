@@ -25,8 +25,7 @@ function ranges($low, $high = '', $step = 1) {
   foreach ($test as $one) {
     if (is_num($one) OR (strlen($one) === 1)) {
       $out []= $one;
-    }
-    elseif (is_string($one)) {
+    } elseif (is_string($one)) {
       $old = array_map('trim', explode('-', $one));
 
       $i   = array_shift($old);
@@ -35,8 +34,7 @@ function ranges($low, $high = '', $step = 1) {
 
       if ( ! $c OR ! $i) {
         continue;
-      }
-      elseif (is_alpha($i) OR is_alpha($c)) {
+      } elseif (is_alpha($i) OR is_alpha($c)) {
         $i  = ord($i);
         $c  = ord($c);
         $x += 1;
@@ -82,9 +80,7 @@ function tree($set, $sep = '. ', $key = 'id', $value = 'title', $items = 'childs
           $out[$k] = $x . $sep . $one;
         }
       }
-    }
-    else
-    {
+    } else {
       $out[$id] = $x . $sep . $item;
     }
   }
@@ -143,9 +139,7 @@ function wrap($set, $test = '%s', $recursive = FALSE) {
   foreach ($set as $key => $val) {
     if (is_array($val)) {
       $val = is_true($recursive) ? wrap($val, $test, $recursive) : $val;
-    }
-    else
-    {
+    } else {
       $val = is_callable($test) ? $test($val) : sprintf($test, (string) $val);
     }
     $set[$key] = $val;
@@ -213,8 +207,7 @@ function kcollect($set, Closure $callback) {
       if ( ! empty($test)) {
         $out[$key] = $test;
       }
-    }
-    elseif ($callback($val, $key)) {
+    } elseif ($callback($val, $key)) {
       $out[$key] = $val;
     }
   }
@@ -252,8 +245,7 @@ function kreject($set, Closure $callback) {
       if ( ! empty($test)) {
         $out[$key] = $test;
       }
-    }
-    elseif ( ! $callback($val, $key)) {
+    } elseif ( ! $callback($val, $key)) {
       $out[$key] = $val;
     }
   }
@@ -273,8 +265,7 @@ function flatten($array, $return = array()) {
   foreach ($array as $one) {
     if (is_array($one)) {
       $return = flatten($one, $return);
-    }
-    elseif($one) {
+    } elseif($one) {
       $return []= $one;
     }
   }

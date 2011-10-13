@@ -15,8 +15,7 @@
 function dispatch($to = NULL, array $params = array()) {
   if (is_assoc($to)) {
     $params = array_merge($to, $params);
-  }
-  elseif ( ! isset($params['to'])) {
+  } elseif ( ! isset($params['to'])) {
     $params['to'] = $to;
   }
 
@@ -44,16 +43,12 @@ function dispatch($to = NULL, array $params = array()) {
     if (is_true($output)) {
       return TRUE;
     }
-  }
-  elseif (is_url($params['to'])) {
+  } elseif (is_url($params['to'])) {
     redirect($params);
-  }
-  elseif (is_file($params['to'])) {
+  } elseif (is_file($params['to'])) {
     if (ext($params['to'], TRUE) === EXT) {
       $output = include $params['to'];
-    }
-    else
-    {
+    } else {
       $type   = $params['type'] ?: mime($params['to']);
       $length = filesize($params['to']);
 
@@ -62,9 +57,7 @@ function dispatch($to = NULL, array $params = array()) {
 
       readfile($params['to']);
     }
-  }
-  else
-  {
+  } else {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
   }
 
@@ -96,8 +89,7 @@ function dispatch($to = NULL, array $params = array()) {
 function response($content, array $params = array()) {
   if (is_assoc($content)) {
     $params = array_merge($content, $params);
-  }
-  elseif ( ! isset($params['output'])) {
+  } elseif ( ! isset($params['output'])) {
     $params['output'] = $content;
   }
 
@@ -154,15 +146,13 @@ function response($content, array $params = array()) {
 function redirect($to = ROOT, $status = NULL, array $params = array()) {
   if (is_assoc($to)) {
     $params = array_merge($to, $params);
-  }
-  elseif ( ! isset($params['to'])) {
+  } elseif ( ! isset($params['to'])) {
     $params['to'] = $to;
   }
 
   if (is_assoc($status)) {
     $params = array_merge($status, $params);
-  }
-  elseif ( ! isset($params['status'])) {
+  } elseif ( ! isset($params['status'])) {
     $params['status'] = (int) $status;
   }
 
@@ -183,8 +173,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
     if ( ! ($params['to'] = referer())) {
       return FALSE;
     }
-  }
-  elseif ($params['locals']) {
+  } elseif ($params['locals']) {
     $params['to'] .= ! is_false(strrpos($params['to'], '?')) ? '&' : '?';
     $params['to'] .= http_build_query($params['locals'], NULL, '&');
   }
@@ -225,9 +214,7 @@ function status($num = 200, array $headers = array()) {
       foreach ($val as $one) {
         header("$key: $one", FALSE);
       }
-    }
-    else
-    {
+    } else {
       header("$key: $val", TRUE);
     }
   }
@@ -235,9 +222,7 @@ function status($num = 200, array $headers = array()) {
 
   if (substr(strtoupper(PHP_SAPI), 0, 3) === 'CGI') {
     header("Status: $num {$set['reasons'][$num]}", TRUE);
-  }
-  else
-  {
+  } else {
     $protocol = server('SERVER_PROTOCOL');
     header("$protocol $num {$set['reasons'][$num]}", TRUE, $num);
   }

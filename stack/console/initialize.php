@@ -44,9 +44,7 @@ run(function () {
 
     if (empty($action) OR ! $mod_class::defined($action)) {
       $mod_class::help();
-    }
-    else
-    {
+    } else {
       $test   =
       $params = array();
 
@@ -55,9 +53,7 @@ run(function () {
       }
       call_user_func_array("$mod_class::$action", $test);
     }
-  }
-  else
-  {
+  } else {
     help($test);
   }
 });

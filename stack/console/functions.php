@@ -92,7 +92,7 @@ function status($type, $text = '') {
     case 'copy';
       action('yellow', $type, $text);
     break;
-    default:
+    default;
       $text && $text = "  $text";
       $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
 

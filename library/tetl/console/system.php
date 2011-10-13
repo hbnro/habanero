@@ -88,13 +88,10 @@ class cli extends prototype
             if ( ! preg_match('/^--?.+/', $test[$i + 1])) {
               static::$flags[$parts[0]] = $test[$i + 1];
             }
-          }
-          else
-          {
+          } else {
             static::$flags[$parts[0]] = isset($parts[1]) ? $parts[1] : TRUE;
           }
-        }
-        elseif ((strlen($str) === 2) && ($str[0] === '-')) {// -a
+        } elseif ((strlen($str) === 2) && ($str[0] === '-')) {// -a
           static::$flags[$str[1]] = TRUE;
 
           if (isset($test[$i + 1])) {
@@ -102,8 +99,7 @@ class cli extends prototype
               static::$flags[$str[1]] = $test[$i + 1];
             }
           }
-        }
-        elseif ((strlen($str) > 1) && ($str[0] === '-')) {// -xyz
+        } elseif ((strlen($str) > 1) && ($str[0] === '-')) {// -xyz
           $k = strlen($str);
 
           for ($j = 1; $j < $k; $j += 1) {
@@ -204,9 +200,7 @@ class cli extends prototype
 
         pause(1);
       }
-    }
-    else
-    {
+    } else {
       static::writeln(static::ln($text));
       static::readln();
     }
@@ -295,12 +289,9 @@ class cli extends prototype
   final public static function clear($num = 0) {
     if ($num) {
       return static::write(str_repeat("\x08", $num));
-    }
-    elseif ( ! IS_WIN) {
+    } elseif ( ! IS_WIN) {
       static::write("\033[H\033[2J");
-    }
-    else
-    {
+    } else {
       $c = static::$height;
 
       while($c -= 1) {
@@ -442,13 +433,10 @@ class cli extends prototype
 
       if ( ! is_numeric($val)) {
         return $default;
-      }
-      else
-      {
+      } else {
         if (isset($old[$val -= 1])) {
           return array_search($old[$val], $set);
-        }
-        elseif ($val < 0 OR $val >= sizeof($old)) {
+        } elseif ($val < 0 OR $val >= sizeof($old)) {
           static::error(static::ln($warn));
         }
       }
@@ -488,9 +476,7 @@ class cli extends prototype
         }
         $out []= wordwrap($str, $max + 2, "\n$left", TRUE);
         $cur  = '';
-      }
-      else
-      {
+      } else {
         if ((strlen($cur) + strlen($str) + $sep) >= $max) {
           $cur   = trim($cur, $separator);
           $out []= str_pad($cur, $max, ' ', $pad);
@@ -587,9 +573,7 @@ class cli extends prototype
         $char = $i === 0 ? '[' : ($i == $length ? ']' : '*');
 
         static::write(static::format("\ccyan($char)\c"));
-      }
-      else
-      {
+      } else {
         $background = $perc > 99 ? 'green' : 'red';
         $char = ($inc += 1) == 0 ? '=' : ' ';
 

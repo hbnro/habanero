@@ -158,8 +158,7 @@ class xss extends prototype
 
           $val = preg_replace(static::$regex['clean_css'], '', $val);
           $val = preg_replace(sprintf('/;?(?:[a-z]*:?)?%s(?::?\(?[^;]*\)?)?;?/i', static::fix_space('expression')), '', $val);
-        }
-        elseif (($key == 'href' OR $key == 'src') && preg_match('/^([^:]*):/', $val, $test)) {
+        } elseif (($key == 'href' OR $key == 'src') && preg_match('/^([^:]*):/', $val, $test)) {
           if ( ! in_array($test[1], static::$defs['allow']['protocols'])) {
             continue;
           }

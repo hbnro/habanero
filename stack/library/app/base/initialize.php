@@ -64,9 +64,7 @@ call_user_func(function () {
       use($request) {
       if (is_callable($params['to'])) {
         $request['dispatch']($params);
-      }
-      else
-      {
+      } else {
         list($controller, $action) = explode('#', (string) $params['to']);
 
         $controller_file = CWD.DS.'app'.DS.'controllers'.DS.$controller.EXT;
@@ -89,8 +87,7 @@ call_user_func(function () {
 
         if ( ! class_exists($class_name)) {
           raise(ln('mvc.class_missing', array('controller' => $class_name)));
-        }
-        elseif ( ! $class_name::defined($action)) {
+        } elseif ( ! $class_name::defined($action)) {
           raise(ln('mvc.action_missing', array('controller' => $class_name, 'action' => $action)));
         }
 

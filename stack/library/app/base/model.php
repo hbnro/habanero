@@ -102,8 +102,7 @@ class model extends prototype
   final public function is_valid() {
     if ( ! static::$validate) {
       return TRUE;
-    }
-    elseif (is_null($this->valid_record)) {
+    } elseif (is_null($this->valid_record)) {
       valid::setup(static::$validate);
 
       $this->valid_record = valid::done($this->props);
@@ -181,8 +180,7 @@ class model extends prototype
       array_unshift($arguments, $method);
 
       return call_user_func_array(get_called_class() . '::find', $arguments);
-    }
-    elseif (preg_match('/^(build|create)_by_(.+)$/', $method, $match)) {
+    } elseif (preg_match('/^(build|create)_by_(.+)$/', $method, $match)) {
       return static::$match[1](static::merge($match[2], $arguments));
     }
 
@@ -258,9 +256,7 @@ class relation
   public function __call($method, $arguments) {
     if ( ! empty($arguments[0]) && is_array($arguments[0])) {
       $arguments[0][$this->related_to[0]['on']] = $this->related_to[1]->id();
-    }
-    else
-    {
+    } else {
       $part = explode('_by_', $method, 2);
       $oper = strpos($method, '_by_') ? 'and' : 'by';
 

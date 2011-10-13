@@ -157,9 +157,7 @@ function oauth_sign($request, $url, $vars = array(), $method = GET, $callback = 
 
   if (function_exists('hash_hmac')) {
     $test = hash_hmac($callback, $test, $key, TRUE);
-  }
-  else
-  {//TODO: fallback is still needed?
+  } else {//TODO: fallback is still needed?
     if (strlen($key) > 64) {
       $key = pack('H*', $callback($key));
     }
@@ -184,8 +182,7 @@ function oauth_sign($request, $url, $vars = array(), $method = GET, $callback = 
 function oauth_encode($test) {
   if (is_scalar($test)) {
     $test = str_replace('%7E', '~', rawurlencode($test));
-  }
-  elseif (is_array($test)) {
+  } elseif (is_array($test)) {
     $test = array_map(__FUNCTION__, $test);
   }
   return $test;

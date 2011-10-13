@@ -73,8 +73,7 @@ css::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 100) {
   if (is_array($red)) {
     $alpha = $green;
     $args  = $red;
-  }
-  elseif (is_hex($red)) {
+  } elseif (is_hex($red)) {
     $args  = css::hex2rgb($red);
     $alpha = $green;
   }
@@ -86,8 +85,7 @@ css::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 100) {
 
   if ((sizeof($args) < 3) OR ($alpha === 0)) {
     return 'transparent';
-  }
-  elseif ($alpha < 1) {
+  } elseif ($alpha < 1) {
     return "rgba!($args[0], $args[1], $args[2], $alpha)";
   }
   return "rgb!($args[0], $args[1], $args[2])";
@@ -411,9 +409,7 @@ css::implement('rgb_safe', function ($red, $green = -1, $blue = -1) {
   foreach ($color as $key => $val) {
     if (strpos($val, '%')) {
       $color[$key] = ((int) $val) * 2.55;
-    }
-    else
-    {
+    } else {
       $color[$key] = ($old = round(abs($val))) > 255 ? $old % 255 : $old;
     }
   }
@@ -453,8 +449,7 @@ css::implement('rgb2hsl', function ($red, $green = -1, $blue = -1) {
 
   if (is_array($red)) {
     $color = $red;
-  }
-  elseif (is_hex($red)) {
+  } elseif (is_hex($red)) {
     $color = css::hex2rgb($red);
   }
 
@@ -471,18 +466,14 @@ css::implement('rgb2hsl', function ($red, $green = -1, $blue = -1) {
   if ($min === $max) {
     $hue        =
     $saturation = 0;
-  }
-  else
-  {
+  } else {
     $saturation = $lightness < 0.5 ? ($max - $min) / ($max + $min) : ($max - $min) / (2.0 - $max - $min);
 
     if ($red === $max) {
       $hue = ($green - $blue) / ($max - $min);
-    }
-    elseif ($green === $max) {
+    } elseif ($green === $max) {
       $hue = 2.0 + ($blue - $red) / ($max - $min);
-    }
-    elseif ($blue === $max) {
+    } elseif ($blue === $max) {
       $hue = 4.0 + ($red - $green) / ($max - $min);
     }
   }
@@ -514,11 +505,9 @@ css::implement('hsl2rgb', function ($hue, $saturation = -1, $lightness = -1) {
 
       if (($hue * 6) < 1) {
         return $max + ($val - $max) * $hue * 6;
-      }
-      elseif (($hue * 2) < 1) {
+      } elseif (($hue * 2) < 1) {
         return $val;
-      }
-      elseif (($hue * 3) < 2) {
+      } elseif (($hue * 3) < 2) {
         return $max + ($val - $max) * ((2 / 3) - $hue) * 6;
       }
       return $max;
@@ -540,9 +529,7 @@ css::implement('hsl2rgb', function ($hue, $saturation = -1, $lightness = -1) {
 
   if ($color[1] === 0) {
     $out = array($color[2] * 255, $color[2] * 255, $color[2] * 255);
-  }
-  else
-  {
+  } else {
     $b = $color[2] <= 0.5 ? $color[2] * ($color[1] + 1) : ($color[2] + $color[1]) - ($color[2] * $color[1]);
     $a = $color[2] * 2 - $b;
 

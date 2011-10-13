@@ -226,8 +226,7 @@ class request extends prototype
 
     if ( ! empty($test['name'][0]) && $test['error'][0] == 0) {
       return TRUE;
-    }
-    elseif (is_array($test) && $test['error'] == 0) {
+    } elseif (is_array($test) && $test['error'] == 0) {
       return TRUE;
     }
 
@@ -268,8 +267,7 @@ class request extends prototype
 request::implement('dispatch', function (array $params = array()) {
   if (empty($params['to'])) {
     raise(ln('function_param_missing', array('name' => 'dispatch', 'input' => 'to')));
-  }
-  elseif ( ! (is_callable($params['to']) OR
+  } elseif ( ! (is_callable($params['to']) OR
               is_file($params['to']) OR
               is_url($params['to']))) {
     raise($params['to']);

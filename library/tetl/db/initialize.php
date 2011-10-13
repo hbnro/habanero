@@ -41,9 +41,7 @@ call_user_func(function () {
 
       $set[$key] = trim(join('', $new));
     }
-  }
-  else
-  {
+  } else {
     $set = (array) @parse_url($dsn_string);
   }
 
@@ -62,9 +60,7 @@ call_user_func(function () {
       raise(ln('db.pdo_adapter_missing', array('name' => $parts['scheme'])));
     }
     $driver_file = __DIR__.DS.'drivers'.DS.'pdo'.EXT;
-  }
-  else
-  {
+  } else {
     $driver_file = __DIR__.DS.'drivers'.DS.$parts['scheme'].EXT;
   }
 

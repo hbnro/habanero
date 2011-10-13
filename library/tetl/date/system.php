@@ -206,8 +206,7 @@ function distance($since, $to = 0, $or = '%F %Y') {
   
   if (($diff >= 0) && ($diff <= 2)) {
     return ln('date.now');
-  }
-  elseif ($diff > 0) {
+  } elseif ($diff > 0) {
     $day_diff = floor($diff / 86400);
     
     if ($day_diff == 0) {
@@ -245,9 +244,7 @@ function distance($since, $to = 0, $or = '%F %Y') {
     }
     
     return mdate($or, $to);
-  }
-  else
-  {
+  } else {
     $diff     = abs($diff);
     $day_diff = floor($diff / 86400);
     
@@ -308,8 +305,7 @@ function days($month, $from = 1970) {
   
   if (($month < 1) OR ($month > 12)) {
     return FALSE;
-  }
-  elseif ( ! is_num($year) OR (strlen($year) <> 4)) {
+  } elseif ( ! is_num($year) OR (strlen($year) <> 4)) {
     $year = date('Y');
   }
 

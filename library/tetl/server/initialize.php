@@ -87,9 +87,7 @@ bootstrap::bind(function ($app) {
         break;
       }
     }
-  }
-  else
-  {
+  } else {
     // URL cleanup
     $root   = preg_quote(ROOT, '/');
     $index  = preg_quote(INDEX, '/');

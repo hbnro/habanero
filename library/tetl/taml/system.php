@@ -39,8 +39,7 @@ class taml extends prototype
   final public static function setup($key, $value = '') {
     if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
-    }
-    elseif (array_key_exists($key, static::$defs)) {
+    } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }
@@ -116,8 +115,7 @@ class taml extends prototype
 
       if ( ! trim($line)) {
         continue;
-      }
-      elseif ($tab && ($tab % static::$defs['indent'])) {
+      } elseif ($tab && ($tab % static::$defs['indent'])) {
         return static::error($i, $line, 'bad_space', $file);
       }
 
@@ -197,14 +195,11 @@ class taml extends prototype
         $sub[$key] []= '- }';
       }
       $out []= static::compile($sub);
-    }
-    else
-    {
+    } else {
       foreach ($tree as $key => $value) {
         if ( ! is_scalar($value)) {
           continue;
-        }
-        elseif (preg_match("/^\s*$expr/", $value)) {
+        } elseif (preg_match("/^\s*$expr/", $value)) {
           $tree []= '- }';
         }
       }
@@ -214,14 +209,12 @@ class taml extends prototype
         if (is_string($value)) {
           $out []= static::line(trim($value));
           continue;
-        }
-        elseif (substr(trim($key), 0, 3) === 'pre') {
+        } elseif (substr(trim($key), 0, 3) === 'pre') {
           $indent = strlen($key) - strlen(ltrim($key));
           $value  = tag('pre', '', join("\n", static::flatten($value)));
           $out  []= preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
           continue;
-        }
-        elseif (preg_match('/^(\s*):(\w+)\s*$/', $key, $match)) {
+        } elseif (preg_match('/^(\s*):(\w+)\s*$/', $key, $match)) {
           $out []= static::filter($match[2], $value, strlen($match[1]));
           continue;
         }
@@ -351,8 +344,7 @@ class taml extends prototype
         if ( ! empty($match[0])) {
           $key  = stripslashes(trim(substr(trim($key), 1)));
           $text = preg_replace('/^/m', '  ', "<?php echo $key; ?>$text");
-        }
-        elseif ( ! is_numeric($key)) {
+        } elseif ( ! is_numeric($key)) {
           $text = stripslashes(trim($key)) . $text;
         }
 
@@ -382,9 +374,7 @@ class taml extends prototype
     foreach ($set as $val) {
       if ( ! is_array($val)) {
         $out []= $val;
-      }
-      else
-      {
+      } else {
         switch ($val[0]) { // intentionally on cascade
           case function_exists($val[1]);
           case in_array($val[1], $expr);
@@ -436,8 +426,7 @@ class taml extends prototype
           case T_AS; // as
           case T_FOR; // for
           case T_FOREACH; // foreach
-          case T_ELSE; // else
-          case T_ELSEIF; // elseif
+          case T_ELSE; // else case T_ELSEIF; // elseif
           case T_SWITCH; // switch
           case T_CASE; // case
           case T_BREAK; // break

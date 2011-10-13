@@ -41,8 +41,7 @@ class assets extends prototype
   final public static function setup($key, $value = '') {
     if (is_assoc($key)) {
       static::$defs = array_merge(static::$defs, $key);
-    }
-    elseif (array_key_exists($key, static::$defs)) {
+    } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
   }

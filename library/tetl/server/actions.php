@@ -14,16 +14,14 @@
 function url_for($action, array $params = array()) {
   if (is_assoc($action)) {
     $params = array_merge($action, $params);
-  }
-  elseif ( ! isset($params['action'])) {
+  } elseif ( ! isset($params['action'])) {
     $params['action'] = $action;
   }
 
 
   if (empty($params['action'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'action')));
-  }
-  elseif (is_url($params['action'])) {
+  } elseif (is_url($params['action'])) {
     return $params['action'];
   }
 
@@ -92,17 +90,14 @@ function pre_url($text) {
 
   if (is_email($text)) {
     $text = 'mailto:' . rawurlencode($text);
-  }
-  elseif (substr($text, 0, 1) === '/') {
+  } elseif (substr($text, 0, 1) === '/') {
     $text = url_for($text, array(
       'complete' => TRUE,
       'host' => TRUE,
     ));
-  }
-  elseif (substr($text, 0, 2) == './') {
+  } elseif (substr($text, 0, 2) == './') {
     $text = server(TRUE, ROOT . substr($text, 2));
-  }
-  elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text)) {
+  } elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text)) {
     $text = "http://$text";
   }
 
@@ -124,25 +119,21 @@ function link_to($text, $url = NULL, $args = array()) {
 
   if (is_assoc($text)) {
     $params = $text;
-  }
-  elseif (is_assoc($url)) {
+  } elseif (is_assoc($url)) {
     $params = array_merge($url, $params);
 
     $url = (string) $text;
-  }
-  elseif (is_closure($url)) {
+  } elseif (is_closure($url)) {
     $params['action'] = $text;
 
     $args = $url;
-  }
-  elseif ( ! isset($params['text'])) {
+  } elseif ( ! isset($params['text'])) {
     $params['text'] = $text;
   }
 
   if (is_assoc($url)) {
     $attrs = array_merge($url, $attrs);
-  }
-  elseif ( ! isset($params['action'])) {
+  } elseif ( ! isset($params['action'])) {
     $params['action'] = $url;
   }
 
@@ -156,9 +147,7 @@ function link_to($text, $url = NULL, $args = array()) {
     ob_start() && $args();
 
     $params['text'] = trim(ob_get_clean());
-  }
-  else
-  {
+  } else {
     $attrs = array_merge($attrs, (array) $args);
   }
 
@@ -198,15 +187,13 @@ function mail_to($address, $text = NULL, array $args = array()) {
 
   if (is_assoc($address)) {
     $params = $address;
-  }
-  elseif ( ! isset($params['address'])) {
+  } elseif ( ! isset($params['address'])) {
     $params['address'] = $address;
   }
 
   if (is_assoc($text)) {
     $params = array_merge($text, $params);
-  }
-  elseif ( ! isset($params['text'])) {
+  } elseif ( ! isset($params['text'])) {
     $params['text'] = $text;
   }
 
@@ -249,8 +236,7 @@ function mail_to($address, $text = NULL, array $args = array()) {
     }
 
     $params['address'] = $test;
-  }
-  elseif ($params['encode'] === 'javascript') {
+  } elseif ($params['encode'] === 'javascript') {
     return tag('script', array(
       'type' => 'text/javascript',
     ), sprintf('document.write("%s")', preg_replace_callback('/./', function ($match) {
@@ -309,18 +295,15 @@ function button_to($name, $url = NULL, array $args = array()) {
 
   if (is_assoc($name)) {
     $params = $name;
-  }
-  elseif (is_assoc($url)) {
+  } elseif (is_assoc($url)) {
     $params['action'] = (string) $name;
-  }
-  elseif ( ! isset($params['text'])) {
+  } elseif ( ! isset($params['text'])) {
     $params['text'] = $name;
   }
 
   if (is_string($name) && is_assoc($url)) {
     $params = array_merge($url, $params);
-  }
-  elseif ( ! isset($params['action'])) {
+  } elseif ( ! isset($params['action'])) {
     $params['action'] = $url;
   }
 

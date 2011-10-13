@@ -59,8 +59,7 @@ class configure extends prototype
       foreach ($set as $key => $value) {
         static::set($key, $value);
       }
-    }
-    elseif (is_file($set)) {
+    } elseif (is_file($set)) {
       static::import($set);
     }
   }

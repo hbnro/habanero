@@ -11,9 +11,7 @@ class app_generator extends prototype
 
     if ( ! is_file(CWD.DS.'initialize'.EXT)) {
       error(ln('app.not_installed'));
-    }
-    else
-    {
+    } else {
       $test  = dir2arr(CWD, '*', DIR_RECURSIVE | DIR_MAP);
       $count = sizeof($test);
       $size  = 0;
@@ -44,9 +42,7 @@ class app_generator extends prototype
           if (is_array($val)) {
             cli::writeln("$pre  \clight_gray,black($key)\c/");
             $self($val, $self, $deep + 2);
-          }
-          else
-          {
+          } else {
             $size = fmtsize(filesize($val));
             $val  = basename($val);
 
@@ -58,9 +54,7 @@ class app_generator extends prototype
       $map($tmp, $map);
 
       error(ln('app.directory_must_be_empty'));
-    }
-    else
-    {
+    } else {
       require __DIR__.DS.'scripts'.DS.'create_app'.EXT;
     }
 
@@ -76,25 +70,19 @@ class app_generator extends prototype
       'model',
     ))) {
       static::help();
-    }
-    else
-    {
+    } else {
       info(ln('app.verifying_generator'));
 
       if ( ! $name) {
         error(ln("app.missing_{$what}_name"));
-      }
-      else
-      {
+      } else {
         switch ($what) {
           case 'controller';
             $out_file = mkpath(CWD.DS.'app'.DS.'controllers').DS.$name.EXT;
 
             if (is_file($out_file)) {
               error(ln('app.controller_already_exists', array('name' => $name)));
-            }
-            else
-            {
+            } else {
               $type = cli::flag('parent') ?: 'controller';
               $code = "<?php\n\nclass {$name}_controller extends $type\n{"
                     . "\n\n  public static function index()\n"
@@ -130,22 +118,16 @@ class app_generator extends prototype
 
             if ( ! $parent) {
               error(ln('app.controller_missing'));
-            }
-            elseif ( ! is_file($out_file)) {
+            } elseif ( ! is_file($out_file)) {
               error(ln('app.controller_not_exists', array('name' => $parent)));
-            }
-            elseif ( ! $name) {
+            } elseif ( ! $name) {
               error(ln("app.missing_{$what}_name"));
-            }
-            else
-            {
+            } else {
               $content = read($out_file);
 
               if (preg_match("/\b(?:private|public)\s+static\s+function\s+$name\s*\(/s", $content)) {
                 error(ln('app.action_already_exists', array('name' => $name, 'controller' => $parent)));
-              }
-              else
-              {
+              } else {
                 success(ln('app.action_method_building', array('name' => $name, 'controller' => $parent)));
 
                 $code = "  public static function $name()\n"
@@ -176,9 +158,7 @@ class app_generator extends prototype
 
             if (is_file($out_file)) {
               error(ln('app.model_already_exists', array('name' => $name)));
-            }
-            else
-            {
+            } else {
               success(ln('app.model_class_building', array('name' => $name)));
 
               $type   = cli::flag('parent') ?: 'dbmodel';
@@ -217,24 +197,19 @@ class app_generator extends prototype
       if (cli::flag('dev')) {
         $what = 'development';
         $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
-      }
-      elseif (cli::flag('test')) {
+      } elseif (cli::flag('test')) {
         $what = 'testing';
         $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
-      }
-      elseif (cli::flag('prod')) {
+      } elseif (cli::flag('prod')) {
         $what = 'production';
         $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
-      }
-      elseif (cli::flag('app')) {
+      } elseif (cli::flag('app')) {
         $what = 'application';
         $file = CWD.DS.'config'.DS.$what.EXT;
-      }
-      elseif (cli::flag('db')) {
+      } elseif (cli::flag('db')) {
         $what = 'database';
         $file = CWD.DS.'config'.DS.$what.EXT;
-      }
-      elseif (cli::flag('global')) {
+      } elseif (cli::flag('global')) {
         $file = CWD.DS.'config'.EXT;
         $what = 'default';
       }
@@ -266,9 +241,7 @@ class app_generator extends prototype
           ! is_file($file) && mkpath(dirname($file)) && write($file, "<?php\n\n");
           write($file, $code, 1);
         }
-      }
-      else
-      {
+      } else {
         dump($config, TRUE);
       }
     }));
@@ -283,9 +256,7 @@ class app_generator extends prototype
 
     if ( ! $name) {
       error(ln("app.missing_script_name"));
-    }
-    else
-    {
+    } else {
       $trap = function () {
         include func_get_arg(0);
         return get_defined_vars();
@@ -300,9 +271,7 @@ class app_generator extends prototype
 
       if ( ! is_file($script_file)) {
         error(ln('app.missing_script_file', array('name' => $path)));
-      }
-      else
-      {
+      } else {
         ! $key && $key = 'default';
 
         $test = $trap($script_file);
@@ -310,12 +279,9 @@ class app_generator extends prototype
 
         if (empty($test['params'])) {
           error(ln('app.missing_script_params'));
-        }
-        elseif ( ! array_key_exists($key, $test['params'])) {
+        } elseif ( ! array_key_exists($key, $test['params'])) {
           error(ln('app.unknown_script_param', array('name' => $key)));
-        }
-        else
-        {
+        } else {
           success(ln('app.executing_script', array('name' => $path, 'param' => $key)));
 
           $args = array_slice(func_get_args(), 1);

@@ -74,12 +74,9 @@ function encode($text) {
 
     if ($ran < 45) {
       $out .= '&#x' . dechex(ord($char)) . ';';
-    }
-    elseif ($ran > 90 && ! preg_match('/[@:.]/', $char)) {
+    } elseif ($ran > 90 && ! preg_match('/[@:.]/', $char)) {
       $out .= $char;
-    }
-    else
-    {
+    } else {
       $out .= '&#' . ord($char) . ';';
     }
   }
@@ -104,9 +101,7 @@ function even($text, $repl = '%s', $ord = 124, $odd = FALSE) {
   foreach ($str as $key => $val) {
     if (($key % 2) <> $odd) {
       $str[$key] =  sprintf($repl, $val);
-    }
-    else
-    {
+    } else {
       $str[$key] = $val;
     }
   }
@@ -233,9 +228,7 @@ function freq($text) {
   foreach (array_filter(explode(' ', $text)) as $word) {
     if (array_key_exists($word, $set)) {
       $set[$word] += 1;
-    }
-    else
-    {
+    } else {
       $set[$word] = 0;
     }
   }
@@ -348,17 +341,17 @@ function find($text, $query = '', $chunk = '..', $length = 30) {
 
   foreach (preg_split('/\s+/', $query) as $one) {
     switch(substr($one, 0, 1)) {
-      case '-':
+      case '-';
         if(strlen($one) > 1) {
           $bad []= preg_quote(substr($one, 1), '/');
         }
       break;
-      case '+':
+      case '+';
         if(strlen($one) > 1) {
           $good []= preg_quote(substr($one, 1), '/');
         }
       break;
-      default:
+      default;
         $good []= preg_quote($one, '/');
       break;
     }

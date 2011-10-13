@@ -29,12 +29,9 @@ class db_generator extends prototype
 
     if ( ! $table) {
       error(ln('db.table_name_missing'));
-    }
-    elseif ( ! in_array($table, db::tables())) {
+    } elseif ( ! in_array($table, db::tables())) {
       error(ln('db.table_not_exists', array('name' => $table)));
-    }
-    else
-    {
+    } else {
       return TRUE;
     }
   }
@@ -99,9 +96,7 @@ class db_generator extends prototype
         $text = str_replace(',)', ')', $text);
 
         $args[$i] = $text;
-      }
-      else
-      {
+      } else {
         $args[$i] = "'$one'";
       }
     }
@@ -113,9 +108,7 @@ class db_generator extends prototype
       $date = date('Y-m-d H:i:s', $time);
 
       write($migration_file, "<?php\n/* $date */\n$code");
-    }
-    else
-    {
+    } else {
       write($migration_file, $code, 1);
     }
 
@@ -132,9 +125,7 @@ class db_generator extends prototype
 
     if (empty($test)) {
       error(ln('db.without_tables'));
-    }
-    else
-    {
+    } else {
       success(ln('db.tables'));
 
       foreach ($test as $one) {
@@ -162,9 +153,7 @@ class db_generator extends prototype
       success(ln('db.loading_schema', array('path' => $path)));
 
       require $schema_file;
-    }
-    else
-    {
+    } else {
       if ( ! cli::flag('seed')) {
         info(ln('db.verifying_database'));
         bold(DB_DSN);
@@ -189,9 +178,7 @@ class db_generator extends prototype
           }
 
           static::schema();
-        }
-        else
-        {
+        } else {
           error(ln('db.without_migrations'));
         }
       }
@@ -202,9 +189,7 @@ class db_generator extends prototype
 
       if ( ! is_file($seed_file)) {
         error(ln('db.without_seed'));
-      }
-      else
-      {
+      } else {
         $path = str_replace(CWD.DS, '', $seed_file);
         success(ln('db.loading_seed', array('path' => $path)));
         require $seed_file;
@@ -241,9 +226,7 @@ class db_generator extends prototype
 
       if ( ! $all) {
         error(ln('db.without_indexes', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         $idx = array();
 
         foreach ($all as $name => $one) {
@@ -270,12 +253,9 @@ class db_generator extends prototype
 
     if ( ! $to) {
       error(ln('db.table_name_missing'));
-    }
-    elseif (in_array($to, db::tables())) {
+    } elseif (in_array($to, db::tables())) {
       error(ln('db.table_already_exists', array('name' => $to)));
-    }
-    else
-    {
+    } else {
       success(ln('db.renaming_table_to', array('from' => $table, 'to' => $to)));
       static::migrate('rename_table', $table, $to);
     }
@@ -290,17 +270,12 @@ class db_generator extends prototype
 
     if ( ! $table) {
       error(ln('db.table_name_missing'));
-    }
-    elseif (in_array($table, db::tables())) {
+    } elseif (in_array($table, db::tables())) {
       error(ln('db.table_already_exists', array('name' => $table)));
-    }
-    else
-    {
+    } else {
       if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         $pk     =
         $fail   = FALSE;
         $fields = array();
@@ -312,9 +287,7 @@ class db_generator extends prototype
             error(ln('db.unknown_field', array('type' => $type, 'name' => $name)));
 
             $fail = TRUE;
-          }
-          else
-          {
+          } else {
             notice(ln('db.success_field_type', array('type' => $type, 'name' => $name)));
 
             $fields[$name] = (array) $type;
@@ -336,9 +309,7 @@ class db_generator extends prototype
 
         if ($fail) {
           error(ln('db.table_fields_missing', array('name' => $table)));
-        }
-        else
-        {
+        } else {
           success(ln('db.table_building', array('name' => $table)));
           static::migrate('create_table', $table, $fields, array('force' => TRUE));
 
@@ -368,9 +339,7 @@ class db_generator extends prototype
 
       if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         foreach ($args as $one) {
           @list($name, $type, $length) = explode(':', $one);
 
@@ -380,12 +349,9 @@ class db_generator extends prototype
 
           if ( ! in_array($type, static::$types)) {
             error(ln('db.unknown_field', array('type' => $type, 'name' => $name)));
-          }
-          elseif (in_array($name, $fields)) {
+          } elseif (in_array($name, $fields)) {
             error(ln('db.column_already_exists', array('name' => $name)));
-          }
-          else
-          {
+          } else {
             success(ln('db.column_building', array('type' => $type, 'name' => $name)));
             static::migrate('add_column', $table, $name, $col);
           }
@@ -403,15 +369,11 @@ class db_generator extends prototype
 
       if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         foreach ($args as $one) {
           if ( ! in_array($one, $fields)) {
             error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
-          }
-          else
-          {
+          } else {
             success(ln('db.column_dropping', array('name' => $one)));
             static::migrate('remove_column', $table, $one);
           }
@@ -429,9 +391,7 @@ class db_generator extends prototype
 
       if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         $c = sizeof($args);
 
         for ($i = 0; $i < $c; $i += 2) {
@@ -440,12 +400,9 @@ class db_generator extends prototype
 
           if ( ! in_array($one, $fields)) {
             error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
-          }
-          elseif ( ! $next) {
+          } elseif ( ! $next) {
             error(ln('db.column_name_missing'));
-          }
-          else
-          {
+          } else {
             success(ln('db.column_renaming', array('from' => $one, 'to' => $next)));
             static::migrate('rename_column', $table, $one, $next);
           }
@@ -463,9 +420,7 @@ class db_generator extends prototype
 
       if ( ! $args) {
         error(ln('db.table_fields_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         $c = sizeof($args);
 
         for ($i = 0; $i < $c; $i += 2) {
@@ -474,12 +429,9 @@ class db_generator extends prototype
 
           if ( ! array_key_exists($one, $fields)) {
             error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
-          }
-          elseif ( ! $next) {
+          } elseif ( ! $next) {
             error(ln('db.column_type_missing'));
-          }
-          else
-          {
+          } else {
             @list($type, $length) = explode(':', $next);
 
             $col = array($type);
@@ -488,12 +440,9 @@ class db_generator extends prototype
 
             if ( ! in_array($type, static::$types)) {
               error(ln('db.unknown_field', array('type' => $type, 'name' => $one)));
-            }
-            elseif ($fields[$one]['type'] === $type) {
+            } elseif ($fields[$one]['type'] === $type) {
               error(ln('db.column_already_exists', array('name' => $one)));
-            }
-            else
-            {
+            } else {
               success(ln('db.column_changing', array('type' => $type, 'name' => $one)));
               static::migrate('change_column', $table, $one, $col);
             }
@@ -509,30 +458,23 @@ class db_generator extends prototype
     if (static::check_table($table)) {
       if ( ! $name) {
         error(ln('db.index_name_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         $unique = cli::flag('unique');
         $args   = array_slice(func_get_args(), 2);
         $idx    = db::indexes($table);
 
         if ( ! $args) {
           error(ln('db.index_columns_missing'));
-        }
-        elseif (array_key_exists($name, $idx)) {
+        } elseif (array_key_exists($name, $idx)) {
           error(ln('db.index_already_exists', array('name' => $name, 'table' => $table)));
-        }
-        else
-        {
+        } else {
           $col    = array();
           $fields = array_keys(db::columns($table));
 
           foreach ($args as $one) {
             if ( ! in_array($one, $fields)) {
               error(ln('db.column_not_exists', array('name' => $one, 'table' => $table)));
-            }
-            else
-            {
+            } else {
               notice(ln('db.success_column_index', array('name' => $one, 'table' => $table)));
 
               $col []= $one;
@@ -559,17 +501,13 @@ class db_generator extends prototype
 
       if ( ! $args) {
         error(ln('db.index_name_missing', array('name' => $table)));
-      }
-      else
-      {
+      } else {
         $idx = db::indexes($table);
 
         foreach ($args as $one) {
           if ( ! array_key_exists($one, $idx)) {
             error(ln('db.index_not_exists', array('name' => $one, 'table' => $table)));
-          }
-          else
-          {
+          } else {
             success(ln('db.index_dropping', array('name' => $one)));
             static::migrate('remove_index', $table, $one);
           }
@@ -586,9 +524,7 @@ class db_generator extends prototype
 
       if ( ! $name) {
         error(ln('db.import_name_missing'));
-      }
-      else
-      {
+      } else {
         $inc_file  = CWD.DS.'db'.DS.'backup'.DS.$name;
         $inc_file .= cli::flag('raw') ? '.sql' : EXT;
 
@@ -596,24 +532,18 @@ class db_generator extends prototype
 
         if ( ! is_file($inc_file)) {
           error(ln('db.import_file_missing', array('path' => $path)));
-        }
-        else
-        {
+        } else {
           success(ln('db.importing', array('path' => $path)));
 
           db::import($inc_file, cli::flag('raw'));
         }
       }
-    }
-    else
-    {
+    } else {
       info(ln('db.verifying_export'));
 
       if ( ! $name) {
         error(ln('db.export_name_missing'));
-      }
-      else
-      {
+      } else {
         $name = preg_replace('/\W/', '_', $name);
 
         $data = cli::flag('data');
@@ -624,9 +554,7 @@ class db_generator extends prototype
 
         if (is_file($out_file)) {
           error(ln('db.export_already_exists'));
-        }
-        else
-        {
+        } else {
           $path = str_replace(CWD.DS, '', $out_file);
 
           touch($out_file);

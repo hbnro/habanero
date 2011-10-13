@@ -36,9 +36,7 @@ class mongdel extends model
         $this->props['_id'] = $last_record['_id'];
         $this->new_record = FALSE;
       }
-    }
-    else
-    {
+    } else {
       static::conn()->update(array(
         '_id' => $this->props['_id'],
       ), $fields);
@@ -95,9 +93,7 @@ class mongdel extends model
 
     if ($params && ! is_assoc($params)) {
       $args []= $params;
-    }
-    else
-    {
+    } else {
       $options = (array) $params;
     }
 
@@ -154,17 +150,14 @@ class mongdel extends model
       $row   = static::select(array(), $where, array('single' => TRUE));
 
       return $row ? new static($row, 'after_find') : FALSE;
-    }
-    elseif (strpos($method, 'count_by_') === 0) {
+    } elseif (strpos($method, 'count_by_') === 0) {
       return static::count(static::merge(substr($method, 9), $arguments));
-    }
-    elseif (strpos($method, 'find_or_create_by_') === 0) {
+    } elseif (strpos($method, 'find_or_create_by_') === 0) {
       $where = static::merge(substr($method, 18), $arguments);
       $res   = static::select(array(), $where, array('single' => TRUE));
 
       return $res ? new static($res, 'after_find') : static::create($where);
-    }
-    elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
+    } elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
       return static::find($match[1], array(
         'where' => static::merge($match[2], $arguments),
       ));
@@ -252,15 +245,13 @@ class mongdel extends model
 
       if (is_keyword($key)) {
         $test['$' . strtolower($key)] = $val;
-      }
-      elseif (strpos($key, '/_or_/')) {
+      } elseif (strpos($key, '/_or_/')) {
         $test['$or'] = array();
 
         foreach (explode('_or_') as $one) {
           $test['$or'] []= array($one => $val);
         }
-      }
-      elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*|)$/', $key, $match)) {
+      } elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*|)$/', $key, $match)) {
         switch ($match[2]) {// TODO: do testing!
           case 'NOT'; case '<>'; case '!'; case '!=';
             $test[$match[1]] = array(is_array($val) ? '$nin': '$ne' => $val);

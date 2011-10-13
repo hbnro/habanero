@@ -88,15 +88,13 @@ function root($to, array $params = array()) {
 function route($match, $to = NULL, array $params = array()) {
   if (is_assoc($match)) {
     $params = array_merge($match, $params);
-  }
-  elseif ( ! isset($params['match'])) {
+  } elseif ( ! isset($params['match'])) {
     $params['match'] = $match;
   }
 
   if (is_assoc($to)) {
     $params = array_merge($to, $params);
-  }
-  elseif ( ! isset($params['to'])) {
+  } elseif ( ! isset($params['to'])) {
     $params['to'] = $to;
   }
 
@@ -141,8 +139,7 @@ function params($key = NULL, $default = FALSE) {
 
   if ( ! func_num_args()) {
     return $set;
-  }
-  elseif (is_array($key)) {
+  } elseif (is_array($key)) {
     foreach ($key as $a => $value) {
       if (is_num($a)) {
         continue;
@@ -152,8 +149,7 @@ function params($key = NULL, $default = FALSE) {
     }
 
     return TRUE;
-  }
-  elseif ( ! is_num($key)) {
+  } elseif ( ! is_num($key)) {
     return ! empty($set[$key]) ? $set[$key] : $default;
   }
 
@@ -219,8 +215,7 @@ function segment($index = 1, $default = FALSE) {
 
   if ( ! $index) {
     return sizeof($set);
-  }
-  elseif ($index < 0) {
+  } elseif ($index < 0) {
     $index = sizeof($set) + 1 + $index;
   }
 
@@ -250,8 +245,7 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
     }
 
     return join('.', $test);
-  }
-  elseif (is_true($key)) {
+  } elseif (is_true($key)) {
     $host = '';
 
     if (is_true($complete)) {
@@ -267,11 +261,9 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
     $host .= ! is_false($default) ? $default : '';
 
     return $host;
-  }
-  elseif ( ! empty($_SERVER[$key])) {
+  } elseif ( ! empty($_SERVER[$key])) {
     return $_SERVER[$key];
-  }
-  elseif ($test = getenv($key)) {
+  } elseif ($test = getenv($key)) {
     return $test;
   }
 
@@ -325,9 +317,7 @@ function download($path, $name = '', $mime = '', $kbps = 24) {
 
     if ($unit == 'bytes') {
       list($range, $extra) = @explode(',', $orig, 2);
-    }
-    else
-    {
+    } else {
       $range = 0;
     }
   }

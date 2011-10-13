@@ -53,14 +53,10 @@ class valid extends prototype
 
             static::$rules[$field][$name] = $one;
           }
-        }
-        else
-        {
+        } else {
           if (is_string($key) && ! is_num($key)) {
             static::$rules[$field][$key] = $one;
-          }
-          else
-          {
+          } else {
             static::$rules[$field] []= $one;
           }
         }
@@ -149,8 +145,7 @@ class valid extends prototype
             $fail = TRUE;
             break;
           }
-        }
-        elseif ( ! is_false(strpos($rule, '|'))) {
+        } elseif ( ! is_false(strpos($rule, '|'))) {
           $fail = TRUE;
 
           foreach (array_filter(explode('|', $rule)) as $callback) {
@@ -163,8 +158,7 @@ class valid extends prototype
           if ($fail) {
             break;
           }
-        }
-        elseif (preg_match('/^((?:[!=]=?|[<>])=?)(.+?)$/', $rule, $match)) {
+        } elseif (preg_match('/^((?:[!=]=?|[<>])=?)(.+?)$/', $rule, $match)) {
           $expr = array_shift(static::vars($match[2]));
 
           $test = ! is_num($test) ? "'$test'" : addslashes($test);
@@ -180,16 +174,14 @@ class valid extends prototype
             $fail = TRUE;
             break;
           }
-        }
-        elseif (($rule[0] === '%') && (substr($rule, -1) === '%')) {
+        } elseif (($rule[0] === '%') && (substr($rule, -1) === '%')) {
           $expr = sprintf('/%s/us', str_replace('/', '\/', substr($rule, 1, -1)));
 
           if ( ! @preg_match($expr, $test)) {
             $fail = TRUE;
             break;
           }
-        }
-        elseif (preg_match('/^([^\[\]]+)\[([^\[\]]+)\]$/', $rule, $match)) {
+        } elseif (preg_match('/^([^\[\]]+)\[([^\[\]]+)\]$/', $rule, $match)) {
           $negate   = substr($match[1], 0, 1) === '!';
           $callback = $negate ? substr($match[1], 1) : $match[1];
 
@@ -209,8 +201,7 @@ class valid extends prototype
               break;
             }
           }
-        }
-        elseif ( ! in_array($test, static::vars($rule))) {
+        } elseif ( ! in_array($test, static::vars($rule))) {
           $fail = TRUE;
           break;
         }
@@ -232,12 +223,9 @@ class valid extends prototype
     foreach ($test as $key => $val) {
       if (preg_match('/^([\'"]).*\\1$/', $val)) {
         $test[$key] = substr(trim($val), 1, -1);
-      }
-      elseif (is_num($val)) {
+      } elseif (is_num($val)) {
         $test[$key] = $val;
-      }
-      else
-      {
+      } else {
         $test[$key] = value(static::$data, $val);
       }
     }

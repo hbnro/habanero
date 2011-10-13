@@ -127,8 +127,7 @@ class html extends prototype
 
       if (is_scalar($text)) {
       return tag($tag, $args, sprintf($wrap, $text));
-    }
-    elseif (is_array($text)) {
+    } elseif (is_array($text)) {
       $test   = array_values($text);
       $length = sizeof($test);
       $out    = array();
@@ -140,8 +139,7 @@ class html extends prototype
 
         if (is_array($test[$i])) {
           $out []= block($test[$i], $args, $wrap, $tag);
-        }
-        elseif (is_array($next)) {
+        } elseif (is_array($next)) {
           $inner = block($next, $args, $wrap, $tag);
           $out []= block(sprintf($wrap, $test[$i]) . $inner, $args, '%s', $tag);
 
@@ -359,8 +357,7 @@ class html extends prototype
     if (is_true($dl)) {
       $tag = 'dl';
       $el  = 'dd';
-    }
-    elseif (is_true($ol)) {
+    } elseif (is_true($ol)) {
       $tag = 'ol';
     }
 
@@ -371,8 +368,7 @@ class html extends prototype
 
       if ( ! isset($test[1])) {
         continue;
-      }
-      elseif (is_true($dl)) {
+      } elseif (is_true($dl)) {
         $out .= tag('dt', '', $test[0]);
       }
 
@@ -424,8 +420,7 @@ class html extends prototype
 
     if (is_assoc($title)) {
       $attrs = array_merge($title, $attrs);
-    }
-    elseif ( ! empty($title)) {
+    } elseif ( ! empty($title)) {
       if (empty($text)) {
         $text = $title;
       }
@@ -468,8 +463,7 @@ class html extends prototype
       $alt   = '';
 
       $default = isset($attrs['alt']) ? $attrs['alt'] : $default;
-    }
-    elseif ( ! empty($alt)) {
+    } elseif ( ! empty($alt)) {
       $default = $alt;
     }
 

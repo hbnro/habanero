@@ -35,9 +35,7 @@ class dbmodel extends model
     if ($this->is_new()) {
       $this->props[static::pk()] = db::insert(static::table(), $fields);
       $this->new_record = FALSE;
-    }
-    else
-    {
+    } else {
       db::update(static::table(), $fields, array(
         static::pk() => $this->props[static::pk()],
       ));
@@ -94,9 +92,7 @@ class dbmodel extends model
 
     if ($params && ! is_assoc($params)) {
       $args []= $params;
-    }
-    else
-    {
+    } else {
       $options = (array) $params;
     }
 
@@ -156,17 +152,14 @@ class dbmodel extends model
       )), AS_ARRAY);
 
       return $row ? new static($row, 'after_find') : FALSE;
-    }
-    elseif (strpos($method, 'count_by_') === 0) {
+    } elseif (strpos($method, 'count_by_') === 0) {
       return static::count(static::merge(substr($method, 9), $arguments));
-    }
-    elseif (strpos($method, 'find_or_create_by_') === 0) {
+    } elseif (strpos($method, 'find_or_create_by_') === 0) {
       $test = static::merge(substr($method, 18), $arguments);
       $res  = db::select(static::table(), ALL, $test);
 
       return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), 'after_find') : static::create($test);
-    }
-    elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
+    } elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
       return static::find($match[1], array(
         'where' => static::merge($match[2], $arguments),
       ));

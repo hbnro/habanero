@@ -30,9 +30,7 @@ class db extends prototype
 
       if (is_array($options['group'])) {
         $sql .= "\n" . join(', ', array_map(array('sql', 'names'), $options['group']));
-      }
-      else
-      {
+      } else {
         $sql .= "\n" . sql::names($options['group']);
       }
     }
@@ -143,8 +141,7 @@ class db extends prototype
   final public static function prepare($sql, array $vars = array()) {
     if (is_array($vars)) {
       $sql = strtr($sql, sql::fixate_string($vars, FALSE));
-    }
-    elseif (func_num_args() > 1) {
+    } elseif (func_num_args() > 1) {
       $args = sql::fixate_string(array_slice(func_get_args(), 1), FALSE);
       $sql  = preg_replace('/((?<!\\\)\?)/e', 'array_shift($args);', $sql);
     }
@@ -189,8 +186,7 @@ class db extends prototype
 
     if (is_array($vars) && ! empty($vars)) {
       $sql = strtr($sql, sql::fixate_string($vars, FALSE));
-    }
-    elseif ( ! empty($args)) {
+    } elseif ( ! empty($args)) {
       $vars = sql::fixate_string($args, FALSE);
       $sql  = preg_replace('/\b%[dsnf]\b/e', '$repl("\\0", array_shift($vars));', $sql);
     }

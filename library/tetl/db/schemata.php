@@ -112,9 +112,7 @@ db::implement('export', function ($to, $mask = '*', $data = FALSE, $raw = FALSE)
       }
     }
     $text = join("\n", $old);
-  }
-  else
-  {
+  } else {
     $code = var_export($out, TRUE);
     $text = '<' . "?php return $code;";
   }
@@ -205,9 +203,7 @@ db::implement('field', function ($type, $length = 0, $default = NULL) {
 
   if (empty($type)) {
     return FALSE;
-  }
-  else
-  {
+  } else {
     $test = is_string($type) && ! empty($set[$type]) ? $set[$type] : $type;
   }
 
@@ -218,8 +214,7 @@ db::implement('field', function ($type, $length = 0, $default = NULL) {
     $type    = ! empty($test['type']) ? $test['type'] : $type;
     $length  = ! empty($test['length']) ? $test['length'] : $length;
     $default = ! empty($test['default']) ? $test['default'] : $default;
-  }
-  elseif (is_array($test)) {
+  } elseif (is_array($test)) {
     @list($type, $length, $default) = $test;
 
     ! $length && ! empty($set[$type]['length']) && $length = $set[$type]['length'];
@@ -230,8 +225,7 @@ db::implement('field', function ($type, $length = 0, $default = NULL) {
       }
       $type = $set[$type]['type'];
     }
-  }
-  elseif ($test !== $type) {
+  } elseif ($test !== $type) {
     return $test;
   }
 

@@ -19,15 +19,13 @@ class form extends prototype
   final public static function to($action, $content, array $params = array()) {
     if (is_assoc($action)) {
       $params = array_merge($action, $params);
-    }
-    elseif ( ! isset($params['action'])) {
+    } elseif ( ! isset($params['action'])) {
       $params['action'] = $action;
     }
 
     if (is_assoc($content)) {
       $params = array_merge($content, $params);
-    }
-    elseif ( ! isset($params['content'])) {
+    } elseif ( ! isset($params['content'])) {
       $params['content'] = $content;
     }
 
@@ -157,11 +155,9 @@ class form extends prototype
         $label  = ! empty($one['label']) ? static::label($one['name'], $one['label']) : '';
 
         $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
-      }
-      elseif (is_array($one)) {
+      } elseif (is_array($one)) {
         $out []= call_user_func_array('form::input', $one);
-      }
-      elseif (is_scalar($one)) {
+      } elseif (is_scalar($one)) {
         $out []= $one;
       }
     }
@@ -183,22 +179,19 @@ class form extends prototype
   final public static function input($type, $name, $value = '', array $params = array()) {
     if (is_assoc($type)) {
       $params = array_merge($type, $params);
-    }
-    elseif ( ! isset($params['type'])) {
+    } elseif ( ! isset($params['type'])) {
       $params['type'] = $type;
     }
 
     if (is_assoc($name)) {
       $params = array_merge($name, $params);
-    }
-    elseif ( ! isset($params['name'])) {
+    } elseif ( ! isset($params['name'])) {
       $params['name'] = $name;
     }
 
     if (is_assoc($value)) {
       $params = array_merge($value, $params);
-    }
-    elseif ( ! isset($params['value'])) {
+    } elseif ( ! isset($params['value'])) {
       $params['value'] = $value;
     }
 
@@ -220,9 +213,7 @@ class form extends prototype
 
     if ( ! preg_match('/^(?:radio|checkbox)$/', $params['type'])) {
       $params['value'] = static::value($key, $params['value']);
-    }
-    else
-    {
+    } else {
       $default = static::value($params['name'], static::value($key));
 
       $params['checked'] = is_array($default) ? in_array($params['value'], $default) : $default === $params['value'];
@@ -253,8 +244,7 @@ class form extends prototype
   final public static function select($name, array $options, array $params = array()) {
     if (is_assoc($name)) {
       $params = array_merge($name, $params);
-    }
-    elseif ( ! isset($params['name'])) {
+    } elseif ( ! isset($params['name'])) {
       $params['name'] = $name;
     }
 
@@ -333,8 +323,7 @@ class form extends prototype
   final public static function group($name, array $options, array $params = array()) {
     if (is_assoc($name)) {
       $params = array_merge($name, $params);
-    }
-    elseif ( ! isset($params['name'])) {
+    } elseif ( ! isset($params['name'])) {
       $params['name'] = $name;
     }
 
@@ -413,15 +402,13 @@ class form extends prototype
 
     if (is_assoc($name)) {
       $args = array_merge($name, $args);
-    }
-    elseif ( ! isset($args['name'])) {
+    } elseif ( ! isset($args['name'])) {
       $args['name'] = $name;
     }
 
     if (is_assoc($value)) {
       $args = array_merge($value, $args);
-    }
-    elseif ( ! isset($params['text'])) {
+    } elseif ( ! isset($params['text'])) {
       $args['text'] = $value;
     }
 
@@ -471,15 +458,13 @@ class form extends prototype
 
     if (is_assoc($for)) {
       $args = array_merge($for, $args);
-    }
-    elseif ( ! isset($args['for'])) {
+    } elseif ( ! isset($args['for'])) {
       $args['for'] = $for;
     }
 
     if (is_assoc($text)) {
       $args = array_merge($text, $args);
-    }
-    elseif ( ! isset($args['text'])) {
+    } elseif ( ! isset($args['text'])) {
       $args['text'] = $text;
     }
 
