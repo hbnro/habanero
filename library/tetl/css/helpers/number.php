@@ -85,4 +85,4 @@ css_helper::implement('abs', function ($num) {
   return abs($num);
 });
 
-/* EOF: ./library/tetl/css/numbers.php */
+/* EOF: ./library/tetl/css/helpers/number.php */

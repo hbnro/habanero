@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CSS basic image functions
+ * CSS image functions
  */
 
 /**
@@ -48,4 +48,4 @@ css_helper::implement('image', function ($path) {
   return $out;
 });
 
-/* EOF: ./library/tetl/css/images.php  */
+/* EOF: ./library/tetl/css/helpers/image.php  */

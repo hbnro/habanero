@@ -51,7 +51,7 @@ class css extends prototype
   // defaults
   private static $defs = array(
     'path' => APP_PATH,
-    'extension' => '.css'
+    'extension' => '.css',
   );
 
   /**#@-*/
