@@ -3,9 +3,9 @@
  */
 
 @mixin radius($size: 5px) {
- -moz-border-radius: %('%dpx', $size);
- -webkit-border-radius: %('%dpx', $size);
- border-radius: %('%dpx', $size);
+ -moz-border-radius: %(%dpx, $size);
+ -webkit-border-radius: %(%dpx, $size);
+ border-radius: %(%dpx, $size);
 
  -moz-background-clip: padding;
  -webkit-background-clip: padding-box;
@@ -13,30 +13,30 @@
 }
 
 @mixin shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
- -moz-box-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
- -webkit-box-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
- box-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
+ -moz-box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -webkit-box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
 @mixin textshadow($left: 0px, $top: 0px, $blur: 5px, $color: #333) {
- text-shadow: %('%dpx %dpx %dpx', $left, $top, $blur) $color;
+ text-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
 @mixin textcolumns($column_count, $column_gap: 20px) {
- -webkit-column-count: %('%dpx', $column_count);
- -webkit-column-gap: %('%dpx', $column_gap);
- -moz-column-count: %('%dpx', $column_count);
- -moz-column-gap: %('%dpx', $column_gap);
- column-count: %('%dpx', $column_count);
- column-gap: %('%dpx', $column_gap);
+ -webkit-column-count: %(%dpx, $column_count);
+ -webkit-column-gap: %(%dpx, $column_gap);
+ -moz-column-count: %(%dpx, $column_count);
+ -moz-column-gap: %(%dpx, $column_gap);
+ column-count: %(%dpx, $column_count);
+ column-gap: %(%dpx, $column_gap);
 }
 
 @mixin rotate($angle: 7.5deg) {
- -moz-transform: rotate(%('%ddeg', $angle));
- -o-transform: rotate(%('%ddeg', $angle));
- -webkit-transform: rotate(%('%ddeg', $angle));
- -ms-transform: rotate(%('%ddeg', $angle));
- transform: rotate(%('%ddeg', $angle));
+ -moz-transform: rotate(%(%ddeg, $angle));
+ -o-transform: rotate(%(%ddeg, $angle));
+ -webkit-transform: rotate(%(%ddeg, $angle));
+ -ms-transform: rotate(%(%ddeg, $angle));
+ transform: rotate(%(%ddeg, $angle));
  zoom: 1;
 }
 
@@ -77,11 +77,11 @@
 @mixin directional_gradient($start: #555, $end: #333, $deg: 45deg) {
  background-color: $end;
  background-repeat: repeat-x;
- background-image: -moz-linear-gradient(%('%ddeg', $deg), $start, $end);
- background-image: -ms-linear-gradient(%('%ddeg', $deg), $start, $end);
- background-image: -webkit-linear-gradient(%('%ddeg', $deg), $start, $end);
- background-image: -o-linear-gradient(%('%ddeg', $deg), $start, $end);
- background-image: linear-gradient(%('%ddeg', $deg), $start, $end);
+ background-image: -moz-linear-gradient(%(%ddeg, $deg), $start, $end);
+ background-image: -ms-linear-gradient(%(%ddeg, $deg), $start, $end);
+ background-image: -webkit-linear-gradient(%(%ddeg, $deg), $start, $end);
+ background-image: -o-linear-gradient(%(%ddeg, $deg), $start, $end);
+ background-image: linear-gradient(%(%ddeg, $deg), $start, $end);
 }
 
 @mixin three_gradient($start: #00b3ee, $middle: #7a43b6, $end: #c3325f, $top: .2, $bottom: .8) {

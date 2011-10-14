@@ -126,7 +126,6 @@ class css extends prototype
       $text = preg_replace(array_keys(static::$minify_expr), static::$minify_expr, $text);
     }
 
-    $text = preg_replace('/%\(\s*([\'"])(.+?)\\1\s*(?:,([^()]+?))?\)/e', "vsprintf('\\2',explode(',','\\3'))", $text);
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
@@ -488,7 +487,7 @@ class css extends prototype
       {
         $old  = strlen($text);
 
-        $text = preg_replace_callback('/(?<![\-._])([\w-]+?)\(([^\(\)]+)\)(\.\w+)?/', array('css', 'do_helper'), $text);
+        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|%\w*?)\(([^\(\)]+)\)(\.\w+)?/', array('css', 'do_helper'), $text);
         $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 
@@ -503,10 +502,14 @@ class css extends prototype
     $args = static::do_solve($match[2]);
     $args = array_filter(explode(',', $args), 'strlen');
 
-    $out  = static::defined($match[1]) ? static::apply($match[1], $args) : '';
-    $out  = ! is_empty($out) ? $out : "$match[1]!({$match[2]})";
+    if ( ! css_helper::defined($match[1])) {
+      return "$match[1]!($match[2])" . ( ! empty($match[3]) ? $match[3] : '');
+    }
 
-    return ! empty($match[3]) ? (string) value($out, substr($match[3], 1)) : (string) $out;
+    $out = css_helper::apply($match[1], $args);
+    $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : (array) $out;
+
+    return is_closure($out) ? $out() : end($out);
   }
 
   // solve math operations

@@ -10,7 +10,7 @@
  * @param  string Path
  * @return string
  */
-css::implement('image', function ($path) {
+css_helper::implement('image', function ($path) {
   static $cache = array();
 
 
@@ -34,8 +34,13 @@ css::implement('image', function ($path) {
     $out['width']  = "$test[0]px";
     $out['height'] = "$test[1]px";
 
-    $out['data']   = 'data:image/' . str_replace('jpg', 'jpeg', ext($img_file));
-    $out['data']  .= ';base64,' . base64_encode(read($img_file));
+    $out['data']   = function ()
+      use($img_file) {
+        $out  = 'data:image/' . str_replace('jpg', 'jpeg', ext($img_file));
+        $out .= ';base64,' . base64_encode(read($img_file));
+
+        return $out;
+    };
   }
 
   $cache[$path] = $out;

@@ -10,7 +10,7 @@
  * @param  mixed  Number|...
  * @return integer
  */
-css::implement('min', function () {
+css_helper::implement('min', function () {
   return min(func_get_args());
 });
 
@@ -21,7 +21,7 @@ css::implement('min', function () {
  * @param  mixed  Number|...
  * @return integer
  */
-css::implement('max', function () {
+css_helper::implement('max', function () {
   return max(func_get_args());
 });
 
@@ -32,7 +32,7 @@ css::implement('max', function () {
  * @param  mixed  Number|...
  * @return integer
  */
-css::implement('avg', function () {
+css_helper::implement('avg', function () {
   $args  = func_get_args();
   $total = array_sum($args);
 
@@ -46,7 +46,7 @@ css::implement('avg', function () {
  * @param  mixed  Number
  * @return integer
  */
-css::implement('ceil', function ($num) {
+css_helper::implement('ceil', function ($num) {
   return ceil($num);
 });
 
@@ -57,7 +57,7 @@ css::implement('ceil', function ($num) {
  * @param  mixed  Number
  * @return integer
  */
-css::implement('floor', function ($num) {
+css_helper::implement('floor', function ($num) {
   return floor($num);
 });
 
@@ -68,7 +68,7 @@ css::implement('floor', function ($num) {
  * @param  mixed Number
  * @return float
  */
-css::implement('round', function ($num) {
+css_helper::implement('round', function ($num) {
   $args = func_get_args();
 
   return call_user_func_array('round', $args);
@@ -81,7 +81,7 @@ css::implement('round', function ($num) {
  * @param  mixed  Number
  * @return integer
  */
-css::implement('abs', function ($num) {
+css_helper::implement('abs', function ($num) {
   return abs($num);
 });
 

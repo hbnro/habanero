@@ -18,8 +18,8 @@
 }
 
 @mixin size($height: 5px, $width: 5px) {
-	height: %('%dpx', $height);
-	width: %('%dpx', $width);
+	height: %(%dpx, $height);
+	width: %(%dpx, $width);
 	overflow: hidden;
 	display: block;
 }
