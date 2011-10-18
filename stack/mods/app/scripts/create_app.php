@@ -56,6 +56,7 @@ cli::flag('force') && status('force');
    create_dir(CWD.DS.'db'.DS.'migrate');
 
    create_dir(CWD.DS.'lib');
+   create_dir(CWD.DS.'logs');
 
    create_dir(CWD.DS.'public');
    create_dir(CWD.DS.'public'.DS.'js');
