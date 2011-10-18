@@ -20,6 +20,7 @@ run(function () {
 
   define('CWD', realpath($path));
 
+  config(CWD.DS.'config'.EXT);
   config(CWD.DS.'config'.DS.'application'.EXT);
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 

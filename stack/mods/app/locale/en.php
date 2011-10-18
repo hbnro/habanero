@@ -40,7 +40,8 @@ $lang['missing_script_file'] = 'Missing script file %{name}';
 $lang['missing_script_params'] = 'Missing script params';
 $lang['unknown_script_param'] = 'Unknown param %{name}';
 
-$lang['executing_script'] = 'Executing script %{name}#%{param}';
+$lang['executing_script'] = 'Executing %{path}';
+$lang['executing_task'] = 'Executing task %{name}#%{param}';
 $lang['configuration'] = 'Configuration';
 $lang['application'] = 'Application';
 $lang['environment'] = 'Environment: %{env}';

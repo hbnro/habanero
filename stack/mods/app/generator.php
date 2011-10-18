@@ -265,8 +265,17 @@ class app_generator extends prototype
       };
 
 
-      $script_file  = CWD.DS.'tasks'.DS.$name;
-      $script_file .= is_dir($script_file) ? DS.$name : '';
+      $script_file = CWD.DS.$name.EXT;
+
+      if (is_file($script_file)) {
+        success(ln('app.executing_script', array('path' => str_replace(CWD.DS, '', $script_file))));
+        require $script_file;
+        bold(ln('tetl.done'));
+        exit;
+      }
+
+      $script_file  = CWD.DS.'lib'.DS.'tasks'.DS.$name;
+      $script_file .= is_dir($script_file) ? DS.'initialize' : '';
       $script_file .= EXT;
 
       $path = str_replace(CWD.DS, '', $script_file);
@@ -284,7 +293,7 @@ class app_generator extends prototype
         } elseif ( ! array_key_exists($key, $test['params'])) {
           error(ln('app.unknown_script_param', array('name' => $key)));
         } else {
-          success(ln('app.executing_script', array('name' => $path, 'param' => $key)));
+          success(ln('app.executing_task', array('name' => $path, 'param' => $key)));
 
           $args = array_slice(func_get_args(), 1);
 
