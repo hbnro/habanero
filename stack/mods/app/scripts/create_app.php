@@ -14,6 +14,9 @@ cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'app'.DS.'controllers');
     copy_file(CWD.DS.'app'.DS.'controllers', $skel_dir.DS.'home'.EXT);
+     template(CWD.DS.'app'.DS.'controllers', $skel_dir.DS.'base'.EXT, array(
+        'app_name' => basename(CWD),
+      ));
 
    create_dir(CWD.DS.'app'.DS.'models');
 

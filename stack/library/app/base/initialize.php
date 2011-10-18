@@ -79,6 +79,7 @@ call_user_func(function () {
          * @ignore
          */
 
+        require CWD.DS.'app'.DS.'controllers'.DS.'base'.EXT;
         require $controller_file;
 
         /**#@-*/
