@@ -18,20 +18,19 @@ run(function () {
   $path = getcwd();
   $args = cli::args();
 
-  $test = key($args);
-
   define('CWD', realpath($path));
 
   config(CWD.DS.'config'.DS.'application'.EXT);
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
-  $mod_file = dirname(__DIR__).DS.'mods'.DS."_$test".EXT;
+  $extra    = key($args);
+  $mod_file = dirname(__DIR__).DS.'mods'.DS."_$extra".EXT;
 
   is_file($mod_file) && die(require $mod_file);
 
 
-  $cmd = array_shift($args);
+  $cmd   = array_shift($args);
 
   @list($module, $action) = explode('.', $cmd);
 
@@ -69,6 +68,7 @@ run(function () {
       foreach ($args as $key => $val) {
         is_numeric($key) ? $test []= $val : $params[$key] = $val;
       }
+
       call_user_func_array("$mod_class::$action", $test);
     }
   } else {

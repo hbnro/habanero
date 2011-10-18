@@ -20,7 +20,9 @@ Installation
 
 ¿Do you like magic? Just copy+paste in your command line.
 
-    $ curl -L http://is.gd/gettetl | sudo sh
+    $ curl -L http://is.gd/gettetl | sh
+
+NOTE: this method is working only on Ubuntu based systems.
 
 If everything is all right the **tetl** executable should be available.
 
@@ -32,12 +34,19 @@ Command line utility
 To create a project using the bundled `app/mvc` middleware first execute:
 
     $ cd /www/vhosts
-    $ tetl -s
+    $ mkdir -p sandbox && cd sandbox
+    $ tetl app.gen
 
 This will create some directories and some blank files.
 
-By default the generator script will attempt to find out where
-are the vhost directories and will perform modifications on their files.
+You can perform the vhost configurations to get your application ready:
+
+    $ sudo tetl --vhost
+
+The script will attempt to find out where are the vhost directories
+and will perform modifications on their files.
+
+NOTE: this method is working only on Ubuntu based systems.
 
 Alternate start
 ---------------
