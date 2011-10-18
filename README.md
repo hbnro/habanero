@@ -18,64 +18,33 @@ Features
 Installation
 ------------
 
-Just clone the GitHub read-only repository.
+¿Do you like magic? Just copy+paste in your command line.
 
-    $ git clone git://github.com/pateketrueke/tetlphp.git ~/tetlphp
+    $ curl -L http://is.gd/gettetl | sudo sh
 
-Then move or link the entire directory within php **include_path**.
+If everything is all right the **tetl** executable should be available.
 
-    $ sudo mv ~/tetlphp /usr/share/php
-
-or
-
-    $ sudo ln -s ~/tetlphp /usr/share/php
-
-This is the best approach of the framework installation rather than using manually.
+    $ tetl -s
 
 Command line utility
 --------------------
 
-To achieve this we must give execution permissions to file **stack/bin**:
-
-    $ chmod +x /usr/share/php/tetlphp/stack/bin
-
-Next we must create a symbolic link to the executable file:
-
-    $ sudo ln -s /usr/share/php/tetlphp/stack/bin /usr/local/bin/tetl
-
 To create a project using the bundled `app/mvc` middleware first execute:
 
     $ cd /www/vhosts
-    $ mkdir -p sandbox && cd sandbox
-    $ tetl app.gen
+    $ tetl -s
 
 This will create some directories and some blank files.
 
-Then we modify our **/etc/hosts** configuration to get something like:
+By default the generator script will attempt to find out where
+are the vhost directories and will perform modifications on their files.
 
-    127.0.0.1	localhost sandbox.dev
+Alternate start
+---------------
 
-Depending in your OS configuration you will need create and enable a
-virtual host pointing to the path previously created:
+Also you can write simple applications from scratch using code like this:
 
-    <VirtualHost *:80>
-      ServerName sandbox.dev
-      DocumentRoot /var/www/vhosts/sandbox/public
-
-      <Directory /var/www/vhosts/sandbox/public/>
-        Options Indexes FollowSymLinks MultiViews
-        AllowOverride All
-        Order allow,deny
-        allow from all
-      </Directory>
-    </VirtualHost>
-
-Quick start
------------
-
-You can write simple applications using code like this:
-
-    require 'tetlphp/library/initialize.php';
+    require 'tetlphp/framework/initialize.php';
 
     run(function () {
 
@@ -86,33 +55,3 @@ You can write simple applications using code like this:
       });
 
     });
-
-Within bundled `app/base` everything is organized into conventional paths:
-
-    /app
-      /controllers
-      /helpers
-      /models
-      /views
-        /assets
-          /css
-          /js
-            /lib
-        /errors
-        /layouts
-        /styles
-    /config
-      /environments
-    /db
-      /backup
-      /migrate
-    /lib
-      /tasks
-        /rsync
-    /public
-      /js
-
-To start navigating just open your browser pointing to the virtual host you created.
-
-Currently **tetl** support making of controllers, models, actions and basic
-database migrations via the command line utility.

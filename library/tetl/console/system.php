@@ -402,9 +402,9 @@ class cli extends prototype
     $value = strtolower(str_replace($default, '', $value)) . strtoupper($default);
     $value = str_replace('\\', '/', trim(addcslashes($value, $value), '\\'));
 
-    $out   = strtolower(static::readln(sprintf('%s [%s]: ', $text, $value)));
+    $out   = static::readln(sprintf('%s [%s]: ', $text, $value)) ?: $default;
 
-    return ($out && strstr($value, $out)) ? $out : $default;
+    return ($out && strstr($value, strtolower($out))) ? $out : $default;
   }
 
 

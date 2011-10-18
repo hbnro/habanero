@@ -10,11 +10,10 @@ $config['encoding'] = 'UTF-8';
 $config['perms'] = 0755;
 
 
-configure::filter('import_path', function ($value) {
-  $value = (array) $value;
-  $value = array_unique($value);
-
-  return $value;
-});
+// autoload
+config('import_path', array(
+  dirname(LIB).DS.'stack'.DS.'library',
+  dirname(LIB).DS.'library',
+));
 
 /* EOF: ./framework/config.php */

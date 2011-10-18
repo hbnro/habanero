@@ -20,8 +20,8 @@ else
 
     echo "Configuring at $TETL"
 
-    cd $TMPPATH
-    cp -R . $TETL
+    cd "$TMPPATH"
+    cp -R . "$TETL"
     rm -rf "$TETL/tmp"
 
 
@@ -32,12 +32,14 @@ else
 
     SYMLINK="/usr/local/bin/tetl"
 
-    if [ -h $SYMLINK ] || [ -e $SYMLINK ]; then
-      unlink $SYMLINK
+    if [ -h "$SYMLINK" ] || [ -d "$SYMLINK" ]; then
+      echo "$SYMLINK"
     fi
 
     ln -s "$TETL/console/bin" $SYMLINK
 
+    echo "Installing."
+    exec $SYMLINK --install
     echo "Done."
   fi
 fi

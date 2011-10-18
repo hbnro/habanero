@@ -1,14 +1,25 @@
 <?php
 
+function say($text) {
+  cli::writeln($text);
+}
+
+function yes($text) {
+  return cli::option($text, 'yn', 'n') === 'y';
+}
+// TODO; choice, prompt, cli-tools
+
 function help($test) {
   $str  = sprintf("\n  %s\n", ln('tetl.generator_intro'));
 
   foreach ($test as $one) {
-    $ns = basename($one);
+    if (substr(basename($one), 0, 1) <> '_') {
+      $ns = basename($one, EXT);
 
-    i18n::load_path($one.DS.'locale', $ns);
+      is_dir($one) && i18n::load_path($one.DS.'locale', $ns);
 
-    $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($ns)\b", ln("$ns.generator_intro"));
+      $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($ns)\b", ln("$ns.generator_intro"));
+    }
   }
 
   cli::write(cli::format("$str\n\n"));
