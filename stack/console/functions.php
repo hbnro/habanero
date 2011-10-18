@@ -79,6 +79,20 @@ function copy_dir($to, $from) {
   cpfiles($from, $to.DS.basename($from), '*', TRUE);
 }
 
+function template($to, $from, array $vars = array()) {
+  status('create', $to.DS.basename($from));
+
+  $render = function()
+  {
+    ob_start();
+    extract(func_get_arg(1));
+    require func_get_arg(0);
+    return ob_get_clean();
+  };
+
+  write($to.DS.basename($from), $render($from, $vars));
+}
+
 function action($format, $text, $what) {
   $prefix = str_pad("\b$format($text)\b", 20 + strlen($format), ' ', STR_PAD_LEFT);
   $text   = str_replace(CWD.DS, '', "\clight_gray($what)\c");
