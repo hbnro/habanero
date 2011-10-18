@@ -139,25 +139,24 @@ call_user_func(function () {
 
 
   route('/all.:type', function () {//TODO: ...
-    $type      = params('type');
+    import('tetl/cache');
 
-    $minify    = option('environment') === 'production';
+    $type = params('type');
+    $prod = option('environment') === 'production';
 
     $base_path = CWD.DS.'app'.DS.'views'.DS.'assets';
-    $base_file = $base_path.DS.$type.DS."app.$type";
-
 
     assets::setup('path', $base_path);
 
     assets::compile('css', function ($file)
-      use($base_path, $minify) {
+      use($base_path, $prod) {
       import('tetl/css');
       css::setup('path', $base_path.DS.'css');
-      return css::render($file, $minify);
+      return css::render($file, $prod);
     });
 
     assets::compile('js', function ($file)
-      use($minify) {// TODO: use JSMin instead...
+      use($prod) {// TODO: use JSMin instead...
       static $regex = array(
                       '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
                       '/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
@@ -167,22 +166,26 @@ call_user_func(function () {
 
       $text = read($file);
 
-      if ($minify) {
+      if ($prod) {
         $text = preg_replace(array_keys($regex), $regex, $text);
         $text = str_replace('elseif', 'else if', $text);
       }
       return $text;
     });
 
+    cache::block("--$type-assets", function ()
+      use($base_path, $type, $prod) {
+      $base_file = $base_path.DS.$type.DS."app.$type";
 
-    $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function ($match)
-      use($type) {
-      assets::append("$match[1].$type");
-    }, read($base_file));
+      $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function ($match)
+        use($type) {
+        assets::append("$match[1].$type");
+      }, read($base_file));
 
-    $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+      $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
 
-    assets::$type(trim($test));
+      assets::$type(trim($test));
+    }, $prod ? 300 : 0);
   }, array(
     'constraints' => array(
       ':type' => '(css|js)',
