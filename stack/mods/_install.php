@@ -35,7 +35,7 @@ if ($older <> $property) {
   sleep(1);
   system('/etc/init.d/apache2 restart');
 } else {
-  notice('Without changes.');
+  notice('Without changes');
 }
 
-bold('Done.');
+bold('Done');

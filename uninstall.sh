@@ -23,7 +23,7 @@ else
     fi
 
     echo "Uninstalling."
-    exec $SYMLINK --uninstall
+    sudo $SYMLINK --uninstall
 
     echo "Done."
   fi

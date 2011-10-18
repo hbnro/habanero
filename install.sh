@@ -39,7 +39,7 @@ else
     ln -s "$TETL/console/bin" $SYMLINK
 
     echo "Installing."
-    exec $SYMLINK --install
+    sudo $SYMLINK --install
     echo "Done."
   fi
 fi
