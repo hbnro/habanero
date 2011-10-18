@@ -10,6 +10,12 @@ body {
   margin: 33px auto 0 auto;
   width: 640px;
 
+  > header {
+    text-transform: uppercase;
+    font-family: 'Days One', sans-serif;
+    font-size: 1.9em;
+  }
+
   > section {
     padding: .8em;
     background: #f4f4f4;

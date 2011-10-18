@@ -274,7 +274,7 @@ class app_generator extends prototype
         exit;
       }
 
-      $script_file  = CWD.DS.'lib'.DS.'tasks'.DS.$name;
+      $script_file  = CWD.DS.'tasks'.DS.$name;
       $script_file .= is_dir($script_file) ? DS.'initialize' : '';
       $script_file .= EXT;
 

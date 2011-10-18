@@ -4,7 +4,7 @@
  * MVC base controller
  */
 
-class controller extends prototype
+abstract class controller extends prototype
 {// TODO: implement... what stuff?
 
   /**#@+
@@ -18,7 +18,7 @@ class controller extends prototype
   public static $head = array();
 
   // default title
-  public static $title = 'untitled';
+  public static $title = '';
 
   // default layout
   public static $layout = 'default.html';
