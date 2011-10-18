@@ -21,7 +21,7 @@
   <body>
   <div id="wrapper">
     <header>
-      <?php echo $title; ?>
+      <?php echo $title; ?> ::
   </header>
 <?php echo $body; ?>
     <footer>
