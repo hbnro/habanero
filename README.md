@@ -22,18 +22,18 @@ Installation
 
     $ curl -L http://is.gd/gettetl | sh
 
-NOTE: this method is working only on Ubuntu based systems.
-
 If everything is all right the **tetl** executable should be available.
 
     $ tetl -s
+
+NOTE: this method is working only on Ubuntu based systems.
 
 Command line utility
 --------------------
 
 To create a project using the bundled `app/mvc` middleware first execute:
 
-    $ cd /www/vhosts
+    $ cd /your/favorite/www/projects/path/
     $ mkdir -p sandbox && cd sandbox
     $ tetl app.gen
 
@@ -45,6 +45,8 @@ You can perform the vhost configurations to get your application ready:
 
 The script will attempt to find out where are the vhost directories
 and will perform modifications on their files.
+
+If success the local domain **sandbox.dev** should be created.
 
 NOTE: this method is working only on Ubuntu based systems.
 
