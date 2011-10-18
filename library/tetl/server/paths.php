@@ -4,7 +4,7 @@
  * Magic routes
  */
 
-class url_for extends prototype
+abstract class url_for extends prototype
 {
 
   /**#@+

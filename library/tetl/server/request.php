@@ -4,7 +4,7 @@
  * Request handler
  */
 
-class request extends prototype
+abstract class request extends prototype
 {
 
   /**#@+
