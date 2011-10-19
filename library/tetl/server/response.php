@@ -103,7 +103,7 @@ function response($content, array $params = array()) {
   }
 
   $params = array_merge(array(
-    'type'    => 'text/html',
+    'type'    => ini_get('default_mimetype'),
     'charset' => CHARSET,
     'headers' => array(),
     'status'  => 200,
@@ -111,9 +111,7 @@ function response($content, array $params = array()) {
     'nocache' => FALSE,
   ), $params);
 
-  $params['type'] = $params['type'] ?: ini_get('default_mimetype');
-
-  if (is_mime($params['type'])) {
+  if (empty($params['headers']['content-type']) && is_mime($params['type'])) {
     $params['headers']['content-type'] = $params['type'] . ($params['charset'] ? "; charset=$params[charset]" : '');
     $params['headers']['content-length'] = strlen((string) $params['output']);
   }
@@ -127,7 +125,6 @@ function response($content, array $params = array()) {
       'post-check=0, pre-check=0',
     );
   }
-
 
   status($params['status'], $params['headers']);
   echo $params['output'];

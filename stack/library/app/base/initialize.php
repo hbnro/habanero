@@ -142,23 +142,23 @@ call_user_func(function () {
     import('tetl/cache');
 
     $type = params('type');
-    $prod = option('environment') === 'production';
+    $env  = option('environment');
+    $prod = $env === 'production';
 
     $base_path = CWD.DS.'app'.DS.'views'.DS.'assets';
 
-
-    cache::block("--$type-assets", function ()
+    cache::block("--$type-assets-$env", function ()
       use($base_path, $type, $prod) {
       import('tetl/assets');
-      import('tetl/css');
 
       assets::setup('path', $base_path);
+      assets::setup('root', CWD.DS.'public');
 
       assets::compile('css', function ($file)
         use($base_path, $prod) {
         import('tetl/css');
         css::setup('path', $base_path.DS.'css');
-        return css::render($file, $prod);
+        return css::render($file, option('environment') === 'production');
       });
 
       assets::compile('js', function ($file)
@@ -182,7 +182,7 @@ call_user_func(function () {
       $base_file = $base_path.DS.$type.DS."app.$type";
 
       $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function ($match)
-        use($type) {
+        use($type, $prod) {
         assets::append("$match[1].$type");
       }, read($base_file));
 

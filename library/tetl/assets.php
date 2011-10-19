@@ -162,24 +162,36 @@ class assets extends prototype
    * @return void
    */
   final public static function missing($method, $arguments) {
-    switch ($method) {// TODO: caching
+    switch ($method) {
       case 'css';
       case 'js';
-        $out = array();
+        $suffix      = ($prod = (option('environment') === 'production')) ? '.min' : '';
+        $static_file = mkpath(static::$defs['root'].DS.$method).DS."all$suffix.$method";
 
-        foreach (static::$set[$method] as $one) {
-          $file = realpath(static::$defs['path'].DS.$method.DS.$one);
+        if ($prod OR ! is_file($static_file)) {
+          $out = array();
 
-          if (is_file($file)) {
-            $path = str_replace(dirname(APP_PATH).DS, '', $file);
-            $now  = date('Y-m-d H:i:s', filemtime($file));
-            $text = static::process($file);
+          foreach (static::$set[$method] as $one) {
+            $file = realpath(static::$defs['path']).DS.$method.DS.$one;
 
-            $out []= sprintf("/* %s ./%s */\n%s", $now, $path, $text);
+            if (is_file($file)) {
+              $path = str_replace(dirname(APP_PATH).DS, '', $file);
+              $now  = date('Y-m-d H:i:s', filemtime($file));
+              $text = static::process($file);
+
+              $out []= $prod ? $text : sprintf("/* %s ./%s */\n%s", $now, $path, $text);
+            }
           }
+
+          $output = join("\n", array_merge($out, $arguments));
+          write($static_file, $output);
+
+          $min_file = str_replace(".$method", ".min.$method", $static_file);
+
+          is_file($min_file) && unlink($min_file);
         }
 
-        response(join("\n", array_merge($out, $arguments)), array(
+        dispatch($static_file, array(
           'type' => mime($method),
         ));
       break;
@@ -198,14 +210,8 @@ class assets extends prototype
   // type compiler
   final private static function process($file) {
     $type = ext($file);
-
     if ( ! empty(static::$filter[$type])) {
-      $compiled = TMP.DS.'_'.basename($file);
-
-      if ( ! is_file($compiled) OR (filemtime($file) > filemtime($compiled))) {
-        write($compiled, call_user_func(static::$filter[$type], $file));
-      };
-      return read($compiled);
+      return call_user_func(static::$filter[$type], $file);
     }
     return read($file);
   }
