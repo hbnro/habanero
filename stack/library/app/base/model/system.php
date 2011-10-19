@@ -4,7 +4,7 @@
  * MVC base model
  */
 
-abstract class model extends prototype
+class model extends prototype
 {
 
   /**#@+

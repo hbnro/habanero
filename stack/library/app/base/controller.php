@@ -4,7 +4,7 @@
  * MVC base controller
  */
 
-abstract class controller extends prototype
+class controller extends prototype
 {// TODO: implement... what stuff?
 
   /**#@+

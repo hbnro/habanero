@@ -28,17 +28,16 @@ if (cli::flag('remove')) {
   $doc_root  = "$base_path$public";
   $scheme    = <<<XML
 <VirtualHost *:80>
-ServerName   $base_name.dev
-DocumentRoot $doc_root
-<Directory $doc_root/>
-  Options -Indexes FollowSymLinks MultiViews
-  AllowOverride All
-  Order allow,deny
-  allow from all
-</Directory>
-LogLevel  warn
-ErrorLog  $base_path/logs/error.log
-CustomLog $base_path/logs/access.log combined
+  ServerName   $base_name.dev
+  DocumentRoot $doc_root
+  <Directory $doc_root/>
+    Options -Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+  ErrorLog  $base_path/logs/error.log
+  CustomLog $base_path/logs/access.log combined
 </VirtualHost>
 XML;
 

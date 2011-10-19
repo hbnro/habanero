@@ -4,7 +4,7 @@
  * MVC base view
  */
 
-abstract class view extends prototype
+class view extends prototype
 {//TODO: caching or anything else?
 
   /**#@+

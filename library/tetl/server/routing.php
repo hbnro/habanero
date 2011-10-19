@@ -4,7 +4,7 @@
  * Routing
  */
 
-abstract class routing extends prototype
+class routing extends prototype
 {
 
   /**#@+
