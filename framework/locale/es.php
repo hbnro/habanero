@@ -25,6 +25,7 @@ $lang['application'] = 'Aplicación';
 $lang['configuration'] = 'Configuración';
 $lang['response_headers'] = 'Cabeceras enviadas';
 $lang['request_headers'] = 'Cabeceras recibidas';
+$lang['request_headers'] = 'Variables de la peticion';
 $lang['environment'] = 'Variables de entorno';
 $lang['backtrace'] = 'Traza de ejecución';
 $lang['includes'] = 'Archivos cargados';

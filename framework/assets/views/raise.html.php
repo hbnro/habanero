@@ -32,10 +32,8 @@
       'params' => function_exists('params') ? params() : array(),
       'bootstrap' => APP_LOADER,
     ), TRUE); ?>
-    <h3><?php echo ln('configuration'); ?></h3>
-    <?php dump(config(), TRUE); ?>
-    <?php if (isset($env)) { ?><h3><?php echo ln('environment'); ?></h3>
-    <?php dump($env, TRUE); } ?>
+    <?php if (isset($vars)) { ?><h3><?php echo ln('request_vars'); ?></h3>
+    <?php dump($vars, TRUE); } ?>
     <?php if (isset($headers)) { ?><h3><?php echo ln('response_headers'); ?></h3>
     <?php dump($headers, TRUE); } ?>
     <?php if (isset($received)) { ?><h3><?php echo ln('request_headers'); ?></h3>
@@ -43,6 +41,10 @@
     <?php if (isset($backtrace)) { ?><h3><?php echo ln('backtrace'); ?></h3>
     <?php dump($backtrace, TRUE); } ?><h3><?php echo ln('includes'); ?></h3>
     <?php dump(get_included_files(), TRUE); ?>
+    <h3><?php echo ln('configuration'); ?></h3>
+    <?php dump(config(), TRUE); ?>
+    <?php if (isset($env)) { ?><h3><?php echo ln('environment'); ?></h3>
+    <?php dump($env, TRUE); } ?>
     <p>&mdash; <?php echo ticks(defined('BEGIN') ? BEGIN : 0); ?>s</p>
   </body>
 </html>

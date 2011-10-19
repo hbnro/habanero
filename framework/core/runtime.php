@@ -142,7 +142,9 @@ function option($get, $or = FALSE) {
  * @return    mixed
  */
 function config($set = NULL, $value = NULL) {
-  if ( ! is_null($value)) {
+  if (func_num_args() === 0) {
+    return configure::all();
+  } elseif ( ! is_null($value)) {
     configure::set($set, $value);
   } else {
     if ( ! is_assoc($set) && ! is_file($set)) {

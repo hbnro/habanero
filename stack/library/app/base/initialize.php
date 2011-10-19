@@ -48,13 +48,11 @@ call_user_func(function () {
     import('app/base/model');
     import('app/base/view');
 
-    import('tetl/assets');
-    import('tetl/taml');
-    import('tetl/css');
-
     i18n::load_path(__DIR__.DS.'locale', 'mvc');
 
     view::register('taml', function ($file, array $vars = array()) {
+      import('tetl/taml');
+
       return taml::render($file, $vars);
     });
 
@@ -117,6 +115,8 @@ call_user_func(function () {
           }
 
 
+          import('tetl/assets');
+
           assets::inline(tag('script', array('src' => url_for('/all.js'))), 'body');
 
           $view = view::render($layout_file, array(
@@ -146,35 +146,39 @@ call_user_func(function () {
 
     $base_path = CWD.DS.'app'.DS.'views'.DS.'assets';
 
-    assets::setup('path', $base_path);
-
-    assets::compile('css', function ($file)
-      use($base_path, $prod) {
-      import('tetl/css');
-      css::setup('path', $base_path.DS.'css');
-      return css::render($file, $prod);
-    });
-
-    assets::compile('js', function ($file)
-      use($prod) {// TODO: use JSMin instead...
-      static $regex = array(
-                      '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
-                      '/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
-                      '/\s{2,}/' => '',
-                    );
-
-
-      $text = read($file);
-
-      if ($prod) {
-        $text = preg_replace(array_keys($regex), $regex, $text);
-        $text = str_replace('elseif', 'else if', $text);
-      }
-      return $text;
-    });
 
     cache::block("--$type-assets", function ()
       use($base_path, $type, $prod) {
+      import('tetl/assets');
+      import('tetl/css');
+
+      assets::setup('path', $base_path);
+
+      assets::compile('css', function ($file)
+        use($base_path, $prod) {
+        import('tetl/css');
+        css::setup('path', $base_path.DS.'css');
+        return css::render($file, $prod);
+      });
+
+      assets::compile('js', function ($file)
+        use($prod) {// TODO: use JSMin instead...
+        static $regex = array(
+                        '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
+                        '/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
+                        '/\s{2,}/' => '',
+                      );
+
+
+        $text = read($file);
+
+        if ($prod) {
+          $text = preg_replace(array_keys($regex), $regex, $text);
+          $text = str_replace('elseif', 'else if', $text);
+        }
+        return $text;
+      });
+
       $base_file = $base_path.DS.$type.DS."app.$type";
 
       $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function ($match)

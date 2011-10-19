@@ -22,6 +22,16 @@ class configure extends prototype
 
 
   /**
+   * Retrieve all options
+   *
+   * @return array
+   */
+  final public static function all() {
+    return static::$bag;
+  }
+
+
+  /**
    * Option setup
    *
    * @param  string Item

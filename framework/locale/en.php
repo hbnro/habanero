@@ -25,6 +25,7 @@ $lang['application'] = 'Application';
 $lang['configuration'] = 'Configuration';
 $lang['response_headers'] = 'Response headers';
 $lang['request_headers'] = 'Request headers';
+$lang['request_vars'] = 'Request vars';
 $lang['environment'] = 'Environment vars';
 $lang['backtrace'] = 'Backtrace log';
 $lang['includes'] = 'Included files';
