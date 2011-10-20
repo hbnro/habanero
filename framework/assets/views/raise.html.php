@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="<?php echo CHARSET; ?>">
+    <meta charset="UTF-8">
     <title><?php echo ln('error'); ?></title>
     <style>
     p {

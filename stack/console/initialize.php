@@ -4,7 +4,7 @@ require dirname(dirname(__DIR__)).'/framework/initialize.php';
 require __DIR__.DS.'functions'.EXT;
 
 run(function () {
-  import('tetl/console');
+  import('console');
 
   i18n::load_path(__DIR__.DS.'locale', 'tetl');
 

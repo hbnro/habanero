@@ -55,7 +55,7 @@ class app_generator extends prototype
 
       error(ln('app.directory_must_be_empty'));
     } else {
-      require __DIR__.DS.'scripts'.DS.'create_app'.EXT;
+      require __DIR__.DS.'scripts'.DS.'create_application'.EXT;
     }
 
     bold(ln('tetl.done'));

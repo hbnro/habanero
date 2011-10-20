@@ -97,8 +97,8 @@ call_user_func(function () {
   define('DB_SCHEME', $parts['scheme']);
   define('DB_VERSION', sql::version(sql::connect($parts)));
 
-  if (sql::defined('encoding')) {// TODO: sure dude?
-    sql::encoding(preg_replace('/\W/', '', CHARSET));
+  if (sql::defined('encoding')) {
+    sql::encoding('UTF8');
   }
 });
 

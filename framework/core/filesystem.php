@@ -170,8 +170,8 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE) {
       $new = str_replace(realpath($from), $to, $file);
 
       if ( ! file_exists($new)) {
-        is_file($file) && copy($file, $new);
-        is_dir($file) && mkdir($new, PERMS);
+        is_file($file) && copy($file, $new) && chmod($new, 0644);
+        is_dir($file) && mkdir($new, 0755);
       }
     }
   }
@@ -185,10 +185,8 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE) {
  * @param  octal  Individual permissions
  * @return string
  */
-function mkpath($dir, $perms = FALSE) {
+function mkpath($dir, $perms = 0755) {
   $path  = strtr($dir, '\\/', DS.DS);
-  $perms = $perms ?: PERMS;
-
 
   if ( ! is_file($path) && ! is_dir($path)) {
     $test = explode(DS, $path);
@@ -327,13 +325,13 @@ function read($path) {
  * @param  octal   Individual permissions
  * @return boolean
  */
-function write($to, $content = '', $type = 0, $perms = FALSE) {
+function write($to, $content = '', $type = 0, $perms = 0644) {
   $output = FALSE;
 
   if (is_dir(dirname($to))) {
     if ( ! is_file($to)) {
       touch($to);
-      chmod($to, ! is_false($perms) ? $perms : PERMS);
+      chmod($to, $perms);
     }
 
 

@@ -50,4 +50,4 @@ cache::block("--$type-assets-$env", function ()
   $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
 
   assets::$type(trim($test));
-}, $prod ? 300 : 0);
+}, $prod ? time() : 0);

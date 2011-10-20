@@ -178,9 +178,7 @@ function match($expr, $subject = NULL, array $constraints = array()) {
     }
 
 
-    // TODO: sure thing?
-    $chars  = preg_quote(RFC_CHARS, '/');
-
+    $chars  = preg_quote('$-_.+!*\'(),', '/');
     $tokens = array(
       '/\\\\\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.+?)',
       '/\\\:([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[^\/]+?)',

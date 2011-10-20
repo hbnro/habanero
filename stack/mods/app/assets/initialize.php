@@ -4,7 +4,7 @@ call_user_func(function()
 {
   require 'tetlphp/framework/initialize.php';
 
-  import('app/base');
+  import('application');
 
   run(function()
   {

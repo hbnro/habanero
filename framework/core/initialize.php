@@ -5,17 +5,6 @@
  */
 
 call_user_func(function () {
-  // common spec chars
-  define('RFC_CHARS', option('allowed_chars', "$-_.+!*'(),"));
-
-
-  // default charset
-  define('CHARSET', option('encoding', 'UTF-8'));
-
-
-  // global file permissions
-  define('PERMS', option('perms', 0777));
-
 
   // default time zone
   $timezone = option('timezone', 'UTC');

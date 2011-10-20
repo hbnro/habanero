@@ -21,7 +21,6 @@ cli::flag('force') && status('force');
    create_dir(CWD.DS.'app'.DS.'models');
 
    create_dir(CWD.DS.'app'.DS.'views');
-
    create_dir(CWD.DS.'app'.DS.'views'.DS.'assets');
 
    create_dir(CWD.DS.'app'.DS.'views'.DS.'assets'.DS.'css');
@@ -60,9 +59,19 @@ cli::flag('force') && status('force');
 
    create_dir(CWD.DS.'lib');
    create_dir(CWD.DS.'logs');
+        chmod(CWD.DS.'logs', 0777);
 
    create_dir(CWD.DS.'public');
+        chmod(CWD.DS.'public', 0777);
+
+   create_dir(CWD.DS.'public'.DS.'css');
+        chmod(CWD.DS.'public'.DS.'css', 0777);
+
+   create_dir(CWD.DS.'public'.DS.'img');
+
    create_dir(CWD.DS.'public'.DS.'js');
+        chmod(CWD.DS.'public'.DS.'js', 0777);
+
     copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'jquery-1.5.1.min.js');
     copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-1.7.min.js');
     copy_file(CWD.DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');

@@ -7,7 +7,7 @@
 <!--[if gt IE 9]><!--><html class="no-js" lang="en"><!--<![endif]-->
 
   <head>
-    <meta charset="<?php echo CHARSET; ?>">
+    <meta charset="UTF-8">
 
     <title><?php echo $title; ?></title>
 
