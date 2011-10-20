@@ -4,7 +4,7 @@
  * CSS manipulation library
  */
 
-class css extends prototype
+class tsss extends prototype
 {
 
   /**#@+
@@ -284,8 +284,8 @@ class css extends prototype
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
     $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, $text);
-    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', array('css', 'fetch_externals'), $text);
-    $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', array('css', 'fetch_properties'), $text);
+    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', get_class() . '::fetch_externals', $text);
+    $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', get_class() . '::fetch_properties', $text);
 
     $depth  = 0;
     $buffer = '';
@@ -307,7 +307,7 @@ class css extends prototype
       }
     }
 
-    preg_replace_callback($regex, array('css', 'fetch_blocks'), $buffer);
+    preg_replace_callback($regex, get_class() . '::fetch_blocks', $buffer);
   }
 
   // hackish properties parsing
@@ -487,7 +487,7 @@ class css extends prototype
       {
         $old  = strlen($text);
 
-        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|%\w*?)\(([^\(\)]+)\)(\.\w+)?/', array('css', 'do_helper'), $text);
+        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|%\w*?)\(([^\(\)]+)\)(\.\w+)?/', get_class() . '::do_helper', $text);
         $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 

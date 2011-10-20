@@ -1,12 +1,12 @@
 <?php
 
-import('tetl/db');
+import('db');
 
 /**
  * DB model
  */
 
-class dbmodel extends model
+class db_model extends a_record
 {
 
   // primary key

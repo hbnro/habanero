@@ -4,7 +4,7 @@
  * MVC base model
  */
 
-class model extends prototype
+class a_record extends prototype
 {
 
   /**#@+
@@ -55,7 +55,7 @@ class model extends prototype
   public function __get($key) {
     if ( ! array_key_exists($key, $this->props)) {
       if ($on = static::has_scope($key)) {
-        return new relation($on, $this);
+        return a_relation::match($this, $on);
       }
       raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }

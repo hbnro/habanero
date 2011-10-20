@@ -4,7 +4,7 @@
  * Relationship scopes
  */
 
-class relation
+class a_relation
 {
 
   /**#@+
@@ -14,9 +14,8 @@ class relation
   // defaults
   private $defs =  array();
 
-  // relation constructor
-  public function __construct($scope, $model) {
-    $this->defs = compact('scope', 'model');
+  // avoid constructor
+  private function __construct() {
   }
 
   // delegate dynamic calls
@@ -38,6 +37,24 @@ class relation
   }
 
   /**#@-*/
+
+
+
+  /**
+   * Magic dates
+   *
+   * @param  model Instance
+   * @param  array Options hash
+   * @return model
+   */
+  final public static function match($model, array $params) {
+    $prop = new static;
+
+    $prop->defs['model'] = $model;
+    $prop->defs['scope'] = $params;
+
+    return $prop;
+  }
 
 }
 

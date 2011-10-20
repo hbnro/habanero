@@ -4,7 +4,7 @@
  * MongoDB model
  */
 
-class mongdel extends model
+class mongo_model extends a_record
 {
 
   // properties

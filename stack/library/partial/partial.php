@@ -4,7 +4,7 @@
  * MVC base view
  */
 
-class view extends prototype
+class partial extends prototype
 {//TODO: caching or anything else?
 
   /**#@+
@@ -37,6 +37,10 @@ class view extends prototype
    * @return string
    */
   final public static function render($file, array $vars = array()) {
+    if ( ! is_file($file)) {
+      raise(ln('mvc.view_missing', array('path' => $path, 'action' => $action)));
+    }
+
     $type = ext(basename($file, EXT));
 
     if ($type && array_key_exists($type, static::$render)) {
@@ -50,7 +54,7 @@ class view extends prototype
 
 
   /**
-   * Fetch dynamic views
+   * Fetch dynamic templates
    *
    * @param  string File path
    * @param  string Action name
@@ -60,12 +64,12 @@ class view extends prototype
   final public static function load($path, array $vars = array()) {
     @list($action, $path) = array(basename($path), dirname($path));
 
-    $view_file = findfile($path, "$action.*", FALSE, 1);
+    $tpl_file = findfile($path, "$action.*", FALSE, 1);
 
-    if ( ! is_file($view_file)) {
-      raise(ln('mvc.view_missing', array('path' => $path, 'action' => $action)));
+    if ( ! is_file($tpl_file)) {
+      raise(ln('mvc.template_missing', array('path' => $path, 'action' => $action)));
     }
-    return static::render($view_file, $vars);
+    return static::render($tpl_file, $vars);
   }
 
 }

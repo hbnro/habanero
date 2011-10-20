@@ -4,7 +4,7 @@
  * MVC base controller
  */
 
-class application extends prototype
+class app_controller extends prototype
 {// TODO: implement... what stuff?
 
   /**#@+
