@@ -90,10 +90,10 @@ class db_model extends a_record
     $where   =
     $options = array();
 
-    if ($params && ! is_assoc($params)) {
-      $args []= $params;
-    } else {
+    if (is_assoc($params)) {
       $options = (array) $params;
+    } else {
+      $args []= $params;
     }
 
     if ( ! empty($options['where'])) {

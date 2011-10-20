@@ -230,9 +230,9 @@ class mongo_model extends a_record
     //TODO: WTF with group?
     if ( ! empty($options['order'])) {
       foreach ($options['order'] as $key => $val) {
-        $options['order'][$key] = $val === DESC ? -1 : 1;
+        $options['order'][$key] = $val === 'DESC' ? -1 : 1;
       }
-      $row->order($options['order']);
+      $row->sort($options['order']);
     }
 
     return is_object($row) ? iterator_to_array($row) : $row;
