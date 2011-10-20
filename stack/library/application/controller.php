@@ -4,7 +4,7 @@
  * MVC base controller
  */
 
-class controller extends prototype
+class application extends prototype
 {// TODO: implement... what stuff?
 
   /**#@+
@@ -35,4 +35,4 @@ class controller extends prototype
 
 }
 
-/* EOF: ./stack/library/app/base/controller.php */
+/* EOF: ./stack/library/app/controller.php */
