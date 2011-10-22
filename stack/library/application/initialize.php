@@ -13,7 +13,6 @@ call_user_func(function () {
   config(CWD.DS.'config'.DS.'application'.EXT);
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
-
   $bootstrap = bootstrap::methods();
 
   bootstrap::implement('raise', function ($message)
@@ -23,6 +22,8 @@ call_user_func(function () {
 
 
   bootstrap::bind(function ($app) {
+    config('import_path', CWD.DS.'lib');
+    routing::load(CWD.DS.'app'.DS.'routes'.EXT, array('safe' => TRUE));
     require __DIR__.DS.'scripts'.DS.'binding'.EXT;
     return $app;
   });
