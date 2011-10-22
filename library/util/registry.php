@@ -4,97 +4,106 @@
  * Basic registry library
  */
 
-/**
- * Registry root
- *
- * @param  string Container
- * @return object
- */
-function registry($bag = '') {
-  static $set = array();
+class registry extends prototype
+{
 
-  
-  $bag = ($bag && ! is_num($bag)) ? $bag : '--registry-default';
+  /**#@+
+   * @ignore
+   */
 
-  if ( ! isset($set[$bag])) {
-    $set[$bag] = new stdClass;
+  // data collection
+  private static $stack = array();
+
+  /**#@-*/
+
+  /**
+   * Retrieve registry item
+   *
+   * @param  string Key
+   * @param  mixed  Default value
+   * @param  string Container
+   * @return mixed
+   */
+  final public static function fetch($item, $or = NULL, $bag = '') {
+    $bag = static::get($bag);
+
+    if (is_num($item)) {
+      return FALSE;
+    }
+    return value($bag, $item, $or);
   }
 
-  return $set[$bag];
-}
 
+  /**
+   * Assign registry item
+   *
+   * @param  string  Key
+   * @param  mixed   Value
+   * @param  string  Container
+   * @return boolean
+   */
+  final public static function assign($item, $value, $bag = '') {
+    $bag = static::get($bag);
 
-/**
- * Retrieve registry item
- *
- * @param  string Key
- * @param  mixed  Default value
- * @param  string Container
- * @return mixed
- */
-function registry_get($item, $or = NULL, $bag = '') {
-  $bag = registry($bag);
+    if (is_num($item)) {
+      return FALSE;
+    }
 
-  if (is_num($item)) {
-    return FALSE;
-  }
-  
-  return value($bag, $item, $or);
-}
+    $bag->$item = $value;
 
-
-/**
- * Assign registry item
- *
- * @param  string  Key
- * @param  mixed   Value
- * @param  string  Container
- * @return boolean
- */
-function registry_set($item, $value, $bag = '') {
-  $bag = registry($bag);
-
-  if (is_num($item)) {
-    return FALSE;
+    return TRUE;
   }
 
-  $bag->$item = $value;
 
-  return TRUE;
-}
+  /**
+   * Delete item from registry
+   *
+   * @param  string  Key
+   * @param  string  Container
+   * @return boolean
+   */
+  final public static function delete($item, $bag = '') {
+    $bag = static::get($bag);
 
+    if (is_num($item) OR ! isset($bag->$item)) {
+      return FALSE;
+    }
 
-/**
- * Delete item from registry
- *
- * @param  string  Key
- * @param  string  Container
- * @return boolean
- */
-function registry_unset($item, $bag = '') {
-  $bag = registry($bag);
+    unset($bag->$item);
 
-  if (is_num($item) OR ! isset($bag->$item)) {
-    return FALSE;
+    return TRUE;
   }
 
-  unset($bag->$item);
 
-  return TRUE;
-}
+  /**
+   * Check if item exists on registry
+   *
+   * @param  string  Key
+   * @param  string  Container
+   * @return boolean
+   */
+  final public static function exists($item, $bag = '') {
+    return isset(static::get($bag)->$item);
+  }
 
 
-/**
- * Check if item exists on registry
- *
- * @param  string  Key
- * @param  string  Container
- * @return boolean
- */
-function registry_exists($item, $bag = '') {
-  $bag = registry($bag);
-  
-  return isset($bag->$item);
+
+  /**#@+
+    * @ignore
+    */
+
+  // retrieve single bag
+  final private static function get($bag = '') {
+    $bag = ($bag && ! is_num($bag)) ? $bag : '--registry-default';
+
+    if ( ! isset(static::$stack[$bag])) {
+      static::$stack[$bag] = new stdClass;
+    }
+    return static::$stack[$bag];
+  }
+
+  /**#@-*/
+
 }
 
 /* EOF: ./library/tetl/registry.php */
