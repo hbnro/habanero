@@ -43,14 +43,15 @@ request::implement('dispatch', function (array $params = array())
     }
 
 
+    /**
+     * @ignore
+     */
+    require CWD.DS.'app'.DS.'helpers'.DS.'base'.EXT;
+
     $helper_file = CWD.DS.'app'.DS.'helpers'.DS.$controller.EXT;
 
-    if (is_file($helper_file)) {
-      /**
-       * @ignore
-       */
-      require $helper_file;
-    }
+    is_file($helper_file) && require $helper_file;
+    /**#@-*/
 
     $class_name::defined('init') && $class_name::init();
     $class_name::$action();
