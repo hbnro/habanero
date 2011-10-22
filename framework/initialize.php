@@ -73,16 +73,9 @@ call_user_func(function () {
 
   // filters
   configure::filter('import_path', function ($value) {
-    $value = (array) $value;
+    $value = array_merge((array) $value, option('import_path', array()));
     $value = array_unique($value);
 
-    $include_path = explode(PATH_SEPARATOR, get_include_path());
-    $test_path    = array_diff($include_path, $value);
-
-    if ( ! empty($test_path)) {
-      $include_path = array_merge($include_path, $test_path);
-      ini_set('include_path', join(PATH_SEPARATOR, $include_path));
-    }
     return $value;
   });
 
