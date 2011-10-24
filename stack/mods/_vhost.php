@@ -1,5 +1,7 @@
 <?php
 
+// Ubuntu only
+
 $base_path = CWD;
 $base_name = basename($base_path);
 

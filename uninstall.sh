@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Ubuntu only
+
 TETL="$HOME/.tetlphp"
 
 echo "Removing framework files"

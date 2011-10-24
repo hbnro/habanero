@@ -1,5 +1,7 @@
 <?php
 
+// Ubuntu only
+
 $path = dirname(dirname(LIB));
 
 $php_ini = '/etc/php5/apache2/php.ini';

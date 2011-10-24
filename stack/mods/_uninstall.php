@@ -1,5 +1,7 @@
 <?php
 
+// Ubuntu only
+
 $php_ini = '/etc/php5/apache2/php.ini';
 
 

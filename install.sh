@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Ubuntu only
+
 URL="http://tinyurl.com/gettetl"
 TETL="$HOME/.tetlphp"
 
