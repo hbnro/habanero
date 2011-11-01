@@ -17,6 +17,12 @@ foreach ($test as $vhost_path) {
   }
 }
 
+if (empty($vhost_path)) {
+  error('Not found a suitable vhost path on your system!');
+  exit;
+}
+
+
 $vhost_file = "$vhost_path/$base_name";
 
 

@@ -5,14 +5,21 @@ info('Looking for php configuration');
 $test  = `php-config`;
 $regex = array(
           '/--with-config-file-path=(\S+)/',
-          '/--sysconfdir=(\S+)/'
+          '/--sysconfdir=(\S+)/',
         );
 
 foreach ($regex as $one) {
   if (preg_match($one, $test, $match)) {
-    install_to("$match[1]/php.ini");
-    break;
+    if (is_file($ini_file = "$match[1]/php.ini")) {
+      install_to($ini_file);
+      break;
+    }
   }
+}
+
+if (empty($ini_file)) {
+  error('Not found a suitable php.ini file on your system!');
+  exit;
 }
 
 
