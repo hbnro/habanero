@@ -1,38 +1,55 @@
 <?php
 
-// Ubuntu only
+info('Looking for php configuration');
 
-$php_ini = '/etc/php5/apache2/php.ini';
+$test  = `php-config`;
+$regex = array(
+          '/--with-config-file-path=(\S+)/',
+          '/--sysconfdir=(\S+)/'
+        );
 
-
-info("Looking for $php_ini");
-
-$config = read($php_ini);
-$test   = preg_replace('/^\s*include_path.*?;;\s*$/m', '', $config);
-
-if ($test <> $config) {
-  success('Updating include_path.');
-  write($php_ini, $test);
-
-  sleep(1);
-  system('/etc/init.d/apache2 restart');
-} else {
-  notice('Without changes');
+foreach ($regex as $one) {
+  if (preg_match($one, $test, $match)) {
+    uninstall_from("$match[1]/php.ini");
+    break;
+  }
 }
 
 
-$hosts_file = '/etc/hosts';
+function uninstall_from($php_ini) {
+  $config = read($php_ini);
+  $test   = preg_replace('/^\s*include_path.*?;;\s*$/m', '', $config);
 
-info("Looking for $hosts_file");
+  if ($test <> $config) {
+    success('Updating include_path');
+    write($php_ini, $test);
 
-$config = read($hosts_file);
-$test   = preg_replace('/^\s*127\.0\.0\.1\s+[\w+.-]+\s*##\s*$/m', '', $config);
+    sleep(1);
 
-if ($config <> $test) {
-  success("Updating $hosts_file");
-  write($hosts_file, $test);
-} else {
-  notice('Without changes');
+
+    $apache_bin = '/etc/init.d/apache2';
+
+    ! is_file($apache_bin) && $apache_bin = 'apachectl';
+
+    system("$apache_bin restart");
+  } else {
+    notice('Without changes');
+  }
+
+
+  $hosts_file = '/etc/hosts';
+
+  info("Looking for $hosts_file");
+
+  $config = read($hosts_file);
+  $test   = preg_replace('/^\s*127\.0\.0\.1\s+[\w+.-]+\s*##\s*$/m', '', $config);
+
+  if ($config <> $test) {
+    success("Updating $hosts_file");
+    write($hosts_file, $test);
+  } else {
+    notice('Without changes');
+  }
 }
 
 bold('Done');
