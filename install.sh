@@ -25,7 +25,7 @@ if [ ! -d "$BINPATH" ]; then
 fi
 
 
-SYMLINK="$BINPATH/tetl"
+SYMLINK="$BINPATH/atl"
 
 if [ -h "$SYMLINK" ] || [ -e "$SYMLINK" ]; then
   unlink $SYMLINK
