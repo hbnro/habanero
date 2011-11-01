@@ -6,36 +6,25 @@ require __DIR__.DS.'functions'.EXT;
 run(function () {
   import('console');
 
+  define('CWD', realpath(getcwd()));
+
   i18n::load_path(__DIR__.DS.'locale', 'tetl');
-
-
-  if (cli::flag('s')) {
-    // TODO: random famoushipsterious-cite picker?
-    cli::writeln(ln('tetl.hello_people'));
-    exit;
-  }
-
-  $path = getcwd();
-  $args = cli::args();
-
-  define('CWD', realpath($path));
 
   config(CWD.DS.'config'.EXT);
   config(CWD.DS.'config'.DS.'application'.EXT);
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
+  $args     = cli::args();
   $extra    = key($args);
   $mod_file = dirname(__DIR__).DS.'mods'.DS."_$extra".EXT;
 
   is_file($mod_file) && die(require $mod_file);
 
 
-  $cmd   = array_shift($args);
+  $cmd = array_shift($args);
 
   @list($module, $action) = explode('.', $cmd);
-
-  $test = dir2arr(dirname(__DIR__).DS.'mods', '*');
 
   if ( ! empty($module)) {
     $mod_file = dirname(__DIR__).DS.'mods'.DS.$module.DS.'generator'.EXT;
@@ -49,7 +38,7 @@ run(function () {
 
         is_file($mod_file) && die(require $mod_file);
       }
-      return help($test);
+      return help();
     }
 
 
@@ -73,7 +62,7 @@ run(function () {
       call_user_func_array("$mod_class::$action", $test);
     }
   } else {
-    help($test);
+    help();
   }
 });
 

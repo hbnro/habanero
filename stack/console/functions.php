@@ -9,7 +9,8 @@ function yes($text) {
 }
 // TODO; choice, prompt, cli-tools
 
-function help($test) {
+function help() {
+  $test = dir2arr(dirname(__DIR__).DS.'mods', '*');
   $str  = sprintf("\n  %s\n", ln('tetl.generator_intro'));
 
   foreach ($test as $one) {
