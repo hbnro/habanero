@@ -1,10 +1,38 @@
 #!/bin/sh
 
-# Ubuntu only
+if [ `whoami` != "root" ]; then
+  sudo sh $0 $*
+  exit 1
+fi
+
+if [ "$SUDO_USER" = "root" ]; then
+  echo "Please run script with sudo"
+  exit 1
+fi
+
+
+if [ ! -d "/Users" ]; then
+  TETL="$HOME/.tetlphp"
+else
+  TETL="$HOME/Library/PHP/tetlphp"
+fi
+
+
+BINPATH="/usr/local/bin"
+
+if [ ! -d "$BINPATH" ]; then
+  BINPATH="/usr/bin"
+fi
+
+
+SYMLINK="$BINPATH/tetl"
+
+if [ -h "$SYMLINK" ] || [ -e "$SYMLINK" ]; then
+  unlink $SYMLINK
+fi
+
 
 URL="http://tinyurl.com/gettetl"
-TETL="$HOME/.tetlphp"
-
 mkdir -p "$TETL/tmp"
 cd "$TETL/tmp"
 
@@ -22,20 +50,15 @@ cd "$TMPPATH"
 cp -R . "$TETL"
 rm -rf "$TETL/tmp"
 
+
 cd $HOME
 
 
 echo "Creating symlink"
 
-SYMLINK="/usr/local/bin/tetl"
-
-if [ -h "$SYMLINK" ] || [ -e "$SYMLINK" ]; then
-  sudo unlink "$SYMLINK"
-fi
-
-sudo ln -s "$TETL/console/bin" "$SYMLINK"
+ln -s "$TETL/stack/bin" $SYMLINK
 
 
 echo "Installing"
-sudo "$SYMLINK" --install
+exec $SYMLINK --install
 echo "Done"
