@@ -61,13 +61,13 @@ class partial extends prototype
    * @param  array  Local vars
    * @return string
    */
-  final public static function load($path, array $vars = array()) {
-    @list($action, $path) = array(basename($path), dirname($path));
+  final public static function load($from, array $vars = array()) {
+    @list($action, $path) = array(basename($from), dirname($from));
 
     $tpl_file = findfile($path, "$action.*", FALSE, 1);
 
     if ( ! is_file($tpl_file)) {
-      raise(ln('mvc.template_missing', array('path' => $path, 'action' => $action)));
+      raise(ln('file_not_exists', array('name' => $from)));
     }
     return static::render($tpl_file, $vars);
   }
