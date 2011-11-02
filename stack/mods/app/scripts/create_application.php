@@ -73,7 +73,7 @@ cli::flag('force') && status('force');
         chmod(CWD.DS.'public'.DS.'js', 0777);
 
     copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'jquery-1.5.1.min.js');
-    copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-1.7.min.js');
+    copy_file(CWD.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-2.0.6.min.js');
     copy_file(CWD.DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');
     copy_file(CWD.DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
 
