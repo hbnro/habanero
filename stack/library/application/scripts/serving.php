@@ -49,5 +49,5 @@ cache::block("--$type-assets-$env", function ()
 
   $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
 
-  assets::$type(trim($test));
+  assets::$type(eval('?>' . trim($test)));
 }, $prod ? time() : 0);
