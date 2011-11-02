@@ -48,15 +48,11 @@ $lang['environment'] = 'Environment: %{env}';
 
 $lang['current_configuration'] = 'Loaded settings';
 $lang['application_configuration'] = 'Application settings';
-$lang['database_configuration'] = 'Database settings';
-$lang['testing_configuration'] = 'Testing settings';
 $lang['development_configuration'] = 'Development settings';
 $lang['production_configuration'] = 'Production settings';
 $lang['default_configuration'] = 'Default settings';
 
 $lang['setting_application_options'] = 'Applying application configuration';
-$lang['setting_database_options'] = 'Applying database configuration';
-$lang['setting_testing_options'] = 'Applying testing configuration';
 $lang['setting_development_options'] = 'Applying development configuration';
 $lang['setting_production_options'] = 'Applying production configuration';
 $lang['setting_default_options'] = 'Applying default configuration';
@@ -71,7 +67,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(app.gen)\b [--force]
 
   \clight_gray(Display and set the configuration options)\c
-    \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|dev|test|prod|app|db]
+    \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Default controller generator)\c
     \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]

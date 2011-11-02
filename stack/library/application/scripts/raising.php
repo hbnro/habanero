@@ -7,7 +7,6 @@ switch (option('environment')) {
     $bootstrap['raise']($message);
   break;
   case 'production';
-  case 'testing';
   default;
     if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message)) {
       $error_status = 404;

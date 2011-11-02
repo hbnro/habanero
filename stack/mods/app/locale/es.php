@@ -48,15 +48,11 @@ $lang['environment'] = 'Entorno: %{env}';
 
 $lang['current_configuration'] = 'Configuración actual';
 $lang['application_configuration'] = 'Configuración de la aplicación';
-$lang['database_configuration'] = 'Configuración de la base de datos';
-$lang['testing_configuration'] = 'Configuración del entorno de prueba';
 $lang['development_configuration'] = 'Configuración del entorno de desarrollo';
 $lang['production_configuration'] = 'Configuración del entorno de producción';
 $lang['default_configuration'] = 'Configuración por defecto';
 
 $lang['setting_application_options'] = 'Aplicando configuración de la aplicación';
-$lang['setting_database_options'] = 'Aplicando configuración de la base de datos';
-$lang['setting_testing_options'] = 'Aplicando configuración del entorno de prueba';
 $lang['setting_development_options'] = 'Aplicando configuración del entorno de desarrollo';
 $lang['setting_production_options'] = 'Aplicando configuración del entorno de producción';
 $lang['setting_default_options'] = 'Aplicando configuración por defecto';
@@ -71,7 +67,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(app.gen)\b [--force]
 
   \clight_gray(Muestra y modifica las opciones de configuración)\c
-    \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|dev|test|prod|app|db]
+    \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Generador del controlador por defecto)\c
     \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]

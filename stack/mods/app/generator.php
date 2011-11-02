@@ -110,17 +110,11 @@ class app_generator extends prototype
       if (cli::flag('dev')) {
         $what = 'development';
         $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
-      } elseif (cli::flag('test')) {
-        $what = 'testing';
-        $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
       } elseif (cli::flag('prod')) {
         $what = 'production';
         $file = CWD.DS.'config'.DS.'environments'.DS.$what.EXT;
       } elseif (cli::flag('app')) {
         $what = 'application';
-        $file = CWD.DS.'config'.DS.$what.EXT;
-      } elseif (cli::flag('db')) {
-        $what = 'database';
         $file = CWD.DS.'config'.DS.$what.EXT;
       } elseif (cli::flag('global')) {
         $file = CWD.DS.'config'.EXT;

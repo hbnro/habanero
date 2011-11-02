@@ -49,7 +49,6 @@ cli::flag('force') && status('force');
    create_dir(CWD.DS.'config'.DS.'environments');
   create_file(CWD.DS.'config'.DS.'environments'.DS.'development'.EXT);
   create_file(CWD.DS.'config'.DS.'environments'.DS.'production'.EXT);
-  create_file(CWD.DS.'config'.DS.'environments'.DS.'testing'.EXT);
 
    create_dir(CWD.DS.'db');
   create_file(CWD.DS.'db'.DS.'db.sqlite');
