@@ -168,7 +168,7 @@ class assets extends prototype
         $suffix      = ($prod = (option('environment') === 'production')) ? '.min' : '';
         $static_file = mkpath(static::$defs['root'].DS.$method).DS."all$suffix.$method";
 
-        if ($prod OR ! is_file($static_file)) {
+        if ( ! $prod) {
           $out = array();
 
           foreach (static::$set[$method] as $one) {
@@ -185,10 +185,6 @@ class assets extends prototype
 
           $output = join("\n", array_merge($out, $arguments));
           write($static_file, $output);
-
-          $min_file = str_replace(".$method", ".min.$method", $static_file);
-
-          is_file($min_file) && unlink($min_file);
         }
 
         dispatch($static_file, array(

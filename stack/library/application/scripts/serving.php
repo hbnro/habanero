@@ -42,7 +42,7 @@ cache::block("--$type-assets-$env", function ()
 
   $base_file = $base_path.DS.$type.DS."app.$type";
 
-  $test = preg_replace_callback('/\s+\*=\s+(.+?)\s/s', function ($match)
+  $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
     use($type, $prod) {
     assets::append("$match[1].$type");
   }, read($base_file));
