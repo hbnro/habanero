@@ -164,45 +164,40 @@ class app_generator extends prototype
     if ( ! $name) {
       error(ln("app.missing_script_name"));
     } else {
-      $trap = function () {
-        include func_get_arg(0);
-        return get_defined_vars();
-      };
-
-
-      $script_file = CWD.DS.$name.EXT;
-
-      if (is_file($script_file)) {
+      if (is_file($script_file = CWD.DS.$name.EXT)) {
         success(ln('app.executing_script', array('path' => str_replace(CWD.DS, '', $script_file))));
         require $script_file;
         bold(ln('tetl.done'));
         exit;
       }
 
-      $script_file  = CWD.DS.'tasks'.DS.$name;
-      $script_file .= is_dir($script_file) ? DS.'initialize' : '';
-      $script_file .= EXT;
+      $task_file = CWD.DS.'tasks'.DS.$name.DS.'initialize'.EXT;
+      $path      = str_replace(CWD.DS, '', $task_file);
 
-      $path = str_replace(CWD.DS, '', $script_file);
-
-      if ( ! is_file($script_file)) {
+      if ( ! is_file($task_file)) {
         error(ln('app.missing_script_file', array('name' => $path)));
       } else {
-        ! $key && $key = 'default';
+        $task_class = "{$name}_task";
 
-        $test = $trap($script_file);
+        /**#@+
+         * @ignore
+         */
+        require __DIR__.DS.'task_manager'.EXT;
+        require $task_file;
+        /**#@-*/
+
+        $task_class::defined('init') && $task_class::init();
+
+        ! $key && $key = ! empty($task_class::$default) ? $task_class::$default : 'main';
 
 
-        if (empty($test['params'])) {
-          error(ln('app.missing_script_params'));
-        } elseif ( ! array_key_exists($key, $test['params'])) {
-          error(ln('app.unknown_script_param', array('name' => $key)));
+        if ( ! class_exists($task_class)) {
+          error(ln('app.missing_task_class', array('path' => $path)));
+        } elseif ( ! $task_class::defined($key)) {
+          error(ln('app.unknown_task_param', array('name' => $key)));
         } else {
-          success(ln('app.executing_task', array('name' => $path, 'param' => $key)));
-
-          $args = array_slice(func_get_args(), 1);
-
-          call_user_func_array($test['params'][$key], $args);
+          success(ln('app.executing_task', array('name' => $name, 'param' => $key)));
+          $task_class::$key();
         }
       }
     }
