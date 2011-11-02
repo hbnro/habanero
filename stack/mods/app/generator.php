@@ -35,13 +35,13 @@ class app_generator extends prototype
       notice(ln('app.application'));
 
       $tmp = dir2arr(CWD, '*', DIR_RECURSIVE | DIR_EMPTY);
-      $map = function ($tree, $self, $deep = 0) {
+      $map = function ($tree, $self, $depth = 0) {
         foreach ($tree as $key => $val) {
-          $pre = str_repeat(' ', $deep);
+          $pre = str_repeat(' ', $depth);
 
           if (is_array($val)) {
-            cli::writeln("$pre  \clight_gray,black($key)\c/");
-            $self($val, $self, $deep + 2);
+            cli::writeln("$pre  \clight_gray,black($key/)\c");
+            $self($val, $self, $depth + 2);
           } else {
             $size = fmtsize(filesize($val));
             $val  = basename($val);

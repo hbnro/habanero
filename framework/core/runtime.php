@@ -301,7 +301,7 @@ function reflection($lambda) {
  * @staticvar array   Replace set
  * @return    mixed
  */
-function dump($var, $show = FALSE, $deep = 99) {
+function dump($var, $show = FALSE, $depth = 99) {
   static $repl = array(
             "\r" => '\r',
             "\n" => '\n',
@@ -309,12 +309,12 @@ function dump($var, $show = FALSE, $deep = 99) {
           );
 
 
-  if ( ! $deep) {
+  if ( ! $depth) {
     return FALSE;
   }
 
-  $depth     = func_num_args() > 3 ? func_get_arg(3) : 0;
-  $tab       = str_repeat('  ', $depth);
+  $limit     = func_num_args() > 3 ? func_get_arg(3) : 0;
+  $tab       = str_repeat('  ', $limit);
 
 
   $arrow     = $show ? ' ' : ' => ';
@@ -359,7 +359,7 @@ function dump($var, $show = FALSE, $deep = 99) {
     foreach ($test as $key => $val) {
       $key = preg_replace('/^\W.*?\W/', '', $key);
 
-      $old = dump($val, FALSE, $deep - 1, $depth + 1);
+      $old = dump($val, FALSE, $depth - 1, $limit + 1);
       $pre = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
 
       $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;
@@ -377,7 +377,7 @@ function dump($var, $show = FALSE, $deep = 99) {
   }
 
 
-  if ($show && $depth <= 0) {
+  if ($show && $limit <= 0) {
     $out = IS_CLI ? $out : htmlspecialchars($out);
     echo IS_CLI ? $out : "\n<pre>$out</pre>";
     return TRUE;
