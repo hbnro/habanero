@@ -8,7 +8,5 @@ call_user_func(function()
 
   run(function()
   {
-    require __DIR__.DS.'app'.DS.'helpers'.EXT;
-    routing::load(__DIR__.DS.'app'.DS.'routes'.EXT, array('safe' => TRUE));
   });
 });
