@@ -15,6 +15,7 @@ request::implement('dispatch', function (array $params = array())
   if (is_callable($params['to'])) {
     $request['dispatch']($params);
   } else {
+    import('assets');
     params($params['matches']);
 
     list($controller, $action) = explode('#', (string) $params['to']);
@@ -65,8 +66,6 @@ request::implement('dispatch', function (array $params = array())
       $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css')));
 
       $layout_file = CWD.DS.'app'.DS.'views'.DS.'layouts'.DS.$class_name::$layout;
-
-      import('assets');
 
       assets::inline(tag('script', array('src' => url_for('/all.js'))), 'body');
 
