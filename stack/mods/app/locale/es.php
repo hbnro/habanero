@@ -37,8 +37,8 @@ $lang['model_class_building'] = 'Generando clase del modelo %{name}';
 
 $lang['missing_script_name'] = 'Hace falta el nombre del script';
 $lang['missing_script_file'] = 'El script %{name} no existe';
-$lang['missing_script_params'] = 'Hacen falta los parametros del script';
-$lang['unknown_script_param'] = 'Parametro %{name} desconocido';
+$lang['missing_task_class'] = 'Hace falta una clase en %{path}';
+$lang['unknown_task_param'] = 'Parametro desconocido %{name}';
 
 $lang['executing_script'] = 'Ejecutando %{path}';
 $lang['executing_task'] = 'Ejecutando tarea %{name}#%{param}';
