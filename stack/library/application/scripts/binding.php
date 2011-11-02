@@ -15,6 +15,8 @@ request::implement('dispatch', function (array $params = array())
   if (is_callable($params['to'])) {
     $request['dispatch']($params);
   } else {
+    params($params['matches']);
+
     list($controller, $action) = explode('#', (string) $params['to']);
 
     $controller_file = CWD.DS.'app'.DS.'controllers'.DS.$controller.EXT;
