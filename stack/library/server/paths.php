@@ -48,6 +48,11 @@ class url_for extends prototype
     $route = ! empty(static::$map[$method]) ? static::$map[$method] : strtr($method, '_', '/');
     $extra = $arguments ? '/' . join('/', $arguments) : '';
 
+    $route = preg_replace_callback('/[:*]([^:*]+)/', function($match)
+      use($params) {
+      return ! empty($params[$match[1]]) ? $params[$match[1]] : $match[1];
+    }, $route);
+
     return url_for($route . $extra, $params);
   }
 
