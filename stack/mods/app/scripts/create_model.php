@@ -9,7 +9,7 @@ if (is_file($out_file)) {
 } else {
   success(ln('app.model_class_building', array('name' => $name)));
 
-  $type   = cli::flag('parent') ?: 'dbmodel';
+  $type   = cli::flag('parent') ?: 'db_model';
   $parent = $table ? "\n  public static \$table = '$table';" : '';
   $code   = "<?php\n\nclass $name extends $type"
           . "\n{{$parent}\n}\n";
