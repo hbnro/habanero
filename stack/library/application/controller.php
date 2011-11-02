@@ -33,6 +33,22 @@ class app_controller extends prototype
 
   /**#@-*/
 
+
+
+  /**
+   * JSON output
+   *
+   * @param  mixed Object|Array
+   * @return void
+   */
+  public static function to_json($obj) {
+    response(json_encode($obj), array(
+      'headers' => array(
+        'content-type' => 'application/json',
+      ),
+    ));
+  }
+
 }
 
 /* EOF: ./stack/library/app/controller.php */
