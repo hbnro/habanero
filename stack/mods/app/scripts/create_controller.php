@@ -5,7 +5,7 @@ $out_file = mkpath(CWD.DS.'app'.DS.'controllers').DS.$name.EXT;
 if (is_file($out_file)) {
   error(ln('app.controller_already_exists', array('name' => $name)));
 } else {
-  $type = cli::flag('parent') ?: 'controller';
+  $type = cli::flag('parent') ?: 'base_controller';
   $code = "<?php\n\nclass {$name}_controller extends $type\n{"
         . "\n\n  public static function index()\n"
         . "  {\n  }\n\n}\n";
