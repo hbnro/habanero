@@ -43,20 +43,5 @@ function uninstall_from($php_ini) {
   } else {
     notice('Without changes');
   }
-
-
-  $hosts_file = '/etc/hosts';
-
-  info("Looking for $hosts_file");
-
-  $config = read($hosts_file);
-  $test   = preg_replace('/^\s*127\.0\.0\.1\s+[\w+.-]+\s*##\s*$/m', '', $config);
-
-  if ($config <> $test) {
-    success("Updating $hosts_file");
-    write($hosts_file, $test);
-  } else {
-    notice('Without changes');
-  }
 }
 
