@@ -73,9 +73,9 @@ request::implement('dispatch', function (array $params = array())
         assets::inline(tag('script', array('src' => url_for('/all.js'))), 'body');
 
         $view = partial::load($layout_file, array(
-          'body' => $view,
           'head' => join("\n", $class_name::$head),
           'title' => $class_name::$title,
+          'body' => $view,
         ));
       }
     }
