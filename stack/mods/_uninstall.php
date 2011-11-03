@@ -2,25 +2,26 @@
 
 info('Looking for php configuration');
 
-$test  = `php-config`;
-$regex = array(
-          '/--with-config-file-path=(\S+)/',
-          '/--sysconfdir=(\S+)/',
-        );
+$paths = array(
+  '/private/etc',
+  '/etc/php5/apache2',
+);
 
-foreach ($regex as $one) {
-  if (preg_match($one, $test, $match)) {
-    if (is_file($ini_file = "$match[1]/php.ini")) {
-      uninstall_from($ini_file);
-      break;
-    }
+
+foreach ($paths as $one) {
+  if (is_file("$one/php.ini")) {
+    $ini_file = "$one/php.ini";
+    break;
   }
 }
 
 if (empty($ini_file)) {
   error('Not found a suitable php.ini file on your system!');
-  exit;
+} else {
+  uninstall_from($ini_file);
 }
+
+bold('Done');
 
 
 function uninstall_from($php_ini) {
@@ -59,4 +60,3 @@ function uninstall_from($php_ini) {
   }
 }
 
-bold('Done');
