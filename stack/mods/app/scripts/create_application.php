@@ -79,6 +79,10 @@ cli::flag('force') && status('force');
     copy_file(CWD.DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
 
      copy_dir(CWD, $skel_dir.DS.'tasks');
+
+   create_dir(CWD.DS.'tmp');
+        chmod(CWD.DS.'tmp', 0777);
+
     copy_file(CWD, $skel_dir.DS.'initialize'.EXT);
 
 /* EOF: ./stack/console/mods/app/scripts/create_app.php */
