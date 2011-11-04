@@ -3,7 +3,7 @@
 
 body {
   background: #f9f9f7;
-  font-family: Monaco, 'Bitstream Vera Sans Mono', 'Lucida Console', Terminal, sans-serif;
+  font-family: Corbel, 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Liberation Sans', Verdana, 'Verdana Ref', sans-serif;
 }
 
 #wrapper {
@@ -12,7 +12,7 @@ body {
 
   > header {
     text-transform: uppercase;
-    font-family: 'Days One', sans-serif;
+    font-family: Bangers, sans-serif;
     font-size: 1.9em;
   }
 
@@ -30,14 +30,14 @@ body {
     }
 
     > pre {
-      color: #6c6c59;
+      color: #6f6f6f;
     }
   }
 
   > footer {
     text-align: right;
-    font-size: .8em;
-    color: #bfbfa5;
+    font-size: .9em;
+    color: #bfbfbf;
   }
 
 }

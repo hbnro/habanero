@@ -11,7 +11,7 @@
 
     <title><?php echo $title; ?></title>
 
-<?php echo assets::tag_for('http://fonts.googleapis.com/css?family=Days+One', 'css'); ?>
+<?php echo assets::tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css'); ?>
 <?php echo assets::tag_for('modernizr-1.7.min.js'); ?>
 <?php echo assets::favicon(); ?>
 <?php echo assets::before(); ?>
@@ -21,7 +21,7 @@
   <body>
   <div id="wrapper">
     <header>
-      <?php echo $title; ?> ::
+      <?php echo $title; ?>!
   </header>
 <?php echo $body; ?>
     <footer>
