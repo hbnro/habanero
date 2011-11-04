@@ -2,10 +2,10 @@
 
 info('Copying entire library');
 
-$tetl_path  = is_dir(CWD.DS.'lib') ? CWD.DS.'lib' : CWD;
-$tetl_path .= DS.'tetlphp';
+$tetl_path  = CWD.DS.'tetlphp';
 
-! is_dir($tetl_path) && mkpath($tetl_path);
+is_dir($tetl_path) && unfile($tetl_path, '*', DIR_RECURSIVE | DIR_EMPTY);
+mkpath($tetl_path);
 
 
 $framework = LIB;
