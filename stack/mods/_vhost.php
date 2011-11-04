@@ -1,6 +1,6 @@
 <?php
 
-info("Verifying vhost availability");
+info('Verifying vhost availability');
 
 $paths = array(
   '/etc/apache2/sites-available',
