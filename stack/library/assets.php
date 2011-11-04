@@ -13,17 +13,17 @@ class assets extends prototype
 
   // groups
   public static $set = array(
-    'head' => array(),
-    'body' => array(),
-    'css' => array(),
-    'js' => array(),
-  );
+                  'head' => array(),
+                  'body' => array(),
+                  'css' => array(),
+                  'js' => array(),
+                );
 
   // defaults
   private static $defs = array(
-    'path' => APP_PATH,
-    'root' => ROOT,
-  );
+                    'path' => APP_PATH,
+                    'root' => ROOT,
+                  );
 
   // compile filters
   private static $filter = array();
@@ -49,6 +49,9 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
+   * @param
    * @return void
    */
   final public static function url_for($path, $prefix = '', $host = FALSE) {
@@ -57,6 +60,8 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
    * @return void
    */
   final public static function tag_for($path, $type = '') {
@@ -87,6 +92,9 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
+   * @param
    * @return void
    */
   final public static function inline($code, $to = '', $before = FALSE) {
@@ -95,6 +103,9 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
+   * @param
    * @return void
    */
   final public static function script($path, $to = '', $before = FALSE) {
@@ -103,6 +114,8 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
    * @return void
    */
   final public static function append($path, $to = '') {
@@ -111,6 +124,8 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
    * @return void
    */
   final public static function prepend($path, $to = '') {
@@ -119,6 +134,7 @@ class assets extends prototype
 
 
   /**
+   * @param
    * @return string
    */
   final public static function favicon($path = '') {
@@ -127,6 +143,7 @@ class assets extends prototype
 
 
   /**
+   * @param
    * @return string
    */
   final public static function image($path) {
@@ -151,6 +168,7 @@ class assets extends prototype
 
 
   /**
+   * @param
    * @return void
    */
   final public static function compile($type, Closure $lambda) {
@@ -159,12 +177,14 @@ class assets extends prototype
 
 
   /**
+   * @param
+   * @param
    * @return void
    */
   final public static function missing($method, $arguments) {
     switch ($method) {
       case 'css';
-      case 'js';
+      case 'js';// TODO: all this is bad, seriously.. ?
         $suffix      = ($prod = (option('environment') === 'production')) ? '.min' : '';
         $static_file = mkpath(static::$defs['root'].DS.$method).DS."all$suffix.$method";
 
