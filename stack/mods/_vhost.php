@@ -40,7 +40,7 @@ function vhost_write($vhost_path) {
       write($vhost_path, preg_replace("/\s*$old_vhost/is", "\n", $config));
       httpd_restart();
     }
-  } elseif ( ! cli::flag('force') && strpos($config, "$base_name.dev")) {
+  } elseif (strpos($config, "$base_name.dev")) {
     error("Already exists $base_name.dev");
   } else {
     success("Appending $base_name.dev");
@@ -63,7 +63,7 @@ function vhost_create($vhost_path) {
       unlink($vhost_file);
       httpd_restart();
     }
-  } elseif ( ! cli::flag('force') && is_file($vhost_file)) {
+  } elseif (is_file($vhost_file)) {
     error("Already exists $vhost_file");
   } else {
     success("Writing $vhost_file");
