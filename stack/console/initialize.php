@@ -15,11 +15,9 @@ run(function () {
   config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
-  $args     = cli::args();
-  $option   = key($args);
-  $mod_file = __DIR__.DS.'scripts'.DS.$option.EXT;
+  $args = cli::args();
 
-  is_file($mod_file) && die(require $mod_file);
+  is_file($mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT) && die(require $mod_file);
 
 
   $cmd = array_shift($args);
