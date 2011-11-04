@@ -12,7 +12,7 @@ fi
 
 
 if [ ! -d "/Users" ]; then
-  TETL="$HOME/.local/share/tetlphp"
+  TETL="$HOME/.local/share/phplib/tetlphp"
 else
   TETL="$HOME/Library/PHP/tetlphp"
 fi
