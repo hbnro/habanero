@@ -28,8 +28,26 @@ bold('Done');
 
 function vhost_write($vhost_path) {
   $base_path  = CWD;
-  $base_name = basename($base_path);
-  notice("TODO: insert/remove vhost-def to $vhost_path");
+  $base_name  = basename($base_path);
+  $config     = read($vhost_path);
+
+  if (cli::flag('remove')) {
+    if ( ! strpos($config, "$base_name.dev")) {
+      error("Not found $base_name.dev");
+    } else {
+      notice("Removing $base_name.dev");
+      $old_vhost = "<(VirtualHost)[^<>]+>[^<>]+$base_name.dev[^<>]+<(Directory)[^<>]+>[^<>]+<\/\\2>[^<>]*<\/\\1>";
+      write($vhost_path, preg_replace("/\s*$old_vhost/is", "\n", $config));
+      httpd_restart();
+    }
+  } elseif ( ! cli::flag('force') && strpos($config, "$base_name.dev")) {
+    error("Already exists $base_name.dev");
+  } else {
+    success("Appending $base_name.dev");
+    write($vhost_path, "$config\n" . vhost_template());
+    httpd_restart(TRUE);
+  }
+  update_hosts($base_name);
 }
 
 function vhost_create($vhost_path) {
@@ -43,10 +61,6 @@ function vhost_create($vhost_path) {
     } else {
       notice("Removing $vhost_file");
       unlink($vhost_file);
-      sleep(1);
-
-      !! `whereis a2dissite` && system("a2dissite $base_name");
-
       httpd_restart();
     }
   } elseif ( ! cli::flag('force') && is_file($vhost_file)) {
@@ -54,11 +68,7 @@ function vhost_create($vhost_path) {
   } else {
     success("Writing $vhost_file");
     write($vhost_file, vhost_template());
-    sleep(1);
-
-    !! `whereis a2ensite` && system("a2ensite $base_name");
-
-    httpd_restart();
+    httpd_restart(TRUE);
   }
   update_hosts($base_name);
 }
@@ -66,20 +76,26 @@ function vhost_create($vhost_path) {
 function vhost_template() {
   $base_path = CWD;
   $base_name = basename($base_path);
-  $doc_root  = "$base_path/public";
+
+  $docs_root = "$base_path/public";
+  $logs_path = "$base_path/logs";
+
+  ! is_dir($docs_root) && $docs_root = $base_path;
+  ! is_dir($logs_path) && $logs_path = $base_path;
+
 
   return <<<XML
 <VirtualHost *:80>
   ServerName   $base_name.dev
-  DocumentRoot $doc_root
-  <Directory $doc_root/>
+  DocumentRoot "$docs_root"
+  <Directory "$docs_root/">
     Options -Indexes FollowSymLinks MultiViews
     AllowOverride All
     Order allow,deny
     allow from all
   </Directory>
-  ErrorLog  $base_path/logs/error.log
-  CustomLog $base_path/logs/access.log combined
+  ErrorLog  "$logs_path/error.log"
+  CustomLog "$logs_path/access.log" combined
 </VirtualHost>
 XML;
 }
@@ -94,7 +110,7 @@ function update_hosts($base_name) {
 
   if (cli::flag('force remove')) {
     $config = str_replace($text, '', $config);
-    $config = str_replace($base_name, '', $config);
+    $config = str_replace("$base_name.dev", '', $config);
   }
 
   $modified = filesize($hosts_file) <> strlen($config);
@@ -107,8 +123,15 @@ function update_hosts($base_name) {
   }
 }
 
-function httpd_restart() {
+function httpd_restart($enable = FALSE) {
+  sleep(1);
+
   $apache_bin = '/etc/init.d/apache2';
+
+  $site_cmd   = $enable ? 'a2ensite' : 'a2dissite';
+
+
+  !! `whereis $site_cmd` && system("$site_cmd $base_name");
 
   ! is_file($apache_bin) && $apache_bin = 'apachectl';
 
