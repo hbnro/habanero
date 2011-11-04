@@ -16,8 +16,8 @@ run(function () {
 
 
   $args     = cli::args();
-  $extra    = key($args);
-  $mod_file = dirname(__DIR__).DS.'mods'.DS."_$extra".EXT;
+  $option   = key($args);
+  $mod_file = __DIR__.DS.'scripts'.DS.$option.EXT;
 
   is_file($mod_file) && die(require $mod_file);
 
