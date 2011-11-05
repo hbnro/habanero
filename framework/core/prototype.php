@@ -11,6 +11,9 @@ class prototype
    * @ignore
    */
 
+  // defaults
+  protected static $defs = array();
+
   // public function stack
   private static $public = array();
 
@@ -79,6 +82,41 @@ class prototype
       return call_user_func_array(self::$public[get_called_class()][$method], $args);
     }
     return call_user_func_array(get_called_class() . "::$method", $args);
+  }
+
+
+  /**
+   * Set configuration
+   *
+   * @param  mixed Key|Hash|Closure
+   * @param  mixed Value
+   * @return void
+   */
+  final public static function config($key, $value = '') {
+    if (is_assoc($key)) {
+      static::$defs = array_merge(static::$defs, $key);
+    } elseif (is_closure($key)) {
+      $config = new stdClass;
+      $key($config);
+
+      foreach ((array) $config as $key => $val) {
+        static::config($key, $val);
+      }
+    } elseif (array_key_exists($key, static::$defs)) {
+      static::$defs[$key] = $value;
+    }
+  }
+
+
+  /**
+   * Retrieve configuration
+   *
+   * @param  string Key
+   * @param  mixed  Default value
+   * @return mixed
+   */
+  final public static function option($key, $default = FALSE) {
+    return ! empty(static::$defs[$key]) ? static::$defs[$key] : $default;
   }
 
 }
