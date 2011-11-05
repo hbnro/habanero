@@ -23,6 +23,11 @@ class a_record extends prototype
   // validation errors
   protected $error_list = array();
 
+  // defaults
+  protected static $defs = array(
+                    'path' => APP_PATH,
+                  );
+
   /**#@-*/
 
 
@@ -57,7 +62,7 @@ class a_record extends prototype
       if ($on = static::has_scope($key)) {
         return a_relation::match($this, $on);
       }
-      raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
+      raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     return $this->props[$key];
   }
@@ -65,7 +70,7 @@ class a_record extends prototype
   // properties setter
   public function __set($key, $value) {
     if ( ! array_key_exists($key, $this->props)) {
-      raise(ln('mvc.undefined_property', array('name' => $key, 'class' => get_called_class())));
+      raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     $this->props[$key] = $value;
   }
