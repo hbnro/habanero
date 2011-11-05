@@ -38,7 +38,9 @@ if ( ! $table) {
       $fields['modified_at'] = array('timestamp');
     }
 
-    ! $pk && $fields['id'] = array('primary_key');
+    if ( ! cli::flag('no-index')) {
+      ! $pk && $fields['id'] = array('primary_key');
+    }
 
 
     if ($fail) {
