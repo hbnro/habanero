@@ -51,7 +51,7 @@ class upload extends prototype
                   );
 
   // defaults
-  private static $defs = array(
+  protected static $defs = array(
                     'path' => TMP,
                     'name' => 'file',
                     'type' => '*/*',
@@ -65,22 +65,6 @@ class upload extends prototype
 
   /**#@-*/
 
-
-
-  /**
-   * Set configuration
-   *
-   * @param  mixed Key|Hash
-   * @param  mixed Value
-   * @return void
-   */
-  final public static function setup($key, $value = '') {
-    if (is_assoc($key)) {
-      static::$defs = array_merge(static::$defs, $key);
-    } elseif (array_key_exists($key, static::$defs)) {
-      static::$defs[$key] = $value;
-    }
-  }
 
 
   /**

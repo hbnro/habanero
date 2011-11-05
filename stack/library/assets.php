@@ -20,7 +20,7 @@ class assets extends prototype
                 );
 
   // defaults
-  private static $defs = array(
+  protected static $defs = array(
                     'path' => APP_PATH,
                     'root' => ROOT,
                   );
@@ -30,22 +30,6 @@ class assets extends prototype
 
   /**#@-*/
 
-
-
-  /**
-   * Set configuration
-   *
-   * @param  mixed Key|Hash
-   * @param  mixed Value
-   * @return void
-   */
-  final public static function setup($key, $value = '') {
-    if (is_assoc($key)) {
-      static::$defs = array_merge(static::$defs, $key);
-    } elseif (array_key_exists($key, static::$defs)) {
-      static::$defs[$key] = $value;
-    }
-  }
 
 
   /**

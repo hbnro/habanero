@@ -12,8 +12,8 @@ cache::block("--$type-assets-$env", function ()
   use($base_path, $type, $prod) {
   import('assets');
 
-  assets::setup('path', $base_path);
-  assets::setup('root', CWD.DS.'public');
+  assets::config('path', $base_path);
+  assets::config('root', CWD.DS.'public');
 
   assets::compile('css', function ($file)
     use($base_path, $prod) {

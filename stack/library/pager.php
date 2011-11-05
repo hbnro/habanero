@@ -18,7 +18,7 @@ class pager extends prototype
   private static $current = 0;
 
   // defaults
-  private static $defs = array(
+  protected static $defs = array(
                     'link_text' => '%d',
                     'link_href' => '?p=%d',
                     'link_root' => ROOT,
@@ -28,22 +28,6 @@ class pager extends prototype
 
   /**#@-*/
 
-
-
-  /**
-   * Set configuration
-   *
-   * @param  mixed Key|Hash
-   * @param  mixed Value
-   * @return void
-   */
-  final public static function setup($key, $value = '') {
-    if (is_assoc($key)) {
-      static::$defs = array_merge(static::$defs, $key);
-    } elseif (array_key_exists($key, static::$defs)) {
-      static::$defs[$key] = $value;
-    }
-  }
 
 
   /**

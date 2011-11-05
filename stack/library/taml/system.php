@@ -18,7 +18,7 @@ class taml extends prototype
   private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
 
   // defaults
-  private static $defs = array(
+  protected static $defs = array(
     'default' => 'div',
     'prefix' => '',
     'indent' => 2,
@@ -27,22 +27,6 @@ class taml extends prototype
 
   /**#@-*/
 
-
-
-  /**
-   * Set configuration
-   *
-   * @param  mixed Key|Hash
-   * @param  mixed Value
-   * @return void
-   */
-  final public static function setup($key, $value = '') {
-    if (is_assoc($key)) {
-      static::$defs = array_merge(static::$defs, $key);
-    } elseif (array_key_exists($key, static::$defs)) {
-      static::$defs[$key] = $value;
-    }
-  }
 
 
   /**

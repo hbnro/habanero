@@ -33,7 +33,7 @@ class twitter extends prototype
   private static $api_url = 'http://api.twitter.com/1/';
 
   // defaults
-  private static $defs = array(
+  protected static $defs = array(
                     'consumer_key' => '',
                     'consumer_secret' => '',
                     'token' => '',
@@ -42,22 +42,6 @@ class twitter extends prototype
 
   /**#@-*/
 
-
-
-  /**
-   * Set configuration
-   *
-   * @param  mixed Key|Hash
-   * @param  mixed Value
-   * @return void
-   */
-  final public static function setup($key, $value = '') {
-    if (is_assoc($key)) {
-      static::$defs = array_merge(static::$defs, $key);
-    } elseif (array_key_exists($key, static::$defs)) {
-      static::$defs[$key] = $value;
-    }
-  }
 
 
   /**

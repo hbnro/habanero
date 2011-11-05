@@ -27,7 +27,7 @@ class xss_filter extends prototype
   private static $regex = array();
 
   // defaults
-  private static $defs = array();
+  protected static $defs = array();
 
   /**#@-*/
 
