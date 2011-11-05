@@ -1,7 +1,6 @@
 <?php
 
 import('cache');
-import('partial');
 
 $type = params('type');
 $env  = option('environment');
