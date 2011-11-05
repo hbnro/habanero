@@ -126,6 +126,8 @@ function update_hosts($base_name) {
 function httpd_restart($enable = FALSE) {
   sleep(1);
 
+  $base_name  = basename(CWD);
+
   $apache_bin = '/etc/init.d/apache2';
 
   $site_cmd   = $enable ? 'a2ensite' : 'a2dissite';
