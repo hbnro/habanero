@@ -3,7 +3,10 @@
 require dirname(__DIR__).DS.'app_controller'.EXT;
 i18n::load_path(__DIR__.DS.'locale', 'app');
 
+import('partial');
 import('a_record');
+
+a_record::config('path', CWD.DS.'app'.DS.'models');
 
 
 $request = request::methods();

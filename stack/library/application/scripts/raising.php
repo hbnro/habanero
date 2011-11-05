@@ -1,5 +1,7 @@
 <?php
 
+import('partial');
+
 $error_status = 500;
 
 switch (option('environment')) {

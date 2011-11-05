@@ -1,6 +1,7 @@
 <?php
 
 import('cache');
+import('partial');
 
 $type = params('type');
 $env  = option('environment');
@@ -18,7 +19,7 @@ cache::block("--$type-assets-$env", function ()
   assets::compile('css', function ($file)
     use($base_path, $prod) {
     import('tsss');
-    tsss::setup('path', $base_path.DS.'css');
+    tsss::config('path', $base_path.DS.'css');
     return tsss::render($file, option('environment') === 'production');
   });
 

@@ -6,7 +6,6 @@
 
 call_user_func(function () {
   import('server');
-  import('partial');
 
   define('CWD', dirname(APP_PATH));
 
