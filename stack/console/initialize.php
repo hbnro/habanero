@@ -47,7 +47,7 @@ run(function () {
       cli::write(cli::format("$help\n"));
     });
 
-    if (empty($action) OR ! $mod_class::defined($action)) {
+    if (empty($action)) {
       $mod_class::help();
     } else {
       $test   =
@@ -56,8 +56,7 @@ run(function () {
       foreach ($args as $key => $val) {
         is_numeric($key) ? $test []= $val : $params[$key] = $val;
       }
-
-      call_user_func_array("$mod_class::$action", $test);
+      $mod_class::apply($action, $test);
     }
   } else {
     help();
