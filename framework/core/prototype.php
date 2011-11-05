@@ -99,9 +99,7 @@ class prototype
       $config = new stdClass;
       $key($config);
 
-      foreach ((array) $config as $key => $val) {
-        static::config($key, $val);
-      }
+      static::$defs = array_merge(static::$defs, (array) $config);
     } elseif (array_key_exists($key, static::$defs)) {
       static::$defs[$key] = $value;
     }
