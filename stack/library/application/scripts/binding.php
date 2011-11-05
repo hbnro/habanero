@@ -4,8 +4,6 @@ require dirname(__DIR__).DS.'app_controller'.EXT;
 i18n::load_path(__DIR__.DS.'locale', 'app');
 
 import('a_record');
-import('partial');
-import('taml');
 
 
 $request = request::methods();
@@ -62,6 +60,8 @@ request::implement('dispatch', function (array $params = array())
       @list($status, $view, $headers) = $test;
       $class_name::$response = compact('status', 'headers');
     } else {
+      import('taml');
+
       $view = partial::load(CWD.DS.'app'.DS.'views'.DS.$controller.DS.$action, (array) $class_name::$view);
 
       if ( ! is_false($class_name::$layout)) {

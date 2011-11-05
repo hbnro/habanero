@@ -38,7 +38,7 @@ class partial extends prototype
    */
   final public static function render($file, array $vars = array()) {
     if ( ! is_file($file)) {
-      raise(ln('partial.view_missing', array('path' => dirname($file), 'action' => $action)));
+      return ln('partial.view_missing', array('path' => dirname($file), 'action' => $action));
     }
 
     $type = ext(basename($file, EXT));
@@ -67,7 +67,7 @@ class partial extends prototype
     $tpl_file = findfile($path, "$action.*", FALSE, 1);
 
     if ( ! is_file($tpl_file)) {
-      raise(ln('file_not_exists', array('name' => $from)));
+      return ln('partial.view_missing', array('path' => $path, 'action' => $action));
     }
     return static::render($tpl_file, $vars);
   }
