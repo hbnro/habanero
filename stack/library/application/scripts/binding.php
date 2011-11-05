@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__DIR__).DS.'controller'.EXT;
+require dirname(__DIR__).DS.'app_controller'.EXT;
 i18n::load_path(__DIR__.DS.'locale', 'app');
 
 import('a_record');
@@ -23,7 +23,7 @@ request::implement('dispatch', function (array $params = array())
     $controller_file = CWD.DS.'app'.DS.'controllers'.DS.$controller.EXT;
 
     if ( ! is_file($controller_file)) {
-      raise(ln('mvc.controller_missing', array('name' => $controller_file)));
+      raise(ln('app.controller_missing', array('name' => $controller_file)));
     }
 
 
@@ -40,9 +40,9 @@ request::implement('dispatch', function (array $params = array())
 
 
     if ( ! class_exists($class_name)) {
-      raise(ln('mvc.class_missing', array('controller' => $class_name)));
+      raise(ln('class_not_exists', array('name' => $class_name)));
     } elseif ( ! $class_name::defined($action)) {
-      raise(ln('mvc.action_missing', array('controller' => $class_name, 'action' => $action)));
+      raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
     }
 
 
