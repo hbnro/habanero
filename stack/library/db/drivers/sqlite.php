@@ -18,13 +18,13 @@ define('DB_DRIVER', 'SQLite3');
 
 sql::implement('connect', function () {
   static $object = NULL;
-  
-  
+
+
   if (is_null($object)) {
     $parts   = func_get_arg(0);
     $db_file = $parts['host'] . $parts['path'];
-    
-    if ( ! is_file($db_file)) {
+
+    if ( ! is_file($db_file) && ($db_file <> ':memory:')) {
       raise(ln('file_not_exists', array('name' => $db_file)));
     }
 
@@ -33,36 +33,36 @@ sql::implement('connect', function () {
     $object->createfunction ('concat', function () {
       return implode(func_get_args(), '');
     });
-    
+
     $object->createfunction ('md5rev', function ($str) {
       return strrev(md5($str));
     }, 1);
-    
+
     $object->createfunction ('mod', function ($a, $b) {
       return $a % $b;
     }, 2);
-    
+
     $object->createfunction ('md5', function ($str) {
       return md5($str);
     }, 1);
-    
+
     $object->createfunction ('now', function () {
       return time();
     }, 0);
   }
-  
+
   return $object;
 });
 
 sql::implement('version', function () {
   $test = sql::connect()->version();
-  
+
   return $test['versionString'];
 });
 
 sql::implement('execute', function ($sql) {//FIX
   sql::connect()->lastQuery = $sql;
-  
+
   return sql::connect()->query($sql);
 });
 
