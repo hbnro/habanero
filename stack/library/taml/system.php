@@ -22,7 +22,6 @@ class taml extends prototype
     'default' => 'div',
     'prefix' => '',
     'indent' => 2,
-    'path' => TMP,
   );
 
   /**#@-*/
@@ -42,7 +41,7 @@ class taml extends prototype
     }
 
 
-    $php_file = static::$defs['path'].DS.md5($file).EXT;
+    $php_file = TMP.DS.md5($file);
 
     if (is_file($php_file)) {
       if (filemtime($file) > filemtime($php_file)) {
