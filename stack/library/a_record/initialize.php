@@ -4,6 +4,8 @@
  * Model initialization
  */
 
+i18n::load_path(__DIR__.DS.'locale', 'ar');
+
 /**#@+
  * @ignore
  */
