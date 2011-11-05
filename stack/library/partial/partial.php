@@ -46,15 +46,24 @@ class partial extends prototype
       return ln('partial.view_missing', array('path' => dirname($file), 'action' => $action));
     }
 
-    $type = ext(basename($file, EXT));
 
-    if ($type && array_key_exists($type, static::$render)) {
-      return call_user_func(static::$render[$type], $file, $vars);
+    $parts = explode('.', basename($file));
+    $name  = array_shift($parts);
+
+    while ($parts) {
+      $type = array_pop($parts);
+
+      if ($type && array_key_exists($type, static::$render)) {
+        $output = call_user_func(static::$render[$type], $file, $vars);
+        $file   = TMP.DS.md5($file);
+
+        write($file, $output);
+
+        continue;
+      }
+      break;
     }
-
-    return render($file, TRUE, array(
-      'locals' => $vars,
-    ));
+    return $output;
   }
 
 
