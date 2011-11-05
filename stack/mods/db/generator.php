@@ -1,6 +1,6 @@
 <?php
 
-import('tetl/db');
+import('db');
 
 i18n::load_path(__DIR__.DS.'locale', 'db');
 
