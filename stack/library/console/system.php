@@ -398,7 +398,7 @@ class cli extends prototype
    * @param  string Default
    * @return mixed
    */
-  final public static function option($text, $value = 'yn', $default = 'n') {
+  final public static function choice($text, $value = 'yn', $default = 'n') {
     $value = strtolower(str_replace($default, '', $value)) . strtoupper($default);
     $value = str_replace('\\', '/', trim(addcslashes($value, $value), '\\'));
 
