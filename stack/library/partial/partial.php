@@ -14,6 +14,11 @@ class partial extends prototype
   // render adapters
   private static $render = array();
 
+  // defualts
+  protected static $defs = array(
+                      'path' => APP_PATH,
+                    );
+
   /**#@-*/
 
 

@@ -65,17 +65,19 @@ request::implement('dispatch', function (array $params = array())
     } else {
       import('taml');
 
-      $view = partial::load(CWD.DS.'app'.DS.'views'.DS.$controller.DS.$action, (array) $class_name::$view);
+      partial::config('path', CWD.DS.'app'.DS.'views');
+
+      $view = partial("$controller/$action.html", (array) $class_name::$view);
 
       if ( ! is_false($class_name::$layout)) {
         $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
         $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css')));
 
-        $layout_file = CWD.DS.'app'.DS.'views'.DS.'layouts'.DS.$class_name::$layout;
+        $layout_file = "layouts/{$class_name::$layout}";
 
         assets::inline(tag('script', array('src' => url_for('/all.js'))), 'body');
 
-        $view = partial::load($layout_file, array(
+        $view = partial($layout_file, array(
           'head' => join("\n", $class_name::$head),
           'title' => $class_name::$title,
           'body' => $view,
