@@ -38,7 +38,7 @@ class partial extends prototype
    */
   final public static function render($file, array $vars = array()) {
     if ( ! is_file($file)) {
-      raise(ln('mvc.view_missing', array('path' => $path, 'action' => $action)));
+      raise(ln('partial.view_missing', array('path' => dirname($file), 'action' => $action)));
     }
 
     $type = ext(basename($file, EXT));
