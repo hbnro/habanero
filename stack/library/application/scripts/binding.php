@@ -6,6 +6,7 @@ i18n::load_path(__DIR__.DS.'locale', 'app');
 import('partial');
 import('a_record');
 
+partial::config('path', CWD.DS.'app'.DS.'views');
 a_record::config('path', CWD.DS.'app'.DS.'models');
 
 
@@ -64,8 +65,6 @@ request::implement('dispatch', function (array $params = array())
       $class_name::$response = compact('status', 'headers');
     } else {
       import('taml');
-
-      partial::config('path', CWD.DS.'app'.DS.'views');
 
       $view = partial("$controller/$action.html", (array) $class_name::$view);
 
