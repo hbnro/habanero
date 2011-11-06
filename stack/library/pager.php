@@ -212,4 +212,4 @@ if (class_exists('db')) {
   });
 }
 
-/* EOF: ./library/tetl/pager.php */
+/* EOF: ./stack/library/pager.php */

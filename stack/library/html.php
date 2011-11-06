@@ -505,4 +505,4 @@ class html extends prototype
 
 }
 
-/* EOF: ./library/tetl/html.php */
+/* EOF: ./stack/library/html.php */

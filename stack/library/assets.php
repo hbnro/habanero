@@ -225,4 +225,4 @@ class assets extends prototype
 
 }
 
-/* EOF: ./library/tetl/assets.php */
+/* EOF: ./stack/library/assets.php */
