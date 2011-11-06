@@ -78,7 +78,7 @@ class partial extends prototype
   final public static function load($from, array $vars = array()) {
     @list($action, $path) = array(basename($from), dirname($from));
 
-    $tpl_file = findfile($path, "$action.*", FALSE, 1);
+    $tpl_file = findfile($path, $action, FALSE, 1);
 
     if ( ! is_file($tpl_file)) {
       return ln('partial.view_missing', array('path' => $path, 'action' => $action));
