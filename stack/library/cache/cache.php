@@ -194,4 +194,4 @@ class cache extends prototype
 
 }
 
-/* EOF: ./library/tetl/cache/system.php */
+/* EOF: ./stack/library/cache/cache.php */

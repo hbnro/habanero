@@ -17,7 +17,7 @@ define('CACHE_DRIVER', 'eAccelerator');
 
 cache::implement('free_all', function () {
   eaccelerator_gc();
-  
+
   foreach (eaccelerator_list_keys() as $one) {
     cache::delete_item(substr($one['name'], 1));
   }
@@ -39,4 +39,4 @@ cache::implement('check_item', function ($key) {
   return in_array($key, eaccelerator_list_keys());
 });
 
-/* EOF: ./library/tetl/cache/drivers/eaccelerator.php */
+/* EOF: ./stack/library/cache/drivers/eaccelerator.php */

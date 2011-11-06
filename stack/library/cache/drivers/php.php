@@ -3,7 +3,7 @@
 /**
  * PHP based cache adapter
  */
- 
+
 /**#@+
  * @ignore
  */
@@ -20,7 +20,7 @@ cache::implement('free_all', function () {
 cache::implement('fetch_item', function ($key) {
   if (is_file($cache_file = TMP.DS.'--cache-php'.md5($key))) {
     $test = include $cache_file;
-    
+
     if ( ! is_array($test)) {
       return @unlink($path);
     } elseif (time() < $test[0]) {
@@ -33,10 +33,10 @@ cache::implement('fetch_item', function ($key) {
 
 cache::implement('store_item', function ($key, $set = array(), $ttl = 0) {
   $cache_file = TMP.DS.'--cache-php'.md5($key);
-  
+
   $vars = var_export($set, TRUE);
   $code = sprintf('<' . '?php return array(%s, %s);', time() + $ttl, $vars);
-  
+
   return write($cache_file, $code);
 });
 
@@ -50,4 +50,4 @@ cache::implement('check_item', function ($key) {
   return ! is_false(cache::fetch_item($key));
 });
 
-/* EOF: ./library/tetl/cache/drivers/php.php */
+/* EOF: ./stack/library/cache/drivers/php.php */

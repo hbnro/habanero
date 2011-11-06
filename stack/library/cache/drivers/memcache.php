@@ -17,20 +17,20 @@ define('CACHE_DRIVER', 'Memcached');
 
 cache::implement('connect', function () {// TODO: overwrite if needed?
   static $resource = NULL;
-  
-  
+
+
   if (is_null($resource)) {
     $resource = memcache_connect('localhost', '11211');
   }
-  
+
   return $resource;
 });
 
 cache::implement('free_all', function () {
   memcache_flush(cache::connect());
-  
+
   $end = time() + 1;
-  
+
   while(time() < $end);
 });
 
@@ -54,7 +54,7 @@ cache::implement('check_item', function ($key) {// http://www.php.net/manual/en/
   foreach ($slabs as $server) {
     foreach (array_keys($server) as $id) {
       $test = memcache_get_extended_stats('cachedump', (int) $id);
-      
+
       foreach ($test as $keys) {
         foreach (array_keys($keys) as $one) {
           if ($one === $key) {
@@ -67,4 +67,4 @@ cache::implement('check_item', function ($key) {// http://www.php.net/manual/en/
   return FALSE;
 });
 
-/* EOF: ./library/tetl/cache/drivers/memcache.php */
+/* EOF: ./stack/library/cache/drivers/memcache.php */

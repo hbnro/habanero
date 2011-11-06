@@ -35,4 +35,4 @@ cache::implement('check_item', function ($key) {
   return xcache_isset($key);
 });
 
-/* EOF: ./library/tetl/cache/drivers/xcache.php */
+/* EOF: ./stack/library/cache/drivers/xcache.php */
