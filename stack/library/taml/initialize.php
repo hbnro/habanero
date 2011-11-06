@@ -8,7 +8,7 @@
  * @ignore
  */
 
-require __DIR__.DS.'system'.EXT;
+require __DIR__.DS.'taml_class'.EXT;
 
 i18n::load_path(__DIR__.DS.'locale', 'taml');
 
@@ -20,4 +20,4 @@ if (class_exists('partial')) {
   });
 }
 
-/* EOF: ./library/tetl/taml/initialize.php */
+/* EOF: ./stack/library/taml/initialize.php */

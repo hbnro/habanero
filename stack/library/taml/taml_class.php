@@ -137,7 +137,7 @@ class taml extends prototype
 
     $out = ents(static::compile($out));
     $out = preg_replace(array_keys($fix), $fix, $out);
-    $out = preg_replace_callback('/%\{([^{}]+?)\}/', 'taml::value', $out);
+    $out = preg_replace_callback('/%\{([^{}]+?)\}/', 'static::value', $out);
 
     return $out;
   }
@@ -147,7 +147,7 @@ class taml extends prototype
    * Register custom tags
    *
    * @param  string Shortcut
-   * @param  mixed  Remplacement
+   * @param  mixed  Replacement
    * @return void
    */
   final public static function expand($tag, $with, array $args = array()) {
@@ -452,4 +452,4 @@ class taml extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/tetl/taml/system.php */
+/* EOF: ./stack/library/taml/taml_class.php */

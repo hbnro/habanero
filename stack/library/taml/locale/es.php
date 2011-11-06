@@ -9,4 +9,4 @@ $lang['error_file'] = 'Error en el archivo %{name}#%{line} "%{text}"';
 $lang['error_line'] = 'Error en la linea %{line}, "%{text}"';
 $lang['bad_space'] = 'El espaciado es incorrecto';
 
-/* EOF: ./library/tetl/taml/locale/es.php */
+/* EOF: ./stack/library/taml/locale/es.php */
