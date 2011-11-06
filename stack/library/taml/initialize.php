@@ -8,7 +8,7 @@
  * @ignore
  */
 
-require __DIR__.DS.'taml_class'.EXT;
+require __DIR__.DS.'taml'.EXT;
 
 i18n::load_path(__DIR__.DS.'locale', 'taml');
 
