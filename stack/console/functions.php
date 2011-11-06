@@ -133,22 +133,15 @@ function generators() {
 
 
   if (is_null($set)) {
-    $set = array();
-
     foreach (option('import_path') as $test) {
       foreach (findfile($test, 'generator'.EXT, TRUE) as $gen_file) {
-        $base_name = explode('_', basename($gen_file));
-        $base_name = array_shift($base_name);
-
-        i18n::load_path(dirname($gen_file).DS.'locale', $base_name);
-
-        $set[$base_name] = array(
-          'help' => cli::format(ln("$base_name.generator_usage")),
-          'title' => ln("$base_name.generator_intro"),
-          'script' => $gen_file,
-        );
+        /**
+         * @ignore
+         */
+        require $gen_file;
       }
     }
+    $set = app_generator::all();
   }
 
   return $set;

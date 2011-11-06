@@ -1,6 +1,7 @@
 <?php
 
 require dirname(dirname(__DIR__)).'/framework/initialize.php';
+require __DIR__.DS.'app_generator'.EXT;
 require __DIR__.DS.'functions'.EXT;
 
 run(function () {
