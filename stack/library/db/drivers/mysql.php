@@ -18,8 +18,8 @@ define('DB_DRIVER', 'MySQL');
 
 sql::implement('connect', function () {
   static $resource = NULL;
-  
-  
+
+
   if (is_null($resource)) {
     $parts = func_get_arg(0);
 
@@ -29,7 +29,7 @@ sql::implement('connect', function () {
     $resource = mysql_connect($host, $parts['user'], ! empty($parts['pass']) ? $parts['pass'] : '');
     mysql_select_db(trim($parts['path'], '/'), $resource);
   }
-  
+
   return $resource;
 });
 
@@ -73,4 +73,4 @@ sql::implement('last_id', function () {
   return mysql_insert_id(sql::connect());
 });
 
-/* EOF: ./library/tetl/db/drivers/mysql.php */
+/* EOF: ./stack/library/db/drivers/mysql.php */

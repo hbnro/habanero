@@ -18,38 +18,38 @@ define('DB_DRIVER', 'PDO');
 
 sql::implement('connect', function () {
   static $object = NULL;
-  
-  
+
+
   if (is_null($object)) {
     extract(func_get_arg(0));
-    
+
     switch ($scheme) {
       case 'sqlite';
         $dsn_string = 'sqlite:' . str_replace('\\', '/', $host . $path);
       break;
       default;
         $dsn_string = "$scheme:host=$host;";
-        
+
         if ($port > 0) {
           $dsn_string .= "port=$port;";
         }
-        
+
         $database    = trim($path, '/');
         $dsn_string .= "dbname=$database;";
       break;
     }
-    
+
     parse_str($query, $query);
-    
+
     $object = new PDO($dsn_string, $user, $pass, $query);
   }
-  
+
   return $object;
 });
 
 sql::implement('version', function () {
   $test = sql::connect()->getAttribute(PDO::ATTR_SERVER_VERSION);
-  
+
   return $test['versionString'];
 });
 
@@ -66,7 +66,7 @@ sql::implement('escape', function ($test) {
 
 sql::implement('error', function () {
   $test = sql::connect()->errorInfo();
-  
+
   return $test[0] == '00000' ? FALSE : $test[2];
 });
 
@@ -86,14 +86,14 @@ sql::implement('count_rows', function ($res) {
   if ( ! $res) {
     return FALSE;
   }
-  
+
   $out = $res->rowCount();
-  
+
   if (preg_match('/^\s*SELECT.+?FROM(.+?)$/is', $res->queryString, $match)) {// http://www.php.net/manual/es/pdostatement.rowcount.php
     $tmp = sql::execute("SELECT COUNT(*) FROM $match[1]");
     $out = sql::result($tmp);
   }
-  
+
   return (int) $out;
 });
 
@@ -111,4 +111,4 @@ sql::implement('last_id', function () {
   return sql::connect()->lastInsertId();
 });
 
-/* EOF: ./library/tetl/db/drivers/pdo.php */
+/* EOF: ./stack/library/db/drivers/pdo.php */

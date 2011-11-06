@@ -52,3 +52,5 @@ if (cli::flag('schema')) {
 }
 
 bold(ln('tetl.done'));
+
+/* EOF: ./stack/library/db/scripts/make.php */

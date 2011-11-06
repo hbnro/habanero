@@ -119,4 +119,4 @@ $lang['generator_usage'] = <<<HELP
 
 HELP;
 
-/* EOF: ./library/tetl/db/locale/en.php */
+/* EOF: ./stack/library/db/locale/en.php */

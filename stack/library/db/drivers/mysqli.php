@@ -18,11 +18,11 @@ define('DB_DRIVER', 'MySQLi');
 
 sql::implement('connect', function () {
   static $resource = NULL;
-  
-  
+
+
   if (is_null($resource)) {
     $parts = func_get_arg(0);
-    
+
     $host  = $parts['host'];
     $host .= ! empty($parts['port']) ? ":$parts[port]" : '';
 
@@ -35,7 +35,7 @@ sql::implement('connect', function () {
 sql::implement('version', function () {
   $res  = mysqli_query(sql::connect(), 'SELECT version()');
   $test = sql::fetch_assoc($res);
-  
+
   return array_shift($test);
 });
 
@@ -75,4 +75,4 @@ sql::implement('last_id', function () {
   return mysqli_insert_id(sql::connect());
 });
 
-/* EOF: ./library/tetl/db/drivers/mysqli.php */
+/* EOF: ./stack/library/db/drivers/mysqli.php */

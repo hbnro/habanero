@@ -37,3 +37,5 @@ if (static::check_table($table)) {
 }
 
 bold(ln('tetl.done'));
+
+/* EOF: ./stack/library/db/scripts/show_table.php */

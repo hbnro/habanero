@@ -38,3 +38,5 @@ if ( ! is_file($migration_file)) {
 }
 
 @eval($code);
+
+/* EOF: ./stack/library/db/scripts/build_migration.php */

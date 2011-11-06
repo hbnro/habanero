@@ -170,4 +170,4 @@ sql::implement('quotes', function ($test) {
   return '"' . $test . '"';
 });
 
-/* EOF: ./library/tetl/db/schemes/sqlite.php */
+/* EOF: ./stack/library/db/schemes/sqlite.php */

@@ -163,4 +163,4 @@ sql::implement('quotes', function ($test) {
   return "`$test`";
 });
 
-/* EOF: ./library/tetl/db/schemes/mysql.php */
+/* EOF: ./stack/library/db/schemes/mysql.php */

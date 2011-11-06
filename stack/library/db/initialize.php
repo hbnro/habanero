@@ -82,9 +82,10 @@ call_user_func(function () {
     * @ignore
     */
 
-  require __DIR__.DS.'system'.EXT;
-  require __DIR__.DS.'builder'.EXT;
-  require __DIR__.DS.'schemata'.EXT;
+  require __DIR__.DS.'sql'.EXT;
+  require __DIR__.DS.'db'.EXT;
+
+  require __DIR__.DS.'schema'.EXT;
   require __DIR__.DS.'migration'.EXT;
 
   require $driver_file;
@@ -102,4 +103,4 @@ call_user_func(function () {
   }
 });
 
-/* EOF: ./library/tetl/db/initialize.php */
+/* EOF: ./stack/library/db/initialize.php */

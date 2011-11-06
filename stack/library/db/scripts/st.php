@@ -24,3 +24,5 @@ if (empty($test)) {
 }
 
 bold(ln('tetl.done'));
+
+/* EOF: ./stack/library/db/scripts/st.php */

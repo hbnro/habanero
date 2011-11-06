@@ -66,3 +66,5 @@ if ( ! $table) {
 }
 
 bold(ln('tetl.done'));
+
+/* EOF: ./stack/library/db/scripts/create_table.php */

@@ -266,4 +266,4 @@ db::implement('build', function ($table, array $columns = array()) {
   return $sql;
 });
 
-/* EOF: ./library/tetl/db/schemata.php */
+/* EOF: ./stack/library/db/schema.php */

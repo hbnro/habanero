@@ -151,4 +151,4 @@ sql::implement('quotes', function ($test) {
   return '"' . $test . '"';
 });
 
-/* EOF: ./library/tetl/db/schemes/pgsql.php */
+/* EOF: ./stack/library/db/schemes/pgsql.php */

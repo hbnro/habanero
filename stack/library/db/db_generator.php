@@ -269,4 +269,4 @@ class db_generator extends prototype
 
 }
 
-/* EOF: ./stack/console/mods/db/generator.php */
+/* EOF: ./stack/library/db/db_generator.php */

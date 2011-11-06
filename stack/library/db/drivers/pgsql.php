@@ -18,8 +18,8 @@ define('DB_DRIVER', 'PostgreSQL');
 
 sql::implement('connect', function () {
   static $resource = NULL;
- 
-  
+
+
   if (is_null($resource)) {
     $parts = func_get_arg(0);
 
@@ -30,7 +30,7 @@ sql::implement('connect', function () {
 
     $resource = pg_connect($conn);
   }
-  
+
   return $resource;
 });
 
@@ -86,8 +86,8 @@ sql::implement('last_id', function ($res, $table, $column) {
   }
 
   $tmp = pg_fetch_row(pg_query(sql::connect(), $sql), 0);
-  
+
   return $tmp[0];
 });
 
-/* EOF: ./library/tetl/db/drivers/pgsql.php */
+/* EOF: ./stack/library/db/drivers/pgsql.php */
