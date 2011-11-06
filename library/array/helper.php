@@ -291,4 +291,4 @@ function swap($set) {
   return $out;
 }
 
-/* EOF: ./library/tetl/array.php */
+/* EOF: ./library/array/helper.php */

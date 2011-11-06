@@ -174,4 +174,4 @@ class xss_filter extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/tetl/xss/system.php */
+/* EOF: ./library/text/xss_filter/xss_filter.php */

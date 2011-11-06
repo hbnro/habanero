@@ -4,6 +4,7 @@
  * UserAgent detection library
  */
 
+// TODO: wrap in a class to allow ua::is_robot(), etc.
 function client($ua = '') {
   static $set = NULL;
 
@@ -83,4 +84,4 @@ function client($ua = '') {
   return $out;
 }
 
-/* EOF: ./library/tetl/agent/functions.php */
+/* EOF: ./library/client/ua/functions.php */

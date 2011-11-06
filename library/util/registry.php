@@ -106,4 +106,4 @@ class registry extends prototype
 
 }
 
-/* EOF: ./library/tetl/registry.php */
+/* EOF: ./library/util/registry.php */

@@ -3,7 +3,7 @@
 /**
  * Allow/remove tags and attributes
  */
- 
+
 return array(
   'allow' => array(// formatting only
     'attributes' => array(
@@ -125,4 +125,4 @@ return array(
   ),
 );
 
-/* EOF: ./library/tetl/xss/assets/scripts/clean_vars.php */
+/* EOF: ./library/text/xss_filter/assets/scripts/clean_vars.php */

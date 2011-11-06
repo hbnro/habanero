@@ -385,4 +385,4 @@ function find($text, $query = '', $chunk = '..', $length = 30) {
   return FALSE;
 }
 
-/* EOF: ./library/tetl/text.php */
+/* EOF: ./library/text/helper.php */

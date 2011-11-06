@@ -402,7 +402,7 @@ return array(
       'Indian/Mayotte' => 'Mayotte',
       'Indian/Reunion' => 'Reunion',
     ),
-    'Pacific' => 
+    'Pacific' =>
     array (
       'Pacific/Apia' => 'Apia',
       'Pacific/Auckland' => 'Auckland',
@@ -446,4 +446,4 @@ return array(
   ),
 );
 
-/* EOF: ./library/tetl/date/assets/scripts/datetime_vars.php */
+/* EOF: ./library/text/date_time/assets/scripts/datetime_vars.php */

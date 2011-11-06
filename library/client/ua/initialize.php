@@ -4,10 +4,12 @@
  * UserAgent initialization
  */
 
-/**
- * @ignore
- */
+call_user_func(function () {
+  /**
+   * @ignore
+   */
 
-require __DIR__.DS.'functions'.EXT;
+  require __DIR__.DS.'functions'.EXT;
+});
 
-/* EOF: ./library/tetl/agent/initialize.php */
+/* EOF: ./library/client/ua/initialize.php */

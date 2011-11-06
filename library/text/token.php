@@ -41,7 +41,7 @@ function gettok($text, $index = 0, $ord = 32, $join = TRUE) {
 
   $index = $index > 0 ? $index - 1:  $index;
   $index = $index < 0 ? sizeof($test) + $index : $index;
-  
+
   return isset($test[$index]) ? $test[$index] : FALSE;
 }
 
@@ -57,9 +57,9 @@ function gettok($text, $index = 0, $ord = 32, $join = TRUE) {
  */
 function addtok($text, $value = '', $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
-  
+
   array_splice($out, sizeof($out), 0, $value);
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -102,13 +102,13 @@ function istok($text, $value, $ord = 32) {
 function remtok($text, $find, $ord = 32, $join = TRUE) {
   $out  = array();
   $find = (array) $find;
-  
+
   foreach (gettok($text, 0, $ord, FALSE) as $one) {
     if ( ! in_array($one, $find)) {
       $out []= $one;
     }
   }
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -124,19 +124,19 @@ function remtok($text, $find, $ord = 32, $join = TRUE) {
  */
 function deltok($text, $index = 0, $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
-  
+
   if (preg_match('/(\d*)-(\d*)/', $index, $match)) {
     if (empty($match[1]) && ! empty($match[2])) {
       $out = array_splice($out, - $match[2]);
     } elseif ( ! empty($match[2])) {
       $out = array_splice($out, $match[1] - 1, $match[2] - ($match[1] - 1));
     }
-    
+
     $out = array_splice($out, $match[1] - 1);
   } elseif (($index > 0) && ($index <= sizeof($out))) {
     unset($out[$index - 1]);
   }
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -153,11 +153,11 @@ function deltok($text, $index = 0, $ord = 32, $join = TRUE) {
  */
 function instok($text, $value = '', $index = 0, $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
-  
+
   if ($index <> 0) {
     array_splice($out, $index, 0, $value);
   }
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -175,15 +175,15 @@ function repltok($text, $repl, $ord = 32, $join = TRUE) {
   if ( ! is_array($repl)) {
     return FALSE;
   }
-  
+
   $out = gettok($text, 0, $ord, FALSE);
-  
+
   foreach ($out as $key => $val) {
     if (isset($repl[$key])) {
       $out[$key] = $repl[$key];
     }
   }
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -200,19 +200,19 @@ function repltok($text, $repl, $ord = 32, $join = TRUE) {
  */
 function settok($text, $value, $index = 0, $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
-  
+
   if (preg_match('/(\d*)-(\d*)/', $index, $match)) {
     if (empty($match[1]) && ! empty($match[2])) {
       $out = array_splice($out, - $match[2], $match[2], $value);
     } elseif ( ! empty($match[2])) {
       $out = array_splice($out, $match[1] - 1, $match[2] - ($match[1] - 1), $value);
     }
-    
+
     $out = array_splice($out, $match[1] - 1, sizeof($out), $value);
   } elseif ($index > 0) {
     $out = array_splice($out, $index - 1, 1, $value);
   }
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -228,7 +228,7 @@ function settok($text, $value, $index = 0, $ord = 32, $join = TRUE) {
  */
 function matchtok($text, $regex, $index = 0, $ord = 32) {
   $regex = sprintf('/%s/', str_replace('/', '\\/', $regex));
-  
+
   foreach (gettok($text, 0, $ord, FALSE) as $key => $val) {
     if (@preg_match($regex, $val)) {
       return $key += 1;
@@ -268,7 +268,7 @@ function wildtok($text, $filter, $index = 0, $ord = 32) {
 function padtok($text, $length, $value = '', $ord = 32, $join = TRUE) {
   $out = gettok($text, 0, $ord, FALSE);
   $out = array_pad($out, $length, $value);
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
@@ -309,8 +309,8 @@ function sorttok($text, $ord = 32, $mode = '', $join = TRUE) {
   }
 
   ! $mode && sort($out);
-  
+
   return is_true($join) ? join(char($ord), $out) : $out;
 }
 
-/* EOF: ./library/tetl/token.php */
+/* EOF: ./library/text/token.php */

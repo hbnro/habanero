@@ -4,10 +4,12 @@
  * XSS initialization
  */
 
-/**
- * @ignore
- */
+call_user_func(function () {
+  /**
+   * @ignore
+   */
 
-require __DIR__.DS.'system'.EXT;
+  require __DIR__.DS.'xss_filter'.EXT;
+});
 
-/* EOF: ./library/tetl/xss/initialize.php */
+/* EOF: ./library/text/xss_filter/initialize.php */
