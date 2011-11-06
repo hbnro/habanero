@@ -5,6 +5,8 @@
  */
 
 $lang['generator_intro'] = '¡Welcome to the \bwhite(atl)\b console utility!';
+$lang['missing_arguments'] = 'Missing arguments';
+$lang['undefined_cmd'] = 'Undefined %{name} command';
 $lang['search_php_ini'] = 'Looking for php configuration';
 $lang['missing_php_ini'] = 'Not found a suitable php.ini file on your system!';
 $lang['update_include_path'] = 'Updating include_path';

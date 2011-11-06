@@ -21,8 +21,7 @@ if (empty($test)) {
 
     cli::writeln($text);
   }
+  done();
 }
 
-done();
-
-/* EOF: ./stack/library/db/scripts/st.php */
+/* EOF: ./stack/library/db/scripts/db_status.php */

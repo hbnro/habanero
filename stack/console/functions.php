@@ -16,11 +16,9 @@ function done($text = 'done') {
 function help() {
   cli::clear();
 
-  $str = sprintf("\n  %s\n", ln('generator_intro'));
+  $str  = sprintf("  %s\n", ln('generator_intro'));
+  $str .= rtrim(app_generator::help());
 
-  foreach (generators() as $key => $one) {
-    $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($key)\b", $one['title']);
-  }
   cli::write(cli::format("$str\n\n"));
 }
 
@@ -123,28 +121,6 @@ function status($type, $text = '') {
       cli::write(cli::format("$prefix$text\n"));
     break;
   }
-}
-
-function tasks() {
-}
-
-function generators() {
-  static $set = NULL;
-
-
-  if (is_null($set)) {
-    foreach (option('import_path') as $test) {
-      foreach (findfile($test, 'generator'.EXT, TRUE) as $gen_file) {
-        /**
-         * @ignore
-         */
-        require $gen_file;
-      }
-    }
-    $set = app_generator::all();
-  }
-
-  return $set;
 }
 
 /* EOF: ./stack/console/functions.php */

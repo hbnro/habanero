@@ -17,7 +17,7 @@ if ( ! $table) {
     foreach ($args as $one) {
       @list($name, $type, $length) = explode(':', $one);
 
-      if ( ! in_array($type, static::$types)) {
+      if ( ! check_column($type)) {
         error(ln('db.unknown_field', array('type' => $type, 'name' => $name)));
 
         $fail = TRUE;

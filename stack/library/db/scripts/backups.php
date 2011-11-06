@@ -15,8 +15,8 @@ if (cli::flag('import')) {
       error(ln('db.import_file_missing', array('path' => $path)));
     } else {
       success(ln('db.importing', array('path' => $path)));
-
       db::import($inc_file, cli::flag('raw'));
+      done();
     }
   }
 } else {
@@ -41,10 +41,9 @@ if (cli::flag('import')) {
       touch($out_file);
       success(ln('db.exporting', array('path' => $path)));
       db::export($out_file, '*', $data, $raw);
+      done();
     }
   }
 }
 
-done();
-
-/* EOF: ./stack/library/db/scripts/backup.php */
+/* EOF: ./stack/library/db/scripts/backups.php */

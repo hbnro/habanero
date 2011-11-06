@@ -79,43 +79,43 @@ $lang['generator_intro'] = 'Generador de la base de datos';
 $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Estado de la base de datos)\c
-    \bgreen(db.st)\b
+    \bgreen(db:status)\b
 
   \clight_gray(Estructura de la tabla especificada)\c
-    \bgreen(db.show)\b \bcyan(table)\b
+    \bgreen(db:show_table)\b \bcyan(table)\b
 
   \clight_gray(Borra la tabla especificada)\c
-    \bgreen(db.drop)\b \bcyan(table)\b
+    \bgreen(db:drop_table)\b \bcyan(table)\b
 
   \clight_gray(Renombra la tabla especificada)\c
-    \bgreen(db.rename)\b \bcyan(table)\b \bwhite(new)\b
+    \bgreen(db:rename_table)\b \bcyan(table)\b \bwhite(new)\b
 
   \clight_gray(Crea una tabla en la base de datos)\c
-    \bgreen(db.create)\b \bcyan(table)\b \byellow(field:type[:length])\b [...] [--model]
+    \bgreen(db:create_table)\b \bcyan(table)\b \byellow(field:type[:length])\b [...] [--model]
 
   \clight_gray(Agrega una columna a la table especificada)\c
-    \bgreen(db.add_column)\b \bcyan(table)\b \byellow(field:type[:length])\b [...]
+    \bgreen(db:add_column)\b \bcyan(table)\b \byellow(field:type[:length])\b [...]
 
   \clight_gray(Elimina una columna de la tabla especificada)\c
-    \bgreen(db.remove_column)\b \bcyan(table)\b \byellow(name)\b [...]
+    \bgreen(db:remove_column)\b \bcyan(table)\b \byellow(name)\b [...]
 
   \clight_gray(Renombra una columna de la tabla especificada)\c
-    \bgreen(db.rename_column)\b \bcyan(table)\b \byellow(name)\b \bwhite(new)\b [...]
+    \bgreen(db:rename_column)\b \bcyan(table)\b \byellow(name)\b \bwhite(new)\b [...]
 
   \clight_gray(Cambia la definición de una columna en la tabla especificada)\c
-    \bgreen(db.change_column)\b \bcyan(table)\b \byellow(name)\b \bwhite(type[:length])\b [...]
+    \bgreen(db:change_column)\b \bcyan(table)\b \byellow(name)\b \bwhite(type[:length])\b [...]
 
   \clight_gray(Agrega un índice a la tabla especificada)\c
-    \bgreen(db.add_index)\b \bcyan(table)\b \byellow(name)\b \bwhite(column)\b [...] [--unique]
+    \bgreen(db:add_index)\b \bcyan(table)\b \byellow(name)\b \bwhite(column)\b [...] [--unique]
 
   \clight_gray(Elimina un índice de la tabla especificada)\c
-    \bgreen(db.remove_index)\b \bcyan(table)\b \byellow(name)\b
+    \bgreen(db:remove_index)\b \bcyan(table)\b \byellow(name)\b
 
   \clight_gray(Copias de seguridad de la base de datos)\c
-    \bgreen(db.backup)\b \bcyan(name)\b [--raw] [--data] [--import]
+    \bgreen(db:backup)\b \bcyan(name)\b [--raw] [--data] [--import]
 
   \clight_gray(Ejecuta las migraciones)\c
-    \bgreen(db.make)\b [--drop-all] [--schema] [--seed]
+    \bgreen(db:migrate)\b [--drop-all] [--schema] [--seed]
 
 HELP;
 

@@ -64,25 +64,25 @@ $lang['generator_intro'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Muestra el estado actual de la aplicación)\c
-    \bgreen(app.st)\b
+    \bgreen(status)\b
 
   \clight_gray(Genera y verifica la estructura de la aplicación)\c
-    \bgreen(app.gen)\b [--force]
+    \bgreen(create)\b [--force]
 
   \clight_gray(Muestra y modifica las opciones de configuración)\c
-    \bgreen(app.conf)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
+    \bgreen(config)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Generador del controlador por defecto)\c
-    \bgreen(app.make)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
+    \bgreen(generate)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
 
   \clight_gray(Generador de la acción por defecto)\c
-    \bgreen(app.make)\b \bcyan(action)\b \byellow(controller:name)\b [--view]
+    \bgreen(generate)\b \bcyan(action)\b \byellow(controller:name)\b [--view]
 
   \clight_gray(Generador del modelo por defecto)\c
-    \bgreen(app.make)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
+    \bgreen(generate)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
 
   \clight_gray(Ejecuta tareas programadas)\c
-    \bgreen(app.run)\b \bcyan(script[:param])\b [...]
+    \bgreen(execute)\b \bcyan(script[:param])\b [...]
 
 HELP;
 

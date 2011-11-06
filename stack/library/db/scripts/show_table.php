@@ -1,6 +1,6 @@
 <?php
 
-if (static::check_table($table)) {
+if (check_table($table)) {
   success(ln('db.table_show_columns', array('name' => $table)));
 
   $set =

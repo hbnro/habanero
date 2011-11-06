@@ -20,44 +20,24 @@ run(function () {
 
   is_file($mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT) && die(require $mod_file);
 
-
-  $cmd = array_shift($args);
-
-  @list($module, $action) = explode('.', $cmd);
-
-
-  $mod = generators();
-
-  if ( ! empty($mod[$module])) {
-    $mod = $mod[$module];
-
-    /**
-     * @ignore
-     */
-    require $mod['script'];
-
-    $mod_class = "{$module}_generator";
-
-    $mod_class::implement('help', function ()
-      use($mod) {
-      cli::clear();
-      cli::write(cli::format("$mod[help]\n"));
-    });
-
-    if ( ! $action) {
-      $mod_class::help();
-    } else {
-      $test   =
-      $params = array();
-
-      foreach ($args as $key => $val) {
-        is_numeric($key) ? $test []= $val : $params[$key] = $val;
-      }
-      $mod_class::apply($action, $test);
+  foreach (option('import_path') as $path) {
+    foreach (findfile($path, 'generator'.EXT, TRUE) as $gen_file) {
+      /**
+       * @ignore
+       */
+      require $gen_file;
     }
-  } else {
-    help();
   }
+
+
+  $test = array();
+  $cmd  = array_shift($args);
+
+  foreach ($args as $key => $val) {
+    is_numeric($key) && $test []= $val;
+  }
+
+  $cmd ? app_generator::exec($cmd, $test) : help();
 });
 
 /* EOF: ./stack/console/initialize.php */
