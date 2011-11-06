@@ -19,4 +19,4 @@ $lang['max_size_error'] = 'El archivo supera el tamaño permitido';
 $lang['filetype_error'] = 'El tipo de archivo no es valido';
 $lang['extension_error'] = 'La extensión del archivo no es valida';
 
-/* EOF: ./library/tetl/upload/locale/es.php */
+/* EOF: ./stack/library/upload/locale/es.php */

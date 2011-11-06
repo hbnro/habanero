@@ -4,18 +4,6 @@
  * Basic upload library
  */
 
-/**#@+
- * Upload error constants
- */
-define('UPLOAD_ERR_PATH', 9);
-define('UPLOAD_ERR_MULTI', 10);
-define('UPLOAD_ERR_MIN_SIZE', 11);
-define('UPLOAD_ERR_MAX_SIZE', 12);
-define('UPLOAD_ERR_TYPE', 13);
-define('UPLOAD_ERR_EXT', 14);
-/**#@-*/
-
-
 class upload extends prototype
 {
 
@@ -271,4 +259,4 @@ class upload extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/tetl/upload/system.php */
+/* EOF: ./stack/library/upload/upload.php */
