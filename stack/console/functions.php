@@ -10,19 +10,13 @@ function yes($text) {
 // TODO; choice, prompt, cli-tools
 
 function help() {
-  $test = dir2arr(dirname(__DIR__).DS.'mods', '*');
-  $str  = sprintf("\n  %s\n", ln('tetl.generator_intro'));
+  cli::clear();
 
-  foreach ($test as $one) {
-    if (substr(basename($one), 0, 1) <> '_') {
-      $ns = basename($one, EXT);
+  $str = sprintf("\n  %s\n", ln('tetl.generator_intro'));
 
-      is_dir($one) && i18n::load_path($one.DS.'locale', $ns);
-
-      $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($ns)\b", ln("$ns.generator_intro"));
-    }
+  foreach (generators() as $one) {
+    $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($one[command])\b", $one['title']);
   }
-
   cli::write(cli::format("$str\n\n"));
 }
 
@@ -125,6 +119,35 @@ function status($type, $text = '') {
       cli::write(cli::format("$prefix$text\n"));
     break;
   }
+}
+
+function tasks() {
+}
+
+function generators() {
+  static $set = NULL;
+
+
+  if (is_null($set)) {
+    $set = array();
+
+    foreach (option('import_path') as $test) {
+      foreach (findfile($test, 'generator'.EXT, TRUE) as $gen_file) {
+        $base_name = explode('_', basename($gen_file));
+        $base_name = array_shift($base_name);
+
+        i18n::load_path(dirname($gen_file).DS.'locale', $base_name);
+
+        $set[$base_name] = array(
+          'help' => cli::format(ln("$base_name.generator_usage")),
+          'title' => ln("$base_name.generator_intro"),
+          'script' => $gen_file,
+        );
+      }
+    }
+  }
+
+  return $set;
 }
 
 /* EOF: ./stack/console/functions.php */

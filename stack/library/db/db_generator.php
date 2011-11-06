@@ -1,6 +1,6 @@
 <?php
 
-import('db');
+require __DIR__.DS.'initialize'.EXT;
 
 i18n::load_path(__DIR__.DS.'locale', 'db');
 

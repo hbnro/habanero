@@ -24,30 +24,26 @@ run(function () {
 
   @list($module, $action) = explode('.', $cmd);
 
-  if ( ! empty($module)) {
-    $mod_file = dirname(__DIR__).DS.'mods'.DS.$module.DS.'generator'.EXT;
+
+  $mod = generators();
+
+  if ( ! empty($mod[$module])) {
+    $mod = (object) $mod[$module];
+
+    /**
+     * @ignore
+     */
+    require $mod->script;
+
     $mod_class = "{$module}_generator";
 
-    is_file($mod_file) && require $mod_file;
-
-    if ( ! class_exists($mod_class)) {
-      if (is_file($mod_file)) {
-        $mod_file = dirname(__DIR__).DS.'mods'.DS.$module.EXT;
-
-        is_file($mod_file) && die(require $mod_file);
-      }
-      return help();
-    }
-
-
     $mod_class::implement('help', function ()
-      use($module) {
-      $help = ln("$module.generator_usage");
-
-      cli::write(cli::format("$help\n"));
+      use($mod) {
+      cli::clear();
+      cli::write(cli::format("{$mod->help}\n"));
     });
 
-    if (empty($action)) {
+    if ( ! $action) {
       $mod_class::help();
     } else {
       $test   =
