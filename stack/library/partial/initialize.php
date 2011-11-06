@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Partial initialization
+ */
+
 i18n::load_path(__DIR__.DS.'locale', 'partial');
 
 require __DIR__.DS.'functions'.EXT;
@@ -12,3 +16,5 @@ partial::register('php', function ($file, array $vars = array()) {
       'locals' => $vars,
     ));
 });
+
+/* EOF: ./stack/library/partial/initialize.php */

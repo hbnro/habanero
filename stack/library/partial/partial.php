@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MVC base view
+ * Partial base view
  */
 
 class partial extends prototype
@@ -88,4 +88,4 @@ class partial extends prototype
 
 }
 
-/* EOF: ./stack/library/app/base/view.php */
+/* EOF: ./stack/library/partial/partial.php */
