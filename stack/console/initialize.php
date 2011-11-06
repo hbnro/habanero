@@ -28,19 +28,19 @@ run(function () {
   $mod = generators();
 
   if ( ! empty($mod[$module])) {
-    $mod = (object) $mod[$module];
+    $mod = $mod[$module];
 
     /**
      * @ignore
      */
-    require $mod->script;
+    require $mod['script'];
 
     $mod_class = "{$module}_generator";
 
     $mod_class::implement('help', function ()
       use($mod) {
       cli::clear();
-      cli::write(cli::format("{$mod->help}\n"));
+      cli::write(cli::format("$mod[help]\n"));
     });
 
     if ( ! $action) {

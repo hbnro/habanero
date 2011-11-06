@@ -14,8 +14,8 @@ function help() {
 
   $str = sprintf("\n  %s\n", ln('tetl.generator_intro'));
 
-  foreach (generators() as $one) {
-    $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($one[command])\b", $one['title']);
+  foreach (generators() as $key => $one) {
+    $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($key)\b", $one['title']);
   }
   cli::write(cli::format("$str\n\n"));
 }
