@@ -298,4 +298,4 @@ class mongo_model extends a_record
   /**#@-*/
 }
 
-/* EOF: ./stack/library/app/base/model/drivers/mongdel.php */
+/* EOF: ./stack/library/a_record/drivers/mongo_model.php */

@@ -9,8 +9,8 @@ i18n::load_path(__DIR__.DS.'locale', 'ar');
 /**#@+
  * @ignore
  */
-require __DIR__.DS.'record'.EXT;
-require __DIR__.DS.'relation'.EXT;
+require __DIR__.DS.'a_record'.EXT;
+require __DIR__.DS.'a_relation'.EXT;
 /**#@-*/
 
 
@@ -27,4 +27,4 @@ rescue(function ($class) {
   /**#@-*/
 });
 
-/* EOF: ./stack/library/app/base/model/initialize.php */
+/* EOF: ./stack/library/a_record/initialize.php */

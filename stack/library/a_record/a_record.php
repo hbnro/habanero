@@ -266,4 +266,4 @@ class a_record extends prototype
   /**#@-*/
 }
 
-/* EOF: ./stack/library/app/base/model/system.php */
+/* EOF: ./stack/library/a_record/a_record.php */

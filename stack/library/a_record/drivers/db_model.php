@@ -195,7 +195,7 @@ class db_model extends a_record
       }
 
       if ( ! static::$primary_key) {
-        raise(ln('mvc.primary_key_missing', array('model' => get_called_class())));
+        raise(ln('ar.primary_key_missing', array('model' => get_called_class())));
       }
     }
 
@@ -227,4 +227,4 @@ class db_model extends a_record
 
 }
 
-/* EOF: ./stack/library/app/base/model/drivers/dbmodel.php */
+/* EOF: ./stack/library/a_record/drivers/db_model.php */
