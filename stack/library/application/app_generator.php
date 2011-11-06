@@ -126,7 +126,7 @@ class app_generator extends prototype
       $config = isset($file) ? $trap($file) : config();
 
       $vars = array_slice(cli::args(), 1);
-      $vars = array_diff_key($vars, array_flip(array('global', 'prod', 'test', 'dev', 'app', 'db')));
+      $vars = array_diff_key($vars, array_flip(array('global', 'app', 'dev', 'prod')));
 
       if ( ! empty($vars)) {
         success(ln("app.setting_{$what}_options"));
