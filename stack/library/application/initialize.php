@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MVC initialization
+ * Application initialization
  */
 
 call_user_func(function () {
@@ -40,4 +40,4 @@ call_user_func(function () {
 
 });
 
-/* EOF: ./stack/library/app/base/initialize.php */
+/* EOF: ./stack/library/application/initialize.php */

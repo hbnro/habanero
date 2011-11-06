@@ -4,7 +4,7 @@ require __DIR__.DS.'config.php';
 
 i18n::load_path(__DIR__.DS.'locale', 'rsync');
 
-class rsync_task extends app_task {
+class rsync_task extends prototype {
 
   public static $default = 'go';
 

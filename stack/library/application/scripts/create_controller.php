@@ -5,6 +5,7 @@ $out_file = mkpath(CWD.DS.'app'.DS.'controllers').DS.$name.EXT;
 if (is_file($out_file)) {
   error(ln('app.controller_already_exists', array('name' => $name)));
 } else {
+  // TODO: use functions like create_class, append_class, prepend_class, add_route, etc.
   $type = cli::flag('parent') ?: 'base_controller';
   $code = "<?php\n\nclass {$name}_controller extends $type\n{"
         . "\n\n  public static function index()\n"
@@ -32,3 +33,5 @@ if (is_file($out_file)) {
     write(mkpath(CWD.DS.'app'.DS.'views'.DS.$name).DS.'index'.EXT, $text);
   }
 }
+
+/* EOF: ./stack/library/application/scripts/create_controller.php */

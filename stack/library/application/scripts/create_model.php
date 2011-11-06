@@ -16,3 +16,5 @@ if (is_file($out_file)) {
 
   write($out_file, $code);
 }
+
+/* EOF: ./stack/library/application/scripts/create_model.php */

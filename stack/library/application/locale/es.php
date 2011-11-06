@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MVC spanish strings
+ * Application spanish strings
  */
 
 $lang['controller_missing'] = 'No existe el controlador %{name}';
@@ -86,4 +86,4 @@ $lang['generator_usage'] = <<<HELP
 
 HELP;
 
-/* EOF: ./stack/library/app/base/locale/en.php */
+/* EOF: ./stack/library/application/locale/es.php */

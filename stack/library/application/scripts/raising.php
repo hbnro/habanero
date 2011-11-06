@@ -23,3 +23,5 @@ response(partial::load($error_file), array(
   'status' => $error_status,
   'message' => $message,
 ));
+
+/* EOF: ./stack/library/application/scripts/raising.php */

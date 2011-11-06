@@ -40,3 +40,5 @@ if ( ! $parent) {
     }
   }
 }
+
+/* EOF: ./stack/library/application/scripts/create_action.php */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MVC base controller
+ * Application base controller
  */
 
 class app_controller extends prototype
@@ -50,4 +50,4 @@ class app_controller extends prototype
 
 }
 
-/* EOF: ./stack/library/app/controller.php */
+/* EOF: ./stack/library/application/app_controller.php */

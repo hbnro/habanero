@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MVC english strings
+ * Application english strings
  */
 
 $lang['controller_missing'] = 'Controller %{name} missing';
@@ -86,4 +86,4 @@ $lang['generator_usage'] = <<<HELP
 
 HELP;
 
-/* EOF: ./stack/library/app/base/locale/en.php */
+/* EOF: ./stack/library/application/locale/en.php */

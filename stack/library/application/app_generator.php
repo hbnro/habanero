@@ -182,7 +182,6 @@ class app_generator extends prototype
         /**#@+
          * @ignore
          */
-        require __DIR__.DS.'task_manager'.EXT;
         require $task_file;
         /**#@-*/
 
@@ -206,4 +205,4 @@ class app_generator extends prototype
 
 }
 
-/* EOF: ./stack/console/mods/app/generator.php */
+/* EOF: ./stack/library/application/app_generator.php */

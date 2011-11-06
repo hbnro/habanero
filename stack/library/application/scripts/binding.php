@@ -89,3 +89,5 @@ request::implement('dispatch', function (array $params = array())
     response($output);
   }
 });
+
+/* EOF: ./stack/library/application/scripts/binding.php */

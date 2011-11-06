@@ -51,3 +51,5 @@ cache::block("--$type-assets-$env", function ()
 
   assets::$type(eval('?>' . trim($test)));
 }, $prod ? time() : 0);
+
+/* EOF: ./stack/library/application/scripts/serving.php */
