@@ -59,7 +59,7 @@ class db_generator extends prototype
       success(ln('db.table_dropping', array('name' => $table)));
       static::migrate('drop_table', $table);
     }
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function rename($table = '', $to = '') {
@@ -73,7 +73,7 @@ class db_generator extends prototype
       success(ln('db.renaming_table_to', array('from' => $table, 'to' => $to)));
       static::migrate('rename_table', $table, $to);
     }
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function create($table = '') {
@@ -108,7 +108,7 @@ class db_generator extends prototype
       }
     }
 
-    bold(ln('tetl.done'));
+    done();
 
   }
 
@@ -131,7 +131,7 @@ class db_generator extends prototype
       }
     }
 
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function rename_column($table = '') {
@@ -159,7 +159,7 @@ class db_generator extends prototype
         }
       }
     }
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function change_column($table = '') {
@@ -200,7 +200,7 @@ class db_generator extends prototype
       }
     }
 
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function add_index($table = '', $name = '') {
@@ -241,7 +241,7 @@ class db_generator extends prototype
       }
     }
 
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function remove_index($table = '') {
@@ -264,7 +264,7 @@ class db_generator extends prototype
       }
     }
 
-    bold(ln('tetl.done'));
+    done();
   }
 
 }

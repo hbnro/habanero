@@ -8,7 +8,7 @@ run(function () {
 
   define('CWD', realpath(getcwd()));
 
-  i18n::load_path(__DIR__.DS.'locale', 'tetl');
+  i18n::load_path(__DIR__.DS.'locale');
 
   config(CWD.DS.'config'.EXT);
   config(CWD.DS.'config'.DS.'application'.EXT);

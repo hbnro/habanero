@@ -23,6 +23,6 @@ if (empty($test)) {
   }
 }
 
-bold(ln('tetl.done'));
+done();
 
 /* EOF: ./stack/library/db/scripts/st.php */

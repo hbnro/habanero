@@ -24,7 +24,7 @@ class app_generator extends prototype
       success(ln('app.sizing_files', array('size' => fmtsize($size))));
       success(ln('app.environment', array('env' => option('environment', 'unknown'))));
 
-      bold(ln('tetl.done'));
+      done();
     }
   }
 
@@ -58,7 +58,7 @@ class app_generator extends prototype
       require __DIR__.DS.'scripts'.DS.'create_application'.EXT;
     }
 
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function make($what = '', $name = '') {
@@ -88,7 +88,7 @@ class app_generator extends prototype
       }
     }
 
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function conf() {
@@ -153,7 +153,7 @@ class app_generator extends prototype
       }
     }));
 
-    bold(ln('tetl.done'));
+    done();
   }
 
   final public static function run($name = '') {
@@ -167,7 +167,7 @@ class app_generator extends prototype
       if (is_file($script_file = CWD.DS.$name.EXT)) {
         success(ln('app.executing_script', array('path' => str_replace(CWD.DS, '', $script_file))));
         require $script_file;
-        bold(ln('tetl.done'));
+        done();
         exit;
       }
 
@@ -200,7 +200,7 @@ class app_generator extends prototype
         }
       }
     }
-    bold(ln('tetl.done'));
+    done();
   }
 
 }

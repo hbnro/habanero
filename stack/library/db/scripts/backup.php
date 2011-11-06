@@ -45,6 +45,6 @@ if (cli::flag('import')) {
   }
 }
 
-bold(ln('tetl.done'));
+done();
 
 /* EOF: ./stack/library/db/scripts/backup.php */

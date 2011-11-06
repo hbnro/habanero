@@ -7,12 +7,16 @@ function say($text) {
 function yes($text) {
   return cli::option($text, 'yn', 'n') === 'y';
 }
+
+function done($text = 'done') {
+  bold(ln($text));
+}
 // TODO; choice, prompt, cli-tools
 
 function help() {
   cli::clear();
 
-  $str = sprintf("\n  %s\n", ln('tetl.generator_intro'));
+  $str = sprintf("\n  %s\n", ln('generator_intro'));
 
   foreach (generators() as $key => $one) {
     $str .= sprintf("\n  %20s \clight_gray(%s)\c", "\bgreen($key)\b", $one['title']);
