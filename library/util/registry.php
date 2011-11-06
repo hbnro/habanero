@@ -25,12 +25,7 @@ class registry extends prototype
    * @return mixed
    */
   final public static function fetch($item, $or = NULL, $bag = '') {
-    $bag = static::get($bag);
-
-    if (is_num($item)) {
-      return FALSE;
-    }
-    return value($bag, $item, $or);
+    return value(static::get($bag), $item, $or);
   }
 
 
@@ -43,14 +38,7 @@ class registry extends prototype
    * @return boolean
    */
   final public static function assign($item, $value, $bag = '') {
-    $bag = static::get($bag);
-
-    if (is_num($item)) {
-      return FALSE;
-    }
-
-    $bag->$item = $value;
-
+    static::get($bag)->$item = $value;
     return TRUE;
   }
 
@@ -65,7 +53,7 @@ class registry extends prototype
   final public static function delete($item, $bag = '') {
     $bag = static::get($bag);
 
-    if (is_num($item) OR ! isset($bag->$item)) {
+    if ( ! isset($bag->$item)) {
       return FALSE;
     }
 
