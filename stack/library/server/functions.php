@@ -357,4 +357,4 @@ function download($path, $name = '', $mime = '', $kbps = 24) {
   exit;
 }
 
-/* EOF: ./library/tetl/server/functions.php */
+/* EOF: ./stack/library/server/functions.php */

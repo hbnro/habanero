@@ -115,4 +115,4 @@ function flash($key = -1, $value = FALSE) {
   ));
 }
 
-/* EOF: ./library/tetl/session/functions.php */
+/* EOF: ./stack/library/server/session.php */

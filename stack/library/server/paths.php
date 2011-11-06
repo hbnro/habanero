@@ -58,4 +58,4 @@ class url_for extends prototype
 
 }
 
-/* EOF: ./library/tetl/server/paths.php */
+/* EOF: ./stack/library/server/paths.php */

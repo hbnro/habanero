@@ -280,4 +280,4 @@ request::implement('dispatch', function (array $params = array()) {
 });
 
 
-/* EOF: ./library/tetl/server/request.php */
+/* EOF: ./stack/library/server/request.php */
