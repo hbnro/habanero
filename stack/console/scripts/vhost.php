@@ -1,6 +1,6 @@
 <?php
 
-info('Verifying vhost availability');
+info(ln('verifying_vhosts'));
 
 $paths = array(
   '/etc/apache2/sites-available',
@@ -18,12 +18,12 @@ foreach ($paths as $one) {
 }
 
 if (empty($vhost_path)) {
-  error('Not found a suitable vhost configuration on your system!');
+  error(ln('missing_vhost_conf'));
 } else {
   is_dir($vhost_path) ? vhost_create($vhost_path) : vhost_write($vhost_path);
 }
 
-bold('Done');
+done();
 
 
 function vhost_write($vhost_path) {
@@ -33,17 +33,17 @@ function vhost_write($vhost_path) {
 
   if (cli::flag('remove')) {
     if ( ! strpos($config, "$base_name.dev")) {
-      error("Not found $base_name.dev");
+      error(ln('vhost_not_found', array('name' => "$base_name.dev")));
     } else {
-      notice("Removing $base_name.dev");
+      notice(ln('vhost_remove', array('name' => "$base_name.dev")));
       $old_vhost = "<(VirtualHost)[^<>]+>[^<>]+$base_name.dev[^<>]+<(Directory)[^<>]+>[^<>]+<\/\\2>[^<>]*<\/\\1>";
       write($vhost_path, preg_replace("/\s*$old_vhost/is", "\n", $config));
       httpd_restart();
     }
   } elseif (strpos($config, "$base_name.dev")) {
-    error("Already exists $base_name.dev");
+    error(ln('vhost_exists', array('name' => "$base_name.dev")));
   } else {
-    success("Appending $base_name.dev");
+    success(ln('vhost_append', array('name' => "$base_name.dev")));
     write($vhost_path, "$config\n" . vhost_template());
     httpd_restart(TRUE);
   }
@@ -57,16 +57,16 @@ function vhost_create($vhost_path) {
 
   if (cli::flag('remove')) {
     if ( ! is_file($vhost_file)) {
-      error("Not exists $vhost_file");
+      error(ln('vhost_not_found', array('name' => $vhost_file)));
     } else {
-      notice("Removing $vhost_file");
+      notice(ln('vhost_remove', array('name' => $vhost_file)));
       unlink($vhost_file);
       httpd_restart();
     }
   } elseif (is_file($vhost_file)) {
-    error("Already exists $vhost_file");
+    error(ln('vhost_exists', array('name' => $vhost_file)));
   } else {
-    success("Writing $vhost_file");
+    success(ln('vhost_write', array('name' => $vhost_file)));
     write($vhost_file, vhost_template());
     httpd_restart(TRUE);
   }
@@ -101,7 +101,7 @@ XML;
 }
 
 function update_hosts($base_name) {
-  info('Verifying hosts file');
+  info(ln('verify_hosts'));
 
   $hosts_file = '/etc/hosts';
   $config     = read($hosts_file);
@@ -116,10 +116,10 @@ function update_hosts($base_name) {
   $modified = filesize($hosts_file) <> strlen($config);
 
   if (( ! cli::flag('remove') OR $modified) && ! strpos($config, $base_name)) {
-    success("Updating $hosts_file");
+    success(ln('update_hosts', array('name' => $hosts_file)));
     write($hosts_file, $config . (cli::flag('remove') ? '' : $text));
   } else {
-    notice('Nothing to update');
+    notice(ln('update_nothing'));
   }
 }
 
@@ -139,3 +139,5 @@ function httpd_restart($enable = FALSE) {
 
   system("$apache_bin restart");
 }
+
+/* EOF: ./stack/console/scripts/vhost.php */

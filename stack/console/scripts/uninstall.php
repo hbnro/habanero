@@ -1,6 +1,6 @@
 <?php
 
-info('Looking for php configuration');
+info(ln('search_php_ini'));
 
 $paths = array(
   '/private/etc',
@@ -16,12 +16,12 @@ foreach ($paths as $one) {
 }
 
 if (empty($ini_file)) {
-  error('Not found a suitable php.ini file on your system!');
+  error(ln('missing_php_ini'));
 } else {
   uninstall_from($ini_file);
 }
 
-bold('Done');
+done();
 
 
 function uninstall_from($php_ini) {
@@ -29,7 +29,7 @@ function uninstall_from($php_ini) {
   $test   = preg_replace('/^\s*include_path.*?;;\s*$/m', '', $config);
 
   if ($test <> $config) {
-    success('Updating include_path');
+    success(ln('update_include_path'));
     write($php_ini, $test);
 
     sleep(1);
@@ -41,7 +41,8 @@ function uninstall_from($php_ini) {
 
     system("$apache_bin restart");
   } else {
-    notice('Without changes');
+    notice(ln('without_changes'));
   }
 }
 
+/* EOF: ./stack/console/scripts/uninstall.php */

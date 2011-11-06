@@ -1,6 +1,6 @@
 <?php
 
-info('Launching vhost');
+info(ln('launch_vhost'));
 
 $open_cmd = !! `whereis xdg-open` ? 'xdg-open' : 'open';
 
@@ -10,4 +10,6 @@ success($dev_url);
 
 system("$open_cmd $dev_url");
 
-bold('Done');
+done();
+
+/* EOF: ./stack/console/scripts/open.php */

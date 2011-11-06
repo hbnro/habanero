@@ -1,6 +1,6 @@
 <?php
 
-info('Copying entire library');
+info(ln('copying_libraries'));
 
 $tetl_path  = CWD.DS.'tetlphp';
 
@@ -16,8 +16,10 @@ $stack     = dirname(LIB).DS.'stack';
 // TODO: allow to customize the stub-installation
 
 foreach (array('framework', 'library', 'stack') as $path) {
-  success("Copying /$path into $tetl_path");
+  success(ln('copying_stub_path', array('name' => $path, 'path' => $tetl_path)));
   cpfiles($$path, $tetl_path.DS.$path);
 }
 
-bold('Done');
+done();
+
+/* EOF: ./stack/console/scripts/stub.php */

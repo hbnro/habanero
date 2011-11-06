@@ -1,6 +1,6 @@
 <?php
 
-info('Looking for php configuration');
+info(ln('search_php_ini'));
 
 $paths = array(
   '/private/etc',
@@ -16,12 +16,12 @@ foreach ($paths as $one) {
 }
 
 if (empty($ini_file)) {
-  error('Not found a suitable php.ini file on your system!');
+  error(ln('missing_php_ini'));
 } else {
   install_to($ini_file);
 }
 
-bold('Done');
+done();
 
 
 function install_to($php_ini) {
@@ -42,7 +42,7 @@ function install_to($php_ini) {
   $older        = trim(end($last[0]));
 
   if ($older <> $property) {
-    success('Updating include_path');
+    success(ln('update_include_path'));
 
     if (preg_match('/\s*include_path\s*=\s*"(.+?)"/m', $config, $match)) {
       $mark = $match[0];
@@ -63,6 +63,8 @@ function install_to($php_ini) {
 
     system("$apache_bin restart");
   } else {
-    notice('Without changes');
+    notice(ln('without_changes'));
   }
 }
+
+/* EOF: ./stack/console/scripts/install.php */
