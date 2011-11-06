@@ -9,4 +9,4 @@ $lang['choose_one_option'] = 'Elige una opci—n';
 $lang['unknown_option'] = 'Opci—n desconocida';
 $lang['available_commands'] = 'Comandos disponibles';
 
-/* EOF: ./lib/console/locale/es.php */
+/* EOF: ./stack/library/console/locale/es.php */

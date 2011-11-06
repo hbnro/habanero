@@ -706,4 +706,4 @@ class cli extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/tetl/console/system.php */
+/* EOF: ./stack/library/console/cli.php */

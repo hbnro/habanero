@@ -8,8 +8,8 @@
  * @ignore
  */
 
-require __DIR__.DS.'system'.EXT;
+require __DIR__.DS.'cli'.EXT;
 
 i18n::load_path(__DIR__.DS.'locale', 'cli');
 
-/* EOF: ./library/tetl/console/initialize.php */
+/* EOF: ./stack/library/console/initialize.php */
