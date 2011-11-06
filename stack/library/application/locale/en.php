@@ -60,8 +60,10 @@ $lang['setting_development_options'] = 'Applying development configuration';
 $lang['setting_production_options'] = 'Applying production configuration';
 $lang['setting_default_options'] = 'Applying default configuration';
 
-$lang['generator_intro'] = 'Application generator';
 $lang['generator_usage'] = <<<HELP
+  =======================
+   Application generator
+  =======================
 
   \clight_gray(Display the current application status)\c
     \bgreen(status)\b
@@ -83,6 +85,7 @@ $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Execute tasks)\c
     \bgreen(execute)\b \bcyan(script[:param])\b [...]
+
 
 HELP;
 

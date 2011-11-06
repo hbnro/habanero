@@ -41,7 +41,7 @@ class app_generator extends prototype
    * Retrieve usage text
    */
   final public static function help() {
-    return join("\n", static::$help);
+    return join('', static::$help);
   }
 
 

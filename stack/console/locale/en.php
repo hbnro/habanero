@@ -4,7 +4,23 @@
  * English generator strings
  */
 
-$lang['generator_intro'] = '¡Welcome to the \bwhite(atl)\b console utility!';
+$lang['generator_intro'] = <<<INTRO
+  ¡Welcome to the \bwhite(atl)\b console utility!
+
+  Usage:
+    atl \bgreen(<command>)\b [arguments] [...]
+
+  Extras (needs sudo permissions):
+    --install           \cdark_gray(#)\c Configure the framework
+    --uninstall         \cdark_gray(#)\c Remove the framework configuration
+    --vhost [--remove]  \cdark_gray(#)\c Create or remove virtual hosts in the system
+
+  Example:
+    \bwhite(sudo)\b atl --vhost
+
+
+INTRO;
+
 $lang['missing_arguments'] = 'Missing arguments';
 $lang['undefined_cmd'] = 'Undefined %{name} command';
 $lang['search_php_ini'] = 'Looking for php configuration';

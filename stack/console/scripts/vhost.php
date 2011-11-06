@@ -108,7 +108,7 @@ function update_hosts($base_name) {
   $text       = "127.0.0.1\t$base_name.dev ##\n";
 
 
-  if (cli::flag('force remove')) {
+  if (cli::flag('remove')) {
     $config = str_replace($text, '', $config);
     $config = str_replace("$base_name.dev", '', $config);
   }

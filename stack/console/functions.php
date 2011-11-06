@@ -16,10 +16,10 @@ function done($text = 'done') {
 function help() {
   cli::clear();
 
-  $str  = sprintf("  %s\n", ln('generator_intro'));
-  $str .= rtrim(app_generator::help());
+  $intro = ln('generator_intro');
+  $help  = app_generator::help();
 
-  cli::write(cli::format("$str\n\n"));
+  cli::write(cli::format("$intro$help"));
 }
 
 function error($text) {
