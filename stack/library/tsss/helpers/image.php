@@ -48,4 +48,4 @@ css_helper::implement('image', function ($path) {
   return $out;
 });
 
-/* EOF: ./library/tetl/css/helpers/image.php  */
+/* EOF: ./stack/library/tsss/helpers/image.php */

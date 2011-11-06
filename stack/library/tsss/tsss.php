@@ -534,4 +534,4 @@ class tsss extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/tetl/css/system.php */
+/* EOF: ./stack/library/tsss/tsss.php */
