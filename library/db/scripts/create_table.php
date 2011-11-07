@@ -47,7 +47,7 @@ if ( ! $table) {
       error(ln('db.table_fields_missing', array('name' => $table)));
     } else {
       success(ln('db.table_building', array('name' => $table)));
-      db_generator::migrate('create_table', $table, $fields, array('force' => TRUE));
+      build_migration('create_table', $table, $fields, array('force' => TRUE));
 
       if (cli::flag('model')) {
         $out_file = mkpath(option('mvc.models_path')).DS.$table.EXT;

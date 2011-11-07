@@ -32,7 +32,7 @@ if (cli::flag('schema')) {
         notice(ln('db.run_migration', array('path' => $path)));
         require $migration_file;
       }
-      db_generator::schema();
+      build_schema();
     } else {
       error(ln('db.without_migrations'));
     }
