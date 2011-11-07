@@ -37,7 +37,7 @@ run(function () {
     is_numeric($key) && $test []= $val;
   }
 
-  $cmd ? app_generator::exec($cmd, $test) : help();
+  is_string($cmd) ? app_generator::exec($cmd, $test) : help();
 });
 
 /* EOF: ./stack/console/initialize.php */

@@ -14,12 +14,7 @@ function done($text = 'done') {
 // TODO; choice, prompt, cli-tools
 
 function help() {
-  cli::clear();
-
-  $intro = ln('generator_intro');
-  $help  = app_generator::help();
-
-  cli::write(cli::format("$intro$help"));
+  cli::write(cli::format(app_generator::help(cli::flag('help'))));
 }
 
 function error($text) {

@@ -75,10 +75,8 @@ $lang['importing'] = 'Importando %{path}';
 
 $lang['tables'] = 'Tablas';
 
+$lang['generator_title'] = 'Generador de la base de datos';
 $lang['generator_usage'] = <<<HELP
-  ===============================
-   Generador de la base de datos
-  ===============================
 
   \clight_gray(Estado de la base de datos)\c
     \bgreen(db:status)\b

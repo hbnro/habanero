@@ -5,15 +5,21 @@
  */
 
 $lang['generator_intro'] = <<<INTRO
+
   ¡Welcome to the \bwhite(atl)\b console utility!
 
   Usage:
     atl \bgreen(<command>)\b [arguments] [...]
 
-  Extras (needs sudo permissions):
-    --install           \cdark_gray(#)\c Configure the framework
-    --uninstall         \cdark_gray(#)\c Remove the framework configuration
-    --vhost [--remove]  \cdark_gray(#)\c Create or remove virtual hosts in the system
+  Extras:
+    --install           \cyellow(*)\c Configure the framework
+    --uninstall         \cyellow(*)\c Remove the framework configuration
+    --vhost [--remove]  \cyellow(*)\c Create or remove virtual hosts in the system
+    --open              \cdark_gray(*)\c Launch the default browser with virtual host domain
+    --stub              \cdark_gray(*)\c Make a local copy from the system libraries
+    --help              \cdark_gray(*)\c Display the descriptions of all generators
+
+    \cyellow(* needs sudo permissions)\c
 
   Example:
     \bwhite(sudo)\b atl --vhost

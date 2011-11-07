@@ -5,15 +5,21 @@
  */
 
 $lang['generator_intro'] = <<<INTRO
+
   ¡Bienvenido a la utilidad de consola \bwhite(atl)\b!
 
   Uso:
     atl \bgreen(<comando>)\b [argumentos] [...]
 
-  Extras (con permisos de sudo):
-    --install           \cdark_gray(#)\c Configura el framework
-    --uninstall         \cdark_gray(#)\c Elimina la configuración del framework
-    --vhost [--remove]  \cdark_gray(#)\c Crea o elimina un host virtual en el sistema
+  Extras:
+    --install           \cyellow(*)\c Configura el include_path de php
+    --uninstall         \cyellow(*)\c Elimina la configuración del include_path
+    --vhost [--remove]  \cyellow(*)\c Crea o elimina un host virtual en el sistema
+    --open              \cdark_gray(*)\c Abre el host virtual en el navegador por defecto
+    --stub              \cdark_gray(*)\c Crea una copia local con las librerías del sistema
+    --help              \cdark_gray(*)\c Muestra la descripción de uso de los generadores
+
+    \cyellow(* requiere permisos de sudo)\c
 
   Ejemplo:
     \bwhite(sudo)\b atl --vhost

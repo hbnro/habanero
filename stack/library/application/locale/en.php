@@ -60,10 +60,8 @@ $lang['setting_development_options'] = 'Applying development configuration';
 $lang['setting_production_options'] = 'Applying production configuration';
 $lang['setting_default_options'] = 'Applying default configuration';
 
+$lang['generator_title'] = 'Application generator';
 $lang['generator_usage'] = <<<HELP
-  =======================
-   Application generator
-  =======================
 
   \clight_gray(Display the current application status)\c
     \bgreen(status)\b
@@ -72,7 +70,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(create)\b [--force]
 
   \clight_gray(Display and set the configuration options)\c
-    \bgreen(config)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
+    \bgreen(configure)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Default controller generator)\c
     \bgreen(generate)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]

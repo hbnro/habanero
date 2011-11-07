@@ -4,9 +4,9 @@ require __DIR__.DS.'initialize'.EXT;
 
 i18n::load_path(__DIR__.DS.'locale', 'db');
 
-app_generator::usage(ln('db.generator_usage'));
+app_generator::usage(ln('db.generator_title'), ln('db.generator_usage'));
 
-app_generator::alias('db:status', 'dbs ds d');
+app_generator::alias('db:status', 'db');
 app_generator::alias('db:show_table', 'db:show show');
 app_generator::alias('db:drop_table', 'db:drop drop');
 app_generator::alias('db:rename_table', 'db:rename rename');

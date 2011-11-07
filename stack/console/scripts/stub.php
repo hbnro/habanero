@@ -17,7 +17,7 @@ $stack     = dirname(LIB).DS.'stack';
 
 foreach (array('framework', 'library', 'stack') as $path) {
   success(ln('copying_stub_path', array('name' => $path, 'path' => $tetl_path)));
-  cpfiles($$path, $tetl_path.DS.$path);
+  cpfiles($$path, $tetl_path.DS.$path, '*', TRUE);
 }
 
 done();

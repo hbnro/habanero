@@ -60,10 +60,8 @@ $lang['setting_development_options'] = 'Aplicando configuración del entorno de 
 $lang['setting_production_options'] = 'Aplicando configuración del entorno de producción';
 $lang['setting_default_options'] = 'Aplicando configuración por defecto';
 
+$lang['generator_title'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP
-  ============================
-   Generador de la aplicación
-  ============================
 
   \clight_gray(Muestra el estado actual de la aplicación)\c
     \bgreen(status)\b
@@ -72,7 +70,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(create)\b [--force]
 
   \clight_gray(Muestra y modifica las opciones de configuración)\c
-    \bgreen(config)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
+    \bgreen(configure)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Generador del controlador por defecto)\c
     \bgreen(generate)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]

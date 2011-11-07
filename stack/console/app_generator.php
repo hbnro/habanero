@@ -24,8 +24,8 @@ class app_generator extends prototype
   /**
    * Configure help
    */
-  final public static function usage($text) {
-    static::$help []= $text;
+  final public static function usage() {
+    static::$help []= func_get_args();
   }
 
 
@@ -40,8 +40,18 @@ class app_generator extends prototype
   /**
    * Retrieve usage text
    */
-  final public static function help() {
-    return join('', static::$help);
+  final public static function help($all = FALSE) {
+    $str = ln('generator_intro');
+
+    if (is_true($all)) {
+      foreach (static::$help as $i => $one) {
+        @list($title, $text) = $one;
+
+        $pad = str_repeat('=', strlen($title) + 2);
+        $str .= "  $pad\n   $title\n  $pad\n$text";
+      }
+    }
+    return $str;
   }
 
 
@@ -57,7 +67,7 @@ class app_generator extends prototype
     }
 
 
-    if ( ! static::defined($mod)) {
+    if (in_array($mod, get_class_methods('app_generator')) OR ! static::defined($mod)) {
       error(ln('undefined_cmd', array('name' => $mod)));
     } else {
       static::apply($mod, $vars);

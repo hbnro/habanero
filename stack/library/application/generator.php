@@ -2,13 +2,13 @@
 
 i18n::load_path(__DIR__.DS.'locale', 'app');
 
-app_generator::usage(ln('app.generator_usage'));
+app_generator::usage(ln('app.generator_title'), ln('app.generator_usage'));
 
 app_generator::alias('create', 'new');
-app_generator::alias('status', 'st s');
-app_generator::alias('config', 'conf c');
-app_generator::alias('execute', 'exec run x');
-app_generator::alias('generate', 'make mk gen g');
+app_generator::alias('status', 'st');
+app_generator::alias('execute', 'exec run');
+app_generator::alias('generate', 'make gen g');
+app_generator::alias('configure', 'config conf');
 
 
 // create application
@@ -82,15 +82,15 @@ app_generator::implement('generate', function($what = '', $name = '') {
 });
 
 
-// configuration status
-app_generator::implement('config', function () {
-  require __DIR__.DS.'scripts'.DS.'configuration'.EXT;
-});
-
-
 // task execution
 app_generator::implement('execute', function ($name = '') {
   require __DIR__.DS.'scripts'.DS.'execute_task'.EXT;
+});
+
+
+// configuration status
+app_generator::implement('configure', function () {
+  require __DIR__.DS.'scripts'.DS.'configuration'.EXT;
 });
 
 /* EOF: ./stack/library/application/generator.php */
