@@ -132,7 +132,7 @@ bootstrap::implement('raise', function ($message) {
   $var['backtrace'] = array_reverse($trace);
   $var['route']     = IS_CLI ? @array_shift($_SERVER['argv']) : value($_SERVER, 'REQUEST_URI');
 
-  ! IS_CLI && $var['vars'] = request::post();
+  ! IS_CLI && $var['vars'] = $_POST;
 
 
   if ( ! IS_CLI) {
