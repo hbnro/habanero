@@ -56,7 +56,9 @@ cd $HOME
 
 echo "Creating symlink"
 
-ln -s "$TETL/stack/bin" $SYMLINK
+ln -s "$TETL/stack/app_console.sh" $SYMLINK
+
+chmod +x $SYMLINK
 
 
 echo "Installing"
