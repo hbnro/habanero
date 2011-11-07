@@ -112,7 +112,7 @@ bootstrap::implement('raise', function ($message) {
 
   foreach ($trace as $i => $on) {
     $type   = ! empty($on['type']) ? $on['type'] : '';
-    $system = ! empty($on['file']) && strstr($on['file'], LIB) ?: FALSE;
+    $system = ! empty($on['file']) && strstr($on['file'], dirname(LIB)) ?: FALSE;
     $prefix = ! empty($on['object']) ? get_class($on['object']) : ( ! empty($on['class']) ? $on['class'] : '');
 
     $call   = $prefix . $type . $on['function'];
