@@ -6,8 +6,6 @@
 
 $skel_dir = dirname(__DIR__).DS.'assets';
 
-cli::flag('force') && status('force');
-
    create_dir(CWD.DS.'app');
    create_dir(CWD.DS.'app'.DS.'helpers');
   create_file(CWD.DS.'app'.DS.'helpers'.DS.'base'.EXT, "<?php\n");

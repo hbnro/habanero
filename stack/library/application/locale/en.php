@@ -67,7 +67,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(status)\b
 
   \clight_gray(Generates and check the application structure)\c
-    \bgreen(create)\b [--force]
+    \bgreen(create)\b
 
   \clight_gray(Display and set the configuration options)\c
     \bgreen(configure)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]

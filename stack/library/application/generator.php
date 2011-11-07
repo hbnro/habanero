@@ -15,7 +15,7 @@ app_generator::alias('configure', 'config conf');
 app_generator::implement('create', function () {
   info(ln('app.verifying_installation'));
 
-  if (is_file(CWD.DS.'initialize'.EXT) && ! cli::flag('force')) {
+  if (is_file(CWD.DS.'initialize'.EXT)) {
     notice(ln('app.application'));
 
     $tmp = dir2arr(CWD, '*', DIR_RECURSIVE | DIR_EMPTY);
