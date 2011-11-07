@@ -1,0 +1,56 @@
+/**
+ * Basic mixins
+ */
+
+@mixin container($width: 100%) {
+  width: $width;
+  @include clearfix;
+}
+
+@mixin clearfix {
+  overflow: hidden;
+  width: 100%;
+}
+
+@mixin center_block {
+  display: block;
+  margin: 0 auto;
+}
+
+@mixin size($height: 5px, $width: 5px) {
+	height: %(%dpx, $height);
+	width: %(%dpx, $width);
+	overflow: hidden;
+	display: block;
+}
+
+@mixin square($size: 5px) {
+  @include size($size, $size);
+}
+
+@mixin placeholder($color: #graylight) {
+  :-moz-placeholder {
+    color: $color;
+  }
+  ::-webkit-input-placeholder {
+    color: $color;
+  }
+}
+
+@mixin background($color: #white, $alpha: 1) {
+  background-color: hsla(hue($color), saturation($color), lightness($color), $alpha);
+}
+
+@mixin border($color: #white, $alpha: 1) {
+  border-color: hsla(hue($color), saturation($color), lightness($color), $alpha);
+  background-clip: padding-box;
+}
+
+@mixin opacity($num: 1) {
+	filter: %("alpha(opacity=%d)", [$num * 100]);
+	-khtml-opacity: $num;
+	-moz-opacity: $num;
+	opacity: $num;
+}
+
+/* EOF: ./library/tsss/assets/styles/base.css */

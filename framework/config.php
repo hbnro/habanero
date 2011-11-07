@@ -8,7 +8,6 @@ $config['timezone'] = 'America/Mexico_City';
 
 // autoload
 config('import_path', array(
-  dirname(LIB).DS.'stack'.DS.'library',
   dirname(LIB).DS.'library',
 ));
 
