@@ -41,7 +41,7 @@ cli::flag('force') && status('force');
     copy_file(CWD.DS.'app'.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html'.EXT);
 
    create_dir(CWD.DS.'app'.DS.'views'.DS.'home');
-    copy_file(CWD.DS.'app'.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index'.EXT);
+    copy_file(CWD.DS.'app'.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
 
    create_dir(CWD.DS.'config');
     copy_file(CWD.DS.'config', $skel_dir.DS.'application'.EXT);
