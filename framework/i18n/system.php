@@ -103,7 +103,7 @@ class i18n extends prototype
     }
 
 
-    $dir = str_replace(dirname(LIB), '.', $from);
+    $dir = realpath($from);
     $set = (array) option('locale_path', array());
 
 
