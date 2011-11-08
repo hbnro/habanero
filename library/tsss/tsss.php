@@ -112,7 +112,7 @@ class tsss extends prototype
 
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
-    $text = preg_replace('/\b0+(?=\.)/', '', $text);
+    $text = preg_replace('/\b0+(?=\.)|\s+&/', '', $text);
     $text = preg_replace('/ +/', ' ', $text);
 
     return $text;
@@ -312,7 +312,7 @@ class tsss extends prototype
       $key = preg_replace('/!\d*$/', '', $key);
 
       if (is_array($val)) {//FIX
-        static::build_properties($val, str_replace(' &', '', trim("$parent $key")));
+        static::build_properties($val, trim("$parent $key"));
       } else {
         switch($key) {
           case '@extend';
@@ -350,7 +350,7 @@ class tsss extends prototype
       } elseif (is_array($val)) {
         if (substr($parent, 0, 1) === '@') {
           $out []= static::build_rules($val, $key);
-        } elseif ($tmp = static::build_rules($val, str_replace(' &', '', "$parent $key"))) {
+        } elseif ($tmp = static::build_rules($val, "$parent $key")) {
           static::$css []= $tmp;
         }
       } elseif (substr($key, 0, 1) <> '@') {
