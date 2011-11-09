@@ -6,10 +6,6 @@ i18n::load_path(__DIR__.DS.'locale', 'app');
 import('partial');
 import('a_record');
 
-partial::config('path', CWD.DS.'app'.DS.'views');
-a_record::config('path', CWD.DS.'app'.DS.'models');
-
-
 $request = request::methods();
 
 request::implement('dispatch', function (array $params = array())
