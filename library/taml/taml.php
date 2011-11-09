@@ -15,7 +15,7 @@ class taml extends prototype
   private static $stack = array();
 
   // open blocks
-  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
+  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?|do)';
 
   // defaults
   protected static $defs = array(
@@ -171,12 +171,12 @@ class taml extends prototype
     $expr = sprintf('-\s+%s', static::$open);
 
     if ( ! empty($tree[-1])) {
-      $key       = $tree[-1];
-      $sub[$key] = array_slice($tree, 1);
+      $sub[$tree[-1]] = array_slice($tree, 1);
 
-      if (preg_match("/^\s*$expr/", $key)) {
-        $sub[$key] []= '- }';
+      if (preg_match("/^\s*$expr/", $tree[-1])) {
+        $sub[$tree[-1]] []= '- }';
       }
+
       $out []= static::compile($sub);
     } else {
       foreach ($tree as $key => $value) {
@@ -250,8 +250,8 @@ class taml extends prototype
 
 
     switch (substr($key, 0, 1)) {
-      case '!';
-        return $key === '!doctype' ? "<$key html>" : $key;
+      case '!';// LOL
+        return $key === '!doctype' ? "<DOCTYPE $key>" : $key;
       break;
       case '/';
         // <!-- ... -->
@@ -267,7 +267,7 @@ class taml extends prototype
         // php
         $key   = stripslashes(substr($key, 1));
         $key   = rtrim(join(' ', static::tokenize($key)), ';');
-        $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : '';
+        $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : ';';
 
         return preg_replace('/^/m', '  ', "<?php $key$close ?>\n$text");
       break;
