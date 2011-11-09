@@ -47,8 +47,12 @@ class taml extends prototype
 
 
     if ( ! is_file($php_file)) {// intentionally hidden
+      $old = ini_set('log_errors', 0);
       $out = static::parse(read($file), $file);
+
       write($php_file, $out);
+
+      ini_set('log_errors', $old);
     }
 
     return render($php_file, TRUE, array(
@@ -280,14 +284,17 @@ class taml extends prototype
           $tag  = static::$defs['default'];
         }
 
-        // attributes {hash => val}
-        preg_match('/(?<!%)\{([^{}]+)\}/', $key, $match);
+        // attributes { hash => val }
+        preg_match('/\{([^{}]+)\}/', $key, $match);
 
         if ( ! empty($match[0])) {
           $key  = str_replace($match[0], '', $key);
-          $hash = join('', static::tokenize($match[1]));
 
-          @eval("\$args=array($hash);");
+          $hash = stripslashes($match[1]);
+          $hash = join('', static::tokenize($hash));
+          $hash = preg_replace('/\$\w+/', '%{\\0}', $hash);
+
+          @eval(sprintf('$args=array_merge($args,array(%s));', $hash));
         }
 
         // output
