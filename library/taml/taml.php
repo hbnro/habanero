@@ -12,7 +12,7 @@ class taml extends prototype
    */
 
   // open blocks
-  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?|do)';
+  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
 
   // defaults
   protected static $defs = array(
