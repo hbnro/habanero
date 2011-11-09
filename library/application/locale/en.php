@@ -16,8 +16,6 @@ $lang['controller_missing'] = 'Controller is missing';
 $lang['controller_not_exists'] = 'Controller %{name} does not exists';
 $lang['action_already_exists'] = 'Action %{controller}#%{name} already exists';
 
-$lang['not_installed'] = 'Not installed';
-
 $lang['verifying_script'] = 'Verifying script';
 $lang['verifying_generator'] = 'Verifying generator';
 $lang['verifying_installation'] = 'Verifying installation';
@@ -47,7 +45,6 @@ $lang['executing_script'] = 'Executing %{path}';
 $lang['executing_task'] = 'Executing task %{name}#%{param}';
 $lang['configuration'] = 'Configuration';
 $lang['application'] = 'Application';
-$lang['environment'] = 'Environment: %{env}';
 
 $lang['current_configuration'] = 'Loaded settings';
 $lang['application_configuration'] = 'Application settings';
