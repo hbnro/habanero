@@ -16,7 +16,6 @@ class taml extends prototype
 
   // defaults
   protected static $defs = array(
-    'default' => 'div',
     'indent' => 2,
   );
 
@@ -80,6 +79,7 @@ class taml extends prototype
               '/}\s*else\s*/s' => '} else ',
               '/><\?php/' => ">\n<?php",
               '/\s+\|\s/m' => "\n",
+              //'/\}\s*;/' => '}', TODO: may break lambdas?
             );
 
 
@@ -177,12 +177,13 @@ class taml extends prototype
 
 
       foreach ($tree as $key => $value) {
+        $indent = strlen($key) - strlen(ltrim($key));
+
         if (is_string($value)) {
           $out []= static::line(trim($value));
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
-          $indent = strlen($key) - strlen(ltrim($key));
-          $value  = tag('pre', '', join("\n", static::flatten($value)));
+        $value  = tag('pre', '', join("\n", static::flatten($value)));
           $out  []= preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
           continue;
         } elseif (preg_match('/^(\s*):(\w+)\s*$/', $key, $match)) {
@@ -279,22 +280,26 @@ class taml extends prototype
         preg_match('/^[#.][.\w:-]+/', $key, $match);
 
         if ( ! empty($match[0])) {
-          $key  = str_replace($match[0], '', $key);
-          $args = args(attrs($match[0]));
-          $tag  = static::$defs['default'];
+          $tag    = 'div';
+          $key    = str_replace($match[0], '', $key);
+          $test   = array();
+
+          foreach (args(attrs($match[0])) as $k => $v) {
+            $test []= "'$k'=>'$v'";
+          }
+          $args []= join(',', $test);
         }
 
         // attributes { hash => val }
         preg_match('/\{([^{}]+)\}/', $key, $match);
 
         if ( ! empty($match[0])) {
-          $key  = str_replace($match[0], '', $key);
+          $key    = str_replace($match[0], '', $key);
 
-          $hash = stripslashes($match[1]);
-          $hash = join('', static::tokenize($hash));
-          $hash = preg_replace('/\$\w+/', '%{\\0}', $hash);
+          $hash   = stripslashes($match[1]);
+          $hash   = join('', static::tokenize($hash));
 
-          @eval(sprintf('$args=array_merge($args,array(%s));', $hash));
+          $args []= $hash;
         }
 
         // output
@@ -308,12 +313,26 @@ class taml extends prototype
         }
 
 
-        $out = $tag ? tag($tag, $args, "\n$text\n") : $text;
+        $out = $tag ? static::tag($tag, $args, "\n$text\n") : $text;
         $out = preg_replace('/^/m', str_repeat(' ', static::$defs['indent']), $out);
 
         return $out;
       break;
     }
+  }
+
+
+  // plain tag attributes
+  final private static function tag($name, $args, $text) {
+    $args = join(',', $args);
+    $hash = md5($name . $args . ticks());
+
+    $out  = tag($name, $args ? array($hash => $hash) : '', $text);
+    $args = preg_replace('/([\w:-]+)\s*=>\s*/', "'\\1'=>", $args);
+
+    $args && $out = str_replace(" $hash=\"$hash\"", "<?php echo attrs(array($args)); ?>", $out);
+
+    return $out;
   }
 
   // retrieve expression tokens
@@ -396,6 +415,7 @@ class taml extends prototype
           case T_ENDIF; // endif
           case T_ENDSWITCH; // endswitch
           case T_ENDWHILE; // endwhile
+          case T_CLASS; // FIX? class=""
 
             $out []= $val[1];
           break;
