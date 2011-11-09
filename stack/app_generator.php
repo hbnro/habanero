@@ -67,7 +67,7 @@ class app_generator extends prototype
     }
 
 
-    if (in_array($mod, get_class_methods('app_generator')) OR ! static::defined($mod)) {
+    if (in_array($mod, get_class_methods(__CLASS__)) OR ! static::defined($mod)) {
       error(ln('undefined_cmd', array('name' => $mod)));
     } else {
       static::apply($mod, $vars);
