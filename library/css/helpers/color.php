@@ -563,4 +563,4 @@ css_helper::implement('hex2rgb', function ($color) {
   );
 });
 
-/* EOF: ./library/tsss/helpers/color.php */
+/* EOF: ./library/css/helpers/color.php */

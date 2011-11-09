@@ -8,7 +8,7 @@ call_user_func(function () {
   /**#@+
    * @ignore
    */
-  require __DIR__.DS.'tsss'.EXT;
+  require __DIR__.DS.'css'.EXT;
 
   class css_helper extends prototype
   {// fake class
@@ -22,4 +22,4 @@ call_user_func(function () {
   /**#@-*/
 });
 
-/* EOF: ./library/tsss/initialize.php */
+/* EOF: ./library/css/initialize.php */

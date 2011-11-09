@@ -31,4 +31,4 @@ css_helper::implement('%', function($text) {
   return vsprintf($text, $args);
 });
 
-/* EOF: ./library/tsss/helpers/string.php */
+/* EOF: ./library/css/helpers/string.php */

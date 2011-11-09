@@ -11,16 +11,12 @@ class taml extends prototype
    * @ignore
    */
 
-  // custom tags
-  private static $stack = array();
-
   // open blocks
   private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?|do)';
 
   // defaults
   protected static $defs = array(
     'default' => 'div',
-    'prefix' => '',
     'indent' => 2,
   );
 
@@ -143,18 +139,6 @@ class taml extends prototype
   }
 
 
-  /**
-   * Register custom tags
-   *
-   * @param  string Shortcut
-   * @param  mixed  Replacement
-   * @return void
-   */
-  final public static function expand($tag, $with, array $args = array()) {
-    static::$stack[$tag] = sprintf("%s$with(%s)", static::$defs['prefix'], trim(attrs($args)));
-  }
-
-
 
   /**#@+
    * @ignore
@@ -250,9 +234,6 @@ class taml extends prototype
 
 
     switch (substr($key, 0, 1)) {
-      case '!';// LOL
-        return $key === '!doctype' ? "<DOCTYPE $key>" : $key;
-      break;
       case '/';
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
@@ -282,12 +263,8 @@ class taml extends prototype
         $tag  = '';
         $args = array();
 
-        $key  = strtr($key, static::$stack);
-        $key  = preg_replace('/\)\s*\(/', ' ', $key);
-
-
         // tag name
-        preg_match(sprintf('/^%s%s\b/', static::$defs['prefix'], $tags), $key, $match);
+        preg_match(sprintf('/^%s\b/', $tags), $key, $match);
 
         if ( ! empty($match[0])) {
           $key = str_replace($match[0], '', $key);
@@ -311,14 +288,6 @@ class taml extends prototype
           $hash = join('', static::tokenize($match[1]));
 
           @eval("\$args=array($hash);");
-        }
-
-        // other (hash="val")
-        preg_match('/\(([^()]+)\)/', $key, $match);
-
-        if ( ! empty($match[0])) {
-          $key  = str_replace($match[0], '', $key);
-          $args = args(stripslashes($match[1]));
         }
 
         // output

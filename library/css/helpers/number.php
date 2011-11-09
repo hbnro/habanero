@@ -85,4 +85,4 @@ css_helper::implement('abs', function ($num) {
   return abs($num);
 });
 
-/* EOF: ./library/tsss/helpers/number.php */
+/* EOF: ./library/css/helpers/number.php */

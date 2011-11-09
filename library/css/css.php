@@ -4,7 +4,7 @@
  * CSS manipulation library
  */
 
-class tsss extends prototype
+class css extends prototype
 {
 
   /**#@+
@@ -534,4 +534,4 @@ class tsss extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/tsss/tsss.php */
+/* EOF: ./library/css/css.php */

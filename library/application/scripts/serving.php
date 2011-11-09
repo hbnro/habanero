@@ -17,9 +17,9 @@ cache::block("--$type-assets-$env", function ()
 
   assets::compile('css', function ($file)
     use($base_path, $prod) {
-    import('tsss');
-    tsss::config('path', $base_path.DS.'css');
-    return tsss::render($file, option('environment') === 'production');
+    import('css');
+    css::config('path', $base_path.DS.'css');
+    return css::render($file, option('environment') === 'production');
   });
 
   assets::compile('js', function ($file)
