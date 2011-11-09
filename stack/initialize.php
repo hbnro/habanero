@@ -9,7 +9,6 @@ run(function () {
 
   i18n::load_path(__DIR__.DS.'locale');
 
-  config(getcwd().DS.'config'.EXT);
   config(getcwd().DS.'config'.DS.'application'.EXT);
   config(getcwd().DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
