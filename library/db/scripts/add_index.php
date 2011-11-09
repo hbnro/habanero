@@ -4,8 +4,8 @@ if (check_table($to)) {
   if ( ! $name) {
     error(ln('db.index_name_missing', array('name' => $to)));
   } else {
+    $args   = array_slice($args, 2);
     $unique = cli::flag('unique');
-    $args   = array_slice(func_get_args(), 2);
     $idx    = db::indexes($table);
 
     if ( ! $args) {

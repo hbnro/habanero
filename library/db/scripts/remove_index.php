@@ -1,7 +1,7 @@
 <?php
 
 if (check_table($from)) {
-  $args = array_slice(func_get_args(), 1);
+  $args   = array_slice($args, 1);
 
   if ( ! $args) {
     error(ln('db.index_name_missing', array('name' => $from)));

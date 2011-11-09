@@ -61,36 +61,42 @@ app_generator::implement('db:create_table', function ($table = '') {
 
 // add columns
 app_generator::implement('db:add_column', function ($to = '') {
+  $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'add_column'.EXT;
 });
 
 
 // remove columns
 app_generator::implement('db:remove_column', function ($from = '') {
+  $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'remove_column'.EXT;
 });
 
 
 // rename column name
 app_generator::implement('db:rename_column', function ($from = '') {
+  $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'rename_column'.EXT;
 });
 
 
 // change column definition
 app_generator::implement('db:change_column', function ($from = '') {
+  $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'change_column'.EXT;
 });
 
 
 // create table index
 app_generator::implement('db:add_index', function ($to = '', $name = '') {
+  $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'add_index'.EXT;
 });
 
 
 // remove table index
 app_generator::implement('db:remove_index', function ($from = '', $name = '') {
+  $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'remove_index'.EXT;
 });
 

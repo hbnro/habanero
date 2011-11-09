@@ -1,8 +1,8 @@
 <?php
 
 if (check_table($from)) {
+  $args   = array_slice($args, 1);
   $fields = array_keys(db::columns($from));
-  $args   = array_slice(func_get_args(), 1);
 
   if ( ! $args) {
     error(ln('db.table_fields_missing', array('name' => $from)));

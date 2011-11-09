@@ -4,10 +4,10 @@ require dirname(__DIR__).'/framework/initialize.php';
 require __DIR__.DS.'app_generator'.EXT;
 require __DIR__.DS.'functions'.EXT;
 
+chdir(getcwd());
+
 run(function () {
   import('console');
-
-  define('getcwd()', realpath(getcwd()));
 
   i18n::load_path(__DIR__.DS.'locale');
 
