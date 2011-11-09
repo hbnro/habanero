@@ -109,8 +109,18 @@ class a_record extends prototype
    *
    * @return mixed
    */
-  function id() {
+  public function id() {
     return $this->props[static::pk()];
+  }
+
+
+  /**
+   * Retrieve all columns
+   *
+   * @return array
+   */
+  final public function fields() {
+    return $this->props;
   }
 
 
