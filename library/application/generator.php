@@ -15,10 +15,10 @@ app_generator::alias('configure', 'config conf');
 app_generator::implement('create', function () {
   info(ln('app.verifying_installation'));
 
-  if (is_file(CWD.DS.'initialize'.EXT)) {
+  if (is_file(getcwd().DS.'initialize'.EXT)) {
     notice(ln('app.application'));
 
-    $tmp = dir2arr(CWD, '*', DIR_RECURSIVE | DIR_EMPTY);
+    $tmp = dir2arr(getcwd(), '*', DIR_RECURSIVE | DIR_EMPTY);
     $map = function ($tree, $self, $depth = 0) {
       foreach ($tree as $key => $val) {
         $pre = str_repeat(' ', $depth);
@@ -53,7 +53,7 @@ app_generator::implement('status', function () {
 
 // script generation
 app_generator::implement('generate', function($what = '', $name = '') {
-  config(CWD.DS.'config'.DS.'application'.EXT);
+  config(getcwd().DS.'config'.DS.'application'.EXT);
 
   if ( ! in_array($what, array(
     'controller',

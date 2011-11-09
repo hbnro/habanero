@@ -7,13 +7,13 @@ require __DIR__.DS.'functions'.EXT;
 run(function () {
   import('console');
 
-  define('CWD', realpath(getcwd()));
+  define('getcwd()', realpath(getcwd()));
 
   i18n::load_path(__DIR__.DS.'locale');
 
-  config(CWD.DS.'config'.EXT);
-  config(CWD.DS.'config'.DS.'application'.EXT);
-  config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
+  config(getcwd().DS.'config'.EXT);
+  config(getcwd().DS.'config'.DS.'application'.EXT);
+  config(getcwd().DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
 
   $args = cli::args();

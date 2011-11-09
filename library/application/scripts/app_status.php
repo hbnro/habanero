@@ -2,10 +2,10 @@
 
 info(ln('app.verifying_installation'));
 
-if ( ! is_file(CWD.DS.'initialize'.EXT)) {
+if ( ! is_file(getcwd().DS.'initialize'.EXT)) {
   error(ln('app.not_installed'));
 } else {
-  $test  = dir2arr(CWD, '*', DIR_RECURSIVE | DIR_MAP);
+  $test  = dir2arr(getcwd(), '*', DIR_RECURSIVE | DIR_MAP);
   $count = sizeof($test);
   $size  = 0;
 

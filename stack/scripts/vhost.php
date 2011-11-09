@@ -27,7 +27,7 @@ done();
 
 
 function vhost_write($vhost_path) {
-  $base_path  = CWD;
+  $base_path  = getcwd();
   $base_name  = basename($base_path);
   $config     = read($vhost_path);
 
@@ -51,7 +51,7 @@ function vhost_write($vhost_path) {
 }
 
 function vhost_create($vhost_path) {
-  $base_path  = CWD;
+  $base_path  = getcwd();
   $base_name  = basename($base_path);
   $vhost_file = "$vhost_path/$base_name";
 
@@ -74,7 +74,7 @@ function vhost_create($vhost_path) {
 }
 
 function vhost_template() {
-  $base_path = CWD;
+  $base_path = getcwd();
   $base_name = basename($base_path);
 
   $docs_root = "$base_path/public";
@@ -126,7 +126,7 @@ function update_hosts($base_name) {
 function httpd_restart($enable = FALSE) {
   sleep(1);
 
-  $base_name  = basename(CWD);
+  $base_name  = basename(getcwd());
 
   $apache_bin = '/etc/init.d/apache2';
 

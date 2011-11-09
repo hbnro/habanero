@@ -2,7 +2,7 @@
 
 info(ln('copying_libraries'));
 
-$tetl_path  = CWD.DS.'tetlphp';
+$tetl_path  = getcwd().DS.'tetlphp';
 
 is_dir($tetl_path) && unfile($tetl_path, '*', DIR_RECURSIVE | DIR_EMPTY);
 mkpath($tetl_path);
@@ -10,7 +10,7 @@ mkpath($tetl_path);
 
 $libs = array();
 $base = dirname(LIB);
-$stub = read(CWD.DS.'Stubfile');
+$stub = read(getcwd().DS.'Stubfile');
 
 preg_match_all('/\s*-\s*(\S+)/m', $stub, $matches);
 

@@ -6,14 +6,14 @@ $type = params('type');
 $env  = option('environment');
 $prod = $env === 'production';
 
-$base_path = CWD.DS.'app'.DS.'views'.DS.'assets';
+$base_path = getcwd().DS.'app'.DS.'views'.DS.'assets';
 
 cache::block("--$type-assets-$env", function ()
   use($base_path, $type, $prod) {
   import('assets');
 
   assets::config('path', $base_path);
-  assets::config('root', CWD.DS.'public');
+  assets::config('root', getcwd().DS.'public');
 
   assets::compile('css', function ($file)
     use($base_path, $prod) {

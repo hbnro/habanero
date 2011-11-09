@@ -4,7 +4,7 @@ info(ln('launch_vhost'));
 
 $open_cmd = !! `whereis xdg-open` ? 'xdg-open' : 'open';
 
-$dev_url  = sprintf('http://%s.dev/', basename(CWD));
+$dev_url  = sprintf('http://%s.dev/', basename(getcwd()));
 
 success($dev_url);
 

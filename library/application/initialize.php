@@ -7,11 +7,11 @@
 call_user_func(function () {
   import('server');
 
-  define('CWD', dirname(APP_PATH));
+  define('getcwd()', dirname(APP_PATH));
 
-  config(CWD.DS.'config'.EXT);
-  config(CWD.DS.'config'.DS.'application'.EXT);
-  config(CWD.DS.'config'.DS.'environments'.DS.option('environment').EXT);
+  config(getcwd().DS.'config'.EXT);
+  config(getcwd().DS.'config'.DS.'application'.EXT);
+  config(getcwd().DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
   $bootstrap = bootstrap::methods();
 
@@ -22,9 +22,9 @@ call_user_func(function () {
 
 
   bootstrap::bind(function ($app) {
-    i18n::load_path(CWD.DS.'locale');
-    config('import_path', CWD.DS.'lib');
-    routing::load(CWD.DS.'app'.DS.'routes'.EXT, array('safe' => TRUE));
+    i18n::load_path(getcwd().DS.'locale');
+    config('import_path', getcwd().DS.'lib');
+    routing::load(getcwd().DS.'app'.DS.'routes'.EXT, array('safe' => TRUE));
     require __DIR__.DS.'scripts'.DS.'binding'.EXT;
     return $app;
   });
