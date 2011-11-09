@@ -81,6 +81,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir(getcwd().DS.'tmp');
         chmod(getcwd().DS.'tmp', 0777);
 
+    copy_file(getcwd(), $skel_dir.DS.'config'.EXT);
     copy_file(getcwd(), $skel_dir.DS.'initialize'.EXT);
 
 /* EOF: ./library/application/scripts/create_application.php */

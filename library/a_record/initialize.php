@@ -20,7 +20,7 @@ call_user_func(function () {
     /**
       * @ignore
       */
-    $model_file  = option('views', getcwd().DS.'models').DS.$class.EXT;
+    $model_file  = getcwd().DS.'models'.DS.$class.EXT;
     $driver_file = __DIR__.DS.'drivers'.DS.$class.EXT;
 
     is_file($driver_file) && require $driver_file;

@@ -18,7 +18,7 @@ request::implement('dispatch', function (array $params = array())
 
     list($controller, $action) = explode('#', (string) $params['to']);
 
-    $controller_file = getcwd().DS.'app'.DS.'controllers'.DS.$controller.EXT;
+    $controller_file = getcwd().DS.'controllers'.DS.$controller.EXT;
 
     if ( ! is_file($controller_file)) {
       raise(ln('app.controller_missing', array('name' => $controller_file)));
@@ -29,7 +29,7 @@ request::implement('dispatch', function (array $params = array())
      * @ignore
      */
 
-    require getcwd().DS.'app'.DS.'controllers'.DS.'base'.EXT;
+    require getcwd().DS.'controllers'.DS.'base'.EXT;
     require $controller_file;
 
     /**#@-*/
@@ -47,9 +47,9 @@ request::implement('dispatch', function (array $params = array())
     /**
      * @ignore
      */
-    require getcwd().DS.'app'.DS.'helpers'.DS.'base'.EXT;
+    require getcwd().DS.'helpers'.DS.'base'.EXT;
 
-    $helper_file = getcwd().DS.'app'.DS.'helpers'.DS.$controller.EXT;
+    $helper_file = getcwd().DS.'helpers'.DS.$controller.EXT;
 
     is_file($helper_file) && require $helper_file;
     /**#@-*/

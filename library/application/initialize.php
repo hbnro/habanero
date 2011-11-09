@@ -7,7 +7,8 @@
 call_user_func(function () {
   import('server');
 
-  config(getcwd().DS.'config'.EXT);
+  chdir(dirname(APP_PATH).DS.'app');
+
   config(getcwd().DS.'config'.DS.'application'.EXT);
   config(getcwd().DS.'config'.DS.'environments'.DS.option('environment').EXT);
 
@@ -22,7 +23,7 @@ call_user_func(function () {
   bootstrap::bind(function ($app) {
     i18n::load_path(getcwd().DS.'locale');
     config('import_path', getcwd().DS.'lib');
-    routing::load(getcwd().DS.'app'.DS.'routes'.EXT, array('safe' => TRUE));
+    routing::load(getcwd().DS.'routes'.EXT, array('safe' => TRUE));
     require __DIR__.DS.'scripts'.DS.'binding'.EXT;
     return $app;
   });
