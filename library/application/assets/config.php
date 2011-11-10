@@ -1,8 +1,8 @@
 <?php
 
-chdir(__DIR__);
+chdir(__DIR__.DS.'app');
 
 # $config['rewrite'] = 1;
-
-$config['views'] = __DIR__.DS.'app'.DS.'views';
-$config['models'] = __DIR__.DS.'app'.DS.'models';
+# $config['language'] = 'en';
+# $config['timezone'] = 'UTC';
+# $config['temporary_files'] = __DIR__.DS.'tmp';
