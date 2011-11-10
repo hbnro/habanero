@@ -1,0 +1,14 @@
+# dependencies
+
+- application
+- server
+
+- db
+- cache
+- a_record
+
+- partial
+- assets
+
+- taml
+- css
