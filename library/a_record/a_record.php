@@ -100,6 +100,11 @@ class a_record extends prototype
     return call_user_func_array(array($this->$method, $what ?: 'all'), $arguments);
   }
 
+  // plain fields
+  public function __toString() {
+    return dump($this->fields());
+  }
+
   /**#@-*/
 
 
