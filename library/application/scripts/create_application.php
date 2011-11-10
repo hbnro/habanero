@@ -76,6 +76,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file(getcwd().DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');
     copy_file(getcwd().DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
 
+    copy_file(getcwd(), $skel_dir.DS.'Stubfile');
      copy_dir(getcwd(), $skel_dir.DS.'tasks');
 
    create_dir(getcwd().DS.'tmp');
