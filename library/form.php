@@ -583,4 +583,24 @@ class form extends prototype
   /**#@-*/
 }
 
+
+// filter hook
+if (class_exists('taml')) {
+  taml::shortcut('form', function ($args, $plain, $params) {
+    $out = "<" . "?php echo form :: to ( %s, function () { ?>\n%s\n<?php }, array ( %s ) ); ?" . ">";
+    return sprintf($out, $args, taml::parse($plain), $params);
+  });
+
+  // generic inputs
+  $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
+
+  foreach ($test['types'] as $one) {
+    taml::shortcut($one, function ($args, $plain, $params)
+      use ($one) {
+      $out = "<" . "?php echo form :: field ( %s , array( label => '%s', type => '%s', %s ) ); ?" . ">";
+      return sprintf($out, $args ?: 'NULL', trim(taml::parse($plain)), $one, $params ?: 'NULL');
+    });
+  }
+}
+
 /* EOF: ./library/form.php */
