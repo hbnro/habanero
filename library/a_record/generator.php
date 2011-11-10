@@ -7,8 +7,7 @@ app_generator::usage(ln('ar.generator_title'), ln('ar.generator_usage'));
 app_generator::alias('console', 'c');
 
 
-
-// a record console
+// inspect records
 app_generator::implement('console', function () {
   import('a_record');
 
