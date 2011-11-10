@@ -316,7 +316,7 @@ function tag($name, $args = array(), $text = '') {
  */
 function attrs($args, $html = FALSE) {
   static $global = NULL,
-         $regex = '/(?:#([a-z_][\da-z_-]*))?(?:[\.,]?([\s\d\.,a-z_-]+))?(?:@([^"]+))?/i';
+         $regex = '/(?:#([a-z_][\da-z_-]*))?(?:[.,]?([\s\d.,a-z_-]+))?(?:@([^"]+))?/i';
 
   if (is_null($global)) {
     $test   = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
@@ -338,7 +338,7 @@ function attrs($args, $html = FALSE) {
     }
 
     if ( ! empty($match[2][0])) {
-      $args['class'] = strtr($match[2][0], ',.', ' ');
+      $args['class'] = strtr($match[2][0], ',.', '  ');
     }
 
     if ( ! empty($match[3][0])) {
@@ -351,6 +351,7 @@ function attrs($args, $html = FALSE) {
         $args[$key] = $val;
       }
     }
+
   }
 
 
