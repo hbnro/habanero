@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title><?php echo ln('error'); ?></title>
     <style>
-    p {
+    p, .debug {
       padding: .5em;
       font-size: .9em;
       background: #ededed;
@@ -12,6 +12,7 @@
     }
     pre {
       overflow: auto;
+      padding: 0 .3em !important;
       font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
       font-size: .8em;
     }
@@ -24,6 +25,7 @@
   </head>
   <body>
     <p><?php echo ents($message, TRUE); ?></p>
+    <?php if ( ! empty($debug)) { ?><pre class="debug"><?php dump($debug, TRUE); ?></pre><?php } ?>
     <h3><?php echo ln('application'); ?></h3>
     <?php dump(array(
       'user' => "$user@$host",

@@ -109,15 +109,16 @@ function render($content, $partial = FALSE, array $params = array()) {
  * Raise a user level exception
  *
  * @param  array Description or exception
+ * @param  mixed Extra information
  * @return void
  */
-function raise($message) {
+function raise($message, $debug = NULL) {
   if (is_closure($message)) {// TODO: there is another way?
     return bootstrap::implement('raise', $message);
   }
 
   // invoke custom handler
-  bootstrap::raise($message);
+  bootstrap::raise($message, $debug);
 }
 
 

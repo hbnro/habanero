@@ -93,7 +93,7 @@ final class bootstrap extends prototype
 
 
 // basic output
-bootstrap::implement('raise', function ($message) {
+bootstrap::implement('raise', function ($message, $debug = NULL) {
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(FALSE), 1);
@@ -128,6 +128,7 @@ bootstrap::implement('raise', function ($message) {
     $trace[$i]  = $format_val;
   }
 
+  $var['debug']     = $debug;
   $var['message']   = dump($message);
   $var['backtrace'] = array_reverse($trace);
   $var['route']     = IS_CLI ? @array_shift($_SERVER['argv']) : value($_SERVER, 'REQUEST_URI');
