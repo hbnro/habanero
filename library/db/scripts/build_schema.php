@@ -14,6 +14,8 @@ foreach (db::tables() as $one) {
   $out []= sprintf("create_table('$one', array(");
 
   foreach (db::columns($one) as $key => $val) {
+    $val['type'] = str_replace('datetime', 'timestamp', $val['type']);
+
     $def = array("'{$val['type']}'");
 
     $val['length'] && $def []= $val['length'];
