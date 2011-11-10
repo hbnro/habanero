@@ -24,11 +24,11 @@
  box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
-@mixin textshadow($left: 0px, $top: 0px, $blur: 5px, $color: #333) {
+@mixin text_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #333) {
  text-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
-@mixin textcolumns($column_count, $column_gap: 20px) {
+@mixin text_columns($column_count, $column_gap: 20px) {
  -webkit-column-count: %(%dpx, $column_count);
  -webkit-column-gap: %(%dpx, $column_gap);
  -moz-column-count: %(%dpx, $column_count);
