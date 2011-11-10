@@ -18,6 +18,12 @@
  box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
+@mixin inner_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
+ -moz-box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -webkit-box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+}
+
 @mixin textshadow($left: 0px, $top: 0px, $blur: 5px, $color: #333) {
  text-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
