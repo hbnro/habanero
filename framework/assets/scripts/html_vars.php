@@ -87,7 +87,6 @@ return array(
     'wbr',
     'ins',
     'del',
-    'img',
     'iframe',
     'embed',
     'object',
