@@ -141,8 +141,8 @@ class taml extends prototype
 
       $test = explode("\n", $out);
       $line = $test[$match[2] - 1];
-
-      raise("$match[1]...", trim(preg_replace('/<\?(php|=)|;?\s*\?>/', '', $line)));
+// TODO: fixate this, does not works very well!
+      //raise("$match[1]...", trim(preg_replace('/<\?(php|=)|;?\s*\? >/', '', $line)));
     }
     return $out;
   }
