@@ -49,18 +49,21 @@ class partial extends prototype
 
     $parts = explode('.', basename($file));
     $name  = array_shift($parts);
+    $test  = TMP.DS.md5($file);
+
+    write($test, read($file));
 
     while ($parts) {
       $type = array_pop($parts);
 
       if ($type && array_key_exists($type, static::$render)) {
-        $output = call_user_func(static::$render[$type], $file, $vars);
-        $file   = TMP.DS.md5($file);
+        $output = call_user_func(static::$render[$type], $test, $vars);
 
-        write($file, $output);
+        write($test, $output);
 
         continue;
       }
+      @unlink($test);
       break;
     }
     return $output;
