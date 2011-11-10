@@ -31,11 +31,13 @@ app_generator::implement('console', function () {
         pretty(function ()
           use($out) {
           if (is_array($out)) {
-            foreach ($out as $one) {
-              printf(">>> $one\n");
+            $max = sizeof($out) - 1;
+            foreach ($out as $i => $one) {
+              echo "\bcyan(>>>)\b $one\n";
+              ($i < $max) && print("\n");
             }
           } else {
-            printf(">>> $out\n");
+            ! is_null($out) ? print("\bcyan(>>>)\b $out\n") : print(">>> $out\n");
           }
         });
       }
