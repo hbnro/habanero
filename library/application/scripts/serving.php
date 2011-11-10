@@ -6,7 +6,7 @@ $type = params('type');
 $env  = option('environment');
 $prod = $env === 'production';
 
-$base_path = getcwd().DS.'app'.DS.'views'.DS.'assets';
+$base_path = getcwd().DS.'views'.DS.'assets';
 
 cache::block("--$type-assets-$env", function ()
   use($base_path, $type, $prod) {
