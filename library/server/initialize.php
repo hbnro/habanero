@@ -133,33 +133,35 @@ call_user_func(function () {
       // default session hanlder
       // http://php.net/session_set_save_handler
 
-      session_set_save_handler(function () {
-        return TRUE;
-      }, function () {
-        return TRUE;
-      }, function ($id) {
-        return read(TMP.DS."sess_$id");
-      }, function ($id, $data) {
-        return write(TMP.DS."sess_$id", $data);
-      }, function ($id) {
-        return @unlink(TMP.DS."sess_$id");
-      }, function ($max) {
-        foreach (dir2arr(TMP, "sess_*") as $one) {
-          if ((@filemtime(TMP.DS.$one) + $max) < time()) {
-            @unlink(TMP.DS.$one);
+      if ( ! session_id()) {
+        session_set_save_handler(function () {
+          return TRUE;
+        }, function () {
+          return TRUE;
+        }, function ($id) {
+          return read(TMP.DS."sess_$id");
+        }, function ($id, $data) {
+          return write(TMP.DS."sess_$id", $data);
+        }, function ($id) {
+          return @unlink(TMP.DS."sess_$id");
+        }, function ($max) {
+          foreach (dir2arr(TMP, "sess_*") as $one) {
+            if ((@filemtime(TMP.DS.$one) + $max) < time()) {
+              @unlink(TMP.DS.$one);
+            }
           }
+        });
+
+
+        // session conf
+        if ( ! is_local()) {
+          session_set_cookie_params(86400, ROOT, '.' . server());
         }
-      });
 
-
-      // session conf
-      if ( ! is_local()) {
-        session_set_cookie_params(86400, ROOT, '.' . server());
+        session_name('--a-' . preg_replace('/\W/', '-', phpversion()));
+        // TODO: BTW with session_id()?
+        session_start();
       }
-
-      session_name('--a-' . preg_replace('/\W/', '-', phpversion()));
-      // TODO: BTW with session_id()?
-      session_start();
 
 
       // expires+hops
