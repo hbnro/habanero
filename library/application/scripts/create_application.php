@@ -6,40 +6,39 @@
 
 $skel_dir = dirname(__DIR__).DS.'assets';
 
-   create_dir(getcwd().DS.'app');
-   create_dir(getcwd().DS.'app'.DS.'helpers');
-  create_file(getcwd().DS.'app'.DS.'helpers'.DS.'base'.EXT, "<?php\n");
-    copy_file(getcwd().DS.'app', $skel_dir.DS.'routes'.EXT);
+   create_dir(getcwd().DS.'helpers');
+  create_file(getcwd().DS.'helpers'.DS.'base'.EXT, "<?php\n");
+    copy_file(getcwd(), $skel_dir.DS.'routes'.EXT);
 
-   create_dir(getcwd().DS.'app'.DS.'controllers');
-    copy_file(getcwd().DS.'app'.DS.'controllers', $skel_dir.DS.'home'.EXT);
-     template(getcwd().DS.'app'.DS.'controllers', $skel_dir.DS.'base'.EXT, array(
+   create_dir(getcwd().DS.'controllers');
+    copy_file(getcwd().DS.'controllers', $skel_dir.DS.'home'.EXT);
+     template(getcwd().DS.'controllers', $skel_dir.DS.'base'.EXT, array(
         'app_name' => basename(getcwd()),
       ));
 
-   create_dir(getcwd().DS.'app'.DS.'models');
+   create_dir(getcwd().DS.'models');
 
-   create_dir(getcwd().DS.'app'.DS.'views');
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'assets');
+   create_dir(getcwd().DS.'views');
+   create_dir(getcwd().DS.'views'.DS.'assets');
 
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'css');
-  create_file(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */");
-    copy_file(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css');
+   create_dir(getcwd().DS.'views'.DS.'assets'.DS.'css');
+  create_file(getcwd().DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */");
+    copy_file(getcwd().DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css');
 
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'js');
-  create_file(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', "/**\n *= lib/jquery-ujs\n */\n");
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'js'.DS.'lib');
-    copy_file(getcwd().DS.'app'.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'jquery-ujs.js');
+   create_dir(getcwd().DS.'views'.DS.'assets'.DS.'js');
+  create_file(getcwd().DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', "/**\n *= lib/jquery-ujs\n */\n");
+   create_dir(getcwd().DS.'views'.DS.'assets'.DS.'js'.DS.'lib');
+    copy_file(getcwd().DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'jquery-ujs.js');
 
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'errors');
-    copy_file(getcwd().DS.'app'.DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'404.html'.EXT);
-    copy_file(getcwd().DS.'app'.DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'500.html'.EXT);
+   create_dir(getcwd().DS.'views'.DS.'errors');
+    copy_file(getcwd().DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'404.html'.EXT);
+    copy_file(getcwd().DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'500.html'.EXT);
 
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'layouts');
-    copy_file(getcwd().DS.'app'.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html'.EXT);
+   create_dir(getcwd().DS.'views'.DS.'layouts');
+    copy_file(getcwd().DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html'.EXT);
 
-   create_dir(getcwd().DS.'app'.DS.'views'.DS.'home');
-    copy_file(getcwd().DS.'app'.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
+   create_dir(getcwd().DS.'views'.DS.'home');
+    copy_file(getcwd().DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
 
    create_dir(getcwd().DS.'config');
     copy_file(getcwd().DS.'config', $skel_dir.DS.'application'.EXT);

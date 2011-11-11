@@ -1,6 +1,6 @@
 <?php
 
-chdir(__DIR__.DS.'app');
+chdir(__DIR__);
 
 # $config['rewrite'] = 1;
 # $config['language'] = 'en';
