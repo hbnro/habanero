@@ -156,7 +156,7 @@ class cache extends prototype
       $old = static::fetch_item('--cache-tags');
 
       foreach ((array) $old as $i => $val) {
-        $diff = array_intersect($key, $val);
+        $diff = array_intersect($key, (array) $val);
 
         if (empty($diff)) {
           continue;
