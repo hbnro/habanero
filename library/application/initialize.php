@@ -7,9 +7,6 @@
 call_user_func(function () {
   import('server');
 
-  config(getcwd().DS.'config'.DS.'application'.EXT);
-  config(getcwd().DS.'config'.DS.'environments'.DS.option('environment').EXT);
-
   $bootstrap = bootstrap::methods();
 
   bootstrap::implement('raise', function ($message)
