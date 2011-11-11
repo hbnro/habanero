@@ -81,16 +81,7 @@ call_user_func(function () {
 
 
   // global
-  $config_set = array(
-    LIB.DS.'config'.EXT,
-    getcwd().DS.'config'.EXT,
-    APP_PATH.DS.'config'.EXT,
-  );
-
-  foreach ($config_set as $config_file) {
-    is_file($config_file) && config($config_file);
-  }
-
+  config(getcwd().DS.'config'.EXT);
 
   // local
   if ( ! empty($GLOBALS['config'])) {
