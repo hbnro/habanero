@@ -3,12 +3,16 @@
 if (cli::flag('schema')) {
   info(ln('db.verifying_schema'));
 
-  $schema_file = getcwd().DS.'db'.DS.'schema'.EXT;
+  $schema_file = getcwd().DS.'database'.DS.'schema'.EXT;
 
   $path = str_replace(getcwd().DS, '', $schema_file);
   success(ln('db.loading_schema', array('path' => $path)));
 
-  require $schema_file;
+  if (is_file($schema_file)) {
+    require $schema_file;
+  } else {
+    error(ln('db.without_schema', array('path' => $path)));
+  }
 } else {
   if ( ! cli::flag('seed')) {
     info(ln('db.verifying_database'));
@@ -22,7 +26,7 @@ if (cli::flag('schema')) {
     }
 
 
-    if ($test = findfile(getcwd().DS.'db'.DS.'migrate', '*'.EXT)) {
+    if ($test = findfile(getcwd().DS.'database'.DS.'migrate', '*'.EXT)) {
       sort($test);
 
       success(ln('db.migrating_database'));
@@ -40,7 +44,7 @@ if (cli::flag('schema')) {
 
   info(ln('db.verifying_seed'));
 
-  $seed_file = getcwd().DS.'db'.DS.'seeds'.EXT;
+  $seed_file = getcwd().DS.'database'.DS.'seeds'.EXT;
 
   if ( ! is_file($seed_file)) {
     error(ln('db.without_seed'));

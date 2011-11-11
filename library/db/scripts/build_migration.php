@@ -4,7 +4,7 @@ $name = cli::flag('name', $callback);
 $time = time();
 
 $migration_name = date('YmdHis_', $time).$args[0].'_'.$name;
-$migration_path = mkpath(getcwd().DS.'db'.DS.'migrate');
+$migration_path = mkpath(getcwd().DS.'database'.DS.'migrate');
 $migration_file = $migration_path.DS.$migration_name.EXT;
 
 

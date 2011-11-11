@@ -49,6 +49,7 @@ $lang['without_indexes'] = 'There are no indexes for %{name}';
 $lang['without_migrations'] = 'There are no migrations';
 $lang['without_tables'] = 'There are no tables';
 $lang['without_seed'] = 'There are no data';
+$lang['without_schema'] = 'Missing schema %{path}';
 
 $lang['loading_seed'] = 'Loading data from %{path}';
 $lang['loading_schema'] = 'Loading schema from %{path}';

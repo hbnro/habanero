@@ -7,7 +7,7 @@
 call_user_func(function () {
   import('server');
 
-  chdir(dirname(APP_PATH).DS.'app');
+  chdir(dirname(getcwd()));
 
   config(getcwd().DS.'config'.DS.'application'.EXT);
   config(getcwd().DS.'config'.DS.'environments'.DS.option('environment').EXT);

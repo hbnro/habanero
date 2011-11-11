@@ -49,6 +49,7 @@ $lang['without_indexes'] = 'La tabla %{name} no tiene indices';
 $lang['without_migrations'] = 'Sin migraciones';
 $lang['without_tables'] = 'Sin tablas';
 $lang['without_seed'] = 'Sin datos';
+$lang['without_schema'] = 'El esquema no existe %{path}';
 
 $lang['loading_seed'] = 'Cargando datos de %{path}';
 $lang['loading_schema'] = 'Cargando esquema de %{path}';

@@ -6,7 +6,7 @@ if (cli::flag('import')) {
   if ( ! $name) {
     error(ln('db.import_name_missing'));
   } else {
-    $inc_file  = getcwd().DS.'db'.DS.'backup'.DS.$name;
+    $inc_file  = mkpath(getcwd().DS.'database'.DS.'backup').DS.$name;
     $inc_file .= cli::flag('raw') ? '.sql' : EXT;
 
     $path = str_replace(getcwd().DS, '', $inc_file);
@@ -31,7 +31,7 @@ if (cli::flag('import')) {
     $raw  = cli::flag('raw');
     $ext  = $raw ? '.sql' : EXT;
 
-    $out_file = mkpath(getcwd().DS.'db'.DS.'backup').DS.$name.$ext;
+    $out_file = mkpath(getcwd().DS.'database'.DS.'backup').DS.$name.$ext;
 
     if (is_file($out_file)) {
       error(ln('db.export_already_exists'));

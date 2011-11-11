@@ -3,7 +3,7 @@
 info(ln('db.verifying_schema'));
 
 $out = array();
-$schema_file = getcwd().DS.'db'.DS.'schema'.EXT;
+$schema_file = mkpath(getcwd().DS.'database').DS.'schema'.EXT;
 
 $path = str_replace(getcwd().DS, '', $schema_file);
 success(ln('db.updating_schema', array('path' => $path)));

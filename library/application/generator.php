@@ -15,7 +15,7 @@ app_generator::alias('configure', 'config conf');
 app_generator::implement('create', function () {
   info(ln('app.verifying_installation'));
 
-  if (dirsize(getcwd())) {
+  if ( ! cli::flag('force') && dirsize(getcwd())) {
     notice(ln('app.application'));
 
     $tmp = dir2arr(getcwd(), '*', DIR_RECURSIVE | DIR_EMPTY);

@@ -2,7 +2,7 @@
 
 @list($parent, $name) = explode(':', $name);
 
-$out_file = mkpath(getcwd().DS.'app'.DS.'controllers').DS.$parent.EXT;
+$out_file = mkpath(getcwd().DS.'controllers').DS.$parent.EXT;
 
 if ( ! $parent) {
   error(ln('app.controller_missing'));
@@ -26,7 +26,7 @@ if ( ! $parent) {
 
     success(ln('app.action_route_building', array('name' => $name, 'controller' => $parent)));
 
-    $route_file = getcwd().DS.'app'.DS.'routes'.EXT;
+    $route_file = getcwd().DS.'routes'.EXT;
     $method     = cli::flag('method') ?: 'get';
     $repl       = ";\n  %-6s('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
     write($route_file, preg_replace('/;[^;]*?$/', sprintf($repl, $method), read($route_file)));
@@ -35,8 +35,8 @@ if ( ! $parent) {
     if (cli::flag('view')) {
       success(ln('app.action_view_building', array('name' => $name, 'controller' => $parent)));
 
-      $text = "<section>\n  <header>$parent#$name.view</header>\n  <pre><?php echo __FILE__; ?></pre>\n</section>\n";
-      write(mkpath(getcwd().DS.'app'.DS.'views'.DS.$parent).DS.$name.EXT, $text);
+      $text = "<section>\n  <header>$parent#$name.view</header>\n  <pre><?php echo getcwd().DS.'views'.DS.'$parent'.DS.'$name.html'.EXT; ?></pre>\n</section>\n";
+      write(mkpath(getcwd().DS.'views'.DS.$parent).DS."$name.html".EXT, $text);
     }
   }
 }

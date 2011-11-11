@@ -6,9 +6,12 @@
 
 $skel_dir = dirname(__DIR__).DS.'assets';
 
-   create_dir(getcwd().DS.'helpers');
-  create_file(getcwd().DS.'helpers'.DS.'base'.EXT, "<?php\n");
-    copy_file(getcwd(), $skel_dir.DS.'routes'.EXT);
+   create_dir(getcwd().DS.'config');
+    copy_file(getcwd().DS.'config', $skel_dir.DS.'application'.EXT);
+
+   create_dir(getcwd().DS.'config'.DS.'environments');
+  create_file(getcwd().DS.'config'.DS.'environments'.DS.'development'.EXT);
+  create_file(getcwd().DS.'config'.DS.'environments'.DS.'production'.EXT);
 
    create_dir(getcwd().DS.'controllers');
     copy_file(getcwd().DS.'controllers', $skel_dir.DS.'home'.EXT);
@@ -16,7 +19,48 @@ $skel_dir = dirname(__DIR__).DS.'assets';
         'app_name' => basename(getcwd()),
       ));
 
+   create_dir(getcwd().DS.'database');
+   create_dir(getcwd().DS.'database'.DS.'backup');
+   create_dir(getcwd().DS.'database'.DS.'migrate');
+  create_file(getcwd().DS.'database'.DS.'db.sqlite');
+  create_file(getcwd().DS.'database'.DS.'schema'.EXT, "<?php\n");
+  create_file(getcwd().DS.'database'.DS.'seeds'.EXT, "<?php\n");
+
+   create_dir(getcwd().DS.'helpers');
+  create_file(getcwd().DS.'helpers'.DS.'base'.EXT, "<?php\n");
+
+   create_dir(getcwd().DS.'library');
+   create_dir(getcwd().DS.'library'.DS.'vendor');
+
+   create_dir(getcwd().DS.'logs');
+        chmod(getcwd().DS.'logs', 0777);
+
    create_dir(getcwd().DS.'models');
+
+   create_dir(getcwd().DS.'public');
+        chmod(getcwd().DS.'public', 0777);
+
+   create_dir(getcwd().DS.'public'.DS.'css');
+        chmod(getcwd().DS.'public'.DS.'css', 0777);
+  create_file(getcwd().DS.'public'.DS.'css'.DS.'all.css', "\n");
+        chmod(getcwd().DS.'public'.DS.'css'.DS.'all.css', 0777);
+
+   create_dir(getcwd().DS.'public'.DS.'img');
+
+   create_dir(getcwd().DS.'public'.DS.'js');
+        chmod(getcwd().DS.'public'.DS.'js', 0777);
+  create_file(getcwd().DS.'public'.DS.'js'.DS.'all.js', "\n");
+        chmod(getcwd().DS.'public'.DS.'js'.DS.'all.js', 0777);
+    copy_file(getcwd().DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'jquery-1.5.1.min.js');
+    copy_file(getcwd().DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-2.0.6.min.js');
+
+    copy_file(getcwd().DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');
+    copy_file(getcwd().DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
+
+     copy_dir(getcwd(), $skel_dir.DS.'tasks');
+
+   create_dir(getcwd().DS.'tmp');
+        chmod(getcwd().DS.'tmp', 0777);
 
    create_dir(getcwd().DS.'views');
    create_dir(getcwd().DS.'views'.DS.'assets');
@@ -40,48 +84,9 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir(getcwd().DS.'views'.DS.'home');
     copy_file(getcwd().DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
 
-   create_dir(getcwd().DS.'config');
-    copy_file(getcwd().DS.'config', $skel_dir.DS.'application'.EXT);
-
-   create_dir(getcwd().DS.'config'.DS.'environments');
-  create_file(getcwd().DS.'config'.DS.'environments'.DS.'development'.EXT);
-  create_file(getcwd().DS.'config'.DS.'environments'.DS.'production'.EXT);
-
-   create_dir(getcwd().DS.'db');
-  create_file(getcwd().DS.'db'.DS.'db.sqlite');
-  create_file(getcwd().DS.'db'.DS.'schema'.EXT, "<?php\n");
-  create_file(getcwd().DS.'db'.DS.'seeds'.EXT, "<?php\n");
-   create_dir(getcwd().DS.'db'.DS.'backup');
-   create_dir(getcwd().DS.'db'.DS.'migrate');
-
-   create_dir(getcwd().DS.'lib');
-   create_dir(getcwd().DS.'lib'.DS.'vendor');
-   create_dir(getcwd().DS.'logs');
-        chmod(getcwd().DS.'logs', 0777);
-
-   create_dir(getcwd().DS.'public');
-        chmod(getcwd().DS.'public', 0777);
-
-   create_dir(getcwd().DS.'public'.DS.'css');
-        chmod(getcwd().DS.'public'.DS.'css', 0777);
-
-   create_dir(getcwd().DS.'public'.DS.'img');
-
-   create_dir(getcwd().DS.'public'.DS.'js');
-        chmod(getcwd().DS.'public'.DS.'js', 0777);
-
-    copy_file(getcwd().DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'jquery-1.5.1.min.js');
-    copy_file(getcwd().DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-2.0.6.min.js');
-    copy_file(getcwd().DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');
-    copy_file(getcwd().DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
-
     copy_file(getcwd(), $skel_dir.DS.'Stubfile');
-     copy_dir(getcwd(), $skel_dir.DS.'tasks');
-
-   create_dir(getcwd().DS.'tmp');
-        chmod(getcwd().DS.'tmp', 0777);
-
     copy_file(getcwd(), $skel_dir.DS.'config'.EXT);
     copy_file(getcwd(), $skel_dir.DS.'initialize'.EXT);
+    copy_file(getcwd(), $skel_dir.DS.'routes'.EXT);
 
 /* EOF: ./library/application/scripts/create_application.php */
