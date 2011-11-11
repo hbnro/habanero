@@ -31,9 +31,7 @@ final class bootstrap extends prototype
     $lib = strtr($lib, '\\/', DS.DS);
 
     if ( ! in_array($lib, bootstrap::$library)) {
-      $test   = (array) option('import_path', array());
-      $test []= dirname(LIB).DS.'library';
-      $test []= getcwd().DS.'library';
+      $test = (array) option('import_path', array());
 
       foreach ($test as $dir) {
         $helper_path  = $dir.DS.$lib;

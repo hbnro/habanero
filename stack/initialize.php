@@ -17,12 +17,14 @@ run(function () {
 
   is_file($mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT) && die(require $mod_file);
 
-  foreach (option('import_path') as $path) {
-    foreach (findfile($path, 'generator'.EXT, TRUE) as $gen_file) {
-      /**
-       * @ignore
-       */
-      require $gen_file;
+  foreach ((array) option('import_path', array()) as $path) {
+    if ($test = findfile($path, 'generator'.EXT, TRUE)) {
+      foreach ($test as $gen_file) {
+        /**
+         * @ignore
+         */
+        require $gen_file;
+      }
     }
   }
 

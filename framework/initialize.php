@@ -88,6 +88,12 @@ call_user_func(function () {
     config($GLOBALS['config']);
   }
 
+  // PATH
+  config('import_path', array(
+    dirname(LIB).DS.'library',
+    getcwd().DS.'library',
+  ));
+
 
   // lazy loading
   spl_autoload_register(function ($class) {
