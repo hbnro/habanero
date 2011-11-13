@@ -169,6 +169,7 @@ class assets extends prototype
     switch ($method) {
       case 'css';
       case 'js';// TODO: all this is bad, seriously.. ?
+      // the issue here is, in read-only filesystems this will not work!
         $suffix      = ($prod = (option('environment') === 'production')) ? '.min' : '';
         $static_file = mkpath(static::$defs['root'].DS.$method).DS."all$suffix.$method";
 
@@ -190,10 +191,7 @@ class assets extends prototype
           $output = join("\n", array_merge($out, $arguments));
           write($static_file, $output);
         }
-
-        dispatch($static_file, array(
-          'type' => mime($method),
-        ));
+        redirect(path_to($static_file));
       break;
       default;
         raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
