@@ -256,7 +256,21 @@ function read($path) {
       $port = 433;
     }
 
-    if (function_exists('fsockopen')) {
+    if (ini_get('allow_url_fopen')) {
+      $output = file_get_contents($path);
+    } elseif (function_exists('curl_init')) {
+      $resource = curl_init();
+
+      curl_setopt($resource, CURLOPT_URL, "$test[scheme]://$test[host]$guri");
+      curl_setopt($resource, CURLOPT_REFERER, $referer);
+      curl_setopt($resource, CURLOPT_FAILONERROR, 1);
+      curl_setopt($resource, CURLOPT_RETURNTRANSFER,1);
+      curl_setopt($resource, CURLOPT_PORT, $port);
+      curl_setopt($resource, CURLOPT_TIMEOUT, 90);
+      curl_setopt($resource, CURLOPT_USERAGENT, $agent);
+
+      $output = curl_exec($resource);
+    } elseif (function_exists('fsockopen')) {
       $resource = @fsockopen($test['host'], $port, $errno, $errstr, 90);
 
       if (is_resource($resource)) {
@@ -284,23 +298,6 @@ function read($path) {
           }
         }
         fclose($resource);
-      }
-    } elseif (function_exists('curl_init')) {
-      $resource = curl_init();
-
-      curl_setopt($resource, CURLOPT_URL, "$test[scheme]://$test[host]$guri");
-      curl_setopt($resource, CURLOPT_REFERER, $referer);
-      curl_setopt($resource, CURLOPT_FAILONERROR, 1);
-      curl_setopt($resource, CURLOPT_RETURNTRANSFER,1);
-      curl_setopt($resource, CURLOPT_PORT, $port);
-      curl_setopt($resource, CURLOPT_TIMEOUT, 90);
-      curl_setopt($resource, CURLOPT_USERAGENT, $agent);
-
-      $output = curl_exec($resource);
-    } elseif (ini_get('allow_url_fopen')) {
-      if ($tmp = @fopen($path, 'r')) {// tricky
-        while ($output .= fread($tmp, 1024));
-        fclose($tmp);
       }
     }
   } elseif (is_file($path)) {
