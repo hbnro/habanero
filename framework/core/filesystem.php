@@ -248,7 +248,7 @@ function read($path) {
     $guri  = ! empty($test['path']) ? $test['path'] : '/';
     $guri .= ! empty($test['query']) ? "?$test[query]" : '';
 
-    $referer = server(TRUE, $_SERVER['REQUEST_URI']);
+    $referer = server(TRUE, $_SERVER['REQUEST_URI'], TRUE);
     $agent   = 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)';
 
 

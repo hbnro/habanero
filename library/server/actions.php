@@ -96,7 +96,7 @@ function pre_url($text) {
       'host' => TRUE,
     ));
   } elseif (substr($text, 0, 2) == './') {
-    $text = server(TRUE, ROOT . substr($text, 2));
+    $text = server(TRUE, ROOT . substr($text, 2), TRUE);
   } elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text)) {
     $text = "http://$text";
   }
@@ -275,7 +275,7 @@ function path_to($path = '.', $host = FALSE) {
     }
 
     $path = strtr($path, '\\', '/');
-    $path = is_true($host) ? server(TRUE, $path) : $path;
+    $path = is_true($host) ? server(TRUE, $path, TRUE) : $path;
   }
 
   return $path;
