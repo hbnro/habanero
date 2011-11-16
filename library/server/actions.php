@@ -269,7 +269,7 @@ function path_to($path = '.', $host = FALSE) {
   }
 
 
-  if ($path = realpath($path)) {
+  if ($path = realpath(getcwd().DS.'public'.DS.$path)) {
     if ($root <> '/') {
       $path = str_replace($root, '', $path);
     }
