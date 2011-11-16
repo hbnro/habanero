@@ -60,4 +60,4 @@ return array(
   ),
 );
 
-/* EOF: ./framework/assets/scripts/status_vars.php */
+/* EOF: ./library/server/assets/scripts/status_vars.php */

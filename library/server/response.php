@@ -196,7 +196,7 @@ function status($num = 200, array $headers = array()) {
     /**
      * @ignore
      */
-    $set = include LIB.DS.'assets'.DS.'scripts'.DS.'status_vars'.EXT;
+    $set = include __DIR__.DS.'assets'.DS.'scripts'.DS.'status_vars'.EXT;
   }
 
 
