@@ -14,11 +14,6 @@ class partial extends prototype
   // render adapters
   private static $render = array();
 
-  // defaults
-  protected static $defs = array(
-                      'path' => APP_PATH,
-                    );
-
   /**#@-*/
 
 
@@ -47,11 +42,12 @@ class partial extends prototype
     }
 
 
-    $parts = explode('.', basename($file));
-    $name  = array_shift($parts);
-    $test  = TMP.DS.md5($file);
+    $parts  = explode('.', basename($file));
+    $name   = array_shift($parts);
+    $test   = TMP.DS.md5($file);
+    $output = read($file);
 
-    write($test, read($file));
+    write($test, $output);
 
     while ($parts) {
       $type = array_pop($parts);

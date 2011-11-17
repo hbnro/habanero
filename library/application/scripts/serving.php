@@ -24,13 +24,13 @@ assets::compile('js', function ($file)
   #                '/\s{2,}/' => '',
   #              );
 
-  $text = read($file);
+  #$text = read($file);
 
   #if ($prod) {
   #  $text = preg_replace(array_keys($regex), $regex, $text);
   #  $text = str_replace('elseif', 'else if', $text);
   #}
-  return $text;
+  #return $text;
 });
 
 $base_file = $base_path.DS.$type.DS."app.$type";
@@ -42,6 +42,8 @@ $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
 
 $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
 
+
+// TODO: compression, gzip?
 assets::$type($test);
 
 /* EOF: ./library/application/scripts/serving.php */
