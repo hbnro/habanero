@@ -14,6 +14,14 @@ call_user_func(function () {
   {// fake class
   }
 
+  // render callback
+  if (class_exists('partial')) {
+    partial::register('css', function ($file, array $vars = array()) {
+      css::config('path', getcwd().DS.'views'.DS.'assets'.DS.'css');
+      return css::render($file);
+    });
+  }
+
   // utility goodies
   require __DIR__.DS.'helpers'.DS.'color'.EXT;
   require __DIR__.DS.'helpers'.DS.'image'.EXT;

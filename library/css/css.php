@@ -39,15 +39,6 @@ class css extends prototype
     '/:\s+\{/' => ':{',
   );
 
-  // compression
-  private static $minify_expr = array(
-    '/;+/' => ';',
-    '/;?[\r\n\t\s]*\}\s*/s' => '}',
-    '/\s*([\{;:,\+~\}>])\s*/' => '\\1',
-    '/:first-l(etter|ine)\{/' => ':first-l\\1 {', //FIX
-    '/(?<!=)\s*#([a-f\d])\\1([a-f\d])\\2([a-f\d])\\3/i' => '#\\1\\2\\3',
-  );
-
   // defaults
   protected static $defs = array(
     'path' => APP_PATH,
@@ -75,11 +66,10 @@ class css extends prototype
    * Render file
    *
    * @param  string  Path
-   * @param  boolean Minify output?
    * @return void
    */
-  final public static function render($path, $minify = FALSE) {
-    return static::parse(static::load_file($path), $minify);
+  final public static function render($path) {
+    return static::parse(static::load_file($path));
   }
 
 
@@ -87,10 +77,9 @@ class css extends prototype
    * Parse expression
    *
    * @param  string  CSS rules
-   * @param  boolean Minify output?
    * @return void
    */
-  final public static function parse($rules, $minify = FALSE) {
+  final public static function parse($rules) {
     static::$css     =
     static::$sets    =
     static::$props   =
@@ -105,10 +94,6 @@ class css extends prototype
     }
 
     $text = join("\n", static::$css);
-
-    if (is_true($minify)) {
-      $text = preg_replace(array_keys(static::$minify_expr), static::$minify_expr, $text);
-    }
 
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
