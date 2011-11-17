@@ -38,11 +38,9 @@ switch (option('environment')) {
     $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
 
     write($out_file, assets::$type($test));
-    echo read($out_file);
   break;
 }
 
-exit;
-//redirect(path_to($type.DS.basename($out_file)));
+redirect(path_to($type.DS.basename($out_file)));
 
 /* EOF: ./library/application/scripts/serving.php */
