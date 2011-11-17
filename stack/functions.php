@@ -67,7 +67,7 @@ function create_dir($path) {
 }
 
 function copy_dir($to, $from) {
-  status('copy', basename($from) . '/');
+  status('copy', rtrim($to, DS).DS.basename($from) . '/');
   cpfiles($from, $to.DS.basename($from), '*', TRUE);
 }
 
