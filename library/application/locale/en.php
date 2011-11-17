@@ -64,7 +64,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(status)\b
 
   \clight_gray(Generates and check the application structure)\c
-    \bgreen(create)\b [--force]
+    \bgreen(create)\b \byellow(app)\b [--force]
 
   \clight_gray(Display and set the configuration options)\c
     \bgreen(configure)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
@@ -80,6 +80,9 @@ $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Execute tasks)\c
     \bgreen(execute)\b \bcyan(script[:param])\b [...]
+
+  \clight_gray(Build application assets to production)\c
+    \bgreen(precompile)\b
 
 
 HELP;
