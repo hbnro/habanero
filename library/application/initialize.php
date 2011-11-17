@@ -16,8 +16,6 @@ call_user_func(function () {
 
 
   bootstrap::bind(function ($app) {
-    import('cache');
-    import('assets');
     import('partial');
 
     i18n::load_path(getcwd().DS.'locale');

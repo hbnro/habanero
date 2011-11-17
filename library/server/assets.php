@@ -163,13 +163,10 @@ class assets extends prototype
     switch ($method) {
       case 'css';
       case 'js';
-        $out         = array();
-        $base_path   = getcwd().DS.'public'.DS.$method;
-        $static_file = mkpath($base_path).DS."all.$method";
+        $out       = array();
+        $base_path = getcwd().DS.'public'.DS.$method;
 
-        foreach (static::$set[$method] as $one) {
-          $file = $base_path.DS.$one;
-
+        foreach (static::$set[$method] as $file) {
           if (is_file($file)) {
             $text  = static::process($file);
             $path  = str_replace(APP_PATH.DS, '', $file);
@@ -180,9 +177,8 @@ class assets extends prototype
         }
 
         $output = join("\n", $out + $arguments);
-        write($static_file, $output);
 
-        redirect(path_to($method.DS.basename($static_file)));
+        return $output;
       break;
       default;
         raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
@@ -214,4 +210,4 @@ class assets extends prototype
 
 }
 
-/* EOF: ./library/assets.php */
+/* EOF: ./library/server/assets.php */

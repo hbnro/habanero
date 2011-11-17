@@ -1,9 +1,5 @@
 <?php
 
-import('assets');
-import('partial');
-
-
 require dirname(__DIR__).DS.'app_controller'.EXT;
 i18n::load_path(__DIR__.DS.'locale', 'app');
 

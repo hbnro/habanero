@@ -1,49 +1,43 @@
 <?php
 
-$type          = params('type');
-$base_path     = getcwd().DS.'views'.DS.'assets';
-$compress_file = getcwd().DS.'public'.DS.$type.DS."all.min.$type";
-
-
-assets::compile('css', function ($file)
-  use($base_path) {
-    return partial($file);
-
-  /*import('css');
-  css::config('path', $base_path.DS.'css');
-  return css::render($file, option('environment') === 'production');*/
-
+// filters
+assets::compile('css', function ($file) {
+  return partial::render($file);
 });
 
-assets::compile('js', function ($file)
-  use($base_path) {
-    return partial($file);
-  #static $regex = array(
-  #                '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/' => '',
-  #                '/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
-  #                '/\s{2,}/' => '',
-  #              );
-
-  #$text = read($file);
-
-  #if ($prod) {
-  #  $text = preg_replace(array_keys($regex), $regex, $text);
-  #  $text = str_replace('elseif', 'else if', $text);
-  #}
-  #return $text;
+assets::compile('js', function ($file) {
+  return partial::render($file);
 });
 
+
+$type      = params('type');
+
+$base_path = getcwd().DS.'views'.DS.'assets';
 $base_file = $base_path.DS.$type.DS."app.$type";
 
+$out_file  = getcwd().DS.'public'.DS.$type.DS."all.$type";
+$min_file  = getcwd().DS.'public'.DS.$type.DS."all.min.$type";
+
+
 $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
-  use($type) {
-  assets::append("$match[1].$type");
+  use($base_path, $type) {
+  assets::append($base_path.DS.$type.DS."$match[1].$type");
 }, read($base_file));
 
-$test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+$test   = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+$output = assets::$type($test);
+
+write($out_file, $output);
 
 
-// TODO: compression, gzip?
-assets::$type($test);
+// TODO: compression, caching, gzip?
+if (option('environment') !== 'production') {
+  if ( ! is_file($min_file)) {
+  die(ln('file_not_exists', array('name' => str_replace(getcwd().DS, '', $min_file))));
+  }
+  $out_file = $min_file;
+}
+
+redirect(path_to($type.DS.basename($out_file)));
 
 /* EOF: ./library/application/scripts/serving.php */
