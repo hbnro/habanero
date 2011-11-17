@@ -1,11 +1,11 @@
 <?php
 
+import('assets');
+import('partial');
+
+
 require dirname(__DIR__).DS.'app_controller'.EXT;
 i18n::load_path(__DIR__.DS.'locale', 'app');
-
-import('a_record');
-import('partial');
-import('taml');
 
 $request = request::methods();
 
@@ -14,7 +14,6 @@ request::implement('dispatch', function (array $params = array())
   if (is_callable($params['to'])) {
     $request['dispatch']($params);
   } else {
-    import('assets');
     params($params['matches']);
 
     list($controller, $action) = explode('#', (string) $params['to']);

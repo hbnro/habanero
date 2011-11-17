@@ -16,8 +16,13 @@ call_user_func(function () {
 
 
   bootstrap::bind(function ($app) {
+    import('cache');
+    import('assets');
+    import('partial');
+
     i18n::load_path(getcwd().DS.'locale');
     routing::load(getcwd().DS.'routes'.EXT, array('safe' => TRUE));
+
     require __DIR__.DS.'scripts'.DS.'binding'.EXT;
     return $app;
   });

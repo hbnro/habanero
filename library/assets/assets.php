@@ -19,12 +19,6 @@ class assets extends prototype
                   'js' => array(),
                 );
 
-  // defaults
-  protected static $defs = array(
-                    'path' => APP_PATH,
-                    'root' => ROOT,
-                  );
-
   // compile filters
   private static $filter = array();
 
@@ -39,7 +33,7 @@ class assets extends prototype
    * @return void
    */
   final public static function url_for($path, $prefix = '', $host = FALSE) {
-    return is_url($path) ? $path : path_to(static::$defs['path'].($prefix ? DS.$prefix : '').DS.$path, $host);
+    return is_url($path) ? $path : path_to(($prefix ? DS.$prefix : '').DS.$path, $host);
   }
 
 
@@ -93,7 +87,7 @@ class assets extends prototype
    * @return void
    */
   final public static function script($path, $to = '', $before = FALSE) {
-    static::push($to ?: 'head', tag('script', array('src' => pre_url($path))), $before);
+    static::push($to ?: 'head', tag('script', array('src' => static::url_for($path))), $before);
   }
 
 
@@ -168,30 +162,27 @@ class assets extends prototype
   final public static function missing($method, $arguments) {
     switch ($method) {
       case 'css';
-      case 'js';// TODO: all this is bad, seriously.. ?
-      // the issue here is, in read-only filesystems this will not work!
-        $suffix      = ($prod = (option('environment') === 'production')) ? '.min' : '';
-        $static_file = mkpath(static::$defs['root'].DS.$method).DS."all$suffix.$method";
+      case 'js';
+        $out         = array();
+        $base_path   = getcwd().DS.'public'.DS.$method;
+        $static_file = mkpath($base_path).DS."all.$method";
 
-        if ( ! $prod) {
-          $out = array();
+        foreach (static::$set[$method] as $one) {
+          $file = $base_path.DS.$one;
 
-          foreach (static::$set[$method] as $one) {
-            $file = realpath(static::$defs['path']).DS.$method.DS.$one;
+          if (is_file($file)) {
+            $text  = static::process($file);
+            $path  = str_replace(APP_PATH.DS, '', $file);
+            $now   = date('Y-m-d H:i:s', filemtime($file));
 
-            if (is_file($file)) {
-              $path = str_replace(dirname(APP_PATH).DS, '', $file);
-              $now  = date('Y-m-d H:i:s', filemtime($file));
-              $text = static::process($file);
-
-              $out []= $prod ? $text : sprintf("/* %s ./%s */\n%s", $now, $path, $text);
-            }
+            $out []= sprintf("/* %s ./%s */\n%s", $now, $path, $text);
           }
-
-          $output = join("\n", array_merge($out, $arguments));
-          write($static_file, $output);
         }
-        redirect(path_to($static_file));
+
+        $output = join("\n", $out + $arguments);
+        write($static_file, $output);
+
+        redirect(path_to($method.DS.basename($static_file)));
       break;
       default;
         raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
