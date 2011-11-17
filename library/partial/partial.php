@@ -59,9 +59,11 @@ class partial extends prototype
 
         continue;
       }
-      @unlink($test);
       break;
     }
+
+    @unlink($test);
+
     return $output;
   }
 

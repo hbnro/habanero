@@ -6,14 +6,13 @@ import('partial');
 $error_status = 500;
 
 switch (option('environment')) {
-  case 'development';
-    $bootstrap['raise']($message);
-  break;
   case 'production';
-  default;
     if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message)) {
       $error_status = 404;
     }
+  break;
+  default;
+    $bootstrap['raise']($message);
   break;
 }
 

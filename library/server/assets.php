@@ -169,10 +169,10 @@ class assets extends prototype
         foreach (static::$set[$method] as $file) {
           if (is_file($file)) {
             $text  = static::process($file);
-            $path  = str_replace(APP_PATH.DS, '', $file);
+            $path  = str_replace(getcwd().DS, '', $file);
             $now   = date('Y-m-d H:i:s', filemtime($file));
 
-            $out []= sprintf("/* %s ./%s */\n%s", $now, $path, $text);
+            $out []= sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
           }
         }
 
