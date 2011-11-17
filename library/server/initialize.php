@@ -13,6 +13,7 @@ call_user_func(function () {
   require __DIR__.DS.'response'.EXT;
 
   require __DIR__.DS.'session'.EXT;
+  require __DIR__.DS.'assets'.EXT;
 
   require __DIR__.DS.'paths'.EXT;
   require __DIR__.DS.'actions'.EXT;
