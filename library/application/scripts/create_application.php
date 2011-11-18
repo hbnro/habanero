@@ -20,9 +20,14 @@ $skel_dir = dirname(__DIR__).DS.'assets';
       ));
 
    create_dir($app_path.DS.'database');
+        chmod($app_path.DS.'database', 0777);
+
    create_dir($app_path.DS.'database'.DS.'backup');
    create_dir($app_path.DS.'database'.DS.'migrate');
+
   create_file($app_path.DS.'database'.DS.'db.sqlite');
+        chmod($app_path.DS.'database'.DS.'db.sqlite', 0777);
+
   create_file($app_path.DS.'database'.DS.'schema'.EXT, "<?php\n");
   create_file($app_path.DS.'database'.DS.'seeds'.EXT, "<?php\n");
 
