@@ -121,16 +121,19 @@ app_generator::implement('precompile', function () {
 
 
 
-// TODO: improve compressors
 function minify_js($text) {
-  static $expr = array(
-                    '/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:(?<!:)\/\/.*$))/' => '',
-                    #'/\s*([?!<(\[\])>=:,+]|if|else|for|while)\s*/' => '\\1',
-                    #'/ {2,}/' => ' ',
-                  );
+  $tmp_file = TMP.DS.md5('--jsmin-input');
+  $min_file = TMP.DS.md5('--jsmin-output');
 
-  $text = preg_replace(array_keys($expr), $expr, $text);
-  $text = str_replace('elseif', 'else if', $text);
+  write($tmp_file, $text);
+
+  // TODO: find out a better solution?
+  @system("jsmin < $tmp_file > $min_file");
+
+  if (filesize($min_file)) {
+    $text = read($min_file);
+  }
+  @unlink($tmp_file);
 
   return $text;
 }
