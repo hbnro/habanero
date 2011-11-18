@@ -87,21 +87,22 @@ function render($content, $partial = FALSE, array $params = array()) {
     raise(ln('file_not_exists', array('name' => $params['content'])));
   }
 
-
-  $output = function ()
-    use($params) {
+  // curiously the last lambda render breaks! why?
+  $output = function () {
     ob_start();
 
-    extract($params['locals'], EXTR_SKIP | EXTR_REFS);
+    extract(func_get_arg(1));
     require func_get_arg(0);
 
     return ob_get_clean();
   };
 
-  if (is_true($params['partial'])) {
-    return $output($params['content']);
+  $output = $output($params['content'], $params['locals']);
+
+  if ($params['partial']) {
+    return $output;
   }
-  echo $output($params['content']);
+  echo $output;
 }
 
 
@@ -281,8 +282,8 @@ function reflection($lambda) {
     return new ReflectionMethod($class, $method);
   }
 
-  if (is_string($lambda) && ! is_false(strpos($lambda, ':'))) {
-    list($class, $method) = explode(':', $lambda);
+  if (is_string($lambda) && ! is_false(strpos($lambda, '::'))) {
+    list($class, $method) = explode('::', $lambda);
     return new ReflectionMethod($class, $method);
   }
 
