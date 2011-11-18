@@ -19,7 +19,7 @@ call_user_func(function () {
 
 
   // default database adapter
-  $dsn_string   = option('dsn');
+  $dsn_string   = option('database');
   $dsn_default  = 'sqlite::memory:';
 
   $regex_string = '/^\w+:|scheme\s*=\s*\w+/';
