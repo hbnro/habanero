@@ -107,14 +107,14 @@ app_generator::implement('precompile', function () {
     $base_file = getcwd().DS.'public'.DS.$type.DS."all.$type";
 
     if (is_file($base_file)) {
-      success(ln('server.writing_asset', array('type' => $type)));
+      success(ln('app.writting_asset', array('type' => $type)));
 
       $text = read($base_file);
       $text = $type === 'css' ? minify_css($text) : minify_js($text);
 
       write(str_replace("all.$type", "all.min.$type", $base_file), $text);
     } else {
-      error(ln('server.missing_asset', array('type' => $type)));
+      error(ln('app.missing_asset', array('type' => $type)));
     }
   }
 });

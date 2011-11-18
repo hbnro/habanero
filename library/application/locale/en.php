@@ -57,6 +57,9 @@ $lang['setting_development_options'] = 'Applying development configuration';
 $lang['setting_production_options'] = 'Applying production configuration';
 $lang['setting_default_options'] = 'Applying default configuration';
 
+$lang['writting_asset'] = 'Writting %{type} assets';
+$lang['missing_asset'] = 'Missing %{type} assets';
+
 $lang['generator_title'] = 'Application generator';
 $lang['generator_usage'] = <<<HELP
 
