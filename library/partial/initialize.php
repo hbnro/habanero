@@ -18,8 +18,8 @@ call_user_func(function () {
   // render callback
   partial::register('php', function ($file, array $vars = array()) {
     return render($file, TRUE, array(
-        'locals' => $vars,
-      ));
+      'locals' => $vars,
+    ));
   });
 });
 
