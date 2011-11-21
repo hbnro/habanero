@@ -22,25 +22,25 @@ Just run the next code in your command line.
 
     curl -L http://is.gd/gettetl | sh
 
-The installation will create a command line utility called atl,
-the program to manage our application and databases among other goodies.
+The installation will create a **command line** utility called `atl`,
+the program to manage our **application** and **databases** among other goodies.
 
-> These scripts only works on Ubuntu 10.04LTS and Mac OS X 10.5 by now.
-> Maybe not all commands available through the atl utility are cross-platform.
+> These scripts only works on **Ubuntu** 10.04LTS and **Mac OS X** 10.5 by now.
+> Maybe not all commands available through the `atl` utility are **cross-platform**.
 
 The skeleton files
 ------------------
 
-Lets asume our web-docs directory as /var/www/vhosts so move on it,
-create a sandbox path, cd in and create with atl the new application inside.
+Lets asume our **web-docs** directory as `/var/www/vhosts` so move on it,
+create a **sandbox** path, `cd` in and create with `atl` the **new** application inside.
 
-    cd /var/www/vhosts
-    atl new sandbox
+    $ cd /var/www/vhosts
+    $ atl new sandbox
 
 Now, let's create the virtual host to view our application.
 
-    sudo atl --vhost
-    atl --open
+    $ sudo atl --vhost
+    $ atl --open
 
 By default the name of our local domain is taken from the application path.
 
