@@ -31,11 +31,12 @@ the program to manage our **application** and **databases** among other goodies.
 The skeleton files
 ------------------
 
-Lets asume our **web-docs** directory as `/var/www/vhosts` so move on it,
-create a **sandbox** path, `cd` in and create with `atl` the **new** application inside.
+Lets asume our **web-docs** directory as `/var/www/vhosts` so move on it.
+Create the **new** application with `atl`, then `cd` inside the created **sandbox** directory.
 
     $ cd /var/www/vhosts
     $ atl new sandbox
+    $ cd sandbox
 
 Now, let's create the virtual host to view our application.
 
