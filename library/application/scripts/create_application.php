@@ -35,7 +35,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
   create_file($app_path.DS.'helpers'.DS.'base'.EXT, "<?php\n");
 
    create_dir($app_path.DS.'library');
-   create_dir($app_path.DS.'library'.DS.'vendor');
+   #create_dir($app_path.DS.'library'.DS.'vendor');
 
    create_dir($app_path.DS.'logs');
         chmod($app_path.DS.'logs', 0777);
