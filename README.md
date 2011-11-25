@@ -20,7 +20,7 @@ Installation
 
 Just run the next code in your command line.
 
-    curl -L http://is.gd/gettetl | sh
+    curl -fsSL http://is.gd/gettetl | sudo sh
 
 The installation will create a **command line** utility called `atl`,
 the program to manage our **application** and **databases** among other goodies.
