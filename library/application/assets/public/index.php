@@ -1,3 +1,1 @@
-<?php
-chdir(dirname(__DIR__));
-require dirname(__DIR__).'/initialize.php';
+<?php require dirname(__DIR__).'/initialize.php';
