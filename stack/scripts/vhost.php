@@ -88,6 +88,7 @@ function vhost_template() {
 <VirtualHost *:80>
   ServerName   $base_name.dev
   DocumentRoot "$docs_root"
+  AccessFileName .develop
   <Directory "$docs_root/">
     Options -Indexes FollowSymLinks MultiViews
     AllowOverride All

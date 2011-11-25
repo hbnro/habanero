@@ -59,6 +59,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'jquery-1.5.1.min.js');
     copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-2.0.6.min.js');
 
+    copy_file($app_path.DS.'public', $skel_dir.DS.'public'.DS.'.develop');
     copy_file($app_path.DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');
     copy_file($app_path.DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
 
