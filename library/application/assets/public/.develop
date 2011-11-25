@@ -1,0 +1,3 @@
+<IfModule mod_env.c>
+  SetEnv OPTION VALUE
+</IfModule>
