@@ -1,16 +1,5 @@
 #!/bin/sh
 
-if [ `whoami` != "root" ]; then
-  sudo sh $0 $*
-  exit 1
-fi
-
-if [ "$SUDO_USER" = "root" ]; then
-  echo "Please run script with sudo"
-  exit 1
-fi
-
-
 if [ ! -d "/Users" ]; then
   TETL="$HOME/.local/share/phplib/tetlphp"
 else
