@@ -103,7 +103,7 @@ app_generator::implement('db:remove_index', function ($from = '', $name = '') {
 
 
 // database backups
-app_generator::implement('db:backup', function () {
+app_generator::implement('db:backup', function ($name = '') {
   require __DIR__.DS.'scripts'.DS.'backups'.EXT;
 });
 
