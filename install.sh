@@ -20,7 +20,7 @@ if [ -h "$SYMLINK" ] || [ -e "$SYMLINK" ]; then
   unlink $SYMLINK
 fi
 
-
+#TODO: please use the real URL, dont be hackish dude!
 URL="http://tinyurl.com/gettetl"
 mkdir -p "$TETL/tmp"
 cd "$TETL/tmp"

@@ -81,6 +81,8 @@ function vhost_template() {
   $docs_root = "$base_path/public";
   $logs_path = "$base_path/logs";
 
+  // TODO: determine automatically the index.php/.htaccess to set the root path
+
   ! is_dir($docs_root) && $docs_root = $base_path;
   ! is_dir($logs_path) && $logs_path = $base_path;
 
