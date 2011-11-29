@@ -1,0 +1,5 @@
+database/db.sqlite
+access.log
+error.log
+logs/*
+.develop

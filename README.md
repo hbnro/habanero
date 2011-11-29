@@ -50,3 +50,6 @@ By default the name of our local domain is taken from the application path.
 > of the generated skeleton application to get you ready with Tetl.
 
 Finally you can execute the `atl` program without arguments to see the available options ¡try it!
+
+Deploying to production
+-----------------------

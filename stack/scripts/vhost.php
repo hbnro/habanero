@@ -9,6 +9,7 @@ $paths = array(
   '/private/etc/apache2/extra/httpd-vhosts.conf',
 );
 
+// TODO: in almost cases the file could be php.ini.default and it should be copied as php.ini
 
 foreach ($paths as $one) {
   if (file_exists($one)) {
