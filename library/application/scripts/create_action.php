@@ -28,7 +28,7 @@ if ( ! $parent) {
 
     $route_file = getcwd().DS.'routes'.EXT;
     $method     = cli::flag('method') ?: 'get';
-    $repl       = ";\n  %-6s('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
+    $repl       = ";\n  %6s('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
     write($route_file, preg_replace('/;[^;]*?$/', sprintf($repl, $method), read($route_file)));
 
 
