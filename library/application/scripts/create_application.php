@@ -88,6 +88,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
     copy_file($app_path, $skel_dir.DS.'.develop');
     copy_file($app_path, $skel_dir.DS.'.htaccess');
+    copy_file($app_path, $skel_dir.DS.'.gitignore');
 
     copy_file($app_path, $skel_dir.DS.'Stubfile');
     copy_file($app_path, $skel_dir.DS.'migrate'.EXT);

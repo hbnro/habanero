@@ -1,4 +1,9 @@
-database/db.sqlite
+.develop
+
 access.log
 error.log
-.develop
+
+public/css/all.css
+public/js/all.js
+
+database/db.sqlite
