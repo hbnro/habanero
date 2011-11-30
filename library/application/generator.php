@@ -110,7 +110,10 @@ app_generator::implement('precompile', function () {
       success(ln('app.writting_asset', array('type' => $type)));
 
       $text = read($base_file);
-      $text = $type === 'css' ? minify_css($text) : minify_js($text);
+
+      if ($test = ($type === 'css' ? minify_css($text) : minify_js($text))) {
+        $text = $test;
+      }
 
       write(str_replace("all.$type", "all.min.$type", $base_file), $text);
     } else {
