@@ -176,7 +176,8 @@ class assets extends prototype
           }
         }
 
-        $output = join("\n", $out + $arguments);
+        $output  = join("\n", $out);
+        $output .= join("\n", $arguments);
 
         return $output;
       break;
