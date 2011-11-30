@@ -1,4 +1,5 @@
 <?php
+
 require 'tetlphp/framework/initialize.php';
 
 run(function () {
@@ -7,8 +8,8 @@ run(function () {
 
   echo 'Migrating database structure...';
 
-  require 'database/schema.php';
-  require 'database/seeds.php';
+  require getcwd().DS.'database'.DS.'schema'.EXT;
+  require getcwd().DS.'database'.DS.'seeds'.EXT;
 
-  echo 'OK';
+  echo "OK\n";
 });

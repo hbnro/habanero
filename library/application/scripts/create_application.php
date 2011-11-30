@@ -56,12 +56,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
         chmod($app_path.DS.'public'.DS.'js', 0777);
   create_file($app_path.DS.'public'.DS.'js'.DS.'all.js', "\n");
         chmod($app_path.DS.'public'.DS.'js'.DS.'all.js', 0777);
-    copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'jquery-1.5.1.min.js');
-    copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'public'.DS.'modernizr-2.0.6.min.js');
-
-    copy_file($app_path.DS.'public', $skel_dir.DS.'public'.DS.'.develop');
-    copy_file($app_path.DS.'public', $skel_dir.DS.'public'.DS.'.htaccess');
-    copy_file($app_path.DS.'public', $skel_dir.DS.'public'.DS.'index'.EXT);
+    copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'jquery-1.5.1.min.js');
+    copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'modernizr-2.0.6.min.js');
 
      copy_dir($app_path, $skel_dir.DS.'tasks');
 
@@ -90,9 +86,13 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'views'.DS.'home');
     copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
 
+    copy_file($app_path, $skel_dir.DS.'.develop');
+    copy_file($app_path, $skel_dir.DS.'.htaccess');
+
     copy_file($app_path, $skel_dir.DS.'Stubfile');
+    copy_file($app_path, $skel_dir.DS.'migrate'.EXT);
     copy_file($app_path, $skel_dir.DS.'config'.EXT);
-    copy_file($app_path, $skel_dir.DS.'initialize'.EXT);
     copy_file($app_path, $skel_dir.DS.'routes'.EXT);
+    copy_file($app_path, $skel_dir.DS.'index'.EXT);
 
 /* EOF: ./library/application/scripts/create_application.php */

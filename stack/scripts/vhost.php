@@ -78,28 +78,19 @@ function vhost_template() {
   $base_path = getcwd();
   $base_name = basename($base_path);
 
-  $docs_root = "$base_path/public";
-  $logs_path = "$base_path/logs";
-
-  // TODO: determine automatically the index.php/.htaccess to set the root path
-
-  ! is_dir($docs_root) && $docs_root = $base_path;
-  ! is_dir($logs_path) && $logs_path = $base_path;
-
-
   return <<<XML
 <VirtualHost *:80>
   ServerName   $base_name.dev
-  DocumentRoot "$docs_root"
+  DocumentRoot "$base_path"
   AccessFileName .develop
-  <Directory "$docs_root/">
+  <Directory "$base_path/">
     Options -Indexes FollowSymLinks MultiViews
     AllowOverride All
     Order allow,deny
     allow from all
   </Directory>
-  ErrorLog  "$logs_path/error.log"
-  CustomLog "$logs_path/access.log" combined
+  ErrorLog  "$base_path/error.log"
+  CustomLog "$base_path/access.log" combined
 </VirtualHost>
 XML;
 }
