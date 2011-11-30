@@ -86,7 +86,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'views'.DS.'home');
     copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
 
-    copy_file($app_path, $skel_dir.DS.'.develop');
+  create_file($app_path.DS.'.develop', "<IfModule mod_env.c>\n  # - Environment options\n  SetEnv OPTION VALUE\n</IfModule>\n");
     copy_file($app_path, $skel_dir.DS.'.htaccess');
     copy_file($app_path, $skel_dir.DS.'.gitignore');
 
