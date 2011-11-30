@@ -50,12 +50,12 @@ if ( ! $table) {
       build_migration('create_table', $table, $fields, array('force' => TRUE));
 
       if (cli::flag('model')) {
-        $out_file = mkpath(option('mvc.models_path')).DS.$table.EXT;
+        $out_file = mkpath(getcwd().DS.'models').DS.$table.EXT;
 
         if ( ! is_file($out_file)) {
           success(ln('db.model_class_building', array('name' => $table)));
 
-          $code   = "<?php\n\nclass $table extends dbmodel"
+          $code   = "<?php\n\nclass $table extends db_model"
                   . "\n{\n}\n";
 
           write($out_file, $code);
