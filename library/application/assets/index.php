@@ -8,5 +8,7 @@ call_user_func(function () {
   import('application');
 
   run(function () {
+    import('db');
+    import('a_record');
   });
 });
