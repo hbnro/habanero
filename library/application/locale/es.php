@@ -76,7 +76,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(generate)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
 
   \clight_gray(Generador de la acción por defecto)\c
-    \bgreen(generate)\b \bcyan(action)\b \byellow(controller:name)\b [--view]
+    \bgreen(generate)\b \bcyan(action)\b \byellow(controller:name)\b [--view] [--method=get|put|post|delete]
 
   \clight_gray(Generador del modelo por defecto)\c
     \bgreen(generate)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
