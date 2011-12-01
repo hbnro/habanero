@@ -75,3 +75,8 @@ own opinion the first place where you should release your startup application.
     # Push and go!
     $ git push heroku master
     $ heroku open
+
+Frequently Asked Questions
+-------------------------
+
+If you're in trouble please read the [FAQ's](https://github.com/pateketrueke/tetlphp/wiki/Faq%27s), if your problem is not there please contact me!
