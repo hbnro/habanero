@@ -53,3 +53,25 @@ Finally you can execute the `atl` program without arguments to see the available
 
 Deploying to production
 -----------------------
+
+Tetl is intensively tested on top of **Heroku**, the git-based cloud hosting platform. In my
+own opinion the first place where you should release your startup application.
+
+    # Make sure you are in a git repo
+    $ git init
+
+    # Compile the assets and grab the libraries
+    $ atl build
+    $ atl --stub
+
+    # Add and commit all the changes
+    $ git add .
+    $ git commit -m "First commit"
+
+    # Create the heroku app and get your default database settings
+    $ heroku create --stack cedar
+    $ heroku addons:add shared-database:5mb
+
+    # Push and go!
+    $ git push heroku master
+    $ heroku open
