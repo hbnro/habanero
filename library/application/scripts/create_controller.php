@@ -8,8 +8,7 @@ if (is_file($out_file)) {
   // TODO: use functions like create_class, append_class, prepend_class, add_route, etc.
   $type = cli::flag('parent') ?: 'base_controller';
   $code = "<?php\n\nclass {$name}_controller extends $type\n{"
-        . "\n\n  public static function index()\n"
-        . "  {\n  }\n\n}\n";
+        . "\n\n  public static function index() {\n  }\n\n}\n";
 
   success(ln('app.controller_class_building', array('name' => $name)));
   write($out_file, $code);

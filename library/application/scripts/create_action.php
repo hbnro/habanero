@@ -18,8 +18,7 @@ if ( ! $parent) {
   } else {
     success(ln('app.action_method_building', array('name' => $name, 'controller' => $parent)));
 
-    $code = "  public static function $name()\n"
-          . "  {\n  }\n\n";
+    $code = "  public static function $name() {\n  }\n\n";
 
     write($out_file, preg_replace('/\}[^{}]*?$/s', "$code\\0", $content));
 
