@@ -10,8 +10,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'config', $skel_dir.DS.'application'.EXT);
 
    create_dir($app_path.DS.'config'.DS.'environments');
-  create_file($app_path.DS.'config'.DS.'environments'.DS.'development'.EXT);
-  create_file($app_path.DS.'config'.DS.'environments'.DS.'production'.EXT);
+    copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'development'.EXT);
+    copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'production'.EXT);
 
    create_dir($app_path.DS.'controllers');
     copy_file($app_path.DS.'controllers', $skel_dir.DS.'home'.EXT);
