@@ -7,6 +7,7 @@ i18n::load_path(__DIR__.DS.'locale', 'db');
 app_generator::usage(ln('db.generator_title'), ln('db.generator_usage'));
 
 app_generator::alias('db:status', 'db');
+app_generator::alias('db:migrate', 'migrate');
 app_generator::alias('db:backup', 'backup export');
 app_generator::alias('db:show_table', 'db:show show');
 app_generator::alias('db:drop_table', 'db:drop drop');
