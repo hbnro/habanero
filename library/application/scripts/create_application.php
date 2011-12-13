@@ -6,6 +6,7 @@
 
 $skel_dir = dirname(__DIR__).DS.'assets';
 
+   create_dir($app_path);
    create_dir($app_path.DS.'config');
     copy_file($app_path.DS.'config', $skel_dir.DS.'application'.EXT);
 
