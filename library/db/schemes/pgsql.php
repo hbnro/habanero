@@ -101,14 +101,15 @@ sql::implement('indexes', function ($test) {
   $out = array();
 
   $sql = "select pg_get_indexdef(indexrelid) AS sql from pg_index where indrelid = '$test'::regclass";
-  $res = sql::execute($sql);
 
-  while ($one = $res->fetchObject()) {
-    if (preg_match('/CREATE(\s+UNIQUE|)\s+INDEX\s+(\w+)\s+ON.+?\((.+?)\)/', $one->sql, $match)) {
-      $out[$match[2]] = array(
-        'unique' => ! empty($match[1]),
-        'column' => explode(',', preg_replace('/["\s]/', '', $match[3])),
-      );
+  if (is_object($res = sql::execute($sql))) {
+    while ($one = $res->fetchObject()) {
+      if (preg_match('/CREATE(\s+UNIQUE|)\s+INDEX\s+(\w+)\s+ON.+?\((.+?)\)/', $one->sql, $match)) {
+        $out[$match[2]] = array(
+          'unique' => ! empty($match[1]),
+          'column' => explode(',', preg_replace('/["\s]/', '', $match[3])),
+        );
+      }
     }
   }
 
