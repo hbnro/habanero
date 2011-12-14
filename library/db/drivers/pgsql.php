@@ -43,7 +43,7 @@ sql::implement('execute', function ($sql) {
 });
 
 sql::implement('escape', function ($test) {
-  return str_replace("'", '\\\'', $test);
+  return pg_escape_string(sql::connect(), $test);
 });
 
 sql::implement('error', function () {
