@@ -80,6 +80,8 @@ class sql extends prototype
       }
     } elseif (is_string($test)) {
       $test = "'" . static::escape($test) . "'";
+    } elseif (is_bool($test)) {
+      $test = ($val ? 'TRUE' : 'FALSE');
     }
     return $test;
   }
