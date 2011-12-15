@@ -77,8 +77,8 @@ sql::implement('last_id', function ($res, $table, $column) {
   $v = (double) $v;
 
 
-  if ($v >= 8.1) {
-    $sql = 'SELECT LASTVAL()';
+  if ($v >= 8.1) {//TODO: this works instead of LASTVAL() ?
+    $sql = ($table && $column) ? "SELECT last_value FROM {$table}_{$column}_seq" : 'SELECT LASTVAL()';
   } elseif ( ! empty($table) &&  ! empty($column) && ($v >= 8.0)) {// http://www.php.net/pg_last_oid
     $sql = sprintf("SELECT CURRVAL(pg_get_serial_sequence('%s','%s'))", $table, $column);
   } else {
