@@ -1,1 +1,4 @@
+.git
 tasks
+error.log
+access.log
