@@ -168,6 +168,22 @@ class a_record extends prototype
 
 
   /**
+   * Update fields
+   *
+   * @param  array Values
+   * @return self
+   */
+  final public function update(array $props) {
+    foreach ($props as $key => $value) {
+      $this->$key = $value;
+    }
+    return $this;
+  }
+
+  // TODO: implemente where() and more chained CRUD methods ?
+
+
+  /**
    * Create row without saving
    *
    * @param  array Properties
