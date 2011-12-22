@@ -6,7 +6,7 @@
 
 class dom extends prototype {
   static function missing($method, $arguments) {
-    return new spandex($method, $arguments);
+    return new spandex("<$method/>", $arguments);
   }
 }
 
