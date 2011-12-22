@@ -3,10 +3,10 @@
 /**
  * Vagely inspirated on jQuery/XHP syntax
  */
- 
+
 class dom extends prototype {
   static function missing($method, $arguments) {
-    return new spandex($method, $args);
+    return new spandex($method, $arguments);
   }
 }
 
