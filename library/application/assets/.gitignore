@@ -1,9 +1,0 @@
-.develop
-
-access.log
-error.log
-
-public/css/all.css
-public/js/all.js
-
-database/db.sqlite
