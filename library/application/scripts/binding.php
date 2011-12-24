@@ -26,6 +26,7 @@ request::implement('dispatch', function (array $params = array())
      */
 
     require getcwd().DS.'controllers'.DS.'base'.EXT;
+    require getcwd().DS.'library'.DS.'helpers'.EXT;
     require $controller_file;
 
     /**#@-*/
@@ -39,16 +40,6 @@ request::implement('dispatch', function (array $params = array())
       raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
     }
 
-
-    /**
-     * @ignore
-     */
-    require getcwd().DS.'helpers'.DS.'base'.EXT;
-
-    $helper_file = getcwd().DS.'helpers'.DS.$controller.EXT;
-
-    is_file($helper_file) && require $helper_file;
-    /**#@-*/
 
     $class_name::defined('init') && $class_name::init();
 
