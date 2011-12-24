@@ -13,7 +13,7 @@ $type      = params('type');
 $base_path = getcwd().DS.'views'.DS.'assets';
 $base_file = $base_path.DS.$type.DS."app.$type";
 
-$out_file  = getcwd().DS.'public'.DS.$type.DS."all.$type";
+$out_file  = getcwd().DS.'static'.DS.$type.DS."all.$type";
 
 
 // TODO: compression, caching, gzip?

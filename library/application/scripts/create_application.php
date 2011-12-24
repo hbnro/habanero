@@ -32,38 +32,27 @@ $skel_dir = dirname(__DIR__).DS.'assets';
   create_file($app_path.DS.'database'.DS.'schema'.EXT, "<?php\n");
   create_file($app_path.DS.'database'.DS.'seeds'.EXT, "<?php\n");
 
-   create_dir($app_path.DS.'helpers');
-  create_file($app_path.DS.'helpers'.DS.'base'.EXT, "<?php\n");
-
    create_dir($app_path.DS.'library');
-   #create_dir($app_path.DS.'library'.DS.'vendor');
+  create_file($app_path.DS.'library'.DS.'helpers'.EXT, "<?php\n");
 
-   create_dir($app_path.DS.'logs');
-        chmod($app_path.DS.'logs', 0777);
+   create_dir($app_path.DS.'static');
+        chmod($app_path.DS.'static', 0777);
 
-   create_dir($app_path.DS.'models');
+   create_dir($app_path.DS.'static'.DS.'css');
+        chmod($app_path.DS.'static'.DS.'css', 0777);
+  create_file($app_path.DS.'static'.DS.'css'.DS.'all.css', "\n");
+        chmod($app_path.DS.'static'.DS.'css'.DS.'all.css', 0777);
 
-   create_dir($app_path.DS.'public');
-        chmod($app_path.DS.'public', 0777);
+   create_dir($app_path.DS.'static'.DS.'img');
 
-   create_dir($app_path.DS.'public'.DS.'css');
-        chmod($app_path.DS.'public'.DS.'css', 0777);
-  create_file($app_path.DS.'public'.DS.'css'.DS.'all.css', "\n");
-        chmod($app_path.DS.'public'.DS.'css'.DS.'all.css', 0777);
-
-   create_dir($app_path.DS.'public'.DS.'img');
-
-   create_dir($app_path.DS.'public'.DS.'js');
-        chmod($app_path.DS.'public'.DS.'js', 0777);
-  create_file($app_path.DS.'public'.DS.'js'.DS.'all.js', "\n");
-        chmod($app_path.DS.'public'.DS.'js'.DS.'all.js', 0777);
-    copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'jquery-1.7.1.min.js');
-    copy_file($app_path.DS.'public'.DS.'js', $skel_dir.DS.'modernizr-2.0.6.min.js');
+   create_dir($app_path.DS.'static'.DS.'js');
+        chmod($app_path.DS.'static'.DS.'js', 0777);
+  create_file($app_path.DS.'static'.DS.'js'.DS.'all.js', "\n");
+        chmod($app_path.DS.'static'.DS.'js'.DS.'all.js', 0777);
+    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'jquery-1.7.1.min.js');
+    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'modernizr-2.0.6.min.js');
 
      copy_dir($app_path, $skel_dir.DS.'tasks');
-
-   create_dir($app_path.DS.'tmp');
-        chmod($app_path.DS.'tmp', 0777);
 
    create_dir($app_path.DS.'views');
    create_dir($app_path.DS.'views'.DS.'assets');
@@ -87,9 +76,19 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'views'.DS.'home');
     copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
 
-  create_file($app_path.DS.'.develop', "<IfModule mod_env.c>\n  # - Environment options\n  SetEnv OPTION VALUE\n</IfModule>\n");
+
+    $ignored_files = array(
+      '.develop',
+      'access.log',
+      'error.log',
+      'static/css/all.css',
+      'static/js/all.js',
+      'database/db.sqlite',
+    );
+
+  create_file($app_path.DS.'.gitignore', join("\n", $ignored_files) . "\n");
+    copy_file($app_path, $skel_dir.DS.'.develop');
     copy_file($app_path, $skel_dir.DS.'.htaccess');
-    copy_file($app_path, $skel_dir.DS.'.gitignore');
 
     copy_file($app_path, $skel_dir.DS.'Stubfile');
     copy_file($app_path, $skel_dir.DS.'migrate'.EXT);
