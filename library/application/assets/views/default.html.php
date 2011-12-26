@@ -12,7 +12,7 @@
     <title><?php echo $title; ?></title>
 
 <?php echo assets::tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css'); ?>
-<?php echo assets::tag_for('modernizr-1.7.min.js'); ?>
+<?php echo assets::tag_for('modernizr-2.0.6.min.js'); ?>
 <?php echo assets::favicon(); ?>
 <?php echo assets::before(); ?>
 <?php echo $head; ?>
