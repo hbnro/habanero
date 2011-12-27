@@ -12,6 +12,27 @@
  background-clip: padding-box;
 }
 
+@mixin radius_box($tl: 5px, $tr: 5px, $br: 5px, $bl: 5px) {
+ -webkit-border-top-left-radius: %(%dpx, $tl);
+ -webkit-border-top-right-radius: %(%dpx, $tr);
+ -webkit-border-bottom-right-radius: %(%dpx, $br);
+ -webkit-border-bottom-left-radius: %(%dpx, $bl);
+
+ -moz-border-radius-topleft: %(%dpx, $tl);
+ -moz-border-radius-topright: %(%dpx, $tr);
+ -moz-border-radius-bottomright: %(%dpx, $br);
+ -moz-border-radius-bottomleft: %(%dpx, $bl);
+
+ border-top-left-radius: %(%dpx, $tl);
+ border-top-right-radius: %(%dpx, $tr);
+ border-bottom-right-radius: %(%dpx, $br);
+ border-bottom-left-radius: %(%dpx, $bl);
+
+ -moz-background-clip: padding;
+ -webkit-background-clip: padding-box;
+ background-clip: padding-box;
+}
+
 @mixin shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
  -moz-box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
  -webkit-box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
