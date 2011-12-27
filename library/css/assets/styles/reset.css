@@ -96,14 +96,14 @@ html {
 }
 
 ::-moz-selection {
-  background: #90bed5;
+  background: $selection;
   text-shadow: none;
-  color: #fff;
+  color: $highlight;
 }
 ::selection {
-  background: #90bed5;
+  background: $selection;
   text-shadow: none;
-  color: #fff;
+  color: $highlight;
 }
 
 img {
