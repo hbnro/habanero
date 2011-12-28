@@ -402,7 +402,7 @@ function attrs($args, $html = FALSE) {
  * @return    array
  */
 function args($text, $prefix = '') {
-  static $regex = '/(?:^|\s+)(?:([\w:-]+)\s*=\s*([\'"`]?)(.+?)\\2|[\w:-]+)(?=\s+|$)/';
+  static $regex = '/(?:^|\s+)(?:([\w:-]+)\s*=\s*([\'"`]?)(.*?)\\2|[\w:-]+)(?=\s+|$)/';
 
 
   $out  = array();
