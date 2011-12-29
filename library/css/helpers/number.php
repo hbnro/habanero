@@ -70,7 +70,6 @@ css_helper::implement('floor', function ($num) {
  */
 css_helper::implement('round', function ($num) {
   $args = func_get_args();
-
   return call_user_func_array('round', $args);
 });
 
@@ -78,11 +77,32 @@ css_helper::implement('round', function ($num) {
 /**
  * Absolute value
  *
- * @param  mixed  Number
+ * @param  mixed   Number
  * @return integer
  */
 css_helper::implement('abs', function ($num) {
   return abs($num);
+});
+
+
+/**
+ * Percentage to floatval
+ *
+ * @param  mixed   Number
+ * @return integer
+ */
+css_helper::implement('fval', function ($num) {
+  return (float) (strpos($num, '%') ? (int) $num / 100 : $num);
+});
+
+/**
+ * Floatval to percentage
+ *
+ * @param  mixed   Number
+ * @return integer
+ */
+css_helper::implement('perc', function ($num) {
+  return sprintf('%d%%', (float) $num > 1 ? (int) $num : $num * 100);
 });
 
 /* EOF: ./library/css/helpers/number.php */
