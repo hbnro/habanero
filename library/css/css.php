@@ -95,9 +95,13 @@ class css extends prototype
 
     $text = join("\n", static::$css);
 
+    $text = preg_replace_callback('/^(.+?)\s+(&.+?)(?=\{)/m', function ($match) {
+      return preg_replace('/\s*&/', " $match[1]", $match[2]);
+    }, $text);
+
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
-    $text = preg_replace('/\b0+(?=\.)|\s+&/', '', $text);
+    $text = preg_replace('/\b0+(?=\.)/', '', $text);
     $text = preg_replace('/ +/', ' ', $text);
 
     return $text;
@@ -253,8 +257,8 @@ class css extends prototype
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
     $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, $text);
-    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', get_class() . '::fetch_externals', $text);
-    $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', get_class() . '::fetch_properties', $text);
+    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', 'static::fetch_externals', $text);
+    $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', 'static::fetch_properties', $text);
 
     $depth  = 0;
     $buffer = '';
@@ -276,7 +280,7 @@ class css extends prototype
       }
     }
 
-    preg_replace_callback($regex, get_class() . '::fetch_blocks', $buffer);
+    preg_replace_callback($regex, 'static::fetch_blocks', $buffer);
   }
 
   // hackish properties parsing
@@ -350,9 +354,10 @@ class css extends prototype
         $parent .= ',' . join(',', $set['@children']);
       }
 
-      $parent = preg_replace('/\s+:/', ':', wordwrap(str_replace(',', ', ', $parent)));
+      $parent = str_replace(',', ', ', $parent);
+      $rules  = static::do_solve(join("\n", $out));
 
-      return static::do_solve(sprintf("$parent {\n%s\n}", join("\n", $out)));
+      return "$parent {\n$rules\n}";
     }
   }
 
@@ -456,7 +461,7 @@ class css extends prototype
       {
         $old  = strlen($text);
 
-        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|[%#]\w*?)\(([^\(\)]+)\)(\.\w+)?/', get_class() . '::do_helper', $text);
+        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|[%#]\w*?)\(([^\(\)]+)\)(\.\w+)?/', 'static::do_helper', $text);
         $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 

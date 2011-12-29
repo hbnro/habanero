@@ -58,13 +58,20 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'views'.DS.'assets');
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'css');
-  create_file($app_path.DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */");
+  create_file($app_path.DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */\n");
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css');
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js');
-  create_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', "/**\n *= lib/jquery-ujs\n */\n");
+  create_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
+    ' *= lib/console',
+    ' *= lib/jquery-ujs',
+    ' *= script',
+  ))));
+
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib');
+    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'console.js');
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'jquery-ujs.js');
+    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'script.js');
 
    create_dir($app_path.DS.'views'.DS.'errors');
     copy_file($app_path.DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'404.html'.EXT);
