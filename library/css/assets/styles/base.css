@@ -8,8 +8,15 @@
 }
 
 @mixin clearfix {
-  overflow: hidden;
-  width: 100%;
+  zoom: 1;
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
 }
 
 @mixin center_block {
