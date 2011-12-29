@@ -210,7 +210,11 @@ table {
   border-spacing: 0;
 }
 
-::-moz-selection,
+
+
+::-moz-selection {
+  @include selection;
+}
 ::selection {
   @include selection;
 }
