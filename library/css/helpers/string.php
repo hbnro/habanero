@@ -31,4 +31,17 @@ css_helper::implement('%', function($text) {
   return vsprintf($text, $args);
 });
 
+
+/**
+ * Index pick
+ *
+ * @param  string Text
+ * @param  mixed  Arguments|...
+ * @return string
+ */
+css_helper::implement('#', function($text, $index = 1, $default = FALSE) {
+  $args = preg_split('/\s+/', $text);
+  return isset($args[$index - 1]) ? $args[$index - 1] : $default;
+});
+
 /* EOF: ./library/css/helpers/string.php */
