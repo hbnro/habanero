@@ -456,7 +456,7 @@ class css extends prototype
       {
         $old  = strlen($text);
 
-        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|%\w*?)\(([^\(\)]+)\)(\.\w+)?/', get_class() . '::do_helper', $text);
+        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|[%#]\w*?)\(([^\(\)]+)\)(\.\w+)?/', get_class() . '::do_helper', $text);
         $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 
