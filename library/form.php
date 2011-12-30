@@ -152,9 +152,9 @@ class form extends prototype
         }
 
         $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
-        $label  = ! empty($one['label']) ? static::label($one['name'], $one['label']) : '';
+        $label  = ! empty($one['label']) ? static::label($one['name'], "$one[label]\n$input") : $input;
 
-        $out  []= sprintf($format, $one['before'] . $label . $input . $one['after']);
+        $out  []= sprintf($format, "$one[before]\n$label\n$one[after]");
       } elseif (is_array($one)) {
         $out []= call_user_func_array('form::input', $one);
       } elseif (is_scalar($one)) {
@@ -162,7 +162,7 @@ class form extends prototype
       }
     }
 
-    return tag('div', '', join('', $out));
+    return join('', $out);
   }
 
 
