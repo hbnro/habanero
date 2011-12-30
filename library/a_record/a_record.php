@@ -58,7 +58,7 @@ class a_record extends prototype
 
   // properties getter
   public function __get($key) {
-    if ( ! array_key_exists($key, $this->props)) {
+    if ( ! array_key_exists($key, $this->columns())) {
       if ($on = static::has_scope($key)) {
         return a_relation::match($this, $on);
       }
@@ -69,7 +69,7 @@ class a_record extends prototype
 
   // properties setter
   public function __set($key, $value) {
-    if ( ! array_key_exists($key, $this->props)) {
+    if ( ! array_key_exists($key, $this->columns())) {
       raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     $this->props[$key] = $value;
