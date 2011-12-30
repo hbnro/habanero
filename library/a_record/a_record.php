@@ -51,7 +51,7 @@ class a_record extends prototype
     $this->new_record = (bool) $new;
 
     foreach (array_keys(static::columns()) as $key) {
-      $this->props[$key] = ! empty($params[$key]) ? $params[$key] : NULL;
+      isset($params[$key]) && $this->props[$key] = $params[$key];
     }
     static::callback($this, $method);
   }
