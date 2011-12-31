@@ -174,8 +174,10 @@ class a_record extends prototype
    * @return self
    */
   final public function update(array $props) {
+    $columns = array_keys($this->fields());
+
     foreach ($props as $key => $value) {
-      $this->$key = $value;
+      in_array($key, $columns) && $this->$key = $value;
     }
     return $this;
   }
