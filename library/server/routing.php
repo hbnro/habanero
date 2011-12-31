@@ -40,9 +40,11 @@ class routing extends prototype
     ), $params);
 
 
-    $test             = preg_split('/\s+/', $params['match']);
-    $test[1]          = static::$root . ltrim($test[1], '/');
-    $params['match']  = join(' ', $test);
+    $test            = preg_split('/\s+/', $params['match']);
+    $test[1]         = rtrim(static::$root, '/') . $test[1];
+    $params['match'] = join(' ', $test);
+
+    $test[1] <> '/' && $params['match'] = rtrim($params['match'], '/');
 
     static::$routes []= $params;
   }

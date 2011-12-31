@@ -121,8 +121,7 @@ function link_to($text, $url = NULL, $args = array()) {
     $params = $text;
   } elseif (is_assoc($url)) {
     $params = array_merge($url, $params);
-
-    $url = (string) $text;
+    $params['text'] = (string) $text;
   } elseif (is_closure($url)) {
     $params['action'] = $text;
 
@@ -166,7 +165,7 @@ function link_to($text, $url = NULL, $args = array()) {
     'href' => substr($params['action'], 0, 1) === '/' ? $params['action'] : url_for($params),
     'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
     'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
-    'data-params' => $params['params'] ? http_build_query($params['params']) : FALSE,
+    'data-params' => $params['params'] ? json_encode($params['params']) : FALSE,
     'data-confirm' => $params['confirm'] ?: FALSE,
     'data-type' => $params['type'] ?: FALSE,
   ), $attrs), $params['text']);
