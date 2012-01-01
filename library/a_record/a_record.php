@@ -182,6 +182,34 @@ class a_record extends prototype
     return $this;
   }
 
+
+  /**
+   * Delete row
+   *
+   * @return mixed
+   */
+  final public function delete() {
+    if ( ! isset($this)) {
+      if (func_num_args() > 0) {
+        $first = func_get_args(0);
+        $where = static::merge(static::pk(), func_get_args())
+
+        return static::delete_all(is_array($first) ? $first : $where);
+      }
+      return FALSE;
+    }
+
+    static::callback($this, 'before_delete');
+
+    static::delete_all(array(
+      static::pk() => $this->props[static::pk()],
+    ));
+
+    static::callback($this, 'after_delete');
+
+    return $this;
+  }
+
   // TODO: implemente where() and more chained CRUD methods ?
 
 

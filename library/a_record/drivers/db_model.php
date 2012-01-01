@@ -48,24 +48,6 @@ class db_model extends a_record
 
 
   /**
-   * Delete row
-   *
-   * @return model
-   */
-  final public function delete() {
-    static::callback($this, 'before_delete');
-
-    db::delete(static::table(), array(
-      static::pk() => $this->props[static::pk()],
-    ));
-
-    static::callback($this, 'after_delete');
-
-    return $this;
-  }
-
-
-  /**
    * Row count
    *
    * @return integer

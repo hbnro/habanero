@@ -49,24 +49,6 @@ class mongo_model extends a_record
 
 
   /**
-   * Delete row
-   *
-   * @return model
-   */
-  final public function delete() {
-    static::callback($this, 'before_delete');
-
-    static::conn()->remove(array(
-      '_id' => $this->props['_id'],
-    ));
-
-    static::callback($this, 'after_delete');
-
-    return $this;
-  }
-
-
-  /**
    * Row count
    *
    * @return integer
