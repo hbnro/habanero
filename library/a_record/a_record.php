@@ -192,7 +192,7 @@ class a_record extends prototype
     if ( ! isset($this)) {
       if (func_num_args() > 0) {
         $first = func_get_args(0);
-        $where = static::merge(static::pk(), func_get_args())
+        $where = static::merge(static::pk(), func_get_args());
 
         return static::delete_all(is_array($first) ? $first : $where);
       }
