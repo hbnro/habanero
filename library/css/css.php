@@ -474,7 +474,7 @@ class css extends prototype
   // css helper callback
   final private static function do_helper($match) {
     $args = static::do_solve($match[2]);
-    $args = array_filter(explode(',', $args), 'strlen');
+    $args = array_map('trim', explode(',', $args));
 
     if ( ! css_helper::defined($match[1])) {
       return "$match[1]!($match[2])" . ( ! empty($match[3]) ? $match[3] : '');
