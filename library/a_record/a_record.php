@@ -23,11 +23,6 @@ class a_record extends prototype
   // validation errors
   protected $error_list = array();
 
-  // defaults
-  protected static $defs = array(
-                    'path' => APP_PATH,
-                  );
-
   /**#@-*/
 
 

@@ -8,8 +8,8 @@ run(function () {
 
   echo 'Migrating database structure...';
 
-  require getcwd().DS.'database'.DS.'schema'.EXT;
-  require getcwd().DS.'database'.DS.'seeds'.EXT;
+  require APP_PATH.DS.'database'.DS.'schema'.EXT;
+  require APP_PATH.DS.'database'.DS.'seeds'.EXT;
 
   echo "OK\n";
 });

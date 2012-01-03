@@ -17,7 +17,7 @@ call_user_func(function () {
   // render callback
   if (class_exists('partial')) {
     partial::register('css', function ($file, array $vars = array()) {
-      css::config('path', getcwd().DS.'views'.DS.'assets'.DS.'css');
+      css::config('path', APP_PATH.DS.'views'.DS.'assets'.DS.'css');
       return css::render($file);
     });
   }

@@ -16,7 +16,7 @@ switch (option('environment')) {
   break;
 }
 
-$error_file = getcwd().DS.'views'.DS.'errors'.DS."$error_status.html";
+$error_file = APP_PATH.DS.'views'.DS.'errors'.DS."$error_status.html";
 
 response(partial::load($error_file), array(
   'status' => $error_status,

@@ -18,8 +18,8 @@ call_user_func(function () {
   bootstrap::bind(function ($app) {
     import('partial');
 
-    i18n::load_path(getcwd().DS.'locale');
-    routing::load(getcwd().DS.'routes'.EXT, array('safe' => TRUE));
+    i18n::load_path(APP_PATH.DS.'locale');
+    routing::load(APP_PATH.DS.'routes'.EXT, array('safe' => TRUE));
 
     require __DIR__.DS.'scripts'.DS.'binding'.EXT;
     return $app;

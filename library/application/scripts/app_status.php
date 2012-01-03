@@ -2,7 +2,7 @@
 
 info(ln('app.verifying_installation'));
 
-$test  = dir2arr(getcwd(), '*', DIR_RECURSIVE | DIR_MAP);
+$test  = dir2arr(APP_PATH, '*', DIR_RECURSIVE | DIR_MAP);
 $count = sizeof($test);
 $size  = 0;
 

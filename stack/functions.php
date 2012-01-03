@@ -87,7 +87,7 @@ function template($to, $from, array $vars = array()) {
 
 function action($format, $text, $what) {
   $prefix = str_pad("\b$format($text)\b", 20 + strlen($format), ' ', STR_PAD_LEFT);
-  $text   = str_replace(getcwd().DS, '', "\clight_gray($what)\c");
+  $text   = str_replace(APP_PATH.DS, '', "\clight_gray($what)\c");
 
   cli::write(cli::format("$prefix  $text\n"));
 }

@@ -268,7 +268,7 @@ function path_to($path = '.', $host = FALSE) {
   }
 
 
-  if ($path = realpath(getcwd().DS.'static'.DS.$path)) {
+  if ($path = realpath(APP_PATH.DS.'static'.DS.$path)) {
     if ($root <> '/') {
       $path = str_replace($root, '', $path);
     }

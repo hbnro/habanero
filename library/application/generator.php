@@ -19,7 +19,7 @@ app_generator::implement('create', function ($name = '') {
   if ( ! $name) {
     error(ln('missing_arguments'));
   } else {
-    $app_path = getcwd().DS.$name;
+    $app_path = APP_PATH.DS.$name;
 
     if ( ! cli::flag('force') && dirsize($app_path)) {
       /*notice(ln('app.application'));
@@ -60,8 +60,6 @@ app_generator::implement('status', function () {
 
 // script generation
 app_generator::implement('generate', function($what = '', $name = '') {
-  config(getcwd().DS.'config'.DS.'application'.EXT);
-
   if ( ! in_array($what, array(
     'controller',
     'action',
@@ -104,7 +102,7 @@ app_generator::implement('configure', function () {
 // compress compiled assets
 app_generator::implement('precompile', function () {
   foreach (array('css', 'js') as $type) {
-    $base_file = getcwd().DS.'public'.DS.$type.DS."all.$type";
+    $base_file = APP_PATH.DS.'public'.DS.$type.DS."all.$type";
 
     if (is_file($base_file)) {
       success(ln('app.writting_asset', array('type' => $type)));

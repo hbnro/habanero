@@ -3,9 +3,9 @@
 info(ln('db.verifying_schema'));
 
 $out = array();
-$schema_file = mkpath(getcwd().DS.'database').DS.'schema'.EXT;
+$schema_file = mkpath(APP_PATH.DS.'database').DS.'schema'.EXT;
 
-$path = str_replace(getcwd().DS, '', $schema_file);
+$path = str_replace(APP_PATH.DS, '', $schema_file);
 success(ln('db.updating_schema', array('path' => $path)));
 
 foreach (db::tables() as $one) {

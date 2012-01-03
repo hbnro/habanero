@@ -12,7 +12,7 @@
  * @return string
  */
 function partial($path, array $vars = array()) {
-  $view_file = getcwd().DS.'views'.DS.str_replace('/', DS, $path);
+  $view_file = APP_PATH.DS.'views'.DS.str_replace('/', DS, $path);
   return partial::apply(is_file($view_file) ? 'render' : 'load', array($view_file, $vars));
 }
 

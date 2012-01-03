@@ -17,15 +17,15 @@ cli::writeln(pretty(function () {
 
   if (cli::flag('dev')) {
     $what = 'development';
-    $file = getcwd().DS.'config'.DS.'environments'.DS.$what.EXT;
+    $file = APP_PATH.DS.'config'.DS.'environments'.DS.$what.EXT;
   } elseif (cli::flag('prod')) {
     $what = 'production';
-    $file = getcwd().DS.'config'.DS.'environments'.DS.$what.EXT;
+    $file = APP_PATH.DS.'config'.DS.'environments'.DS.$what.EXT;
   } elseif (cli::flag('app')) {
     $what = 'application';
-    $file = getcwd().DS.'config'.DS.$what.EXT;
+    $file = APP_PATH.DS.'config'.DS.$what.EXT;
   } elseif (cli::flag('global')) {
-    $file = getcwd().DS.'config'.EXT;
+    $file = APP_PATH.DS.'config'.EXT;
     $what = 'default';
   }
 

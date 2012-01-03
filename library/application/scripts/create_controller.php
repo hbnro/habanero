@@ -1,6 +1,6 @@
 <?php
 
-$out_file = mkpath(getcwd().DS.'controllers').DS.$name.EXT;
+$out_file = mkpath(APP_PATH.DS.'controllers').DS.$name.EXT;
 
 if (is_file($out_file)) {
   error(ln('app.controller_already_exists', array('name' => $name)));
@@ -15,13 +15,13 @@ if (is_file($out_file)) {
 
   success(ln('app.controller_route_building', array('name' => $name)));
 
-  $route_file = getcwd().DS.'routes'.EXT;
+  $route_file = APP_PATH.DS.'routes'.EXT;
   write($route_file, preg_replace('/;[^;]*?$/', ";\nget('/$name', '$name#index', array('path' => '$name'))\\0", read($route_file)));
 
 
   if (cli::flag('helper')) {
     success(ln('app.controller_helper_building', array('name' => $name)));
-    write(mkpath(getcwd().DS.'helpers').DS.$name.EXT, "<?php\n");
+    write(mkpath(APP_PATH.DS.'helpers').DS.$name.EXT, "<?php\n");
   }
 
 
@@ -29,7 +29,7 @@ if (is_file($out_file)) {
     success(ln('app.controller_view_building', array('name' => $name)));
 
     $text = "<section>\n  <header>$name#index.view</header>\n  <pre><?php echo getcwd().DS.'views'.DS.'$name'.DS.'index.html'.EXT; ?></pre>\n</section>\n";
-    write(mkpath(getcwd().DS.'views'.DS.$name).DS.'index.html'.EXT, $text);
+    write(mkpath(APP_PATH.DS.'views'.DS.$name).DS.'index.html'.EXT, $text);
   }
 }
 

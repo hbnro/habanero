@@ -11,10 +11,10 @@ foreach (array('php', 'css', 'js') as $one) {
 $type      = params('type');
 $sheet     = request::get('src', 'app');
 
-$base_path = getcwd().DS.'views'.DS.'assets';
+$base_path = APP_PATH.DS.'views'.DS.'assets';
 $base_file = $base_path.DS.$type.DS."$sheet.$type";
 
-$out_file  = getcwd().DS.'static'.DS.$type.DS."$sheet.$type";
+$out_file  = APP_PATH.DS.'static'.DS.$type.DS."$sheet.$type";
 
 
 // TODO: compression, caching, gzip?
@@ -23,7 +23,7 @@ switch (option('environment')) {
     $out_file = str_replace("$sheet.$type", "$sheet.min.$type", $out_file);
 
     if ( ! is_file($out_file)) {
-      die(ln('file_not_exists', array('name' => str_replace(getcwd().DS, '', $out_file))));
+      die(ln('file_not_exists', array('name' => str_replace(APP_PATH.DS, '', $out_file))));
     }
   break;
   default;

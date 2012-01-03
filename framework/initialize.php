@@ -29,8 +29,8 @@ call_user_func(function () {
   define('APP_LOADER', realpath($trace['file']));
 
 
-  // the root-directory
-  define('APP_PATH', dirname(APP_LOADER));
+  // the root-directory (really)
+  define('APP_PATH', realpath(getcwd()));
 
 
   // the root-script name
@@ -81,7 +81,7 @@ call_user_func(function () {
 
 
   // global
-  config(getcwd().DS.'config'.EXT);
+  config(APP_PATH.DS.'config'.EXT);
 
   // local
   if ( ! empty($GLOBALS['config'])) {
@@ -91,7 +91,7 @@ call_user_func(function () {
   // PATH
   config('import_path', array(
     dirname(LIB).DS.'library',
-    getcwd().DS.'library',
+    APP_PATH.DS.'library',
   ));
 
 

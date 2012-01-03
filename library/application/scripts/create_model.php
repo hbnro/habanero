@@ -2,7 +2,7 @@
 
 @list($name, $table) = explode(':', $name);
 
-$out_file = mkpath(getcwd().DS.'models').DS.$name.EXT;
+$out_file = mkpath(APP_PATH.DS.'models').DS.$name.EXT;
 
 if (is_file($out_file)) {
   error(ln('app.model_already_exists', array('name' => $name)));
