@@ -125,9 +125,7 @@ class css extends prototype
         $path = substr($path, 2);
         $root = dirname($root);
       }
-
-      $abs  = APP_PATH.DS.ltrim($path, DS);
-      $path = is_file($abs) ? $abs : $root.DS.ltrim($path, DS);
+      return $root.DS.ltrim($path, DS);
     }
     return $path;
   }
@@ -461,7 +459,7 @@ class css extends prototype
       {
         $old  = strlen($text);
 
-        $text = preg_replace_callback('/(?<![\-._])([\w-]+?|[%#]\w*?)\(([^\(\)]+)\)(\.\w+)?/', 'static::do_helper', $text);
+        $text = preg_replace_callback('/(?<![\-._])(\w[\w-]+?|[%#]\w*?)\(([^\(\)]+)\)/', 'static::do_helper', $text);
         $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 
@@ -481,9 +479,9 @@ class css extends prototype
     }
 
     $out = css_helper::apply($match[1], $args);
-    $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : (array) $out;
+    $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : $out;
 
-    return is_closure($out) ? $out() : end($out);
+    return $out;
   }
 
   // solve math operations

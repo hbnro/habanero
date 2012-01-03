@@ -5,47 +5,27 @@
  */
 
 /**
- * Image properties
+ * Images
  *
  * @param  string Path
+ * @param  mixed  Index
  * @return string
  */
-css_helper::implement('image', function ($path) {
+css_helper::implement('image', function ($path, $key = -1) {
   static $cache = array();
 
 
-  if (isset($cache[$path])) {
-    return $cache[$path];
+  if (empty($cache[$path])) {
+    $img_file = css::path($path);
+    if (is_file($img_file)) {
+      $cache[$path] = getimagesize($img_file);
+    }
   }
 
+  $test = $cache[$path];
+  $test = ! empty($test[$key]) ? $test[$key] : 0;
 
-  $out = array(
-    'width' => 'auto',
-    'height' => 'auto',
-    'url' => "url!($path)",
-  );
-
-
-  $img_file = css::path($path);
-
-  if (is_file($img_file)) {
-    $test = getimagesize($img_file);
-
-    $out['width']  = "$test[0]px";
-    $out['height'] = "$test[1]px";
-
-    $out['data']   = function ()
-      use($img_file) {
-        $out  = 'data:image/' . str_replace('jpg', 'jpeg', ext($img_file));
-        $out .= ';base64,' . base64_encode(read($img_file));
-
-        return $out;
-    };
-  }
-
-  $cache[$path] = $out;
-
-  return $out;
+  return "{$test}px";
 });
 
 /* EOF: ./library/css/helpers/image.php */
