@@ -24,7 +24,7 @@
   margin: 0 auto;
 }
 
-@mixin size($height: 5px, $width: 5px) {
+@mixin size($width: 5px, $height: 5px) {
 	height: %(%dpx, $height);
 	width: %(%dpx, $width);
 	overflow: hidden;
