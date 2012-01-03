@@ -34,10 +34,6 @@
  box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
-@mixin text_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #333) {
- text-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
-}
-
 @mixin text_columns($column_count, $column_gap: 20px) {
  -webkit-column-count: %(%dpx, $column_count);
  -webkit-column-gap: %(%dpx, $column_gap);
@@ -83,12 +79,13 @@
  background-repeat: repeat-x;
 
  background-image: -khtml-gradient(linear, left top, left bottom, from(#($start, 1)), to(#($end, 1)));
- background-image: -moz-linear-gradient(#($start, 1) perc(#($start, 2, 0)), #($end, 1) perc(#($end, 2, 1)));
- background-image: -ms-linear-gradient(#($start, 1) perc(#($start, 2, 0)), #($end, 1) perc(#($end, 2, 1)));
- background-image: -webkit-gradient(linear, left top, left bottom, color-stop(perc(#($start, 2, 0)), #($start, 1)), color-stop(perc(#($end, 2, 1)), #($end, 1)));
- background-image: -webkit-linear-gradient(#($start, 1) perc(#($start, 2, 0)), #($end, 1) perc(#($end, 2, 1)));
- background-image: -o-linear-gradient(#($start, 1) perc(#($start, 2, 0)), #($end, 1) perc(#($end, 2, 1)));
- background-image: linear-gradient(#($start, 1) perc(#($start, 2, 0)), #($end, 1) perc(#($end, 2, 1)));
+ background-image: -moz-linear-gradient($start, $end);
+ background-image: -ms-linear-gradient($start, $end);
+ background-image: -webkit-linear-gradient($start, $end);
+ background-image: -o-linear-gradient($start, $end);
+ background-image: linear-gradient($start, $end);
+
+ background-image: -webkit-gradient(linear, left top, left bottom, color-stop(fval(#($start, 2, 0)), #($start, 1)), color-stop(fval(#($end, 2, 1)), #($end, 1)));
 
  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#($start, 1)', endColorstr='#($end, 1)', GradientType=0);
  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#($start, 1)', endColorstr='#($end, 1)', GradientType=0);
@@ -105,17 +102,17 @@
  background-image: linear-gradient(%(%ddeg, $deg), $start, $end);
 }
 
-@mixin three_gradient($colors: #555 #444 #333, $parts: 0 .5 1) {
- background-color: #($colors, 2);
+@mixin three_gradient($bottom: #555 0%, $middle: #444 50%, $top: #333 100%) {
+ background-color: #($middle, 1);
  background-repeat: no-repeat;
 
- background-image: linear-gradient(bottom, #($colors, 1) perc(#($parts, 1)), #($colors, 2) perc(#($parts, 2)), #($colors, 3) perc(#($parts, 3)));
- background-image: -o-linear-gradient(bottom, #($colors, 1) perc(#($parts, 1)), #($colors, 2) perc(#($parts, 2)), #($colors, 3) perc(#($parts, 3)));
- background-image: -moz-linear-gradient(bottom, #($colors, 1) perc(#($parts, 1)), #($colors, 2) perc(#($parts, 2)), #($colors, 3) perc(#($parts, 3)));
- background-image: -webkit-linear-gradient(bottom, #($colors, 1) perc(#($parts, 1)), #($colors, 2) perc(#($parts, 2)), #($colors, 3) perc(#($parts, 3)));
- background-image: -ms-linear-gradient(bottom, #($colors, 1) perc(#($parts, 1)), #($colors, 2) perc(#($parts, 2)), #($colors, 3) perc(#($parts, 3)));
+ background-image: linear-gradient(bottom, $bottom, $middle, $top);
+ background-image: -o-linear-gradient(bottom, $bottom, $middle, $top);
+ background-image: -moz-linear-gradient(bottom, $bottom, $middle, $top);
+ background-image: -webkit-linear-gradient(bottom, $bottom, $middle, $top);
+ background-image: -ms-linear-gradient(bottom, $bottom, $middle, $top);
 
- background-image: -webkit-gradient(linear, left bottom, left top, color-stop(fval(#($parts, 1)), #($colors, 1)), color-stop(fval(#($parts, 2)), #($colors, 2)), color-stop(fval(#($parts, 3)), #($colors, 3)));
+ background-image: -webkit-gradient(linear, left bottom, left top, color-stop(fval(#($bottom, 2, 0)), #($bottom, 1)), color-stop(fval(#($middle, 2, .5)), #($middle, 1)), color-stop(fval(#($top, 2, 1)), #($top, 1)));
 }
 
 /* EOF: ./library/css/assets/styles/css3.css */
