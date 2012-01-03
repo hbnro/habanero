@@ -248,7 +248,7 @@ function read($path) {
     $guri  = ! empty($test['path']) ? $test['path'] : '/';
     $guri .= ! empty($test['query']) ? "?$test[query]" : '';
 
-    $referer = server(TRUE, $_SERVER['REQUEST_URI'], TRUE);
+    //$referer = server(TRUE, $_SERVER['REQUEST_URI'], TRUE);
     $agent   = 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)';
 
 
@@ -262,7 +262,7 @@ function read($path) {
       $resource = curl_init();
 
       curl_setopt($resource, CURLOPT_URL, "$test[scheme]://$test[host]$guri");
-      curl_setopt($resource, CURLOPT_REFERER, $referer);
+      //curl_setopt($resource, CURLOPT_REFERER, $referer);
       curl_setopt($resource, CURLOPT_FAILONERROR, 1);
       curl_setopt($resource, CURLOPT_RETURNTRANSFER,1);
       curl_setopt($resource, CURLOPT_PORT, $port);
@@ -282,7 +282,7 @@ function read($path) {
         fputs($resource, "Accept-Charset: iso-8859-1,utf-8;q=0.7,*;q=0.7\r\n");
         fputs($resource, "Keep-Alive: 300\r\n");
         fputs($resource, "Connection: Keep-Alive\r\n");
-        fputs($resource, "Referer: $referer\r\n\r\n");
+        //fputs($resource, "Referer: $referer\r\n\r\n");
 
         $end = FALSE;
 
