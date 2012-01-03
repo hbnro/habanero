@@ -8,33 +8,36 @@ run(function () {
   import('console');
 
   i18n::load_path(__DIR__.DS.'locale');
-  config(getcwd().DS.'config'.EXT);
 
 
   $args = cli::args();
 
-  is_file($mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT) && die(require $mod_file);
+  $mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT;
 
-  foreach ((array) option('import_path', array()) as $path) {
-    if ($test = findfile($path, 'generator'.EXT, TRUE)) {
-      foreach ($test as $gen_file) {
-        /**
-         * @ignore
-         */
-        require $gen_file;
+  if (is_file($mod_file)) {
+    require $mod_file;
+  } else {
+    foreach ((array) option('import_path', array()) as $path) {
+      if ($test = findfile($path, 'generator'.EXT, TRUE)) {
+        foreach ($test as $gen_file) {
+          /**
+           * @ignore
+           */
+          require $gen_file;
+        }
       }
     }
+
+
+    $test = array();
+    $cmd  = array_shift($args);
+
+    foreach ($args as $key => $val) {
+      is_numeric($key) && $test []= $val;
+    }
+
+    is_string($cmd) ? app_generator::exec($cmd, $test) : help();
   }
-
-
-  $test = array();
-  $cmd  = array_shift($args);
-
-  foreach ($args as $key => $val) {
-    is_numeric($key) && $test []= $val;
-  }
-
-  is_string($cmd) ? app_generator::exec($cmd, $test) : help();
 });
 
 /* EOF: ./stack/initialize.php */
