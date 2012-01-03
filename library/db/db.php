@@ -81,11 +81,6 @@ class db extends prototype
     if (is_true($return)) {
       return $sql;
     }
-
-    if (is_null($column)) {// TODO: experimental support for pgsql, try to use db_columns() instead?
-      $column = array_shift(array_keys($values));
-    }
-// TODO: ERROR: lastval is not yet defined in this session (Heroku)
     return static::inserted(static::query($sql), $table, $column);
   }
 

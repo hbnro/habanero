@@ -33,7 +33,7 @@ class db_model extends a_record
     unset($fields[static::pk()]);
 
     if ($this->is_new()) {
-      $this->props[static::pk()] = db::insert(static::table(), $fields);
+      $this->props[static::pk()] = db::insert(static::table(), $fields, static::pk());
       $this->new_record = FALSE;
     } else {
       db::update(static::table(), $fields, array(
