@@ -9,8 +9,13 @@ $paths = array(
 
 
 foreach ($paths as $one) {
-  if (is_file("$one/php.ini")) {
-    $ini_file = "$one/php.ini";
+  $php_ini = "$one/php.ini";
+  $default = "$php_ini.default";
+
+  ! is_file($php_ini) && is_file($default) && copy($default, $php_ini);
+
+  if (is_file($php_ini)) {
+    $ini_file = $php_ini;
     break;
   }
 }
@@ -20,9 +25,6 @@ if (empty($ini_file)) {
 } else {
   install_to($ini_file);
 }
-
-done();
-
 
 function install_to($php_ini) {
   $config = read($php_ini);

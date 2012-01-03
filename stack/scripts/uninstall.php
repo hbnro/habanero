@@ -21,8 +21,6 @@ if (empty($ini_file)) {
   uninstall_from($ini_file);
 }
 
-done();
-
 
 function uninstall_from($php_ini) {
   $config = read($php_ini);

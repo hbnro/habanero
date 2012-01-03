@@ -1,12 +1,5 @@
 #!/bin/sh
 
-if [ ! -d "/Users" ]; then
-  TETL="$HOME/.local/share/phplib/tetlphp"
-else
-  TETL="$HOME/Library/PHP/tetlphp"
-fi
-
-
 BINPATH="/usr/local/bin"
 
 if [ ! -d "$BINPATH" ]; then
@@ -16,23 +9,12 @@ fi
 
 SYMLINK="$BINPATH/atl"
 
-
-echo "Uninstalling"
-exec $SYMLINK --uninstall
-
-
 echo "Removing symlink"
 
+"$SYMLINK" --uninstall
 
 if [ -h "$SYMLINK" ] || [ -e "$SYMLINK" ]; then
-  unlink $SYMLINK
-fi
-
-
-echo "Removing framework files"
-
-if [ -e "$TETL" ]; then
-  rm -rf $TETL
+  unlink "$SYMLINK"
 fi
 
 echo "Done"
