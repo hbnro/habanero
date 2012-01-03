@@ -35,6 +35,13 @@
   @include size($size, $size);
 }
 
+@mixin inline_image($src: 'blank.gif') {
+  @include size(image($src, 0), image($src, 1));
+  background: url($src) no-repeat;
+  text-indent: -99999px;
+  white-space: nowrap;
+}
+
 @mixin placeholder($color: #graylight) {
   :-moz-placeholder {
     color: $color;
