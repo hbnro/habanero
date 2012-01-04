@@ -95,10 +95,6 @@ class css extends prototype
 
     $text = join("\n", static::$css);
 
-    $text = preg_replace_callback('/^(.+?)\s+(&.+?)(?=\{)/m', function ($match) {
-      return preg_replace('/\s*&/', " $match[1]", $match[2]);
-    }, $text);
-
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
@@ -352,10 +348,30 @@ class css extends prototype
         $parent .= ',' . join(',', $set['@children']);
       }
 
-      $parent = str_replace(',', ', ', $parent);
-      $rules  = static::do_solve(join("\n", $out));
+      $rules = static::do_solve(join("\n", $out));
+      $parts = preg_split('/\s*,+\s*/', $parent);
 
-      return "$parent {\n$rules\n}";
+      $top  = '';
+      $rule = array();
+      
+
+      foreach ($parts as $one) {
+        $pos = strpos($one, '&');
+
+        if ( ! is_false($pos)) {
+          if ($pos > 0) {
+            $top = trim(substr($one, 0, $pos));
+          }
+          $rule []= $top . substr($one, $pos + 1);
+        } else {
+          $rule []= trim($one);
+        }
+      }
+
+      $top = join(', ', $rule);
+      $out  = "$top {\n$rules\n}";
+
+      return $out;
     }
   }
 
