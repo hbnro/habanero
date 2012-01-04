@@ -5,30 +5,6 @@
  */
 
 /**
- * Is application root?
- *
- * @return boolean
- */
-function is_root() {
-  return URI === '/';
-}
-
-
-/**
- * Is ajax maded request?
- *
- * @return boolean
- */
-function is_ajax() {
-  if (empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {// intentionally native
-    return FALSE;
-  }
-
-  return $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-}
-
-
-/**
  * Is odd number?
  *
  * @param  scalar  Number
@@ -374,30 +350,6 @@ function is_url($test) {
   static $regex = '/^((?:[a-z]{2,7}:)?\/\/)([a-z0-9\-]{1,16}\.?)+([a-z]{2,6})?(:[0-9]{2,4})?\/?(\??.+)?$/i';
 
   return (strpos($test, 'data:') === 0) OR preg_match($regex, $test) > 0;
-}
-
-
-/**
- * Is local ip format valid?
- *
- * @param     scalar  String
- * @staticvar string  RegExp
- * @return    boolean
- */
-function is_local($test = NULL) {
-  static $regex = '/^(::|127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|localhost)/';
-
-  if (is_url($test)) {
-    $host = value($_SERVER, 'HTTP_HOST');
-    $test = parse_url($test);
-
-    if (isset($test['host']) && ($test['host'] !== $host)) {
-      return FALSE;
-    }
-    return TRUE;
-  }
-
-  return preg_match($regex, $test ?: value($_SERVER, 'REMOTE_ADDR')) > 0;
 }
 
 

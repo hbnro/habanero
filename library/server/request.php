@@ -171,6 +171,54 @@ class request extends prototype
 
 
   /**
+   * Is local ip format valid?
+   *
+   * @param     scalar  String
+   * @staticvar string  RegExp
+   * @return    boolean
+   */
+  function is_local($test = NULL) {
+    static $regex = '/^(::|127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|localhost)/';
+
+    if (is_url($test)) {
+      $host = value($_SERVER, 'HTTP_HOST');
+      $test = parse_url($test);
+
+      if (isset($test['host']) && ($test['host'] !== $host)) {
+        return FALSE;
+      }
+      return TRUE;
+    }
+
+    return preg_match($regex, $test ?: value($_SERVER, 'REMOTE_ADDR')) > 0;
+  }
+
+
+  /**
+   * Is application root?
+   *
+   * @return boolean
+   */
+  final public static function is_root() {
+    return URI === '/';
+  }
+
+
+  /**
+   * Is ajax maded request?
+   *
+   * @return boolean
+   */
+  final public static function is_ajax() {
+    if (empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {// intentionally native
+      return FALSE;
+    }
+
+    return $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+  }
+
+
+  /**
    * Is POST request?
    *
    * @return boolean
