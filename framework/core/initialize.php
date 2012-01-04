@@ -17,17 +17,19 @@ call_user_func(function () {
   // ----------------------------------------------------------------------------
 
   // OS temp path
-  if ( ! @is_dir($temporary_files = option('temporary_files'))) {
-    if (function_exists('sys_get_temp_dir')) {
-      $temporary_files = @sys_get_temp_dir();
-    } else {
+  if (function_exists('sys_get_temp_dir')) {
+    $temporary_files = @sys_get_temp_dir();
+  } else {
+    $temporary_files = getenv('TMP') ?: getenv('TEMP');
+    
+    if ( ! is_dir($temporary_files)) {
       $old = @tempnam('E', '');
       $temporary_files = @dirname($old);
       @unlink($old);
     }
   }
 
-  define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? $temporary_files : LIB.DS.'tmp');
+  define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? $temporary_files : '/tmp');
 
   ! is_dir(TMP) && mkpath(TMP);
 
