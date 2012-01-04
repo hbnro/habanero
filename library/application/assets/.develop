@@ -1,4 +1,4 @@
 <IfModule mod_env.c>
   # - Environment options
-  SetEnv OPTION VALUE
+  SetEnv ENV development
 </IfModule>

@@ -24,3 +24,8 @@
   # - Default error fallback
   # ErrorDocument 404 /index.php
 </IfModule>
+
+<IfModule mod_env.c>
+  # - Environment options
+  SetEnv ENV production
+</IfModule>

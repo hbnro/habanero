@@ -39,7 +39,7 @@ call_user_func(function () {
         continue;
       }
 
-      $url = $_SERVER[$key];
+      $url = strip_tags($_SERVER[$key]); //FIX?
       break;
     }
 
@@ -100,9 +100,9 @@ call_user_func(function () {
     define('URI', '/' . trim($parts, '/'));
 
 
-    if (empty($_SERVER['REQUEST_URI'])) {//FIX
+    if (empty($_SERVER['REQUEST_URI'])) {//FIX?
       $_SERVER['REQUEST_URI']  = server('SCRIPT_NAME', server('PHP_SELF'));
-      $_SERVER['REQUEST_URI'] .= $query = server('QUERY_STRING') ? "?$query" : '';
+      $_SERVER['REQUEST_URI'] .= $query = strip_tags(server('QUERY_STRING')) ? "?$query" : '';
     }
 
 

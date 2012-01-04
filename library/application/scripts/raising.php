@@ -5,7 +5,7 @@ import('partial');
 
 $error_status = 500;
 
-switch (option('environment')) {
+switch (APP_ENV) {
   case 'production';
     if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message)) {
       $error_status = 404;

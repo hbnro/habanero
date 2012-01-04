@@ -239,7 +239,6 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
   if (func_num_args() == 0) {
     $test = explode('.', $_SERVER['SERVER_NAME']);
 
-
     if ( ! empty($test[0]) && ($test[0] === 'www')) {
       array_shift($test);
     }
@@ -262,9 +261,7 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
 
     return $host;
   } elseif ( ! empty($_SERVER[$key])) {
-    return $_SERVER[$key];
-  } elseif ($test = getenv($key)) {
-    return $test;
+    return strip_tags($_SERVER[$key]); //FIX?
   }
 
   return $default;

@@ -33,6 +33,10 @@ call_user_func(function () {
   define('APP_PATH', realpath(getcwd()));
 
 
+  // the default environment
+  define('APP_ENV', getenv('ENV') ?: 'development');
+
+
   // the root-script name
   define('INDEX', basename(APP_LOADER));
 
