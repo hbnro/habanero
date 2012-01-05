@@ -353,7 +353,7 @@ class css extends prototype
 
       $top  = '';
       $rule = array();
-      
+
 
       foreach ($parts as $one) {
         $pos = strpos($one, '&');
