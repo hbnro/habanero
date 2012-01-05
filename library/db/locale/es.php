@@ -13,8 +13,6 @@ $lang['migrating_database'] = 'Migrando base de datos';
 
 $lang['verifying_seed'] = 'Comprobando registros';
 $lang['verifying_schema'] = 'Comprobando esquema';
-$lang['verifying_import'] = 'Comprobando importación';
-$lang['verifying_export'] = 'Comprobando exportación';
 $lang['verifying_database'] = 'Comprobando base de datos';
 $lang['verifying_structure'] = 'Comprobando estructura';
 
@@ -29,8 +27,6 @@ $lang['success_field_type'] = 'El tipo de columna %{name}:%{type} es correcto';
 $lang['indexing_table'] = 'Agregando indice %{name} a la tabla %{table}';
 
 $lang['column_type_missing'] = 'Hace falta el tipo de columna';
-$lang['import_name_missing'] = 'Hace falta el nombre para importar';
-$lang['import_file_missing'] = 'El archivo a importar %{path} no existe';
 
 $lang['index_already_exists'] = 'El índice %{name} ya existe';
 $lang['index_columns_missing'] = 'Hace falta una columna';
@@ -69,11 +65,6 @@ $lang['table_building'] = 'Creando tabla %{name}';
 $lang['table_dropping'] = 'Eliminando tabla %{name}';
 $lang['table_show_columns'] = 'Mostrando columnas de %{name}';
 
-$lang['export_name_missing'] = 'Hace falta un nombre para exportar';
-$lang['export_already_exists'] = 'El archivo a exportar ya existe';
-$lang['exporting'] = 'Exportando %{path}';
-$lang['importing'] = 'Importando %{path}';
-
 $lang['tables'] = 'Tablas';
 
 $lang['generator_title'] = 'Generador de la base de datos';
@@ -111,9 +102,6 @@ $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Elimina un índice de la tabla especificada)\c
     \bgreen(db:remove_index)\b \bcyan(table)\b \byellow(name)\b
-
-  \clight_gray(Copias de seguridad de la base de datos)\c
-    \bgreen(db:backup)\b \bcyan(name)\b [--raw] [--data] [--import]
 
   \clight_gray(Ejecuta las migraciones)\c
     \bgreen(db:migrate)\b [--drop-all] [--schema] [--seed]

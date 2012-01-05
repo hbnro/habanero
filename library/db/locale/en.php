@@ -13,8 +13,6 @@ $lang['migrating_database'] = 'Migrating database';
 
 $lang['verifying_seed'] = 'Verifying records';
 $lang['verifying_schema'] = 'Verifying schema';
-$lang['verifying_import'] = 'Verifying import';
-$lang['verifying_export'] = 'Verifying export';
 $lang['verifying_database'] = 'Verifying database';
 $lang['verifying_structure'] = 'Verifying structure';
 
@@ -29,8 +27,6 @@ $lang['success_field_type'] = 'Column type %{name}:%{type} is correct';
 $lang['indexing_table'] = 'Adding index %{name} to %{table}';
 
 $lang['column_type_missing'] = 'Column type is missing';
-$lang['import_name_missing'] = 'Import name is missing';
-$lang['import_file_missing'] = 'Import file %{path} does not exists';
 
 $lang['index_already_exists'] = 'Index %{name} already exists';
 $lang['index_columns_missing'] = 'Missing columns to index';
@@ -69,11 +65,6 @@ $lang['table_building'] = 'Creating table %{name}';
 $lang['table_dropping'] = 'Dropping table %{name}';
 $lang['table_show_columns'] = 'Showing columns from %{name}';
 
-$lang['export_name_missing'] = 'Export name is missing';
-$lang['export_already_exists'] = 'Export file already exists';
-$lang['exporting'] = 'Exporting %{path}';
-$lang['importing'] = 'Importing %{path}';
-
 $lang['tables'] = 'Tables';
 
 $lang['generator_title'] = 'Database generator';
@@ -111,9 +102,6 @@ $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Remove a index from the specified table)\c
     \bgreen(db:remove_index)\b \bcyan(table)\b \byellow(name)\b
-
-  \clight_gray(Manage the database backups)\c
-    \bgreen(db:backup)\b \bcyan(name)\b [--raw] [--data] [--import]
 
   \clight_gray(Run migrations)\c
     \bgreen(db:migrate)\b [--drop-all] [--schema] [--seed]

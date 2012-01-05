@@ -7,7 +7,6 @@
 $lang['controller_missing'] = 'Controller %{name} missing';
 $lang['action_missing'] = 'Controller action  %{controller}#%{action} missing';
 
-$lang['missing_model_name'] = 'Model name missing';
 $lang['missing_action_name'] = 'Action name missing';
 $lang['missing_controller_name'] = 'Controller name missing';
 
@@ -32,9 +31,6 @@ $lang['action_view_building'] = 'Generating view for %{controller}#%{name}';
 $lang['controller_class_building'] = 'Generating default class for controller %{name}';
 $lang['controller_route_building'] = 'Generating route for default controller %{name}';
 $lang['controller_view_building'] = 'Generating view for default controller %{name}';
-
-$lang['model_already_exists'] = 'The model %{name} already exists';
-$lang['model_class_building'] = 'Generating class for model %{name}';
 
 $lang['missing_script_name'] = 'Missing script name';
 $lang['missing_script_file'] = 'Missing script file %{name}';
@@ -64,28 +60,25 @@ $lang['generator_title'] = 'Application generator';
 $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Display the current application status)\c
-    \bgreen(status)\b
+    \bgreen(app:status)\b
 
   \clight_gray(Generates and check the application structure)\c
-    \bgreen(create)\b \byellow(app)\b [--force]
+    \bgreen(app:create)\b \bcyan(app)\b [--force]
 
   \clight_gray(Display and set the configuration options)\c
-    \bgreen(configure)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
+    \bgreen(app:configure)\b \bcyan([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Default controller generator)\c
-    \bgreen(generate)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
+    \bgreen(app:controller)\b \bcyan(name)\b [--view] [--helper] [--parent=class]
 
   \clight_gray(Default action generator)\c
-    \bgreen(generate)\b \bcyan(action)\b \byellow(controller:name)\b [--view] [--method=get|put|post|delete]
-
-  \clight_gray(Default model generator)\c
-    \bgreen(generate)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
+    \bgreen(app:action)\b \bcyan(controller:name)\b [--view] [--method=get|put|post|delete]
 
   \clight_gray(Execute tasks)\c
-    \bgreen(execute)\b \bcyan(script[:param])\b [...]
+    \bgreen(app:execute)\b \bcyan(script[:param])\b [...]
 
   \clight_gray(Build application assets to production)\c
-    \bgreen(precompile)\b
+    \bgreen(app:precompile)\b
 
 
 HELP;

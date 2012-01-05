@@ -4,16 +4,15 @@ i18n::load_path(__DIR__.DS.'locale', 'app');
 
 app_generator::usage(ln('app.generator_title'), ln('app.generator_usage'));
 
-app_generator::alias('create', 'new');
-app_generator::alias('status', 'st');
-app_generator::alias('execute', 'exec run');
-app_generator::alias('generate', 'make gen g');
-app_generator::alias('configure', 'config conf');
-app_generator::alias('precompile', 'build compile');
+app_generator::alias('app:create', 'create new');
+app_generator::alias('app:status', 'status st');
+app_generator::alias('app:execute', 'execute exec run');
+app_generator::alias('app:configure', 'configure config conf');
+app_generator::alias('app:precompile', 'build compile precompile');
 
 
 // create application
-app_generator::implement('create', function ($name = '') {
+app_generator::implement('app:create', function ($name = '') {
   info(ln('app.verifying_installation'));
 
   if ( ! $name) {
@@ -53,54 +52,47 @@ app_generator::implement('create', function ($name = '') {
 
 
 // application status
-app_generator::implement('status', function () {
+app_generator::implement('app:status', function () {
   require __DIR__.DS.'scripts'.DS.'app_status'.EXT;
 });
 
 
-// script generation
-app_generator::implement('generate', function($what = '', $name = '') {
-  if ( ! in_array($what, array(
-    'controller',
-    'action',
-    'model',
-  ))) {
-    error(ln('missing_arguments'));
+// controllers
+app_generator::implement('app:controller', function($name = '') {
+  if ( ! $name) {
+    error(ln('app.missing_controller_name'));
   } else {
-    info(ln('app.verifying_generator'));
-
-    if ( ! $name) {
-      error(ln("app.missing_{$what}_name"));
-    } else {
-      switch ($what) {
-        case 'controller';
-        case 'action';
-        case 'model';
-          require __DIR__.DS.'scripts'.DS."create_$what".EXT;
-        break;
-        default;
-        break;
-      }
-    }
-    done();
+    require __DIR__.DS.'scripts'.DS.'create_controller'.EXT;
   }
+  done();
+});
+
+
+// actions
+app_generator::implement('app:action', function($name = '') {
+  if ( ! $name) {
+    error(ln('app.missing_action_name'));
+  } else {
+    require __DIR__.DS.'scripts'.DS.'create_action'.EXT;
+  }
+  done();
 });
 
 
 // task execution
-app_generator::implement('execute', function ($name = '') {
+app_generator::implement('app:execute', function ($name = '') {
   require __DIR__.DS.'scripts'.DS.'execute_task'.EXT;
 });
 
 
 // configuration status
-app_generator::implement('configure', function () {
+app_generator::implement('app:configure', function () {
   require __DIR__.DS.'scripts'.DS.'configuration'.EXT;
 });
 
 
 // compress compiled assets
-app_generator::implement('precompile', function () {
+app_generator::implement('app:precompile', function () {
   foreach (array('css', 'js') as $type) {
     $base_file = APP_PATH.DS.'public'.DS.$type.DS."all.$type";
 

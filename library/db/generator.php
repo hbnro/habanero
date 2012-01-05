@@ -8,7 +8,6 @@ app_generator::usage(ln('db.generator_title'), ln('db.generator_usage'));
 
 app_generator::alias('db:status', 'db');
 app_generator::alias('db:migrate', 'migrate');
-app_generator::alias('db:backup', 'backup export');
 app_generator::alias('db:show_table', 'db:show show');
 app_generator::alias('db:drop_table', 'db:drop drop');
 app_generator::alias('db:create_table', 'db:create table');
@@ -101,12 +100,6 @@ app_generator::implement('db:add_index', function ($to = '', $name = '') {
 app_generator::implement('db:remove_index', function ($from = '', $name = '') {
   $args = func_get_args();
   require __DIR__.DS.'scripts'.DS.'remove_index'.EXT;
-});
-
-
-// database backups
-app_generator::implement('db:backup', function ($name = '') {
-  require __DIR__.DS.'scripts'.DS.'backups'.EXT;
 });
 
 

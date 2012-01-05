@@ -7,7 +7,6 @@
 $lang['controller_missing'] = 'No existe el controlador %{name}';
 $lang['action_missing'] = 'No existe la acción %{controller}#%{action}';
 
-$lang['missing_model_name'] = 'Hace falta el nombre del modelo';
 $lang['missing_action_name'] = 'Hace falta el nombre de la acción';
 $lang['missing_controller_name'] = 'Hace falta el nombre del controlador';
 
@@ -32,9 +31,6 @@ $lang['action_view_building'] = 'Generando vista para %{controller}#%{name}';
 $lang['controller_class_building'] = 'Generando clase por defecto del controlador %{name}';
 $lang['controller_route_building'] = 'Generando ruta por defecto del controlador %{name}';
 $lang['controller_view_building'] = 'Generando vista por defecto del controlador %{name}';
-
-$lang['model_already_exists'] = 'El modelo %{name} ya existe';
-$lang['model_class_building'] = 'Generando clase del modelo %{name}';
 
 $lang['missing_script_name'] = 'Hace falta el nombre del script';
 $lang['missing_script_file'] = 'El script %{name} no existe';
@@ -64,28 +60,25 @@ $lang['generator_title'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Muestra el estado actual de la aplicación)\c
-    \bgreen(status)\b
+    \bgreen(app:status)\b
 
   \clight_gray(Genera y verifica la estructura de la aplicación)\c
-    \bgreen(create)\b \byellow(app)\b [--force]
+    \bgreen(app:create)\b \bcyan(app)\b [--force]
 
   \clight_gray(Muestra y modifica las opciones de configuración)\c
-    \bgreen(configure)\b \byellow([--item=value])\b [...] [--global|app|dev|prod]
+    \bgreen(app:configure)\b \bcyan([--item=value])\b [...] [--global|app|dev|prod]
 
   \clight_gray(Generador del controlador por defecto)\c
-    \bgreen(generate)\b \bcyan(controller)\b \byellow(name)\b [--view] [--helper] [--parent=class]
+    \bgreen(app:controller)\b \bcyan(name)\b [--view] [--helper] [--parent=class]
 
   \clight_gray(Generador de la acción por defecto)\c
-    \bgreen(generate)\b \bcyan(action)\b \byellow(controller:name)\b [--view] [--method=get|put|post|delete]
-
-  \clight_gray(Generador del modelo por defecto)\c
-    \bgreen(generate)\b \bcyan(model)\b \byellow(name[:table])\b [--parent=class]
+    \bgreen(app:action)\b \bcyan(controller:name)\b [--view] [--method=get|put|post|delete]
 
   \clight_gray(Ejecuta tareas programadas)\c
-    \bgreen(execute)\b \bcyan(script[:param])\b [...]
+    \bgreen(app:execute)\b \bcyan(script[:param])\b [...]
 
   \clight_gray(Genera los assets de la aplicación para producción)\c
-    \bgreen(precompile)\b
+    \bgreen(app:precompile)\b
 
 
 HELP;
