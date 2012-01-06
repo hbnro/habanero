@@ -177,7 +177,7 @@ class request extends prototype
    * @staticvar string  RegExp
    * @return    boolean
    */
-  function is_local($test = NULL) {
+  final public static function is_local($test = NULL) {
     static $regex = '/^(::|127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|localhost)/';
 
     if (is_url($test)) {
@@ -210,11 +210,7 @@ class request extends prototype
    * @return boolean
    */
   final public static function is_ajax() {
-    if (empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {// intentionally native
-      return FALSE;
-    }
-
-    return $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+    return server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest';
   }
 
 

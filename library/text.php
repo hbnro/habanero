@@ -40,7 +40,7 @@ function urlify($text, $options = FALSE) {
 
     $args['href'] = pre_url($args['href']);
 
-    if ($external && ! is_local($args['href'])) {
+    if ($external && ! request::is_local($args['href'])) {
       $args['rel']  = $nofollow ? 'nofollow ' : '';
       $args['rel'] .= 'external';
     }

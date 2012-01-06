@@ -155,7 +155,7 @@ call_user_func(function () {
 
 
         // session conf
-        if ( ! is_local()) {
+        if ( ! request::is_local()) {
           session_set_cookie_params(86400, ROOT, '.' . server());
         }
 
