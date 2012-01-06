@@ -5,75 +5,88 @@ require __DIR__.DS.'initialize'.EXT;
 app_generator::usage(ln('ar.generator_title'), ln('ar.generator_usage'));
 
 app_generator::alias('ar:console', 'console c');
-app_generator::alias('ar:backup', 'c');
-app_generator::alias('ar:model', 'c');
+app_generator::alias('ar:backup', 'backup');
+app_generator::alias('ar:model', 'model');
 
 
 // models
-app_generator::implement('ar:model', function () {
+app_generator::implement('ar:model', function ($name = '') {
   @list($name, $table) = explode(':', $name);
 
-  $out_file = mkpath(APP_PATH.DS.'models').DS.$name.EXT;
-
-  if (is_file($out_file)) {
-    error(ln('ar.model_already_exists', array('name' => $name)));
+  if ( ! $name) {
+    error(ln('ar.missing_model_name'));
   } else {
-    success(ln('ar.model_class_building', array('name' => $name)));
+    $out_file = mkpath(APP_PATH.DS.'models').DS.$name.EXT;
 
-    $type   = cli::flag('parent') ?: 'db_model';
-    $parent = $table ? "\n  public static \$table = '$table';" : '';
-    $code   = "<?php\n\nclass $name extends $type"
-            . "\n{{$parent}\n}\n";
+    if (is_file($out_file)) {
+      error(ln('ar.model_already_exists', array('name' => $name)));
+    } else {
+      success(ln('ar.model_class_building', array('name' => $name)));
 
-    write($out_file, $code);
+      $type   = cli::flag('parent') ?: 'db_model';
+      $parent = $table ? "\n  public static \$table = '$table';" : '';
+      $code   = "<?php\n\nclass $name extends $type"
+              . "\n{{$parent}\n}\n";
+
+      write($out_file, $code);
+    }
   }
 });
 
 // backups
-app_generator::implement('ar:backup', function ($name = '') {
-  if (cli::flag('import')) {
-    info(ln('ar.verifying_import'));
+app_generator::implement('ar:backup', function ($model = '') {
+  @list($model, $name) = explode(':', $model);
 
-    if ( ! $name) {
-      error(ln('ar.import_name_missing'));
-    } else {
-      @list($model, $name) = explode(':', $name);
+  $model_file = APP_PATH.DS.'models'.DS.$model.EXT;
+  $name = $name ? "{$model}_$name": sprintf("{$model}_%s", date('YmdHis'));
 
-      $name = $name ?: $name;
-
-      $inc_file = mkpath(APP_PATH.DS.'database'.DS.'backup').DS.$name.EXT;
-
-      $path = str_replace(APP_PATH.DS, '', $inc_file);
-
-      if ( ! is_file($inc_file)) {
-        error(ln('ar.import_file_missing', array('path' => $path)));
-      } else {
-        success(ln('ar.importing', array('path' => $path)));
-        // TODO
-        done();
-      }
-    }
+  if ( ! is_file($model_file)) {
+    error(ln('ar.missing_model_file', array('name' => $model)));
   } else {
-    info(ln('ar.verifying_export'));
+    $php_file = mkpath(APP_PATH.DS.'database'.DS.'backup').DS.$name.EXT;
+    $path = str_replace(APP_PATH.DS, '', $php_file);
 
-    if ( ! $name) {
-      error(ln('ar.export_name_missing'));
-    } else {
-      @list($model, $name) = explode(':', $name);
+    if (cli::flag('import')) {
+      info(ln('ar.verifying_import'));
 
-      $name = $name ? preg_replace('/\W/', '_', $name) : $model;
-
-      $out_file = mkpath(APP_PATH.DS.'database'.DS.'backup').DS.$name.EXT;
-
-      if (is_file($out_file)) {
-        error(ln('ar.export_already_exists'));
+      if ( ! $model) {
+        error(ln('ar.import_model_missing'));
       } else {
-        $path = str_replace(APP_PATH.DS, '', $out_file);
+        if ( ! is_file($php_file)) {
+          error(ln('ar.import_file_missing', array('path' => $path)));
+        } else {
+          success(ln('ar.importing', array('path' => $path)));
 
-        touch($out_file);
-        success(ln('ar.exporting', array('path' => $path)));
-        // TODO
-        done();
+          cli::flag('delete-all') && $model::delete_all();
+
+          $data = include $php_file;
+
+          foreach ($data as $one) {
+            $model::count($one) OR $model::create($one);
+          }
+          done();
+        }
+      }
+    } else {
+      info(ln('ar.verifying_export'));
+
+      if ( ! $name) {
+        error(ln('ar.export_model_missing'));
+      } else {
+        if (is_file($php_file)) {
+          error(ln('ar.export_already_exists'));
+        } else {
+          success(ln('ar.exporting', array('path' => $path)));
+
+          $data = array();
+
+          foreach ($model::all() as $one) {
+            $data []= $one->fields();
+          }
+
+          write($php_file, sprintf('<' . "?php return %s;\n", var_export($data, TRUE)));
+          done();
+        }
       }
     }
   }
