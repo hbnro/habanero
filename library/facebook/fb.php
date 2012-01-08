@@ -10,13 +10,10 @@ class fb extends prototype
    * @ignore
    */
 
-  //
+  // credentials
   private static $me = NULL;
 
-  //
-  private static $self = NULL;
-
-  //
+  // defaults
   protected static $defs = array(
                       'api_key' => '',
                       'api_secret' => '',
@@ -30,27 +27,39 @@ class fb extends prototype
   /**#@-*/
 
 
+  /**
+   * Delegate mising methods
+   *
+   * @param  string Method
+   * @param  array  Arguments
+   * @return mixed
+   */
   final public static function missing($method, $arguments)
   {
-    if (method_exists(static::instance(), camelcase($method)))
-    {
-      return call_user_func_array(array(static::instance(), camelcase($method)), $arguments);
-    }
-  }
+    static $instance = NULL;
 
-  final public static function instance()
-  {
-    if (is_null(static::$self))
+
+    if (is_null($instance))
     {
-      static::$self = new Facebook(array(
+      $instance = new Facebook(array(
         'appId' => static::option('api_key'),
         'secret' => static::option('api_secret'),
         'cookie' => TRUE,
       ));
     }
-    return static::$self;
+
+    if (method_exists($instance, camelcase($method)))
+    {
+      return call_user_func_array(array($instance, camelcase($method)), $arguments);
+    }
   }
 
+
+  /**
+   * Initialize connection
+   *
+   * @return void
+   */
   final public static function init()
   {
     if ( ! request::is_ssl() && ! request::is_local()) {
@@ -74,19 +83,32 @@ class fb extends prototype
     }
   }
 
+
+  /**
+   * URL for access
+   *
+   * @return string
+   */
   final public static function login_url() {
     return static::get_login_url(static::$defs['login_options']);
   }
 
+
+  /**
+   * Facebook session
+   *
+   * @return boolean
+   */
   final public static function is_logged() {
     return !! static::$me;
   }
 
-  final public static function is_canvas()
-  {
-    return ! empty(static::$defs['login_options']['canvas']);
-  }
 
+  /**
+   * User credentials
+   *
+   * @return array
+   */
   final public static function me()
   {
     return static::$me;
