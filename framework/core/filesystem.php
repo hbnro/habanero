@@ -28,7 +28,7 @@ function unfile($path, $filter = '*', $options = FALSE) {
     $test  = dir2arr($path, $filter, $options | DIR_MAP | DIR_SORT);
 
     foreach ($test as $file) {
-      is_file($file) && unlink($file);
+      is_file($file) && @unlink($file);
       is_dir($file) && rmdir($file);
     }
 

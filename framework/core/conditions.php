@@ -613,26 +613,6 @@ function is_naked_day($offset = 0) {
 
 
 /**
- * Is SSL valid?
- *
- * @return boolean
- */
-function is_ssl() {
-  if (isset($_SERVER['HTTPS'])) {
-    if (strtolower($_SERVER['HTTPS']) == 'on') {
-      return TRUE;
-    } elseif ((int) $_SERVER['HTTPS'] > 0) {
-      return TRUE;
-    }
-  } elseif (isset($_SERVER['SERVER_PORT']) && ((int) $_SERVER['SERVER_PORT'] == 443)) {
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-
-/**
  * Is included file?
  *
  * @param  string  Filename

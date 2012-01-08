@@ -279,6 +279,25 @@ class request extends prototype
 
 
   /**
+   * Is SSL valid?
+   *
+   * @return boolean
+   */
+  final public static function is_ssl() {
+    if ($test = server('HTTPS')) {
+      if (strtolower($test) === 'on') {
+        return TRUE;
+      } elseif ((int) $test > 0) {
+        return TRUE;
+      }
+    } elseif (request::port() == 443) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+
+  /**
    * Is CSRF-free request valid?
    *
    * @staticvar string  Token
