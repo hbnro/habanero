@@ -6,6 +6,8 @@ app_generator::usage(ln('app.generator_title'), ln('app.generator_usage'));
 
 app_generator::alias('app:create', 'create new');
 app_generator::alias('app:status', 'status st');
+app_generator::alias('app:action', 'action');
+app_generator::alias('app:controller', 'controller');
 app_generator::alias('app:execute', 'execute exec run');
 app_generator::alias('app:configure', 'configure config conf');
 app_generator::alias('app:precompile', 'build compile precompile');
