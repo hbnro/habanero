@@ -33,7 +33,7 @@ class assets extends prototype
    * @return void
    */
   final public static function url_for($path, $prefix = '', $host = FALSE) {
-    return is_url($path) ? $path : path_to(($prefix ? DS.$prefix : '').DS.$path, $host);
+    return is_url($path) ? $path : path_to(($prefix ? $prefix : ext($path)).DS.$path, $host);
   }
 
 
