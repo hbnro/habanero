@@ -5,13 +5,13 @@
  */
 
 /**
- * Images
+ * Image dimensions
  *
  * @param  string Path
  * @param  mixed  Index
  * @return string
  */
-css_helper::implement('image', function ($path, $key = -1) {
+css_helper::implement('image_size', function ($path, $key = -1) {
   static $cache = array();
 
 
@@ -26,6 +26,25 @@ css_helper::implement('image', function ($path, $key = -1) {
   $test = ! empty($test[$key]) ? $test[$key] : 0;
 
   return "{$test}px";
+});
+
+
+/**
+ * Image url
+ *
+ * @param  string Path
+ * @return string
+ */
+css_helper::implement('image_path', function ($path) {
+  $img_file = css::path($path);
+
+  if (is_file($img_file)) {
+    $file_hash = md5(filemtime($img_file));
+    $file_name = extn($path, TRUE) . $file_hash . ext($path, TRUE);
+
+    $path = str_replace(basename($path), $file_name, $path);
+  }
+  return "url!($path)";
 });
 
 /* EOF: ./library/css/helpers/image.php */

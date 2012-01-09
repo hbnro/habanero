@@ -1,13 +1,5 @@
 <?php
 
-// filters
-foreach (array('php', 'css', 'js') as $one) {
-  assets::compile($one, function ($file) {
-    return partial::render($file);
-  });
-}
-
-
 $type      = params('type');
 $sheet     = request::get('src', 'app');
 
@@ -27,6 +19,33 @@ switch (APP_ENV) {
     }
   break;
   default;
+    // filters
+    foreach (array('php', 'css', 'js') as $one) {
+      assets::compile($one, function ($file) {
+        return partial::render($file);
+      });
+    }
+
+    // images
+    $img_path   = APP_PATH.DS.'views'.DS.'assets'.DS.'img';
+    $static_dir = APP_PATH.DS.'static'.DS.'img';
+
+    ! is_dir($static_dir) && mkpath($static_dir);
+
+    unfile($static_dir, '*', DIR_RECURSIVE);
+
+    if ($test = dir2arr($img_path, '*', DIR_RECURSIVE | DIR_MAP)) {
+      foreach ($test as $file) {
+        $file_hash  = md5(filemtime($file));
+        $file_name  = extn($file, TRUE) . $file_hash . ext($file, TRUE);
+
+        $static_img = $static_dir.DS.$file_name;
+
+        ! is_file($static_img) && copy($file, $static_img);
+      }
+    }
+
+    // css and js
     $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
       use($base_path, $type) {
         $test_file = $base_path.DS.$type.DS."$match[1].$type";
