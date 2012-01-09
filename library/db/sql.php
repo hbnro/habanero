@@ -127,7 +127,7 @@ class sql extends prototype
         $val = static::fixate_string($val, TRUE);
 
         if (is_true($insert)) {
-          $sql []= $val ?: 'NULL';
+          $sql []= is_num($val) ? $val : ($val ?: 'NULL');
         } elseif ( ! empty($val)) {
           $sql []= sprintf('%s = %s', static::names($key), $val ?: "''");
         }

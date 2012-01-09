@@ -78,10 +78,7 @@ class db extends prototype
     $sql  = "INSERT INTO\n" . sql::build_fields($table);
     $sql .= sql::build_values($values, TRUE);
 
-    if (is_true($return)) {
-      return $sql;
-    }
-    return static::inserted(static::query($sql), $table, $column);
+    return is_true($return) ? $sql : static::inserted(static::query($sql), $table, $column);
   }
 
 
