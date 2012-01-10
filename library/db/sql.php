@@ -117,27 +117,30 @@ class sql extends prototype
     }
 
 
+    $out   = array();
     $count = 0;
     $total = sizeof($fields);
 
     foreach ($fields as $key => $val) {
       if (is_num($key)) {
-        $sql []= $val;
+        $out []= $val;
       } else {
         $val = static::fixate_string($val, TRUE);
 
         if (is_true($insert)) {
-          $sql []= is_num($val) ? $val : ($val ?: 'NULL');
+          $out []= is_num($val) ? $val : ($val ?: 'NULL');
         } elseif ( ! empty($val)) {
-          $sql []= sprintf('%s = %s', static::names($key), $val ?: "''");
+          $out []= sprintf('%s = %s', static::names($key), $val ?: "''");
         }
       }
-      $sql []= (($count += 1) < $total ? ",\n" : '');
     }
+
+    $sql []= join(",\n", $out);
 
     if (is_true($insert)) {
       $sql []= ')';
     }
+
     return join('', $sql);
   }
 
