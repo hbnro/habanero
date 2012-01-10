@@ -1,7 +1,7 @@
 <?php
 
 require dirname(__DIR__).DS.'app_controller'.EXT;
-i18n::load_path(__DIR__.DS.'locale', 'app');
+i18n::load_path(dirname(__DIR__).DS.'locale', 'app');
 
 $request = request::methods();
 
