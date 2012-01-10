@@ -240,8 +240,8 @@ function match($expr, $subject = NULL, array $constraints = array()) {
 function value($from, $that = NULL, $or = FALSE) {
   if ( ! is_iterable($from)) {
     return $or;
-  } elseif (($from = (array) $from) && isset($from[$that])) {//FIX
-    return $from[$that] ?: $or;
+  } elseif ($from = (array) $from) {//FIX
+    return isset($from[$that]) ? $from[$that] : $or;
   } elseif (preg_match_all('/\[([^\[\]]*)\]/U', $that, $matches) OR
          ($matches[1] = explode('.', $that))) {
     $key = ($offset = strpos($that, '[')) > 0 ? substr($that, 0, $offset) : '';
