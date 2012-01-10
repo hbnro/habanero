@@ -34,13 +34,11 @@ class fb extends prototype
    * @param  array  Arguments
    * @return mixed
    */
-  final public static function missing($method, $arguments)
-  {
+  final public static function missing($method, $arguments) {
     static $instance = NULL;
 
 
-    if (is_null($instance))
-    {
+    if (is_null($instance)) {
       $instance = new Facebook(array(
         'appId' => static::option('api_key'),
         'secret' => static::option('api_secret'),
@@ -48,8 +46,7 @@ class fb extends prototype
       ));
     }
 
-    if (method_exists($instance, camelcase($method)))
-    {
+    if (method_exists($instance, camelcase($method))) {
       return call_user_func_array(array($instance, camelcase($method)), $arguments);
     }
   }
@@ -60,22 +57,19 @@ class fb extends prototype
    *
    * @return void
    */
-  final public static function init()
-  {
+  final public static function init() {
     if ( ! request::is_ssl() && ! request::is_local()) {
-      redirect('https://' . $_SERVER['HTTP_HOST'] . server('REQUEST_URI'));
+      redirect('https:' . server(TRUE, server('REQUEST_URI')));
     }
 
 
     $test = headers_list();
 
-    if (array_key_exists('X-Facebook-User', $test))
-    {
+    if (array_key_exists('X-Facebook-User', $test)) {
       static::$me = (array) json_decode($test['X-Facebook-User']);
     }
 
-    if ( ! static::$me)
-    {
+    if ( ! static::$me) {
       try {
         static::$me = static::api('/me');
       } catch (FacebookApiException $e) {
@@ -109,8 +103,7 @@ class fb extends prototype
    *
    * @return array
    */
-  final public static function me()
-  {
+  final public static function me() {
     return static::$me;
   }
 }
