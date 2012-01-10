@@ -50,7 +50,7 @@ class url_for extends prototype
 
     $route = preg_replace_callback('/:([^:()\/]+)/', function($match)
       use($params) {
-      return ! empty($params[$match[1]]) ? $params[$match[1]] : '';
+      return ! empty($params[$match[1]]) ? $params[$match[1]] : $match[0];
     }, $route);
 
     $out = url_for($route . $extra, $params);
