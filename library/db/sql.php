@@ -78,7 +78,7 @@ class sql extends prototype
       } else {
         return array_map(array('sql', 'fixate_string'), $test);
       }
-    } elseif (is_string($test)) {
+    } elseif (is_string($test) && $test) {
       $test = "'" . static::escape($test) . "'";
     } elseif (is_bool($test)) {
       $test = ($test ? 'TRUE' : 'FALSE');
@@ -117,27 +117,31 @@ class sql extends prototype
     }
 
 
+    $out   = array();
     $count = 0;
     $total = sizeof($fields);
 
     foreach ($fields as $key => $val) {
       if (is_num($key)) {
-        $sql []= $val;
+        $out []= $val;
       } else {
         $val = static::fixate_string($val, TRUE);
+        $val = is_num($val) ? $val : ($val ?: 'NULL');
 
         if (is_true($insert)) {
-          $sql []= $val ?: 'NULL';
-        } elseif ( ! empty($val)) {
-          $sql []= sprintf('%s = %s', static::names($key), $val ?: "''");
+          $out []= $val;
+        } else {
+          $out []= sprintf('%s = %s', static::names($key), $val);
         }
       }
-      $sql []= (($count += 1) < $total ? ",\n" : '');
     }
+
+    $sql []= join(",\n", $out);
 
     if (is_true($insert)) {
       $sql []= ')';
     }
+
     return join('', $sql);
   }
 

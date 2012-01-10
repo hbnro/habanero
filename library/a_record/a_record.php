@@ -46,7 +46,11 @@ class a_record extends prototype
     $this->new_record = (bool) $new;
 
     foreach (array_keys(static::columns()) as $key) {
-      isset($params[$key]) && $this->props[$key] = $params[$key];
+      if ($new) {
+        isset($params[$key]) && $this->props[$key] = $params[$key];
+      } else {
+        $this->props[$key] = $params[$key];
+      }
     }
     static::callback($this, $method);
   }
@@ -291,13 +295,14 @@ class a_record extends prototype
 
   // make timestamps
   final protected static function stamp($fields, $new) {
+    $props   = static::columns();
     $current = date('Y-m-d H:i:s');
 
-    if ($new && array_key_exists('created_at', $fields)) {
+    if ($new && array_key_exists('created_at', $props)) {
       $fields['created_at'] = $current;
     }
 
-    if (array_key_exists('modified_at', $fields)) {
+    if (array_key_exists('modified_at', $props)) {
       $fields['modified_at'] = $current;
     }
 

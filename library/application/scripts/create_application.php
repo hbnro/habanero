@@ -40,15 +40,11 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path.DS.'static'.DS.'css');
         chmod($app_path.DS.'static'.DS.'css', 0777);
-  create_file($app_path.DS.'static'.DS.'css'.DS.'all.css', "\n");
-        chmod($app_path.DS.'static'.DS.'css'.DS.'all.css', 0777);
 
    create_dir($app_path.DS.'static'.DS.'img');
 
    create_dir($app_path.DS.'static'.DS.'js');
         chmod($app_path.DS.'static'.DS.'js', 0777);
-  create_file($app_path.DS.'static'.DS.'js'.DS.'all.js', "\n");
-        chmod($app_path.DS.'static'.DS.'js'.DS.'all.js', 0777);
     copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'jquery-1.7.1.min.js');
     copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'modernizr-2.0.6.min.js');
 

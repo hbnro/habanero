@@ -180,7 +180,7 @@ class mongo_model extends a_record
    * @return void
    */
   final public static function delete_all(array $params = array()) {
-    static::conn()->remove($params);
+    static::conn()->remove($params ? $params : array());
   }
 
 

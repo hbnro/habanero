@@ -53,8 +53,7 @@ $lang['setting_development_options'] = 'Aplicando configuración del entorno de 
 $lang['setting_production_options'] = 'Aplicando configuración del entorno de producción';
 $lang['setting_default_options'] = 'Aplicando configuración por defecto';
 
-$lang['writting_asset'] = 'Escribiendo los recursos %{type}';
-$lang['missing_asset'] = 'Hacen falta los recursos %{type}';
+$lang['compiling_asset'] = 'Compilando %{name}';
 
 $lang['generator_title'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP

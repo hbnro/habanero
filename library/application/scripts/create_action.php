@@ -27,8 +27,8 @@ if ( ! $parent) {
 
     $route_file = APP_PATH.DS.'routes'.EXT;
     $method     = cli::flag('method') ?: 'get';
-    $repl       = ";\n  %6s('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
-    write($route_file, preg_replace('/;[^;]*?$/', sprintf($repl, $method), read($route_file)));
+    $route      = ";\n$method('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
+    write($route_file, preg_replace('/;[^;]*?$/', $route, read($route_file)));
 
 
     if (cli::flag('view')) {

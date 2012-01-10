@@ -6,6 +6,8 @@ app_generator::usage(ln('app.generator_title'), ln('app.generator_usage'));
 
 app_generator::alias('app:create', 'create new');
 app_generator::alias('app:status', 'status st');
+app_generator::alias('app:action', 'action');
+app_generator::alias('app:controller', 'controller');
 app_generator::alias('app:execute', 'execute exec run');
 app_generator::alias('app:configure', 'configure config conf');
 app_generator::alias('app:precompile', 'build compile precompile');
@@ -94,20 +96,17 @@ app_generator::implement('app:configure', function () {
 // compress compiled assets
 app_generator::implement('app:precompile', function () {
   foreach (array('css', 'js') as $type) {
-    $base_file = APP_PATH.DS.'public'.DS.$type.DS."all.$type";
+    $base_path = APP_PATH.DS.'static'.DS.$type;
 
-    if (is_file($base_file)) {
-      success(ln('app.writting_asset', array('type' => $type)));
+    foreach (dir2arr($base_path, "*.$type") as $one) {
+      $text = read($one);
+      $name = extn($one, TRUE);
 
-      $text = read($base_file);
-
-      if ($test = ($type === 'css' ? minify_css($text) : minify_js($text))) {
-        $text = $test;
+      if (substr($name, -4) <> '.min') {
+        success(ln('app.compiling_asset', array('name' => basename($one))));
+        $test = ($type === 'css' ? minify_css($text) : minify_js($text));
+        write(dirname($one).DS."$name.min.$type", $test ?: $text);
       }
-
-      write(str_replace("all.$type", "all.min.$type", $base_file), $text);
-    } else {
-      error(ln('app.missing_asset', array('type' => $type)));
     }
   }
 });
