@@ -42,6 +42,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
         chmod($app_path.DS.'static'.DS.'css', 0777);
 
    create_dir($app_path.DS.'static'.DS.'img');
+        chmod($app_path.DS.'static'.DS.'img', 0777);
 
    create_dir($app_path.DS.'static'.DS.'js');
         chmod($app_path.DS.'static'.DS.'js', 0777);
