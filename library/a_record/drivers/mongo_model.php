@@ -85,7 +85,6 @@ class mongo_model extends a_record
 
     $what = ! empty($options['select']) ? $options['select'] : array();
 
-
     switch ($wich) {
       case 'first';
       case 'last';
@@ -110,12 +109,11 @@ class mongo_model extends a_record
       break;
     }
 
-
     $row = static::select($what, array(
       '_id' => array_shift($args),
     ), $options);
 
-    return $row ? new static(array_shift($row), 'after_find') : FALSE;
+    return $row ? new static($row, 'after_find') : FALSE;
   }
 
 
@@ -203,8 +201,15 @@ class mongo_model extends a_record
 
   // selection
   final private static function select($fields, $where, $options) {
+    $where  = static::parse($where);
     $method = ! empty($options['single']) ? 'findOne' : 'find';
-    $row    = static::conn()->$method(static::parse($where), $fields);
+
+    if (array_key_exists('_id', $where)) {
+      $where['_id'] = new MongoId($where['_id']);
+      $method = 'findOne';
+    }
+
+    $row = static::conn()->$method($where, $fields);
 
     ! empty($options['limit']) && $row->limit($options['limit']);
     ! empty($options['offset']) && $row->skip($options['offset']);
