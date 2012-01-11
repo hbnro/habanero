@@ -49,9 +49,10 @@ class a_record extends prototype
       if ($new) {
         isset($params[$key]) && $this->props[$key] = $params[$key];
       } else {
-        $this->props[$key] = $params[$key];
+        $this->props[$key] = isset($params[$key]) ? $params[$key] : NULL;
       }
     }
+
     static::callback($this, $method);
   }
 
