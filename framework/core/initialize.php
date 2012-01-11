@@ -21,7 +21,7 @@ call_user_func(function () {
     $temporary_files = @sys_get_temp_dir();
   } else {
     $temporary_files = getenv('TMP') ?: getenv('TEMP');
-    
+
     if ( ! is_dir($temporary_files)) {
       $old = @tempnam('E', '');
       $temporary_files = @dirname($old);
@@ -29,7 +29,7 @@ call_user_func(function () {
     }
   }
 
-  define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? $temporary_files : '/tmp');
+  define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? rtrim($temporary_files, DS) : '/tmp');
 
   ! is_dir(TMP) && mkpath(TMP);
 
