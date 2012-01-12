@@ -4,7 +4,7 @@
  * CSS manipulation library
  */
 
-class css extends prototype
+class cssp extends prototype
 {
 
   /**#@+
@@ -490,11 +490,11 @@ class css extends prototype
     $args = static::do_solve($match[2]);
     $args = array_map('trim', explode(',', $args));
 
-    if ( ! css_helper::defined($match[1])) {
+    if ( ! cssp_helper::defined($match[1])) {
       return "$match[1]!($match[2])" . ( ! empty($match[3]) ? $match[3] : '');
     }
 
-    $out = css_helper::apply($match[1], $args);
+    $out = cssp_helper::apply($match[1], $args);
     $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : $out;
 
     return $out;
@@ -538,4 +538,4 @@ class css extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/css/css.php */
+/* EOF: ./library/cssp/cssp.php */
