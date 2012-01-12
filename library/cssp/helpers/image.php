@@ -11,12 +11,12 @@
  * @param  mixed  Index
  * @return string
  */
-css_helper::implement('image_size', function ($path, $key = -1) {
+cssp_helper::implement('image_size', function ($path, $key = -1) {
   static $cache = array();
 
 
   if (empty($cache[$path])) {
-    $img_file = css::path($path);
+    $img_file = cssp::path($path);
     if (is_file($img_file)) {
       $cache[$path] = getimagesize($img_file);
     }
@@ -35,8 +35,8 @@ css_helper::implement('image_size', function ($path, $key = -1) {
  * @param  string Path
  * @return string
  */
-css_helper::implement('image_path', function ($path) {
-  $img_file = css::path($path);
+cssp_helper::implement('image_path', function ($path) {
+  $img_file = cssp::path($path);
 
   if (is_file($img_file)) {
     $file_hash = md5(filemtime($img_file));
@@ -47,4 +47,4 @@ css_helper::implement('image_path', function ($path) {
   return "url!($path)";
 });
 
-/* EOF: ./library/css/helpers/image.php */
+/* EOF: ./library/cssp/helpers/image.php */
