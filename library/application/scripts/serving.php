@@ -34,7 +34,7 @@ switch (APP_ENV) {
 
     if ($test = dir2arr($img_path, '*', DIR_RECURSIVE | DIR_MAP)) {
       foreach ($test as $file) {
-        $file_hash  = md5(filemtime($file));
+        $file_hash  = md5(md5_file($file) . filesize($file));
         $file_name  = extn($file, TRUE) . $file_hash . ext($file, TRUE);
 
         $static_img = $static_dir.DS.$file_name;
