@@ -20,11 +20,9 @@ switch (APP_ENV) {
   break;
   default;
     // filters
-    foreach (array('php', 'css', 'js') as $one) {
-      assets::compile($one, function ($file) {
-        return partial::render($file);
-      });
-    }
+    assets::compile('php', function ($file) {
+      return partial::render($file);
+    });
 
     // images
     $img_path   = APP_PATH.DS.'views'.DS.'assets'.DS.'img';
