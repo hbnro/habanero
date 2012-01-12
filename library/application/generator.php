@@ -114,8 +114,8 @@ app_generator::implement('app:precompile', function () {
 
 
 function minify_js($text) {
-  $tmp_file = TMP.DS.md5('--jsmin-input');
-  $min_file = TMP.DS.md5('--jsmin-output');
+  $tmp_file = TMP.DS.md5(uniqid('--jsmin-input'));
+  $min_file = TMP.DS.md5(uniqid('--jsmin-output'));
 
   write($tmp_file, $text);
 
