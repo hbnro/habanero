@@ -20,12 +20,18 @@ class partial extends prototype
   /**
    * Register adapter
    *
-   * @param  string File type
-   * @param  mixed  Function callback
+   * @param  mixed File type|Types
+   * @param  mixed Function callback
    * @return void
    */
   final public static function register($type, Closure $lambda) {
-    static::$render[$type] = $lambda;
+    if (is_array($type)) {
+      foreach ($type as $one) {
+        static::$render[$one] = $lambda;
+      }
+    } else {
+      static::$render[$type] = $lambda;
+    }
   }
 
 
