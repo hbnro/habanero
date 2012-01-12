@@ -17,7 +17,7 @@ call_user_func(function () {
   // render callback
   if (class_exists('partial')) {
     partial::register('taml', function ($file, array $vars = array()) {
-      return taml::render($file, $vars);
+      return str_replace('\\"', '"', taml::render($file, $vars));//TODO: fixit!
     });
   }
 
