@@ -131,8 +131,9 @@ function link_to($text, $url = NULL, $args = array()) {
   }
 
   if (is_assoc($url)) {
-    $attrs = array_merge($url, $attrs);
-  } elseif ( ! isset($params['action'])) {
+    $attrs  = $args;
+    $params = array_merge($params, $url);
+  } elseif ( ! isset($params['action']) && is_string($url)) {
     $params['action'] = $url;
   }
 
