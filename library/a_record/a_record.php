@@ -173,13 +173,27 @@ class a_record extends prototype
    * @param  array Values
    * @return self
    */
-  final public function update(array $props) {
+  final public function update() {
+    if ( ! isset($this)) {
+      @list($id, $props) = func_get_args();
+
+      is_array($id) && $props = $id;
+
+      if ( ! empty($props)) {
+        $where = is_array($id) ? array() : static::merge(static::pk(), array($id));
+        return static::update_all($props, $where);
+      }
+      return FALSE;
+    }
+
+    $props   = (array) func_get_arg(0);
     $columns = array_keys($this->fields());
 
     foreach ($props as $key => $value) {
       in_array($key, $columns) && $this->$key = $value;
     }
-    return $this;
+
+    return $this->save();
   }
 
 
@@ -193,19 +207,14 @@ class a_record extends prototype
       if (func_num_args() > 0) {
         $first = func_get_args(0);
         $where = static::merge(static::pk(), func_get_args());
-
         return static::delete_all(is_array($first) ? $first : $where);
       }
       return FALSE;
     }
 
-    static::callback($this, 'before_delete');
-
     static::delete_all(array(
       static::pk() => $this->props[static::pk()],
     ));
-
-    static::callback($this, 'after_delete');
 
     return $this;
   }
