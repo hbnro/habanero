@@ -198,7 +198,7 @@ class db extends prototype
     $callback = array('db', strpos($sql, '?') > 0 ? 'prep' : 'escape');
     $sql      = sizeof($args) > 1 ? call_user_func_array($callback, $args) : $sql;
 
-    $out = sql::execute(sql::query_repare($sql));
+    $out = @sql::execute(sql::query_repare($sql));
 
     if ($message = sql::error()) {// FIX
       raise(ln('db.database_query_error', array('message' => $message, 'sql' => $sql)));

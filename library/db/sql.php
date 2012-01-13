@@ -206,8 +206,6 @@ class sql extends prototype
       $sql = preg_replace('/(AND|OR)\s*(AND|OR)/s', '\\1', $sql);
       $sql = preg_replace('/(?<=\()\s*AND|OR\s*(?=\))/s', '', $sql);
 
-      $sql = static::query_repare($sql);
-
       return $sql;
     }
   }
