@@ -32,7 +32,7 @@ call_user_func(function () {
   @setlocale(LC_ALL, "$lang.UTF-8");
 
   require __DIR__.DS.'functions'.EXT;
-  require __DIR__.DS.'system'.EXT;
+  require __DIR__.DS.'i18n'.EXT;
 });
 
 /* EOF: ./framework/i18n/initialize.php */

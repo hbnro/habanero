@@ -309,4 +309,4 @@ class i18n extends prototype
 
 }
 
-/* EOF: ./framework/i18n/system.php */
+/* EOF: ./framework/i18n/i18n.php */
