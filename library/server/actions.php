@@ -53,9 +53,7 @@ function url_for($action, array $params = array()) {
     $link .= ($rewrite ? '' : '/') . ltrim($part, '/');
   }
 
-  if ($rewrite && ! preg_match('/(?:\/|\.\w+)$/', $link)) {
-    $link .= option('suffix');
-  }
+  ! preg_match('/(?:\/|\.\w+)$/', $link) && $link .= '/';
 
 
   if ( ! empty($params['locals'])) {

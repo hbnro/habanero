@@ -93,8 +93,7 @@ call_user_func(function () {
       // URL cleanup
       $root   = preg_quote(ROOT, '/');
       $index  = preg_quote(INDEX, '/');
-      $suffix = option('rewrite') ? preg_quote(option('suffix'), '/') : '';
-      $parts  = preg_replace("/^(?:$root(?:$index)?)?|$suffix$/", '', array_shift(explode('?', $url)));
+      $parts  = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift(explode('?', $url)));
     }
 
     define('URI', '/' . trim($parts, '/'));
