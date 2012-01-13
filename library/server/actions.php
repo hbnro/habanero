@@ -41,8 +41,6 @@ function url_for($action, array $params = array()) {
 
   ! $rewrite && $link .= INDEX;
 
-  $link .= option('query') ? '?' : '';
-
   $anchor =
   $query  = '';
 
@@ -57,15 +55,18 @@ function url_for($action, array $params = array()) {
 
 
   if ( ! empty($params['locals'])) {
-    $hash  = uniqid('--query-prefix');
-    $test  = http_build_query($params['locals'], $hash, '&amp;');
-    $test  = preg_replace("/{$hash}\d+=/", '', $test);
-    $link .= (option('query') ? '&' : '?') . $test;
+    $test = array();
+    $hash = uniqid('--query-prefix');
+
+    parse_str($query, $test);
+
+    $query = http_build_query(array_merge($test, $params['locals']), $hash, '&amp;');
+    $query = preg_replace("/{$hash}\d+=/", '', $query);
   }
 
   $params['anchor'] && $anchor = $params['anchor'];
 
-  $link .= $query ? "&$query" : '';
+  $link .= $query ? "?$query" : '';
   $link .= $anchor ? "#$anchor" : '';
 
   return $link;

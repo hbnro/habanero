@@ -78,23 +78,10 @@ call_user_func(function () {
     define('ROOT', strtr(str_replace(INDEX, '', $base), '\\./', '/'));
 
 
-    if (option('query')) {
-      $parts = '';
-
-      // fallback
-      foreach ($_GET as $key => $val) {
-        if (substr($key, 0, 1) === '/') {
-          unset($_GET[$key]);
-          $parts = $key;
-          break;
-        }
-      }
-    } else {
-      // URL cleanup
-      $root   = preg_quote(ROOT, '/');
-      $index  = preg_quote(INDEX, '/');
-      $parts  = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift(explode('?', $url)));
-    }
+    // URL cleanup
+    $root   = preg_quote(ROOT, '/');
+    $index  = preg_quote(INDEX, '/');
+    $parts  = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift(explode('?', $url)));
 
     define('URI', '/' . trim($parts, '/'));
 
