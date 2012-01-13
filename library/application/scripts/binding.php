@@ -50,12 +50,16 @@ request::implement('dispatch', function (array $params = array())
       $view = partial("$controller/$action.html", (array) $class_name::$view);
 
       if ( ! is_false($class_name::$layout)) {
+        $params = array();
+
+        $class_name::$source && $params['locals'] = array('src' => $class_name::$source);
+
         $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
-        $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css')));
+        $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css', $params)));
+
+        assets::inline(tag('script', array('src' => url_for('/all.js', $params))), 'body');
 
         $layout_file = "layouts/{$class_name::$layout}";
-
-        assets::inline(tag('script', array('src' => url_for('/all.js'))), 'body');
 
         $view = partial($layout_file, array(
           'head' => join("\n", $class_name::$head),
