@@ -46,7 +46,7 @@ class url_for extends prototype
     }
 
     $route = ! empty(static::$map[$method]) ? static::$map[$method] : strtr($method, '_', '/');
-    $extra = $arguments ? '/' . join('/', $arguments) : '';
+    $extra = $arguments ? '/' . join('/', array_filter($arguments)) : '';
 
     $route = preg_replace_callback('/:([^:()\/]+)/', function($match)
       use($params) {
@@ -57,7 +57,7 @@ class url_for extends prototype
 
     do {
       $tmp = $out;
-      $out = preg_replace('/\([^()]*?\)/', '', $out);
+      $out = preg_replace('/\([^()]*?\)|\/?\*\w+/', '', $out);
     } while($tmp <> $out);
 
     return $out;
