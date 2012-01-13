@@ -16,6 +16,11 @@ if (class_exists('partial')) {
       'bare' => TRUE,
     ));
   });
+
+  // assets compiler
+  assets::compile('coffee', function ($file) {
+    return partial::render($file);
+  });
 }
 
 /* EOF: ./library/coffee/initialize.php */
