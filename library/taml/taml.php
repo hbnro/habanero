@@ -11,6 +11,27 @@ class taml extends prototype
    * @ignore
    */
 
+  // quotes
+  private static $qt = array(
+                    '\\' => '<!--#BS#-->',
+                    '"' => '<!--#QUOT#-->',
+                    "'" => '<!--#APOS#-->',
+                  );
+
+  // code fixes
+  private static $fix = array(
+                    '/\s*<\?/' => '<?',
+                    '/\?>\s*<\//' => '?></',
+                    '/\s*(?=[\r\n])/s' => '',
+                    '/\s*<!--#PRE#-->/' => "\n",
+                    '/\s*<!--#CONCAT#-->/s' => '',
+                    '/<([\w:-]+)([^<>]*)>[|\s]*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
+                    '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
+                    '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
+                    '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
+                    '/\};?\s*else(?=if|\b)/' => '} else',
+                  );
+
   // open blocks
   private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
 
@@ -114,7 +135,7 @@ class taml extends prototype
 
       $code .= "$key ";
 
-      $line  = addslashes(rtrim($line));
+      $line  = static::escape(rtrim($line));
 
       $code .= $indent > $tab ? "= array(-1 => '$line')" : "[]= '$line'";
       $code .= ";\n";
@@ -127,8 +148,8 @@ class taml extends prototype
       return FALSE;
     }
 
-    $out = static::fixate(static::compile($out));
-
+    $out = static::compile($out);
+    $out = static::fixate($out);
 
     ob_start();
     $old = @ini_set('log_errors', 0);
@@ -141,51 +162,51 @@ class taml extends prototype
 
       $test = explode("\n", $out);
       $line = $test[$match[2] - 1];
-// TODO: fixate this, does not works very well!
-      //raise("$match[1]...", trim(preg_replace('/<\?(php|=)|;?\s*\? >/', '', $line)));
+
+      raise(ln('taml.error_line', array('text' => $line, 'line' => $match[2])));
     }
-    return $out;
-  }
-
-
-  /**
-   * Raw markup tags
-   *
-   * @param  string Name
-   * @param  string Attributes
-   * @param  string Inner text
-   * @return
-   */
-  final public static function markup($tag, $args, $text = '') {
-    $args = join(',', (array) $args);
-    $hash = md5($tag . $args . ticks());
-
-    $out  = $hash . tag($tag, '', $text);
-
-    $args && $out = str_replace("$hash<$tag", "<$tag<?php echo attrs(array($args)); ?>", $out);
-
-    $out  = str_replace($hash, '', $out);
 
     return $out;
   }
-
-
-  /**
-   * Block filters registry
-   *
-   * @param  string Name
-   * @param  string Replacement
-   * @return void
-   */
-  final public static function shortcut($name, Closure $lambda) {
-    static::$blocks[$name] = $lambda;
-  }
-
 
 
   /**#@+
    * @ignore
    */
+
+  // render markup tags
+  final private static function markup($tag, $args, $text = '') {
+    $merge = FALSE;
+
+    foreach ($args as $i => $one) {
+      if (is_array($one)) {
+        $code = var_export($one, TRUE);
+        $code = str_replace(",\n", ',', $code);
+        $code = str_replace('array ', 'array', $code);
+        $code = preg_replace("/\s*'([^']+)'\s*=>\s*/s", "'\\1'=>", $code);
+
+        $args[$i] = $code;
+
+        $merge = TRUE;
+      } else {
+        $args[$i] = "array({$args[$i]})";
+      }
+    }
+
+    $args = join(',', $args);
+    $hash = md5($tag . $args . ticks());
+
+    $out  = $hash . tag($tag, '', $text);
+    $merge && $args = "array_merge($args)";
+
+    $repl = "<$tag<?php echo attrs($args); ?>";
+
+    $args && $out = str_replace("$hash<$tag", $repl, $out);
+
+    $out  = str_replace($hash, '', $out);
+
+    return $out;
+  }
 
   // variable interpolation
   final private static function value($match) {
@@ -219,19 +240,15 @@ class taml extends prototype
         $indent = strlen($key) - strlen(ltrim($key));
 
         if (is_string($value)) {
-          $out []= static::line(trim($value), '', $indent);
+          $out []= static::line($value, '', $indent);
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
-        $value  = tag('pre', '', join("\n", static::flatten($value)));
-          $out  []= preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
-          continue;
-        } elseif (preg_match('/^(\s*):(\w+.*?)$/', $key, $match)) {
-          $out []= static::filter($match[2], $value, strlen($match[1]));
-          continue;
+          $value = join("\n", static::flatten($value));
+          $value = preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
         }
 
         $value = is_array($value) ? static::compile($value) : $value;
-        $out []= static::line(trim($key), $value, $indent);
+        $out []= static::line($key, $value, $indent);
       }
     }
 
@@ -241,35 +258,13 @@ class taml extends prototype
     return $out;
   }
 
-  // filters
-  final private static function filter($name, $value, $indent = 0) {
-    $params = '';
-
-    @list($name, $args) = explode(' ', $name, 2);
-
-    if (preg_match('/\{([^{}]+)\}/', $args, $match)) {
-      $params = join('', static::tokenize($match[1]));
-      $test   = explode($match[0], $args);
-
-      @list($args, $extra) = $test;
-
-      $test && array_unshift($value, $extra);
-    }
-
-    $plain = static::indent(join("\n", static::flatten($value)), $indent);
-    $args  = join('', static::tokenize($args));
-
-    if ( ! array_key_exists($name, static::$blocks)) {
-      raise(ln('taml.unknown_filter', array('name' => $name)));
-    } else {
-      $value = call_user_func(static::$blocks[$name], $args, trim($plain), $params);
-    }
-    return $value;
-  }
 
   // parse single line
   final private static function line($key, $text = '', $indent = 0) {
     static $tags = NULL;
+
+    $key  = static::unescape($key);
+    $text = static::unescape($text);
 
 
     if (is_null($tags)) {
@@ -288,11 +283,11 @@ class taml extends prototype
         return sprintf("<!--#CONCAT#-->%s$text", substr($key, 1));
       break;case '<';
         // html
-        return stripslashes($key . $text);
+        return $key . $text;
       break;
       case '-';
         // php
-        $key   = stripslashes(substr($key, 1));
+        $key   = substr($key, 1);
         $key   = rtrim(join(' ', static::tokenize($key)), ';');
         $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : ';';
 
@@ -300,14 +295,13 @@ class taml extends prototype
       break;
       case '=';
         // print
-        $key = stripslashes(trim(substr($key, 1)));
+        $key = trim(substr($key, 1));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
 
         return static::indent("<?php echo $key; ?>$text");
       break;
-      case ':';
-        // inline filters
-        return static::filter(substr($key, 1), array($text), $indent);
+      case ';';
+        continue;
       break;
       default;
         $tag  = '';
@@ -328,20 +322,15 @@ class taml extends prototype
           $key  = substr($key, strlen($match[0]));
           $test = array();
 
-          foreach (args(attrs($match[0])) as $k => $v) {
-            $test []= "'$k'=>'$v'";
-          }
-          $args []= join(',', $test);
+          $args []= args(attrs($match[0]));
         }
 
         // attributes { hash => val }
-        preg_match('/\{([^{}]+)\}/', $key, $match);
+        preg_match('/^\s*\{(.+?)\}/', $key, $match);
 
         if ( ! empty($match[0])) {
           $key    = str_replace($match[0], '', $key);
-
-          $hash   = stripslashes($match[1]);
-          $hash   = join('', static::tokenize($hash));
+          $hash   = join('', static::tokenize($match[1]));
 
           $args []= $hash;
         }
@@ -350,10 +339,10 @@ class taml extends prototype
         preg_match('/^\s*=.+?/', $key, $match);
 
         if ( ! empty($match[0])) {
-          $key  = stripslashes(trim(substr(trim($key), 1)));
+          $key  = trim(substr(trim($key), 1));
           $text = static::indent("<?php echo $key; ?>$text");
         } elseif ( ! is_numeric($key)) {
-          $text = stripslashes(trim($key)) . $text;
+          $text = trim($key) . $text;
         }
 
         $out = ($tag OR $args) ? static::markup($tag ?: 'div', $args, "\n$text\n") : $text;
@@ -468,23 +457,10 @@ class taml extends prototype
 
   // apply fixes
   final private static function fixate($code) {
-    static $fix = array(
-              '/\s*<\?/' => '<?',
-              '/\?>\s*<\//' => '?></',
-              '/\s*(?=[\r\n])/s' => '',
-              '/\s*<!--#CONCAT#-->/s' => '',
-              '/\s*<!--#PRE#-->(\s*\|\s)?/m' => "\n",
-              '/<([\w:-]+)([^<>]*)>[|\s]*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
-              '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
-              '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
-              '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
-              '/\};?\s*else\s*\{/' => '} else {',
-              '/}\s*else\s*/s' => '} else ',
-              '/\s+\|\s/m' => "\n",
-            );
+    $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
+    $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
 
-
-    return preg_replace(array_keys($fix), $fix, $code);
+    return $code;
   }
 
   // indentation
@@ -499,6 +475,16 @@ class taml extends prototype
     $desc    = ln("taml.$desc");
 
     raise("$message ($desc)");
+  }
+
+  // protect chars
+  final private static function escape($text, $rev = FALSE) {
+    return $rev ? strtr(trim($text), array_flip(static::$qt)) : strtr($text, static::$qt);
+  }
+
+  // revert chars
+  final private static function unescape($text) {
+    return static::escape($text, TRUE);
   }
 
   /**#@-*/
