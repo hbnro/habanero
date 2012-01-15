@@ -10,6 +10,7 @@ call_user_func(function () {
   /**#@+
    * @ignore
    */
+  require __DIR__.DS.'a_query'.EXT;
   require __DIR__.DS.'a_record'.EXT;
   require __DIR__.DS.'a_relation'.EXT;
   /**#@-*/

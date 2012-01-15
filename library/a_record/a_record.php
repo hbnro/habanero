@@ -219,7 +219,27 @@ class a_record extends prototype
     return $this;
   }
 
-  // TODO: implemente where() and more chained CRUD methods ?
+
+  /**
+   * Filter columns
+   *
+   * @param  mixed Fields|...
+   * @return model
+   */
+  final public static function get() {
+    return a_query::fetch(get_called_class(), 'select', func_get_args());
+  }
+
+
+  /**
+   * Filter values
+   *
+   * @param  array Fields
+   * @return model
+   */
+  final public static function where(array $params) {
+    return a_query::fetch(get_called_class(), 'where', $params);
+  }
 
 
   /**
