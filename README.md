@@ -18,17 +18,14 @@ Features
 Installation
 ------------
 
-Just download the latest zip/tar file from the [downloads section](https://github.com/pateketrueke/tetlphp/zipball/master).
-
-    curl -L http://tinyurl.com/gettetl
-    
-Or if you wish clone the entire repository.
+Just download the latest zip file from the [downloads section](http://tinyurl.com/gettetl)
+and unpack it or if you wish clone the entire repository.
 
     git clone git://github.com/pateketrueke/tetlphp.git
 
-Now `cd` in and execute with **sudo** the install.sh file.
+Now `cd` inside the extracted/cloned path and execute with **sudo** the install.sh file.
 
-    cd tetlphp
+    cd <tetlphp>
     sudo sh install.sh
 
 The installation will create a **command line** utility called `atl`,
