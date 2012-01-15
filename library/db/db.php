@@ -7,293 +7,86 @@
 class db extends prototype
 {
 
-  /**
-   * Select
-   *
-   * @param  mixed   Table(s)
-   * @param  mixed   Column(s)
-   * @param  mixed   Conditions
-   * @param  mixed   Params
-   * @param  boolean Return SQL?
-   * @return mixed
-   */
-  final public static function select($table, $fields = ALL, array $where = array(), array $options = array(), $return = FALSE) {
-    $sql  = "SELECT\n" . sql::build_fields($fields);
-    $sql .= "\nFROM\n" . sql::build_fields($table);
+  private static $multi = array();
 
-    if ( ! empty($where)) {
-      $sql .= "\nWHERE\n" . sql::build_where($where);
-    }
+  private static $cached = array();
 
-    if ( ! empty($options['group'])) {
-      $sql .= "\nGROUP BY";
+  final public static function connect($dsn_string) {
+    if ( ! in_array($dsn_string, static::$multi)) {
+      $dsn_default  = 'sqlite::memory:';
+      $regex_string = '/^\w+:|scheme\s*=\s*\w+/';
 
-      if (is_array($options['group'])) {
-        $sql .= "\n" . join(', ', array_map(array('sql', 'names'), $options['group']));
+      $dsn_string   = preg_match($regex_string, $dsn_string) ? $dsn_string : $dsn_default;
+
+
+      $test = array('scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment');
+
+      if (strrpos($dsn_string, ';')) {
+        $set = array();
+
+        $old = explode(';', $dsn_string);
+        $old = array_map('trim', $old);
+
+        foreach ($old as $one) {
+          $new = explode('=', $one, 2);
+          $key = trim(array_shift($new));
+
+          $set[$key] = trim(join('', $new));
+        }
       } else {
-        $sql .= "\n" . sql::names($options['group']);
+        $set = (array) @parse_url($dsn_string);
       }
-    }
 
-    if ( ! empty($options['order'])) {
-      $inc  = 0;
-      $sql .= "\nORDER BY";
 
-      foreach ($options['order'] as $one => $set) {
-        if (($inc += 1) > 1) {
-          $sql .= ', ';
-        }
+      $parts = array();
 
-        if (is_num($one)) {//FIX
-          $sql .= $set === RANDOM ? "\n$set" : "\n" . sql::names($set[0]) . " $set[1]";
-          continue;
-        }
-
-        $one  = sql::names($one);
-        $sql .= "\n$one $set";
+      foreach ($test as $key) {
+        $parts[$key] = ! empty($set[$key]) ? $set[$key] : '';
       }
-    }
 
-    $limit  = ! empty($options['limit']) ? $options['limit'] : 0;
-    $offset = ! empty($options['offset']) ? $options['offset'] : 0;
-
-    if ($limit > 0) {
-      $sql .= "\nLIMIT " . ($offset > 0 ? "$offset," : '') . $limit;
-    }
-
-    return is_true($return) ? $sql : static::query($sql);
-  }
+      $scheme_file = $driver_file = '';
 
 
-  /**
-   * Insert
-   *
-   * @param  mixed   Table(s)
-   * @param  mixed   Column(s)
-   * @param  string  Primary key|Index
-   * @param  boolean Return SQL?
-   * @return mixed
-   */
-  final public static function insert($table, $values, $column = NULL, $return = FALSE) {
-    $sql  = "INSERT INTO\n" . sql::build_fields($table);
-    $sql .= sql::build_values($values, TRUE);
-
-    return is_true($return) ? $sql : static::inserted(static::query($sql), $table, $column);
-  }
-
-
-  /**
-   * Delete
-   *
-   * @param  mixed   Table(s)
-   * @param  mixed   Conditions
-   * @param  mixed   Rows to delete
-   * @param  boolean Return SQL?
-   * @return mixed
-   */
-  final public static function delete($table, array $where = array(), $limit = 0, $return = FALSE) {
-    $sql = "DELETE FROM\n" . sql::build_fields($table);
-
-    if ( ! empty($where)) {
-      $sql .= "\nWHERE\n" . sql::build_where($where);
-    }
-    $sql .= $limit > 0 ? "\nLIMIT $limit" : '';
-
-    return is_true($return) ? $sql : static::affected(static::query($sql));
-  }
-
-
-  /**
-   * Update
-   *
-   * @param  mixed   Table(s)
-   * @param  mixed   Column(s)
-   * @param  mixed   Conditions
-   * @param  mixed   Rows to update
-   * @param  boolean Return SQL?
-   * @return mixed
-   */
-  final public static function update($table, $fields, array $where = array(), $limit = 0, $return = FALSE) {
-    $sql  = "UPDATE\n" . sql::build_fields($table);
-    $sql .= "\nSET\n" . sql::build_values($fields, FALSE);
-    $sql .= "\nWHERE\n" . sql::build_where($where);
-    $sql .= $limit > 0 ? "\nLIMIT {$limit}" : '';
-
-    return is_true($return) ? $sql : static::affected(static::query($sql));
-  }
-
-
-  /**
-   * Prepare SQL query
-   *
-   * @param  string Query
-   * @param  array  Params|Arguments
-   * @return string
-   */
-  final public static function prepare($sql, array $vars = array()) {
-    if (is_array($vars)) {
-      $sql = strtr($sql, sql::fixate_string($vars, FALSE));
-    } elseif (func_num_args() > 1) {
-      $args = sql::fixate_string(array_slice(func_get_args(), 1), FALSE);
-      $sql  = preg_replace('/((?<!\\\)\?)/e', 'array_shift($args);', $sql);
-    }
-
-    return $sql;
-  }
-
-
-  /**
-   * Automatic escape
-   *
-   * @param     mixed Query
-   * @param     mixed Params|Arguments
-   * @staticvar mixed Function callback
-   * @return    mixed
-   */
-  final public static function escape($sql, $vars = array()) {
-    static $repl = NULL;
-
-
-    if (is_null($repl)) {
-      $repl = function ($type, $value = NULL) {
-        switch($type) {
-          case '%n';
-            return ! strlen(trim($value, "\\'")) ? 'NULL' : $value;
-          break;
-          case '%f';
-            return (float) $value;
-          break;
-          case '%d';
-            return (int) $value;
-          break;
-          default;
-            return $value;
-          break;
+      if (class_exists('PDO') && option('pdo')) {
+        if ( ! in_array($parts['scheme'], pdo_drivers())) {
+          raise(ln('db.pdo_adapter_missing', array('name' => $parts['scheme'])));
         }
-      };
+        $driver_file = __DIR__.DS.'drivers'.DS.'pdo'.EXT;
+      } else {
+        $driver_file = __DIR__.DS.'drivers'.DS.$parts['scheme'].EXT;
+      }
+
+
+      if ( ! is_file($driver_file)) {
+        raise(ln('db.database_driver_missing', array('adapter' => $parts['scheme'])));
+      }
+
+
+      $scheme_name = str_replace('mysqli', 'mysql', $parts['scheme']); // DRY
+      $scheme_file = __DIR__.DS.'schemes'.DS.$scheme_name.EXT;
+
+      if ( ! in_array($scheme_name, static::$cached)) {
+        if ( ! is_file($scheme_file)) {
+          raise(ln('db.database_scheme_missing', array('adapter' => $parts['scheme'])));
+        }
+
+
+        /**#@+
+          * @ignore
+          */
+        require $scheme_file;
+        require $driver_file;
+        /**#@-*/
+
+        static::$cached []= $scheme_name;
+      }
+      static::$multi[$dsn_string] = $scheme_name::factory($parts);
     }
-
-
-    $args = array_slice(func_get_args(), 1);
-
-    if (is_array($vars) && ! empty($vars)) {
-      $sql = strtr($sql, sql::fixate_string($vars, FALSE));
-    } elseif ( ! empty($args)) {
-      $vars = sql::fixate_string($args, FALSE);
-      $sql  = preg_replace('/\b%[dsnf]\b/e', '$repl("\\0", array_shift($vars));', $sql);
-    }
-
-    return $sql;
+    return static::$multi[$dsn_string];
   }
 
-
-  /**
-   * Execute raw query
-   *
-   * @param  string Query
-   * @return mixed
-   */
-  final public static function query($sql) {
-    $args     = func_get_args();
-    $callback = array('db', strpos($sql, '?') > 0 ? 'prep' : 'escape');
-    $sql      = sizeof($args) > 1 ? call_user_func_array($callback, $args) : $sql;
-
-    $out = @sql::execute(sql::query_repare($sql));
-
-    if ($message = sql::error()) {// FIX
-      raise(ln('db.database_query_error', array('message' => $message, 'sql' => $sql)));
-    }
-    return $out;
-  }
-
-
-  /**
-   * Unique result
-   *
-   * @param  mixed SQL result|Query
-   * @param  mixed Default value
-   * @return mixed
-   */
-  final public static function result($result, $default = FALSE) {
-    if (is_string($result)) {
-      $res = static::query($result);
-    }
-
-    if (static::numrows($result) > 0) {
-      return sql::result($result) ?: $default;
-    }
-    return $default;
-  }
-
-
-  /**
-   * Fetch all rows
-   *
-   * @param  mixed SQL result|Query
-   * @param  mixed AS_ARRAY|AS_OBJECT
-   * @return array
-   */
-  final public static function fetch_all($result, $output = AS_ARRAY) {
-    $out = array();
-
-    if (is_string($result)) {
-      $args     = func_get_args();
-      $callback = strpos($result, ' ') ? 'query' : 'select';
-      $result   = call_user_func_array("static::$callback", $args);
-    }
-
-
-    while ($row = static::fetch($result, $output)) {
-      $out []= $row;
-    }
-    return $out;
-  }
-
-
-  /**
-   * Fetch single row
-   *
-   * @param  mixed SQL result
-   * @param  mixed AS_ARRAY|AS_OBJECT
-   * @return array
-   */
-  final public static function fetch($result, $output = AS_ARRAY) {
-    return $output === AS_OBJECT ? sql::fetch_object($result) : sql::fetch_assoc($result);
-  }
-
-
-  /**
-   * Rows count
-   *
-   * @param  mixed SQL result
-   * @return mixed
-   */
-  final public static function numrows($result) {
-    return sql::count_rows($result);
-  }
-
-
-  /**
-   * Affected rows
-   *
-   * @param  mixed SQL result
-   * @return mixed
-   */
-  final public static function affected($result) {
-    return sql::affected_rows($result);
-  }
-
-
-  /**
-   * Last inserted ID
-   *
-   * @param  mixed SQL result
-   * @param  mixed Table name
-   * @param  mixed Primary key|Index
-   * @return mixed
-   */
-  final public static function inserted($result, $table = NULL, $column = NULL) {
-    return sql::last_id($result, $table, $column);
+  final public static function missing($method, array $arguments) {
+    return call_user_func_array(array(static::connect(option('database.default')), $method), $arguments);
   }
 
 }

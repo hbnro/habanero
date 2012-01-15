@@ -8,10 +8,10 @@
   * @ignore
   */
 
-class sql extends prototype
+class sql_base
 {
 
-  final public static function names($test) {
+  final protected function protect_names($test) {
     static $callback = NULL;
 
     if (is_null($callback)) {
@@ -24,7 +24,7 @@ class sql extends prototype
 
     foreach ($set as $i => $val) {
       $test = array_map($callback, explode('.', $val));
-      $char = substr(static::quotes('x'), 0, 1);
+      $char = substr($this->quote_string('x'), 0, 1);
 
       foreach ($test as $key => $val) {
         if (preg_match('/^[\sa-zA-Z0-9_-]+$/', $val)) {
@@ -39,12 +39,12 @@ class sql extends prototype
     return join(', ', $set);
   }
 
-  final public static function mix_columns($test, $value) {
+  final protected function mix_columns($test, $value) {
     $set    = preg_split('/_(?:or|and)_/', $test);
     $length = sizeof($set);
     $output = array();
 
-    $output []= "\n" . static::build_where(array(
+    $output []= "\n" . $this->build_where(array(
       $set[0] => $value,
     ));
 
@@ -57,51 +57,51 @@ class sql extends prototype
       }
 
       $output []= strtoupper($one) . "\n";
-      $output []= static::build_where(array(
+      $output []= $this->build_where(array(
         $next => $value,
       ));
     }
     return " (" . join('', $output) . " )\n";
   }
 
-  final public static function fixate_string($test, $alone = FALSE) {
+  final protected function fixate_string($test, $alone = FALSE) {
     if (is_array($test)) {
       if (is_true($alone) && sizeof($test) == 1) {
         $col = key($test);
         $val = $test[$col];
 
         if ( ! is_num($col)) {
-          return static::names("$val.$col");
+          return $this->protect_names("$val.$col");
         } else {
-          return static::fixate_string($val, TRUE);
+          return $this->fixate_string($val, TRUE);
         }
       } else {
-        return array_map(array('sql', 'fixate_string'), $test);
+        return array_map(array($this, 'fixate_string'), $test);
       }
     } elseif (is_string($test) && $test) {
-      $test = "'" . static::escape($test) . "'";
+      $test = "'" . $this->real_escape($test) . "'";
     } elseif (is_bool($test)) {
       $test = ($test ? 'TRUE' : 'FALSE');
     }
     return $test;
   }
 
-  final public static function build_fields($values) {
+  final protected function build_fields($values) {
     $sql = array();
 
     foreach ((array) $values as $key => $val) {
       if (strlen(trim($val)) == 0) {
         continue;
       } elseif (is_num($key)) {
-        $sql []= ' ' . static::names($val);
+        $sql []= ' ' . $this->protect_names($val);
         continue;
       }
-      $sql []= ' ' . static::names($key) . ' AS ' . static::names($val);
+      $sql []= ' ' . $this->protect_names($key) . ' AS ' . $this->protect_names($val);
     }
     return join(",\n", $sql);
   }
 
-  final public static function build_values($fields, $insert = FALSE) {
+  final protected function build_values($fields, $insert = FALSE) {
     $sql    = array();
     $fields = (array) $fields;
 
@@ -109,7 +109,7 @@ class sql extends prototype
       $cols = array();
 
       foreach (array_keys($fields) as $one) {
-        $cols []= static::names($one);
+        $cols []= $this->protect_names($one);
       }
 
       $sql []= '(' . join(', ', $cols) . ')';
@@ -125,13 +125,13 @@ class sql extends prototype
       if (is_num($key)) {
         $out []= $val;
       } else {
-        $val = static::fixate_string($val, TRUE);
+        $val = $this->fixate_string($val, TRUE);
         $val = is_num($val) ? $val : ($val ?: 'NULL');
 
         if (is_true($insert)) {
           $out []= $val;
         } else {
-          $out []= sprintf('%s = %s', static::names($key), $val);
+          $out []= sprintf('%s = %s', $this->protect_names($key), $val);
         }
       }
     }
@@ -145,7 +145,7 @@ class sql extends prototype
     return join('', $sql);
   }
 
-  final public static function build_where($test, $operator = 'AND') {
+  final protected function build_where($test, $operator = 'AND') {
     if ( ! empty($test)) {
       $operator = strtoupper($operator);
       $test     = (array) $test;
@@ -156,12 +156,12 @@ class sql extends prototype
       foreach ($test as $key => $val) {
         if (preg_match('/_(?:or|and)_/', $key)) {
           $sql .= "$operator\n";
-          $sql .= static::mix_columns($key, $val);
+          $sql .= $this->mix_columns($key, $val);
 
           $count += 1;
           continue;
         } elseif (is_keyword($key)) {
-          $out  = static::build_where($val, $key);
+          $out  = $this->build_where($val, $key);
           $sql .= strtoupper($key) . "\n$out";
 
           $count += 1;
@@ -174,16 +174,16 @@ class sql extends prototype
           if (is_string($val)) {
             $sql .= "$val\n";
           } else {
-            $sql .= static::build_where($val, $operator);
+            $sql .= $this->build_where($val, $operator);
           }
         } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
           $oper = '';
-          $key  = static::names($match[1]);
+          $key  = $this->protect_names($match[1]);
 
           if (is_null($val)) {
             $oper = 'IS NULL';
           } else {
-            $val = static::fixate_string($val, FALSE);
+            $val = $this->fixate_string($val, FALSE);
             $oper = ! empty($match[2]) ? ($match[2] == '!' ? '!=' : $match[2]) : '=';
           }
 
@@ -210,24 +210,24 @@ class sql extends prototype
     }
   }
 
-  final public static function query_repare($test) {
+  final protected function query_repare($test) {
     static $rand_expr = '/RAND(?:OM)?\s*\(([^\(\)]*)\)/i',
            $delete_expr = '/^\s*DELETE\s+FROM\s+(\S+)\s*$/is';
 
     if (function_exists('sql_limit')) {
       $limit_expr = '/\s+LIMIT\s+(\d+)(?:\s*(?:,|\s+TO\s+)\s*(\d+))?\s*$/i';
       $test       = preg_replace_callback($limit_expr, function ($match) {
-        return static::limit($match[1], $match[2]);
+        return $this->ensure_limit($match[1], $match[2]);
       }, $test);
     }
 
     $test = preg_replace($delete_expr, 'DELETE FROM \\1 WHERE 1=1', $test);
-    $test = preg_replace($rand_expr, RANDOM, $test);
+    $test = preg_replace($rand_expr, $this->random, $test);
 
     return $test;
   }
 
-  final public static function query_parse($test, $separator = 59) {
+  final protected function query_parse($test, $separator = 59) {
     $last = substr($separator, 0, 2);
 
     if ($last === '\t') {
@@ -286,4 +286,4 @@ class sql extends prototype
 
 /**#@-*/
 
-/* EOF: ./library/db/sql.php */
+/* EOF: ./library/db/sql_base.php */
