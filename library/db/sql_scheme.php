@@ -6,7 +6,6 @@
 
 class sql_scheme extends sql_query
 {
-
   /**
    * Initiate transaction
    *
@@ -264,8 +263,8 @@ class sql_scheme extends sql_query
 
     return $sql;
   }
-  /**#@-*/
 
+  /**#@-*/
 }
 
 /* EOF: ./library/db/sql_scheme.php */

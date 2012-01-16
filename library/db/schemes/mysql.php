@@ -4,6 +4,10 @@
  * MySQL-core database scheme
  */
 
+/**#@+
+ * @ignore
+ */
+
 class mysql_scheme extends sql_scheme
 {
   protected $random = 'RAND()';
@@ -157,4 +161,7 @@ class mysql_scheme extends sql_scheme
     return "`$test`";
   }
 }
+
+/**#@-*/
+
 /* EOF: ./library/db/schemes/mysql.php */

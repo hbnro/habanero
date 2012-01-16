@@ -4,6 +4,10 @@
  * PostgreSQL database scheme
  */
 
+/**#@+
+ * @ignore
+ */
+
 class pgsql_scheme extends sql_scheme
 {
   protected $random = 'RANDOM()';
@@ -148,5 +152,7 @@ class pgsql_scheme extends sql_scheme
     return '"' . $test . '"';
   }
 }
+
+/**#@-*/
 
 /* EOF: ./library/db/schemes/pgsql.php */

@@ -6,7 +6,6 @@
 
 class sql_query extends sql_base
 {
-
   /**
    * Select
    *
@@ -290,8 +289,6 @@ class sql_query extends sql_base
   final public function inserted($result, $table = NULL, $column = NULL) {
     return $this->last_inserted_id($result, $table, $column);
   }
-
-
 }
 
-/* EOF: ./library/db/db.php */
+/* EOF: ./library/db/sql_query.php */

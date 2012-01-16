@@ -10,7 +10,7 @@
 
 class sql_base
 {
-
+  // escaping for columns and tables
   final protected function protect_names($test) {
     static $callback = NULL;
 
@@ -39,6 +39,7 @@ class sql_base
     return join(', ', $set);
   }
 
+  // recursive where lookup
   final protected function mix_columns($test, $value) {
     $set    = preg_split('/_(?:or|and)_/', $test);
     $length = sizeof($set);
@@ -64,6 +65,7 @@ class sql_base
     return " (" . join('', $output) . " )\n";
   }
 
+  // recursive string escaping
   final protected function fixate_string($test, $alone = FALSE) {
     if (is_array($test)) {
       if (is_true($alone) && sizeof($test) == 1) {
@@ -86,6 +88,7 @@ class sql_base
     return $test;
   }
 
+  // fields for SELECT
   final protected function build_fields($values) {
     $sql = array();
 
@@ -101,6 +104,7 @@ class sql_base
     return join(",\n", $sql);
   }
 
+  // values for INSERT/UPDATE
   final protected function build_values($fields, $insert = FALSE) {
     $sql    = array();
     $fields = (array) $fields;
@@ -145,6 +149,7 @@ class sql_base
     return join('', $sql);
   }
 
+  // dynamic WHERE building
   final protected function build_where($test, $operator = 'AND') {
     if ( ! empty($test)) {
       $operator = strtoupper($operator);
@@ -210,6 +215,7 @@ class sql_base
     }
   }
 
+  // hardcore SQL fixes!
   final protected function query_repare($test) {
     static $rand_expr = '/RAND(?:OM)?\s*\(([^\(\)]*)\)/i',
            $delete_expr = '/^\s*DELETE\s+FROM\s+(\S+)\s*$/is';
@@ -227,6 +233,7 @@ class sql_base
     return $test;
   }
 
+  // hardcore SQL sentence parsing
   final protected function query_parse($test, $separator = 59) {
     $last = substr($separator, 0, 2);
 
@@ -281,7 +288,6 @@ class sql_base
     }
     return $out;
   }
-
 }
 
 /**#@-*/

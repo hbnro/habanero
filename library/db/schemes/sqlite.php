@@ -4,6 +4,10 @@
  * SQLite3 database scheme
  */
 
+/**#@+
+ * @ignore
+ */
+
 class sqlite_scheme extends sql_scheme
 {
   protected $random = 'RANDOM()';
@@ -166,5 +170,7 @@ class sqlite_scheme extends sql_scheme
     return '"' . $test . '"';
   }
 }
+
+/**#@-*/
 
 /* EOF: ./library/db/schemes/sqlite.php */
