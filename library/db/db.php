@@ -46,8 +46,9 @@ class db extends prototype
 
       $scheme_file = $driver_file = '';
 
+      parse_str($parts['query'], $query);
 
-      if (class_exists('PDO') && option('pdo')) {
+      if (array_key_exists('pdo', $query)) {
         if ( ! in_array($parts['scheme'], pdo_drivers())) {
           raise(ln('db.pdo_adapter_missing', array('name' => $parts['scheme'])));
         }
@@ -62,8 +63,9 @@ class db extends prototype
       }
 
 
-      $scheme_name = str_replace('mysqli', 'mysql', $parts['scheme']); // DRY
-      $scheme_file = __DIR__.DS.'schemes'.DS.$scheme_name.EXT;
+      $scheme_name  = str_replace('mysqli', 'mysql', $parts['scheme']); // DRY
+      $scheme_file  = __DIR__.DS.'schemes'.DS.$scheme_name.EXT;
+      $driver_class = extn($driver_file, TRUE) . '_driver';
 
       if ( ! in_array($scheme_name, static::$cached)) {
         if ( ! is_file($scheme_file)) {
@@ -80,7 +82,8 @@ class db extends prototype
 
         static::$cached []= $scheme_name;
       }
-      static::$multi[$dsn_string] = $scheme_name::factory($parts);
+      static::$multi[$dsn_string] = $driver_class::factory($parts);
+      method_exists(static::$multi[$dsn_string], 'set_enconding') && static::$multi[$dsn_string]->set_encoding();
     }
     return static::$multi[$dsn_string];
   }

@@ -8,107 +8,100 @@ if ( ! class_exists('PDO')) {
   raise(ln('extension_missing', array('name' => 'PDO')));
 }
 
-/**#@+
- * @ignore
- */
-define('RANDOM', 'RANDOM()');
-define('DB_DRIVER', 'PDO');
-/**#@-*/
+class pdo_driver
+{
 
+  protected $last_query = NULL;
 
-sql::implement('connect', function () {
-  static $object = NULL;
-
-
-  if (is_null($object)) {
-    extract(func_get_arg(0));
-
-    switch ($scheme) {
+  final public static function factory(array $params) {
+    switch ($params['scheme']) {
       case 'sqlite';
-        $dsn_string = 'sqlite:' . str_replace('\\', '/', $host . $path);
+        $dsn_string = 'sqlite:' . str_replace('\\', '/', $params['host'] . $params['path']);
       break;
       default;
-        $dsn_string = "$scheme:host=$host;";
+        $dsn_string = "$params[scheme]:host=$params[host];";
 
-        if ($port > 0) {
-          $dsn_string .= "port=$port;";
+        if ($params['port'] > 0) {
+          $dsn_string .= "port=$params[port];";
         }
 
-        $database    = trim($path, '/');
-        $dsn_string .= "dbname=$database;";
+        $params['database'] = trim($params['path'], '/');
+        $dsn_string        .= "dbname=$params[database];";
       break;
     }
 
-    parse_str($query, $query);
+    parse_str($params['query'], $query);
 
-    $object = new PDO($dsn_string, $user, $pass, $query);
+    $scheme_class = $params['scheme'] . '_scheme';
+    $fake_class   = "pdo_{$params['scheme']}_driver";
+    $php_class    = "class $fake_class extends $scheme_class{public function __call(\$m,\$a){return call_user_func_array(array(\$this->bridge,\$m),\$a);}}";
+
+    ! class_exists($fake_class) && eval($php_class);
+
+    $obj = new $fake_class;
+    $obj->bridge = new static;
+    $obj->bridge->res  = new PDO($dsn_string, $params['user'], $params['pass'], $query);
+
+    return $obj;
   }
 
-  return $object;
-});
-
-sql::implement('version', function () {
-  $test = sql::connect()->getAttribute(PDO::ATTR_SERVER_VERSION);
-
-  return $test['versionString'];
-});
-
-sql::implement('execute', function ($sql) {
-  if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $sql)) {
-    return sql::connect()->exec($sql);
-  }
-  return sql::connect()->query($sql);
-});
-
-sql::implement('escape', function ($test) {
-  return substr(sql::connect()->quote($test), 1, -1);
-});
-
-sql::implement('error', function () {
-  $test = sql::connect()->errorInfo();
-
-  return $test[0] == '00000' ? FALSE : $test[2];
-});
-
-sql::implement('result', function ($res) {
-  return @array_shift(sql::fetch_assoc($res));
-});
-
-sql::implement('fetch_assoc', function ($res) {
-  return $res ? $res->fetch(PDO::FETCH_ASSOC) : array();
-});
-
-sql::implement('fetch_object', function ($res) {
-  return $res ? $res->fetch(PDO::FETCH_OBJ) : new stdClass;
-});
-
-sql::implement('count_rows', function ($res) {
-  if ( ! $res) {
-    return FALSE;
+  final public function version() {
+    $test = $this->res->getAttribute(PDO::ATTR_SERVER_VERSION);
+    return $test['versionString'];
   }
 
-  $out = $res->rowCount();
+  final public function execute($sql) {
+    $this->last_query = $sql;
 
-  if (preg_match('/^\s*SELECT.+?FROM(.+?)$/is', $res->queryString, $match)) {// http://www.php.net/manual/es/pdostatement.rowcount.php
-    $tmp = sql::execute("SELECT COUNT(*) FROM $match[1]");
-    $out = sql::result($tmp);
-  }
-
-  return (int) $out;
-});
-
-sql::implement('affected_rows', function ($res) {
-  return $res ? (int) $res : FALSE;
-});
-
-sql::implement('last_id', function () {
-  if (DB_SCHEME == 'pgsql') {// http://www.php.net/manual/en/pdo.lastinsertid.php#86178
-    if (preg_match('/^\s*INSERT\s+INTO\s+(")?([^"]+)(?=\s|")/is', sql::connect()->last, $match)) {
-      $sql = "SELECT currval('{$match[2]}_id_seq') AS last_value";
-      return (int) sql::result(sql::execute($sql));
+    if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $sql)) {
+      return $this->res->exec($sql);
     }
+    return $this->res->query($sql);
   }
-  return sql::connect()->lastInsertId();
-});
 
+  final public function real_escape($test) {
+    return substr($this->res->quote($test), 1, -1);
+  }
+
+  final public function has_error() {
+    $test = $this->res->errorInfo();
+    return $test[0] == '00000' ? FALSE : $test[2];
+  }
+
+  final public function fetch_result($res) {
+    return @array_shift($this->fetch_assoc($res));
+  }
+
+  final public function fetch_assoc($res) {
+    return $res ? $res->fetch(PDO::FETCH_ASSOC) : FALSE;
+  }
+
+  final public function fetch_object($res) {
+    return $res ? $res->fetch(PDO::FETCH_OBJ) : FALSE;
+  }
+
+  final public function count_rows($res) {
+    if ( ! $res) {
+      return FALSE;
+    }
+
+    $out = $res->rowCount();
+
+    if (preg_match('/^\s*SELECT.+?FROM(.+?)$/is', $res->queryString, $match)) {
+      // http://www.php.net/manual/es/pdostatement.rowcount.php
+      $tmp = $this->execute("SELECT COUNT(*) FROM $match[1]");
+      $out = $this->fetch_result($tmp);
+    }
+    return (int) $out;
+  }
+
+  final public function affected_rows($res) {
+    return $res ? (int) $res : FALSE;
+  }
+
+  final public function last_inserted_id() {
+    // TODO: support for postgres?
+    return $this->res->lastInsertId();
+  }
+}
 /* EOF: ./library/db/drivers/pdo.php */

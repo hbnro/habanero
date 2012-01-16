@@ -8,11 +8,14 @@ if ( ! class_exists('SQLite3')) {
   raise(ln('extension_missing', array('name' => 'SQLite3')));
 }
 
-class sqlite extends sqlite_scheme {
+class sqlite_driver extends sqlite_scheme
+{
 
-  private $last_query = NULL;
+  protected $last_query = NULL;
 
-  final public static function factory($params) {
+  protected $random = 'RANDOM()';
+
+  final public static function factory(array $params) {
     $db_file = $params['host'] . $params['path'];
 
     if ( ! is_file($db_file) && ($db_file <> ':memory:')) {

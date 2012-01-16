@@ -10,6 +10,11 @@ class mongo_model extends a_record
   // properties
   public static $columns = array();
 
+  // connection
+  public static $database = 'mongodb';
+
+  // resource
+  protected static $res = NULL;
 
 
   /**
@@ -271,8 +276,9 @@ class mongo_model extends a_record
 
 
     if (is_null($conn)) {
-      $database   = option('mongo.db');
-      $dsn_string = option('mongo.dsn');
+      $dsn_string = option('database.' . static::$database);
+      $database   = substr($dsn_string, strrpos($dsn_string, '/') + 1);
+
 
       $mongo    = $dsn_string ? new Mongo($dsn_string) : new Mongo;
       $database = $database ?: 'default';

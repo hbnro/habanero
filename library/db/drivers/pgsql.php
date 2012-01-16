@@ -8,86 +8,81 @@ if ( ! function_exists('pg_connect')) {
   raise(ln('extension_missing', array('name' => 'PostgreSQL')));
 }
 
-/**#@+
- * @ignore
- */
-define('RANDOM', 'RANDOM()');
-define('DB_DRIVER', 'PostgreSQL');
-/**#@-*/
+class pgsql_driver extends sqlite_scheme
+{
 
+  protected $last_query = NULL;
 
-sql::implement('connect', function () {
-  static $resource = NULL;
+  protected $random = 'RANDOM()';
 
+  final public function factory(array $params) {
+    $obj = new static;
 
-  if (is_null($resource)) {
-    $parts = func_get_arg(0);
+    $conn  = "dbname=" . trim($params['path'], '/');
+    $conn .= " host={$params['host']} user=$params[user]";
+    $conn .= ! empty($params['port'])? " port=$params[port]": '';
+    $conn .= ! empty($params['pass'])? " password=$params[pass]": '';
 
-    $conn  = "dbname=" . trim($parts['path'], '/');
-    $conn .= " host={$parts['host']} user=$parts[user]";
-    $conn .= ! empty($parts['port'])? " port=$parts[port]": '';
-    $conn .= ! empty($parts['pass'])? " password=$parts[pass]": '';
+    $obj->res = pg_connect($conn);
 
-    $resource = pg_connect($conn);
+    return $obj;
   }
 
-  return $resource;
-});
-
-sql::implement('version', function () {
-  return pg_fetch_result(pg_exec(sql::connect(), 'SELECT version()'), 0);
-});
-
-sql::implement('execute', function ($sql) {
-  return pg_query(sql::connect(), $sql);
-});
-
-sql::implement('escape', function ($test) {
-  return pg_escape_string(sql::connect(), $test);
-});
-
-sql::implement('error', function () {
-  return pg_last_error(sql::connect());
-});
-
-sql::implement('result', function ($res) {
-  return pg_fetch_result($res, 0);
-});
-
-sql::implement('fetch_assoc', function ($res) {
-  return pg_fetch_assoc($res);
-});
-
-sql::implement('fetch_object', function ($res) {
-  return pg_fetch_object($res);
-});
-
-sql::implement('count_rows', function ($res) {
-  return pg_num_rows($res);
-});
-
-sql::implement('affected_rows', function ($res) {
-  return pg_affected_rows($res);
-});
-
-sql::implement('last_id', function ($res, $table, $column) {
-  $tmp = pg_fetch_row(pg_query(sql::connect(), 'SELECT version()'), 0);
-
-  $v = preg_replace('/^\w+\s+([0-9\.]+)\s.*$/i', '\\1', $tmp[0]);
-  $v = (double) $v;
-
-
-  if ($v >= 8.1) {//TODO: try to find out a better fix?
-    $sql = ($table && $column) ? "SELECT MAX($column) FROM $table" : 'SELECT LASTVAL()';
-  } elseif ( ! empty($table) &&  ! empty($column) && ($v >= 8.0)) {// http://www.php.net/pg_last_oid
-    $sql = sprintf("SELECT CURRVAL(pg_get_serial_sequence('%s','%s'))", $table, $column);
-  } else {
-    return pg_last_oid(sql::connect());
+  final public function version() {
+    return pg_fetch_result(pg_exec($this->res, 'SELECT version()'), 0);
   }
 
-  $tmp = pg_fetch_row(pg_query(sql::connect(), $sql), 0);
+  final public function execute($sql) {
+    return pg_query($this->res, $sql);
+  }
 
-  return $tmp[0];
-});
+  final public function real_escape($test) {
+    return pg_escape_string($this->res, $test);
+  }
+
+  final public function has_error() {
+    return pg_last_error($this->res);
+  }
+
+  final public function fetch_result($res) {
+    return pg_fetch_result($res, 0);
+  }
+
+  final public function fetch_assoc($res) {
+    return pg_fetch_assoc($res);
+  }
+
+  final public function fetch_object($res) {
+    return pg_fetch_object($res);
+  }
+
+  final public function count_rows($res) {
+    return pg_num_rows($res);
+  }
+
+  final public function affected_rows($res) {
+    return pg_affected_rows($res);
+  }
+
+  final public function last_inserted_id($res, $table, $column) {
+    $tmp = pg_fetch_row(pg_query($this->res, 'SELECT version()'), 0);
+
+    $v = preg_replace('/^\w+\s+([0-9\.]+)\s.*$/i', '\\1', $tmp[0]);
+    $v = (double) $v;
+
+
+    if ($v >= 8.1) {//TODO: try to find out a better fix?
+      $sql = ($table && $column) ? "SELECT MAX($column) FROM $table" : 'SELECT LASTVAL()';
+    } elseif ( ! empty($table) &&  ! empty($column) && ($v >= 8.0)) {// http://www.php.net/pg_last_oid
+      $sql = sprintf("SELECT CURRVAL(pg_get_serial_sequence('%s','%s'))", $table, $column);
+    } else {
+      return pg_last_oid($this->res);
+    }
+
+    $tmp = pg_fetch_row(pg_query($this->res, $sql), 0);
+
+    return $tmp[0];
+  }
+}
 
 /* EOF: ./library/db/drivers/pgsql.php */

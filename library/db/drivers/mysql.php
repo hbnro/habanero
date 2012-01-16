@@ -8,69 +8,63 @@ if ( ! function_exists('mysql_connect')) {
   raise(ln('extension_missing', array('name' => 'MySQL')));
 }
 
-/**#@+
- * @ignore
- */
-define('RANDOM', 'RAND()');
-define('DB_DRIVER', 'MySQL');
-/**#@-*/
+class mysql_driver extends mysql_scheme
+{
+  protected $last_query = NULL;
 
+  protected $random = 'RAND()';
 
-sql::implement('connect', function () {
-  static $resource = NULL;
+  final public static function factory(array $params) {
+    $host  = $params['host'];
+    $host .= ! empty($params['port']) ? ":$params[port]" : '';
 
+    $obj = new static;
 
-  if (is_null($resource)) {
-    $parts = func_get_arg(0);
+    $obj->res = mysql_connect($host, $params['user'], ! empty($params['pass']) ? $params['pass'] : '');
+    mysql_select_db(trim($params['path'], '/'), $obj->res);
 
-    $host  = $parts['host'];
-    $host .= ! empty($parts['port']) ? ":$parts[port]" : '';
-
-    $resource = mysql_connect($host, $parts['user'], ! empty($parts['pass']) ? $parts['pass'] : '');
-    mysql_select_db(trim($parts['path'], '/'), $resource);
+    return $obj;
   }
 
-  return $resource;
-});
+  final public function version() {
+    return mysql_result(mysql_query('SELECT version()', $this->res), 0);
+  }
 
-sql::implement('version', function () {
-  return mysql_result(mysql_query('SELECT version()', sql::connect()), 0);
-});
+  final public function execute($sql) {
+    return mysql_query($sql, $this->res);
+  }
 
-sql::implement('execute', function ($sql) {
-  return mysql_query($sql, sql::connect());
-});
+  final public function real_escape($test) {
+    return mysql_real_escape_string($test, $this->res);
+  }
 
-sql::implement('escape', function ($test) {
-  return str_replace("'", '\\\'', stripslashes($test));
-});
+  final public function has_error() {
+    return mysql_error($this->res);
+  }
 
-sql::implement('error', function () {
-  return mysql_error(sql::connect());
-});
+  final public function fetch_result($res) {
+    return mysql_result($res, 0);
+  }
 
-sql::implement('result', function ($res) {
-  return mysql_result($res, 0);
-});
+  final public function fetch_assoc($res) {
+    return mysql_fetch_assoc($res);
+  }
 
-sql::implement('fetch_assoc', function ($res) {
-  return mysql_fetch_assoc($res);
-});
+  final public function fetch_object($res) {
+    return mysql_fetch_object($res);
+  }
 
-sql::implement('fetch_object', function ($res) {
-  return mysql_fetch_object($res);
-});
+  final public function count_rows($res) {
+    return mysql_num_rows($res);
+  }
 
-sql::implement('count_rows', function ($res) {
-  return mysql_num_rows($res);
-});
+  final public function affected_rows() {
+    return mysql_affected_rows($this->res);
+  }
 
-sql::implement('affected_rows', function () {
-  return mysql_affected_rows(sql::connect());
-});
-
-sql::implement('last_id', function () {
-  return mysql_insert_id(sql::connect());
-});
+  final public function last_inserted_id() {
+    return mysql_insert_id($this->res);
+  }
+}
 
 /* EOF: ./library/db/drivers/mysql.php */

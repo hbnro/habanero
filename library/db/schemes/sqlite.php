@@ -4,33 +4,34 @@
  * SQLite3 database scheme
  */
 
-class sqlite_scheme extends sql_scheme {
+class sqlite_scheme extends sql_scheme
+{
 
   private $raw = array(
-              'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
-              'string' => array('type' => 'VARCHAR', 'length' => 255),
-              'timestamp' => array('type' => 'DATETIME'),
-              'binary' => array('type' => 'BLOB'),
-            );
+            'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
+            'string' => array('type' => 'VARCHAR', 'length' => 255),
+            'timestamp' => array('type' => 'DATETIME'),
+            'binary' => array('type' => 'BLOB'),
+          );
 
   private $types = array(
-              'CHARACTER' => 'string',
-              'NVARCHAR' => 'string',
-              'VARCHAR' => 'string',
-              'NCHAR' => 'string',
-              'CLOB' => 'string',
-              'INT' => 'integer',
-              'TINYINT' => 'integer',
-              'SMALLINT' => 'integer',
-              'MEDIUMINT' => 'integer',
-              'BIGINT' => 'integer',
-              'INT2' => 'integer',
-              'INT8' => 'integer',
-              'REAL' => 'float',
-              'DOUBLE' => 'float',
-              'DECIMAL' => 'numeric',
-              'BLOB' => 'binary',
-            );
+            'CHARACTER' => 'string',
+            'NVARCHAR' => 'string',
+            'VARCHAR' => 'string',
+            'NCHAR' => 'string',
+            'CLOB' => 'string',
+            'INT' => 'integer',
+            'TINYINT' => 'integer',
+            'SMALLINT' => 'integer',
+            'MEDIUMINT' => 'integer',
+            'BIGINT' => 'integer',
+            'INT2' => 'integer',
+            'INT8' => 'integer',
+            'REAL' => 'float',
+            'DOUBLE' => 'float',
+            'DECIMAL' => 'numeric',
+            'BLOB' => 'binary',
+          );
 
   final public function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
@@ -102,7 +103,7 @@ class sqlite_scheme extends sql_scheme {
   }
 
   final public function add_column($to, $name, $type) {
-    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->field($type)));
+    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
   }
 
   final public function remove_column($from, $name) {
@@ -143,7 +144,7 @@ class sqlite_scheme extends sql_scheme {
 
     $this->begin();
 
-    $this->execute($this->build($old = uniqid($from), $new));
+    $this->execute($this->build_table($old = uniqid($from), $new));
     $this->execute(sprintf('INSERT INTO "%s" SELECT "%s" FROM "%s"', $old, join('", "', array_keys($new)), $from));
     $this->execute(sprintf('DROP TABLE "%s"', $from));
 
