@@ -6,45 +6,46 @@
 
 class pgsql_scheme extends sql_scheme
 {
+  protected $random = 'RANDOM()';
 
-  private $types = array(
-            'CHARACTER' => 'string',
-            'VARCHAR' => 'string',
-            'CHAR' => 'string',
-            'INT' => 'integer',
-            'BIGINT' => 'integer',
-            'SMALLINT' => 'integer',
-            'BOOLEAN' => 'boolean',
-            'DECIMAL' => 'numeric',
-            'MONEY' => 'numeric',
-            'ZONE' => 'numeric',
-            'DOUBLE' => 'float',
-            'REAL' => 'float',
-            'BLOB' => 'binary',
-          );
+  protected $types = array(
+              'CHARACTER' => 'string',
+              'VARCHAR' => 'string',
+              'CHAR' => 'string',
+              'INT' => 'integer',
+              'BIGINT' => 'integer',
+              'SMALLINT' => 'integer',
+              'BOOLEAN' => 'boolean',
+              'DECIMAL' => 'numeric',
+              'MONEY' => 'numeric',
+              'ZONE' => 'numeric',
+              'DOUBLE' => 'float',
+              'REAL' => 'float',
+              'BLOB' => 'binary',
+            );
 
-  private $raw = array(
-            'primary_key' => 'SERIAL PRIMARY KEY',
-            'string' => array('type' => 'CHARACTER varying', 'length' => 255),
-          );
+  protected $raw = array(
+              'primary_key' => 'SERIAL PRIMARY KEY',
+              'string' => array('type' => 'CHARACTER varying', 'length' => 255),
+            );
 
-  final public function begin_transaction() {
+  final protected function begin_transaction() {
     return $this->execute('BEGIN');
   }
 
-  final public function commit_transaction() {
+  final protected function commit_transaction() {
     return $this->execute('COMMIT');
   }
 
-  final public function rollback_transaction() {
+  final protected function rollback_transaction() {
     return $this->execute('ROLLBACK');
   }
 
-  final public function set_encoding() {
+  final protected function set_encoding() {
     return $this->execute("SET NAMES 'UTF-8'");
   }
 
-  final public function fetch_tables() {
+  final protected function fetch_tables() {
     $out = array();
 
     $sql = "SELECT tablename FROM pg_tables WHERE tablename "
@@ -59,7 +60,7 @@ class pgsql_scheme extends sql_scheme
     return $out;
   }
 
-  final public function fetch_columns($test) {
+  final protected function fetch_columns($test) {
     $out = array();
 
     $sql = "SELECT DISTINCT "
@@ -92,7 +93,7 @@ class pgsql_scheme extends sql_scheme
     return $out;
   }
 
-  final public function fetch_indexes($test) {
+  final protected function fetch_indexes($test) {
     $out = array();
 
     $sql = "select pg_get_indexdef(indexrelid) AS sql from pg_index where indrelid = '$test'::regclass";
@@ -111,42 +112,41 @@ class pgsql_scheme extends sql_scheme
     return $out;
   }
 
-  final public function ensure_limit($from, $to) {
+  final protected function ensure_limit($from, $to) {
     return $to ? "\nLIMIT $to OFFSET $from" : "\nLIMIT $from\n";
   }
 
-  final public function rename_table($from, $to) {
+  final protected function rename_table($from, $to) {
     return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
   }
 
-  final public function add_column($to, $name, $type) {
+  final protected function add_column($to, $name, $type) {
     return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
   }
 
-  final public function remove_column($from, $name) {
+  final protected function remove_column($from, $name) {
     return $this->execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
   }
 
-  final public function rename_column($from, $name, $to) {
+  final protected function rename_column($from, $name, $to) {
     return $this->execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
   }
 
-  final public function change_column($from, $name, $to) {
+  final protected function change_column($from, $name, $to) {
     return $this->execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, $this->a_field($to)));
   }
 
-  final public function add_index($to, $name, $column, $unique = FALSE) {
+  final protected function add_index($to, $name, $column, $unique = FALSE) {
     return $this->execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
   }
 
-  final public function remove_index($name) {
+  final protected function remove_index($name) {
     return $this->execute(sprintf('DROP INDEX "%s"', $name));
   }
 
-  final public function quote_string($test) {
+  final protected function quote_string($test) {
     return '"' . $test . '"';
   }
-
 }
 
 /* EOF: ./library/db/schemes/pgsql.php */

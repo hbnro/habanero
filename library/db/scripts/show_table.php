@@ -3,7 +3,7 @@
 if (check_table($table)) {
   success(ln('db.table_show_columns', array('name' => $table)));
 
-  $set =
+  $set   =
   $heads = array();
 
   foreach (db::columns($table) as $name => $one) {

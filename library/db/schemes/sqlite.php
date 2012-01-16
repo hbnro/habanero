@@ -6,46 +6,47 @@
 
 class sqlite_scheme extends sql_scheme
 {
+  protected $random = 'RANDOM()';
 
-  private $raw = array(
-            'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
-            'string' => array('type' => 'VARCHAR', 'length' => 255),
-            'timestamp' => array('type' => 'DATETIME'),
-            'binary' => array('type' => 'BLOB'),
-          );
+  protected $types = array(
+              'CHARACTER' => 'string',
+              'NVARCHAR' => 'string',
+              'VARCHAR' => 'string',
+              'NCHAR' => 'string',
+              'CLOB' => 'string',
+              'INT' => 'integer',
+              'TINYINT' => 'integer',
+              'SMALLINT' => 'integer',
+              'MEDIUMINT' => 'integer',
+              'BIGINT' => 'integer',
+              'INT2' => 'integer',
+              'INT8' => 'integer',
+              'REAL' => 'float',
+              'DOUBLE' => 'float',
+              'DECIMAL' => 'numeric',
+              'BLOB' => 'binary',
+            );
 
-  private $types = array(
-            'CHARACTER' => 'string',
-            'NVARCHAR' => 'string',
-            'VARCHAR' => 'string',
-            'NCHAR' => 'string',
-            'CLOB' => 'string',
-            'INT' => 'integer',
-            'TINYINT' => 'integer',
-            'SMALLINT' => 'integer',
-            'MEDIUMINT' => 'integer',
-            'BIGINT' => 'integer',
-            'INT2' => 'integer',
-            'INT8' => 'integer',
-            'REAL' => 'float',
-            'DOUBLE' => 'float',
-            'DECIMAL' => 'numeric',
-            'BLOB' => 'binary',
-          );
+  protected $raw = array(
+              'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
+              'string' => array('type' => 'VARCHAR', 'length' => 255),
+              'timestamp' => array('type' => 'DATETIME'),
+              'binary' => array('type' => 'BLOB'),
+            );
 
-  final public function begin_transaction() {
+  final protected function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
   }
 
-  final public function commit_transaction() {
+  final protected function commit_transaction() {
     return $this->execute('COMMIT TRANSACTION');
   }
 
-  final public function rollback_transaction() {
+  final protected function rollback_transaction() {
     return $this->execute('ROLLBACK TRANSACTION');
   }
 
-  final public function fetch_tables() {
+  final protected function fetch_tables() {
     $out = array();
     $sql = "SELECT name FROM sqlite_master WHERE type = 'table'";
     $old = $this->execute($sql);
@@ -57,7 +58,7 @@ class sqlite_scheme extends sql_scheme
     return $out;
   }
 
-  final public function fetch_columns($test) {
+  final protected function fetch_columns($test) {
     $out = array();
     $sql = "PRAGMA table_info('$test')";
     $old = $this->execute($sql);
@@ -76,7 +77,7 @@ class sqlite_scheme extends sql_scheme
     return $out;
   }
 
-  final public function fetch_indexes($test) {
+  final protected function fetch_indexes($test) {
     $res = $this->execute("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='$test'");
 
     $out = array();
@@ -94,23 +95,23 @@ class sqlite_scheme extends sql_scheme
     return $out;
   }
 
-  final public function ensure_limit($from, $to) {
+  final protected function ensure_limit($from, $to) {
     return "\nLIMIT $from" . ($to ? ",$to\n" : "\n");
   }
 
-  final public function rename_table($from, $to) {
+  final protected function rename_table($from, $to) {
     return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
   }
 
-  final public function add_column($to, $name, $type) {
+  final protected function add_column($to, $name, $type) {
     return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
   }
 
-  final public function remove_column($from, $name) {
+  final protected function remove_column($from, $name) {
     return $this->change_column($from, $name, NULL);
   }
 
-  final public function rename_column($from, $name, $to) {
+  final protected function rename_column($from, $name, $to) {
     $set = $this->columns($from);
     $old = $set[$name];
 
@@ -125,7 +126,7 @@ class sqlite_scheme extends sql_scheme
     return $this->remove_column($from, $name);
   }
 
-  final public function change_column($from, $name, $to) {
+  final protected function change_column($from, $name, $to) {
     $new = array();
 
     foreach ($this->columns($from) as $key => $val) {
@@ -153,15 +154,15 @@ class sqlite_scheme extends sql_scheme
     return $this->commit();
   }
 
-  final public function add_index($to, $name, $column, $unique = FALSE) {
+  final protected function add_index($to, $name, $column, $unique = FALSE) {
     return $this->execute(sprintf('CREATE%sINDEX IF NOT EXISTS "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
   }
 
-  final public function remove_index($name) {
+  final protected function remove_index($name) {
     return $this->execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
   }
 
-  final public function quote_string($test) {
+  final protected function quote_string($test) {
     return '"' . $test . '"';
   }
 }

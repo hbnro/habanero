@@ -10,8 +10,9 @@ if ( ! class_exists('PDO')) {
 
 class pdo_driver
 {
-
   protected $last_query = NULL;
+
+  private static $defs = array('pgsql', 'mysql');
 
   final public static function factory(array $params) {
     switch ($params['scheme']) {
@@ -42,45 +43,45 @@ class pdo_driver
     $obj->bridge = new static;
     $obj->bridge->res  = new PDO($dsn_string, $params['user'], $params['pass'], $query);
 
+    in_array($params['scheme'], static::$defs) && $obj->bridge->set_encoding();
+
     return $obj;
   }
 
-  final public function version() {
+  final protected function version() {
     $test = $this->res->getAttribute(PDO::ATTR_SERVER_VERSION);
     return $test['versionString'];
   }
 
-  final public function execute($sql) {
-    $this->last_query = $sql;
-
-    if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $sql)) {
-      return $this->res->exec($sql);
+  final protected function execute($sql) {
+    if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $this->last_query = $sql)) {
+      return @$this->res->exec($sql);
     }
-    return $this->res->query($sql);
+    return @$this->res->query($sql);
   }
 
-  final public function real_escape($test) {
+  final protected function real_escape($test) {
     return substr($this->res->quote($test), 1, -1);
   }
 
-  final public function has_error() {
+  final protected function has_error() {
     $test = $this->res->errorInfo();
     return $test[0] == '00000' ? FALSE : $test[2];
   }
 
-  final public function fetch_result($res) {
+  final protected function fetch_result($res) {
     return @array_shift($this->fetch_assoc($res));
   }
 
-  final public function fetch_assoc($res) {
+  final protected function fetch_assoc($res) {
     return $res ? $res->fetch(PDO::FETCH_ASSOC) : FALSE;
   }
 
-  final public function fetch_object($res) {
+  final protected function fetch_object($res) {
     return $res ? $res->fetch(PDO::FETCH_OBJ) : FALSE;
   }
 
-  final public function count_rows($res) {
+  final protected function count_rows($res) {
     if ( ! $res) {
       return FALSE;
     }
@@ -95,11 +96,11 @@ class pdo_driver
     return (int) $out;
   }
 
-  final public function affected_rows($res) {
+  final protected function affected_rows($res) {
     return $res ? (int) $res : FALSE;
   }
 
-  final public function last_inserted_id() {
+  final protected function last_inserted_id() {
     // TODO: support for postgres?
     return $this->res->lastInsertId();
   }

@@ -10,10 +10,7 @@ if ( ! class_exists('SQLite3')) {
 
 class sqlite_driver extends sqlite_scheme
 {
-
   protected $last_query = NULL;
-
-  protected $random = 'RANDOM()';
 
   final public static function factory(array $params) {
     $db_file = $params['host'] . $params['path'];
@@ -47,48 +44,47 @@ class sqlite_driver extends sqlite_scheme
     return $obj;
   }
 
-  final public function version() {
+  final protected function version() {
     $test = $this->res->version();
     return $test['versionString'];
   }
 
-  final public function execute($sql) {//FIX
-    $this->last_query = $sql;
-    return @$this->res->query($sql);
+  final protected function execute($sql) {//FIX
+    return @$this->res->query($this->last_query = $sql);
   }
 
-  final public function real_escape($test) {
+  final protected function real_escape($test) {
     return str_replace("'", "''", stripslashes($test));
   }
 
-  final public function has_error() {
+  final protected function has_error() {
     return $this->res->lastErrorCode() ? $this->res->lastErrorMsg() : FALSE;
   }
 
-  final public function fetch_result($res) {
+  final protected function fetch_result($res) {
     return ($tmp = $this->fetch_assoc($res)) ? array_shift($tmp) : FALSE;
   }
 
-  final public function fetch_assoc($res) {
+  final protected function fetch_assoc($res) {
     return $res ? $res->fetchArray(SQLITE3_ASSOC) : FALSE;
   }
 
-  final public function fetch_object($res) {
+  final protected function fetch_object($res) {
     if ($res && $out = $this->fetch_assoc($res)) {//FIX
       return (object) $out;
     }
   }
 
-  final public function count_rows($res) {//FIX
+  final protected function count_rows($res) {//FIX
     $sql = sprintf('SELECT COUNT(*) FROM (%s)', $this->last_query);
     return $this->last_query ? $this->fetch_result($this->execute($sql)) : FALSE;
   }
 
-  final public function affected_rows() {
+  final protected function affected_rows() {
     return $this->res->changes();
   }
 
-  final public function last_inserted_id() {
+  final protected function last_inserted_id() {
     return $this->res->lastInsertRowID();
   }
 }

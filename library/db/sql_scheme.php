@@ -38,6 +38,29 @@ class sql_scheme extends sql_query
 
 
   /**
+   * Create tables
+   *
+   * @param  string Table name
+   * @param  array  Columns
+   * @return mixed
+   */
+  final public function create($table, array $columns) {
+    return $this->execute($this->build_table($table, $columns));
+  }
+
+
+  /**
+   * Drop tables
+   *
+   * @param  string Table name
+   * @return mixed
+   */
+  final public function drop($table) {
+    return $this->execute('DROP TABLE ' . $this->quote_string($name));
+  }
+
+
+  /**
    * Database import
    *
    * @param  string  Filepath
@@ -138,13 +161,11 @@ class sql_scheme extends sql_query
       return $test;
     }
 
-
     foreach ($test as $one) {
       if (match($filter, $one)) {
         $out []= $one;
       }
     }
-
     return $out;
   }
 
@@ -185,13 +206,13 @@ class sql_scheme extends sql_query
    * @ignore
    */
 
+   // single column definition
   final protected function a_field($type, $length = 0, $default = NULL) {
     if (empty($type)) {
       return FALSE;
     } else {
       $test = is_string($type) && ! empty($this->raw[$type]) ? $this->raw[$type] : $type;
     }
-
 
     if (is_assoc($test)) {
       $test = array_merge(compact('length', 'default'), $test);
@@ -226,15 +247,16 @@ class sql_scheme extends sql_query
     return $type;
   }
 
+  // generic table definition
   final protected function build_table($table, array $columns = array()) {
-    $name = $this->protect_names($table);
+    $name = $this->quote_string($table);
 
     $sql  = "CREATE TABLE $name";
     $sql .= "\n(\n";
 
 
     foreach ($columns as $key => $value) {
-      $sql  .= sprintf(" %s %s,\n", $this->protect_names($key), $this->a_field($value));
+      $sql  .= sprintf(" %s %s,\n", $this->quote_string($key), $this->a_field($value));
     }
 
     $sql  = $columns ? substr($sql, 0, - 2) : '';

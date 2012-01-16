@@ -80,15 +80,15 @@ class db extends prototype
       /**#@-*/
 
       static::$multi[$dsn_string] = $driver_class::factory($parts);
-      method_exists(static::$multi[$dsn_string], 'set_enconding') && static::$multi[$dsn_string]->set_encoding();
     }
     return static::$multi[$dsn_string];
   }
-
-  final public static function missing($method, array $arguments) {
-    return call_user_func_array(array(static::connect(option('database.default')), $method), $arguments);
-  }
-
 }
+
+
+// primary connection
+db::implement('missing', function ($method, array $arguments) {
+  return call_user_func_array(array(db::connect(option('database.default')), $method), $arguments);
+});
 
 /* EOF: ./library/db/db.php */

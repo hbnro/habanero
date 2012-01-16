@@ -96,7 +96,7 @@ class sql_base
         $sql []= ' ' . $this->protect_names($val);
         continue;
       }
-      $sql []= ' ' . $this->protect_names($key) . ' AS ' . $this->protect_names($val);
+      $sql []= ' ' . $this->protect_names($key) . ' AS ' . $this->quote_string($val);
     }
     return join(",\n", $sql);
   }
@@ -109,7 +109,7 @@ class sql_base
       $cols = array();
 
       foreach (array_keys($fields) as $one) {
-        $cols []= $this->protect_names($one);
+        $cols []= $this->quote_string($one);
       }
 
       $sql []= '(' . join(', ', $cols) . ')';
@@ -131,7 +131,7 @@ class sql_base
         if (is_true($insert)) {
           $out []= $val;
         } else {
-          $out []= sprintf('%s = %s', $this->protect_names($key), $val);
+          $out []= sprintf('%s = %s', $this->quote_string($key), $val);
         }
       }
     }

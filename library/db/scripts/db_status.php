@@ -1,33 +1,31 @@
 <?php
 
-
-
 info(ln('db.verifying_databases'));
 
-foreach ((array) option('database') as $name => $dsn) {
-  bold("$name - $dsn");
+$name = db()->name;
+$dsn  = db()->dsn;
 
-  $res  = db::connect($dsn);
-  $test = $res->tables();
+bold("$name - $dsn");
 
-  if (empty($test)) {
-    error(ln('db.without_tables'));
-  } else {
-    success(ln('db.tables'));
+$test = db::tables();
 
-    foreach ($test as $tbl) {
-      $count = (int) $res->result($res->select($tbl, 'COUNT(*)'));
+if (empty($test)) {
+  error(ln('db.without_tables'));
+} else {
+  success(ln('db.tables'));
 
-      $keys  = array_keys($res->columns($tbl));
-      $keys  = sprintf('\clight_gray(%s)\c', join(')\c, \clight_gray(', $keys));
+  foreach ($test as $tbl) {
+    $count = (int) db::result(db::select($tbl, 'COUNT(*)'));
 
-      $text  = sprintf("\byellow($tbl)\b ($keys)\n  => $count");
+    $keys  = array_keys(db::columns($tbl));
+    $keys  = sprintf('\clight_gray(%s)\c', join(')\c, \clight_gray(', $keys));
 
-      cli::writeln($text);
-    }
-    done();
+    $text  = sprintf("\byellow($tbl)\b ($keys)\n  => $count");
+
+    cli::writeln($text);
   }
-
 }
+
+done();
 
 /* EOF: ./library/db/scripts/db_status.php */

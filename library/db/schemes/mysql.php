@@ -6,56 +6,57 @@
 
 class mysql_scheme extends sql_scheme
 {
+  protected $random = 'RAND()';
 
-  private $raw = array(
-            'primary_key' => 'INT(11) DEFAULT NULL auto_increment PRIMARY KEY',
-            'string' => array('type' => 'VARCHAR', 'length' => 255),
-            'integer' => array('type' => 'INT', 'length' => 11),
-            'timestamp' => array('type' => 'DATETIME'),
-            'numeric' => array('type' => 'VARCHAR', 'length' => 16),
-            'boolean' => array('type' => 'TINYINT', 'length' => 1),
-            'binary' => array('type' => 'BLOB'),
-          );
+  protected $types = array(
+              'VARCHAR' => 'string',
+              'LONGTEXT' => 'string',
+              'TINYTEXT' => 'string',
+              'INT' => 'integer',
+              'TINYINT' => 'integer',
+              'SMALLINT' => 'integer',
+              'MEDIUM' => 'integer',
+              'BIGINT' => 'integer',
+              'NUMERIC' => 'numeric',
+              'DECIMAL' => 'numeric',
+              'YEAR' => 'numeric',
+              'DOUBLE' => 'float',
+              'BOOL' => 'boolean',
+              'BINARY' => 'binary',
+              'VARBINARY' => 'binary',
+              'LONGBLOB' => 'binary',
+              'MEDIUMBLOB' => 'binary',
+              'TINYBLOB' => 'binary',
+              'BLOB' => 'binary',
+            );
 
-  private $types = array(
-            'VARCHAR' => 'string',
-            'LONGTEXT' => 'string',
-            'TINYTEXT' => 'string',
-            'INT' => 'integer',
-            'TINYINT' => 'integer',
-            'SMALLINT' => 'integer',
-            'MEDIUM' => 'integer',
-            'BIGINT' => 'integer',
-            'NUMERIC' => 'numeric',
-            'DECIMAL' => 'numeric',
-            'YEAR' => 'numeric',
-            'DOUBLE' => 'float',
-            'BOOL' => 'boolean',
-            'BINARY' => 'binary',
-            'VARBINARY' => 'binary',
-            'LONGBLOB' => 'binary',
-            'MEDIUMBLOB' => 'binary',
-            'TINYBLOB' => 'binary',
-            'BLOB' => 'binary',
-          );
+  protected $raw = array(
+              'primary_key' => 'INT(11) DEFAULT NULL auto_increment PRIMARY KEY',
+              'string' => array('type' => 'VARCHAR', 'length' => 255),
+              'integer' => array('type' => 'INT', 'length' => 11),
+              'timestamp' => array('type' => 'DATETIME'),
+              'numeric' => array('type' => 'VARCHAR', 'length' => 16),
+              'boolean' => array('type' => 'TINYINT', 'length' => 1),
+              'binary' => array('type' => 'BLOB'),
+            );
 
-  final public function begin_transaction() {
+  final protected function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
   }
 
-  final public function commit_transaction() {
+  final protected function commit_transaction() {
     return $this->execute('COMMIT TRANSACTION');
   }
 
-  final public function rollback_transaction() {
+  final protected function rollback_transaction() {
     return $this->execute('ROLLBACK TRANSACTION');
   }
 
-  final public function set_encoding() {
+  final protected function set_encoding() {
     return $this->execute("SET NAMES 'UTF-8'");
   }
 
-  final public function fetch_tables() {
+  final protected function fetch_tables() {
     $out = array();
     $old = $this->execute('SHOW TABLES');
 
@@ -66,7 +67,7 @@ class mysql_scheme extends sql_scheme
     return $out;
   }
 
-  final public function fetch_columns($test) {
+  final protected function fetch_columns($test) {
     $out = array();
     $old = $this->execute("DESCRIBE `$test`");
 
@@ -84,7 +85,7 @@ class mysql_scheme extends sql_scheme
     return $out;
   }
 
-  final public function fetch_indexes($test) {
+  final protected function fetch_indexes($test) {
     $out = array();
 
     $res = $this->execute("SHOW INDEXES FROM `$test`");
@@ -105,23 +106,23 @@ class mysql_scheme extends sql_scheme
     return $out;
   }
 
-  final public function ensure_limit($from, $to) {
+  final protected function ensure_limit($from, $to) {
     return "\nLIMIT {$from}" . ( ! empty($to) ? ",$to\n" : "\n");
   }
 
-  final public function rename_table($from, $to) {
+  final protected function rename_table($from, $to) {
     return $this->execute(sprintf('RENAME TABLE `%s` TO `%s`', $from, $to));
   }
 
-  final public function add_column($to, $name, $type) {
-    return $this->execute(sprintf('ALTER TABLE `%s` ADD `%s` %s', $to, $name, db::field($type)));
+  final protected function add_column($to, $name, $type) {
+    return $this->execute(sprintf('ALTER TABLE `%s` ADD `%s` %s', $to, $name, $this->a_field($type)));
   }
 
-  final public function remove_column($from, $name) {
+  final protected function remove_column($from, $name) {
     return $this->execute(sprintf('ALTER TABLE `%s` DROP COLUMN `%s`', $from, $name));
   }
 
-  final public function rename_column($from, $name, $to) {
+  final protected function rename_column($from, $name, $to) {
     static $map = array(
               '/^VARCHAR$/' => 'VARCHAR(255)',
               '/^INT(?:EGER)$/' => 'INT(11)',
@@ -139,22 +140,21 @@ class mysql_scheme extends sql_scheme
     return $this->execute(sprintf('ALTER TABLE `%s` CHANGE `%s` `%s` %s', $from, $name, $to, $type));
   }
 
-  final public function change_column($from, $name, $to) {
+  final protected function change_column($from, $name, $to) {
     return $this->execute(sprintf('ALTER TABLE `%s` MODIFY `%s` %s', $from, $name, $this->a_field($to)));
   }
 
-  final public function add_index($to, $name, $column, $unique = FALSE) {
+  final protected function add_index($to, $name, $column, $unique = FALSE) {
     $query  = sprintf('CREATE%sINDEX `%s` ON `%s` (`%s`)', $unique ? ' UNIQUE ' : ' ', $name, $to, join('`, `', $column));
     return $this->execute($query);
   }
 
-  final public function remove_index($name, $table) {
+  final protected function remove_index($name, $table) {
     return $this->execute(sprintf('DROP INDEX `%s` ON `%s`', $name, $table));
   }
 
-  final public function quote_string($test) {
+  final protected function quote_string($test) {
     return "`$test`";
   }
-
 }
 /* EOF: ./library/db/schemes/mysql.php */
