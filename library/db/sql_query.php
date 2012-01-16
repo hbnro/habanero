@@ -218,11 +218,7 @@ class sql_query extends sql_base
     if (is_string($test)) {
       $test = $this->query($test);
     }
-
-    if ($this->numrows($test) > 0) {
-      return $this->fetch_result($test) ?: $default;
-    }
-    return $default;
+    return $this->fetch_result($test) ?: $default;
   }
 
 
