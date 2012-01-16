@@ -9,15 +9,8 @@ import('db');
 class db_model extends a_record
 {
 
-  // primary key
-  public static $primary_key = NULL;
-
   // connection
   public static $database = 'default';
-
-  // resource
-  protected static $res = NULL;
-
 
 
   /**
@@ -162,8 +155,13 @@ class db_model extends a_record
    *
    * @return array
    */
-  final public static function columns() {// TODO: implements caching for this...
-    return static::conn()->columns(static::table());
+  final public static function columns() {
+    $idx = get_called_class() . '_columns';
+
+    if (empty(static::$cache[$idx])) {
+      static::$cache[$idx] = static::conn()->columns(static::table());
+    }
+    return static::$cache[$idx];
   }
 
 
@@ -173,21 +171,22 @@ class db_model extends a_record
    * @return array
    */
   final public static function pk() {
-    if ( ! static::$primary_key) {
+    $idx = get_called_class() . '_pk';
+
+    if (empty(static::$cache[$idx])) {
       foreach (static::columns() as $key => $one) {
         if ($one['type'] === 'primary_key') {
-          static::$primary_key = $key;
+          static::$cache[$idx] = $key;
 
           break;
         }
       }
 
-      if ( ! static::$primary_key) {
+      if ( ! static::$cache[$idx]) {
         raise(ln('ar.primary_key_missing', array('model' => get_called_class())));
       }
     }
-
-    return static::$primary_key;
+    return static::$cache[$idx];
   }
 
 
@@ -213,12 +212,17 @@ class db_model extends a_record
     static::conn()->update(static::table(), $data, $params);
   }
 
+
+  /**#@+
+   * @ignore
+   */
+
+  // cached connection
   final private static function conn() {
-    if (is_null(static::$res)) {
-      static::$res = db::connect(option('database.' . static::$database));
-    }
-    return static::$res;
+    return db::connect(option('database.' . static::$database));
   }
+
+  /**#@-*/
 
 }
 

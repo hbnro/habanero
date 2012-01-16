@@ -67,21 +67,18 @@ class db extends prototype
       $scheme_file  = __DIR__.DS.'schemes'.DS.$scheme_name.EXT;
       $driver_class = extn($driver_file, TRUE) . '_driver';
 
-      if ( ! in_array($scheme_name, static::$cached)) {
-        if ( ! is_file($scheme_file)) {
-          raise(ln('db.database_scheme_missing', array('adapter' => $parts['scheme'])));
-        }
-
-
-        /**#@+
-          * @ignore
-          */
-        require $scheme_file;
-        require $driver_file;
-        /**#@-*/
-
-        static::$cached []= $scheme_name;
+      if ( ! is_file($scheme_file)) {
+        raise(ln('db.database_scheme_missing', array('adapter' => $parts['scheme'])));
       }
+
+
+      /**#@+
+        * @ignore
+        */
+      ! is_loaded($scheme_file) && require $scheme_file;
+      ! is_loaded($driver_file) && require $driver_file;
+      /**#@-*/
+
       static::$multi[$dsn_string] = $driver_class::factory($parts);
       method_exists(static::$multi[$dsn_string], 'set_enconding') && static::$multi[$dsn_string]->set_encoding();
     }
