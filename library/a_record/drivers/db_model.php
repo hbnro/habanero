@@ -146,6 +146,9 @@ class db_model extends a_record
       ));
     }
 
+    if (method_exists(static::conn(), $method)) {
+      return call_user_func_array(array(static::conn(), $method), $arguments);
+    }
     return parent::super($method, $arguments);
   }
 

@@ -55,7 +55,7 @@ class sql_scheme extends sql_query
    * @return mixed
    */
   final public function drop($table) {
-    return $this->execute('DROP TABLE ' . $this->quote_string($name));
+    return $this->execute('DROP TABLE ' . $this->quote_string($table));
   }
 
 
