@@ -35,6 +35,20 @@ foreach ((array) option('import_path', array()) as $path) {
   }
 }
 
+// compactize!
+if ( !! `php -v`) {
+  $test = dir2arr($tetl_path, '*'.EXT, DIR_RECURSIVE | DIR_MAP);
+  $test = array_filter($test, 'is_file');
+
+  cli::write('Compressing files...');
+
+  foreach ($test as $one) {
+    $in_file = escapeshellarg($one);
+    write($one, `php -w $in_file`);
+  }
+  cli::writeln('OK');
+}
+
 done();
 
 /* EOF: ./stack/scripts/stub.php */
