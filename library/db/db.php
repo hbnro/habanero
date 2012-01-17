@@ -12,7 +12,7 @@ class db extends prototype
   private static $cached = array();
 
   final public static function connect($dsn_string) {
-    if ( ! array_key_exists($dsn_string, static::$multi)) {
+    if ( ! @array_key_exists($dsn_string, static::$multi)) {
       $dsn_default  = 'sqlite::memory:';
       $regex_string = '/^\w+:|scheme\s*=\s*\w+/';
 
