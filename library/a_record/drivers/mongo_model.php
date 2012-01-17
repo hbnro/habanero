@@ -33,10 +33,9 @@ class mongo_model extends a_record
     unset($fields['_id']);
 
     if ($this->is_new()) {
-      if (static::conn()->insert($fields)) {
-        $last_record = static::conn()->findOne($fields, (array) '_id');
-        $this->props['_id'] = $last_record['_id'];
+      if (static::conn()->insert($fields, TRUE)) {
         $this->new_record = FALSE;
+        $this->props = $fields;
       }
     } else {
       static::conn()->update(array(
