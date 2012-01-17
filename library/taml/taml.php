@@ -151,21 +151,6 @@ class taml extends prototype
     $out = static::compile($out);
     $out = static::fixate($out);
 
-    ob_start();
-    $old = @ini_set('log_errors', 0);
-    eval(sprintf('if(0){?' . '>%s<' . '?php;}', $out));
-    @ini_set('log_errors', $old);
-    $check = ob_get_clean();
-
-    if (preg_match('/(?:Parse|syntax)\s+error/', $check)) {
-      preg_match('/(.+?\s+in).*?on\s+line\s+(\d+)/', $check, $match);
-
-      $test = explode("\n", $out);
-      $line = $test[$match[2] - 1];
-
-      raise(ln('taml.error_line', array('text' => $line, 'line' => $match[2])));
-    }
-
     return $out;
   }
 
