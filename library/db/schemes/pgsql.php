@@ -4,152 +4,155 @@
  * PostgreSQL database scheme
  */
 
-sql::implement('type', function () {
-  static $set = array(
-            'CHARACTER' => 'string',
-            'VARCHAR' => 'string',
-            'CHAR' => 'string',
-            'INT' => 'integer',
-            'BIGINT' => 'integer',
-            'SMALLINT' => 'integer',
-            'BOOLEAN' => 'boolean',
-            'DECIMAL' => 'numeric',
-            'MONEY' => 'numeric',
-            'ZONE' => 'numeric',
-            'DOUBLE' => 'float',
-            'REAL' => 'float',
-            'BLOB' => 'binary',
-          );
+/**#@+
+ * @ignore
+ */
 
-  return $set;
-});
+class pgsql_scheme extends sql_scheme
+{
+  protected $random = 'RANDOM()';
 
-sql::implement('raw', function () {
-  static $set = array(
-            'primary_key' => 'SERIAL PRIMARY KEY',
-            'string' => array('type' => 'CHARACTER varying', 'length' => 255),
-          );
+  protected $types = array(
+              'CHARACTER' => 'string',
+              'VARCHAR' => 'string',
+              'CHAR' => 'string',
+              'INT' => 'integer',
+              'BIGINT' => 'integer',
+              'SMALLINT' => 'integer',
+              'BOOLEAN' => 'boolean',
+              'DECIMAL' => 'numeric',
+              'MONEY' => 'numeric',
+              'ZONE' => 'numeric',
+              'DOUBLE' => 'float',
+              'REAL' => 'float',
+              'BLOB' => 'binary',
+            );
 
-  return $set;
-});
+  protected $raw = array(
+              'primary_key' => 'SERIAL PRIMARY KEY',
+              'string' => array('type' => 'CHARACTER varying', 'length' => 255),
+            );
 
-sql::implement('begin', function () {
-  return sql::execute('BEGIN');
-});
-
-sql::implement('commit', function () {
-  return sql::execute('COMMIT');
-});
-
-sql::implement('rollback', function () {
-  return sql::execute('ROLLBACK');
-});
-
-sql::implement('encoding', function ($test) {
-  return sql::execute("SET NAMES '$test'");
-});
-
-sql::implement('tables', function () {
-  $out = array();
-
-  $sql = "SELECT tablename FROM pg_tables WHERE tablename "
-       . "!~ '^pg_+' AND schemaname = 'public'";
-
-  $old = sql::execute($sql);
-
-  while ($row = sql::fetch_assoc($old)) {
-    $out []= $row['tablename'];
+  final protected function begin_transaction() {
+    return $this->execute('BEGIN');
   }
 
-  return $out;
-});
+  final protected function commit_transaction() {
+    return $this->execute('COMMIT');
+  }
 
-sql::implement('columns', function ($test) {
-  $out = array();
+  final protected function rollback_transaction() {
+    return $this->execute('ROLLBACK');
+  }
 
-  $sql = "SELECT DISTINCT "
-       . "column_name, data_type AS t, character_maximum_length, column_default AS d,"
-       . "is_nullable FROM information_schema.columns WHERE table_name='$test'";
+  final protected function set_encoding() {
+    return $this->execute("SET NAMES 'UTF-8'");
+  }
 
-  $old = sql::execute($sql);
+  final protected function fetch_tables() {
+    $out = array();
 
-  while ($row = sql::fetch_assoc($old)) {
-    if (preg_match('/^nextval\(.+$/', $row['d'], $id)) {
-      $row['d'] = NULL;
-    } else {
-      $row['d'] = trim(preg_replace('/::.+$/', '', $row['d']), "'");
+    $sql = "SELECT tablename FROM pg_tables WHERE tablename "
+         . "!~ '^pg_+' AND schemaname = 'public'";
+
+    $old = $this->execute($sql);
+
+    while ($row = $this->fetch_assoc($old)) {
+      $out []= $row['tablename'];
     }
 
-    $test     = explode(' ', $row['t']);
-    $row['t'] = $test[0];
-
-    $key  = array_shift($row);
-    $type = array_shift($row);
-
-    $out[$key] = array(
-      'type' => $id ? 'PRIMARY_KEY' : strtoupper($type),
-      'length' => (int) array_shift($row),
-      'default' => trim(array_shift($row), "(')"),
-      'not_null' => ! array_shift($row),
-    );
+    return $out;
   }
 
-  return $out;
-});
+  final protected function fetch_columns($test) {
+    $out = array();
 
-sql::implement('indexes', function ($test) {
-  $out = array();
+    $sql = "SELECT DISTINCT "
+         . "column_name, data_type AS t, character_maximum_length, column_default AS d,"
+         . "is_nullable FROM information_schema.columns WHERE table_name='$test'";
 
-  $sql = "select pg_get_indexdef(indexrelid) AS sql from pg_index where indrelid = '$test'::regclass";
+    $old = $this->execute($sql);
 
-  if (is_object($res = sql::execute($sql))) {
-    while ($one = $res->fetchObject()) {
-      if (preg_match('/CREATE(\s+UNIQUE|)\s+INDEX\s+(\w+)\s+ON.+?\((.+?)\)/', $one->sql, $match)) {
-        $out[$match[2]] = array(
-          'unique' => ! empty($match[1]),
-          'column' => explode(',', preg_replace('/["\s]/', '', $match[3])),
-        );
+    while ($row = $this->fetch_assoc($old)) {
+      if (preg_match('/^nextval\(.+$/', $row['d'], $id)) {
+        $row['d'] = NULL;
+      } else {
+        $row['d'] = trim(preg_replace('/::.+$/', '', $row['d']), "'");
+      }
+
+      $test     = explode(' ', $row['t']);
+      $row['t'] = $test[0];
+
+      $key  = array_shift($row);
+      $type = array_shift($row);
+
+      $out[$key] = array(
+        'type' => $id ? 'PRIMARY_KEY' : strtoupper($type),
+        'length' => (int) array_shift($row),
+        'default' => trim(array_shift($row), "(')"),
+        'not_null' => ! array_shift($row),
+      );
+    }
+
+    return $out;
+  }
+
+  final protected function fetch_indexes($test) {
+    $out = array();
+
+    $sql = "select pg_get_indexdef(indexrelid) AS sql from pg_index where indrelid = '$test'::regclass";
+
+    if (is_object($res = $this->execute($sql))) {
+      while ($one = $res->fetchObject()) {
+        if (preg_match('/CREATE(\s+UNIQUE|)\s+INDEX\s+(\w+)\s+ON.+?\((.+?)\)/', $one->sql, $match)) {
+          $out[$match[2]] = array(
+            'unique' => ! empty($match[1]),
+            'column' => explode(',', preg_replace('/["\s]/', '', $match[3])),
+          );
+        }
       }
     }
+
+    return $out;
   }
 
-  return $out;
-});
+  final protected function ensure_limit($from, $to) {
+    return $to ? "\nLIMIT $to OFFSET $from" : "\nLIMIT $from\n";
+  }
 
-sql::implement('limit', function ($from, $to) {
-  return $to ? "\nLIMIT $to OFFSET $from" : "\nLIMIT $from\n";
-});
+  final protected function rename_table($from, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
+  }
 
-sql::implement('rename_table', function ($from, $to) {
-  return sql::execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
-});
+  final protected function add_column($to, $name, $type) {
+    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
+  }
 
-sql::implement('add_column', function ($to, $name, $type) {
-  return sql::execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, db::field($type)));
-});
+  final protected function remove_column($from, $name) {
+    return $this->execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
+  }
 
-sql::implement('remove_column', function ($from, $name) {
-  return sql::execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
-});
+  final protected function rename_column($from, $name, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
+  }
 
-sql::implement('rename_column', function ($from, $name, $to) {
-  return sql::execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
-});
+  final protected function change_column($from, $name, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, $this->a_field($to)));
+  }
 
-sql::implement('change_column', function ($from, $name, $to) {
-  return sql::execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, db::field($to)));
-});
+  final protected function add_index($to, $name, $column, $unique = FALSE) {
+    return $this->execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
+  }
 
-sql::implement('add_index', function ($to, $name, $column, $unique = FALSE) {
-  return sql::execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
-});
+  final protected function remove_index($name) {
+    return $this->execute(sprintf('DROP INDEX "%s"', $name));
+  }
 
-sql::implement('remove_index', function ($name) {
-  return sql::execute(sprintf('DROP INDEX "%s"', $name));
-});
+  final protected function quote_string($test) {
+    return '"' . $test . '"';
+  }
+}
 
-sql::implement('quotes', function ($test) {
-  return '"' . $test . '"';
-});
+/**#@-*/
 
 /* EOF: ./library/db/schemes/pgsql.php */

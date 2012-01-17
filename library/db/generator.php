@@ -2,6 +2,10 @@
 
 require __DIR__.DS.'initialize'.EXT;
 
+db::implement('missing', function ($method, array $arguments) {
+  return call_user_func_array(array(db()->conn, $method), $arguments);
+});
+
 i18n::load_path(__DIR__.DS.'locale', 'db');
 
 app_generator::usage(ln('db.generator_title'), ln('db.generator_usage'));
@@ -12,7 +16,6 @@ app_generator::alias('db:show_table', 'db:show show');
 app_generator::alias('db:drop_table', 'db:drop drop');
 app_generator::alias('db:create_table', 'db:create table');
 app_generator::alias('db:rename_table', 'db:rename rename');
-
 
 
 
@@ -149,6 +152,20 @@ function build_migration($callback) {
 
 function build_schema() {
   require __DIR__.DS.'scripts'.DS.__FUNCTION__.EXT;
+}
+
+function db() {
+  static $res = NULL;
+
+  if (is_null($res)) {
+    $name = cli::flag('database') ?: 'default';
+    $dsn  = option("database.$name");
+
+    $res->conn = db::connect($dsn);
+    $res->name = $name;
+    $res->dsn = $dsn;
+  }
+  return $res;
 }
 
 /* EOF: ./library/db/generator.php */

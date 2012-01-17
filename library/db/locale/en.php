@@ -13,7 +13,7 @@ $lang['migrating_database'] = 'Migrating database';
 
 $lang['verifying_seed'] = 'Verifying records';
 $lang['verifying_schema'] = 'Verifying schema';
-$lang['verifying_database'] = 'Verifying database';
+$lang['verifying_databases'] = 'Verifying databases';
 $lang['verifying_structure'] = 'Verifying structure';
 
 $lang['model_class_building'] = 'Generating class for model %{name}';

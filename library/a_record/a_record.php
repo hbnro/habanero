@@ -23,6 +23,9 @@ class a_record extends prototype
   // validation errors
   protected $error_list = array();
 
+  // internal caching by class
+  protected static $cache = array();
+
   /**#@-*/
 
 

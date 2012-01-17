@@ -9,9 +9,8 @@ import('db');
 class db_model extends a_record
 {
 
-  // primary key
-  public static $primary_key = NULL;
-
+  // connection
+  public static $database = 'default';
 
 
   /**
@@ -33,10 +32,10 @@ class db_model extends a_record
     unset($fields[static::pk()]);
 
     if ($this->is_new()) {
-      $this->props[static::pk()] = db::insert(static::table(), $fields, static::pk());
+      $this->props[static::pk()] = static::conn()->insert(static::table(), $fields, static::pk());
       $this->new_record = FALSE;
     } else {
-      db::update(static::table(), $fields, array(
+      static::conn()->update(static::table(), $fields, array(
         static::pk() => $this->props[static::pk()],
       ));
     }
@@ -53,7 +52,7 @@ class db_model extends a_record
    * @return integer
    */
   final public static function count($params = array()) {
-    return (int) db::result(db::select(static::table(), 'COUNT(*)', ! empty($params['where']) ? $params['where'] : $params));
+    return (int) static::conn()->result(static::conn()->select(static::table(), 'COUNT(*)', ! empty($params['where']) ? $params['where'] : $params));
   }
 
 
@@ -93,15 +92,15 @@ class db_model extends a_record
           static::pk() => $wich === 'first' ? ASC : DESC,
         );
 
-        $row = db::fetch(db::select(static::table(), $what, $where, $options), AS_ARRAY);
+        $row = static::conn()->fetch(static::conn()->select(static::table(), $what, $where, $options), AS_ARRAY);
 
         return $row ? new static($row, 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
-        $res = db::select(static::table(), $what, $where, $options);
+        $res = static::conn()->select(static::table(), $what, $where, $options);
 
-        while ($row = db::fetch($res, AS_ARRAY)) {
+        while ($row = static::conn()->fetch($res, AS_ARRAY)) {
           $out []= new static($row, 'after_find');
         }
         return $out;
@@ -112,7 +111,7 @@ class db_model extends a_record
     }
 
 
-    $row = db::fetch(db::select(static::table(), $what, array(
+    $row = static::conn()->fetch(static::conn()->select(static::table(), $what, array(
       static::pk() => array_shift($args),
     ), $options), AS_ARRAY);
 
@@ -129,7 +128,7 @@ class db_model extends a_record
    */
   final public static function missing($method, $arguments) {
     if (strpos($method, 'find_by_') === 0) {
-      $row = db::fetch(db::select(static::table(), ALL, array(
+      $row = static::conn()->fetch(static::conn()->select(static::table(), ALL, array(
         substr($method, 8) => $arguments,
       )), AS_ARRAY);
 
@@ -138,15 +137,18 @@ class db_model extends a_record
       return static::count(static::merge(substr($method, 9), $arguments));
     } elseif (strpos($method, 'find_or_create_by_') === 0) {
       $test = static::merge(substr($method, 18), $arguments);
-      $res  = db::select(static::table(), ALL, $test);
+      $res  = static::conn()->select(static::table(), ALL, $test);
 
-      return db::numrows($res) ? new static(db::fetch($res, AS_ARRAY), 'after_find') : static::create($test);
+      return static::conn()->numrows($res) ? new static(static::conn()->fetch($res, AS_ARRAY), 'after_find') : static::create($test);
     } elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
       return static::find($match[1], array(
         'where' => static::merge($match[2], $arguments),
       ));
     }
 
+    if (method_exists(static::conn(), $method)) {
+      return call_user_func_array(array(static::conn(), $method), $arguments);
+    }
     return parent::super($method, $arguments);
   }
 
@@ -156,8 +158,13 @@ class db_model extends a_record
    *
    * @return array
    */
-  final public static function columns() {// TODO: implements caching for this...
-    return db::columns(static::table());
+  final public static function columns() {
+    $idx = get_called_class() . '_columns';
+
+    if (empty(static::$cache[$idx])) {
+      static::$cache[$idx] = static::conn()->columns(static::table());
+    }
+    return static::$cache[$idx];
   }
 
 
@@ -167,21 +174,22 @@ class db_model extends a_record
    * @return array
    */
   final public static function pk() {
-    if ( ! static::$primary_key) {
+    $idx = get_called_class() . '_pk';
+
+    if (empty(static::$cache[$idx])) {
       foreach (static::columns() as $key => $one) {
         if ($one['type'] === 'primary_key') {
-          static::$primary_key = $key;
+          static::$cache[$idx] = $key;
 
           break;
         }
       }
 
-      if ( ! static::$primary_key) {
+      if ( ! static::$cache[$idx]) {
         raise(ln('ar.primary_key_missing', array('model' => get_called_class())));
       }
     }
-
-    return static::$primary_key;
+    return static::$cache[$idx];
   }
 
 
@@ -192,7 +200,7 @@ class db_model extends a_record
    * @return void
    */
   final public static function delete_all(array $params = array()) {
-    db::delete(static::table(), $params);
+    static::conn()->delete(static::table(), $params);
   }
 
 
@@ -204,8 +212,20 @@ class db_model extends a_record
    * @return void
    */
   final public static function update_all(array $data, array $params = array()) {
-    db::update(static::table(), $data, $params);
+    static::conn()->update(static::table(), $data, $params);
   }
+
+
+  /**#@+
+   * @ignore
+   */
+
+  // cached connection
+  final private static function conn() {
+    return db::connect(option('database.' . static::$database));
+  }
+
+  /**#@-*/
 
 }
 

@@ -4,170 +4,173 @@
  * SQLite3 database scheme
  */
 
-sql::implement('type', function () {
-  static $set = array(
-            'CHARACTER' => 'string',
-            'NVARCHAR' => 'string',
-            'VARCHAR' => 'string',
-            'NCHAR' => 'string',
-            'CLOB' => 'string',
-            'INT' => 'integer',
-            'TINYINT' => 'integer',
-            'SMALLINT' => 'integer',
-            'MEDIUMINT' => 'integer',
-            'BIGINT' => 'integer',
-            'INT2' => 'integer',
-            'INT8' => 'integer',
-            'REAL' => 'float',
-            'DOUBLE' => 'float',
-            'DECIMAL' => 'numeric',
-            'BLOB' => 'binary',
-          );
+/**#@+
+ * @ignore
+ */
 
-  return $set;
-});
+class sqlite_scheme extends sql_scheme
+{
+  protected $random = 'RANDOM()';
 
-sql::implement('raw', function () {
-  static $set = array(
-            'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
-            'string' => array('type' => 'VARCHAR', 'length' => 255),
-            'timestamp' => array('type' => 'DATETIME'),
-            'binary' => array('type' => 'BLOB'),
-          );
+  protected $types = array(
+              'CHARACTER' => 'string',
+              'NVARCHAR' => 'string',
+              'VARCHAR' => 'string',
+              'NCHAR' => 'string',
+              'CLOB' => 'string',
+              'INT' => 'integer',
+              'TINYINT' => 'integer',
+              'SMALLINT' => 'integer',
+              'MEDIUMINT' => 'integer',
+              'BIGINT' => 'integer',
+              'INT2' => 'integer',
+              'INT8' => 'integer',
+              'REAL' => 'float',
+              'DOUBLE' => 'float',
+              'DECIMAL' => 'numeric',
+              'BLOB' => 'binary',
+            );
 
-  return $set;
-});
+  protected $raw = array(
+              'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
+              'string' => array('type' => 'VARCHAR', 'length' => 255),
+              'timestamp' => array('type' => 'DATETIME'),
+              'binary' => array('type' => 'BLOB'),
+            );
 
-sql::implement('begin', function () {
-  return sql::execute('BEGIN TRANSACTION');
-});
-
-sql::implement('commit', function () {
-  return sql::execute('COMMIT TRANSACTION');
-});
-
-sql::implement('rollback', function () {
-  return sql::execute('ROLLBACK TRANSACTION');
-});
-
-sql::implement('tables', function () {
-  $out = array();
-  $sql = "SELECT name FROM sqlite_master WHERE type = 'table'";
-  $old = sql::execute($sql);
-
-  while ($row = sql::fetch_assoc($old)) {
-    $out []= $row['name'];
+  final protected function begin_transaction() {
+    return $this->execute('BEGIN TRANSACTION');
   }
 
-  return $out;
-});
-
-sql::implement('columns', function ($test) {
-  $out = array();
-  $sql = "PRAGMA table_info('$test')";
-  $old = sql::execute($sql);
-
-  while ($row = sql::fetch_assoc($old)) {
-    preg_match('/^(\w+)(?:\((\d+)\))?.*?$/', strtoupper($row['type']), $match);
-
-    $out[$row['name']] = array(
-        'type' => $row['pk'] > 0 ? 'PRIMARY_KEY' : $match[1],
-        'length' => ! empty($match[2]) ? (int) $match[2] : 0,
-        'default' => trim($row['dflt_value'], "(')"),
-        'not_null' => $row['notnull'] > 0,
-    );
+  final protected function commit_transaction() {
+    return $this->execute('COMMIT TRANSACTION');
   }
 
-  return $out;
-});
+  final protected function rollback_transaction() {
+    return $this->execute('ROLLBACK TRANSACTION');
+  }
 
-sql::implement('indexes', function ($test) {
-  $res = sql::execute("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='$test'");
+  final protected function fetch_tables() {
+    $out = array();
+    $sql = "SELECT name FROM sqlite_master WHERE type = 'table'";
+    $old = $this->execute($sql);
 
-  $out = array();
+    while ($row = $this->fetch_assoc($old)) {
+      $out []= $row['name'];
+    }
 
-  while ($one = sql::fetch_object($res)) {
-    if (preg_match('/\((.+?)\)/', $one->sql, $match)) {
-      $col = explode(',', preg_replace('/["\s]/', '', $match[1]));
-      $out[$one->name] = array(
-        'unique' => strpos($one->sql, 'UNIQUE ') !== FALSE,
-        'column' => $col,
+    return $out;
+  }
+
+  final protected function fetch_columns($test) {
+    $out = array();
+    $sql = "PRAGMA table_info('$test')";
+    $old = $this->execute($sql);
+
+    while ($row = $this->fetch_assoc($old)) {
+      preg_match('/^(\w+)(?:\((\d+)\))?.*?$/', strtoupper($row['type']), $match);
+
+      $out[$row['name']] = array(
+          'type' => $row['pk'] > 0 ? 'PRIMARY_KEY' : $match[1],
+          'length' => ! empty($match[2]) ? (int) $match[2] : 0,
+          'default' => trim($row['dflt_value'], "(')"),
+          'not_null' => $row['notnull'] > 0,
       );
     }
+
+    return $out;
   }
 
-  return $out;
-});
+  final protected function fetch_indexes($test) {
+    $res = $this->execute("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='$test'");
 
-sql::implement('limit', function ($from, $to) {
-  return "\nLIMIT $from" . ($to ? ",$to\n" : "\n");
-});
+    $out = array();
 
-sql::implement('rename_table', function ($from, $to) {
-  return sql::execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
-});
-
-sql::implement('add_column', function ($to, $name, $type) {
-  return sql::execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, db::field($type)));
-});
-
-sql::implement('remove_column', function ($from, $name) {
-  return sql::change_column($from, $name, NULL);
-});
-
-sql::implement('rename_column', function ($from, $name, $to) {
-  $set = sql::columns($from);
-  $old = $set[$name];
-
-  sql::add_column($from, $to, array(
-    $old['type'],
-    $old['length'],
-    $old['default'],
-  ));
-
-  sql::execute(sprintf('UPDATE "%s" SET "%s" = "%s"', $from, $to, $name));
-
-  return sql::remove_column($from, $name);
-});
-
-sql::implement('change_column', function ($from, $name, $to) {
-  $new = array();
-
-  foreach (sql::columns($from) as $key => $val) {
-    if ($key === $name) {
-      if (is_array($to)) {
-        $new[$key] = $to;
+    while ($one = $this->fetch_object($res)) {
+      if (preg_match('/\((.+?)\)/', $one->sql, $match)) {
+        $col = explode(',', preg_replace('/["\s]/', '', $match[1]));
+        $out[$one->name] = array(
+          'unique' => strpos($one->sql, 'UNIQUE ') !== FALSE,
+          'column' => $col,
+        );
       }
-      continue;
     }
-    $new[$key] = array(
-      $val['type'],
-      $val['length'],
-      $val['default'],
-    );
+
+    return $out;
   }
 
-  sql::begin();
+  final protected function ensure_limit($from, $to) {
+    return "\nLIMIT $from" . ($to ? ",$to\n" : "\n");
+  }
 
-  sql::execute(db::build($old = uniqid($from), $new));
-  sql::execute(sprintf('INSERT INTO "%s" SELECT "%s" FROM "%s"', $old, join('", "', array_keys($new)), $from));
-  sql::execute(sprintf('DROP TABLE "%s"', $from));
+  final protected function rename_table($from, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
+  }
 
-  sql::rename_table($old, $from);
+  final protected function add_column($to, $name, $type) {
+    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
+  }
 
-  return sql::commit();
-});
+  final protected function remove_column($from, $name) {
+    return $this->change_column($from, $name, NULL);
+  }
 
-sql::implement('add_index', function ($to, $name, $column, $unique = FALSE) {
-  return sql::execute(sprintf('CREATE%sINDEX IF NOT EXISTS "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
-});
+  final protected function rename_column($from, $name, $to) {
+    $set = $this->columns($from);
+    $old = $set[$name];
 
-sql::implement('remove_index', function ($name) {
-  return sql::execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
-});
+    $this->add_column($from, $to, array(
+      $old['type'],
+      $old['length'],
+      $old['default'],
+    ));
 
-sql::implement('quotes', function ($test) {
-  return '"' . $test . '"';
-});
+    $this->execute(sprintf('UPDATE "%s" SET "%s" = "%s"', $from, $to, $name));
+
+    return $this->remove_column($from, $name);
+  }
+
+  final protected function change_column($from, $name, $to) {
+    $new = array();
+
+    foreach ($this->columns($from) as $key => $val) {
+      if ($key === $name) {
+        if (is_array($to)) {
+          $new[$key] = $to;
+        }
+        continue;
+      }
+      $new[$key] = array(
+        $val['type'],
+        $val['length'],
+        $val['default'],
+      );
+    }
+
+    $this->begin();
+
+    $this->execute($this->build_table($old = uniqid($from), $new));
+    $this->execute(sprintf('INSERT INTO "%s" SELECT "%s" FROM "%s"', $old, join('", "', array_keys($new)), $from));
+    $this->execute(sprintf('DROP TABLE "%s"', $from));
+
+    $this->rename_table($old, $from);
+
+    return $this->commit();
+  }
+
+  final protected function add_index($to, $name, $column, $unique = FALSE) {
+    return $this->execute(sprintf('CREATE%sINDEX IF NOT EXISTS "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
+  }
+
+  final protected function remove_index($name) {
+    return $this->execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
+  }
+
+  final protected function quote_string($test) {
+    return '"' . $test . '"';
+  }
+}
+
+/**#@-*/
 
 /* EOF: ./library/db/schemes/sqlite.php */

@@ -10,6 +10,8 @@ class mongo_model extends a_record
   // properties
   public static $columns = array();
 
+  // connection
+  public static $database = 'mongodb';
 
 
   /**
@@ -267,19 +269,19 @@ class mongo_model extends a_record
 
   // connection
   final private static function conn() {
-    static $conn = NULL;
+    $idx = get_called_class() . '_conn';
 
+    if (empty(static::$cache[$idx])) {
+      $dsn_string = option('database.' . static::$database);
+      $database   = substr($dsn_string, strrpos($dsn_string, '/') + 1);
 
-    if (is_null($conn)) {
-      $database   = option('mongo.db');
-      $dsn_string = option('mongo.dsn');
 
       $mongo    = $dsn_string ? new Mongo($dsn_string) : new Mongo;
       $database = $database ?: 'default';
-      $conn     = $mongo->$database;
-    }
 
-    return $conn->{static::table()};
+      static::$cache[$idx] = $mongo->$database;
+    }
+    return static::$cache[$idx]->{static::table()};
   }
 
   /**#@-*/
