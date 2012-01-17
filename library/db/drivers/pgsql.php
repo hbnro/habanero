@@ -10,7 +10,7 @@ if ( ! function_exists('pg_connect')) {
 
 class pgsql_driver extends pgsql_scheme
 {
-  protected $last_query = NULL;
+  protected $last_query = array();
 
   final protected function factory(array $params) {
     $obj = new static;
@@ -31,7 +31,8 @@ class pgsql_driver extends pgsql_scheme
   }
 
   final protected function execute($sql) {
-    return @pg_query($this->res, $this->last_query = $sql);
+    $this->last_query []= $sql;
+    return @pg_query($this->res, $sql);
   }
 
   final protected function real_escape($test) {

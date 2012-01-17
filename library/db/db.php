@@ -12,14 +12,12 @@ class db extends prototype
   private static $cached = array();
 
   final public static function connect($dsn_string) {
-    if ( ! in_array($dsn_string, static::$multi)) {
+    if ( ! array_key_exists($dsn_string, static::$multi)) {
       $dsn_default  = 'sqlite::memory:';
       $regex_string = '/^\w+:|scheme\s*=\s*\w+/';
 
       $dsn_string   = preg_match($regex_string, $dsn_string) ? $dsn_string : $dsn_default;
-
-
-      $test = array('scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment');
+      $test         = explode('|', 'scheme|host|port|user|pass|path|query|fragment');
 
       if (strrpos($dsn_string, ';')) {
         $set = array();

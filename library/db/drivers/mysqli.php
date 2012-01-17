@@ -10,7 +10,7 @@ if ( ! function_exists('mysqli_connect')) {
 
 class mysqli_driver extends mysql_scheme
 {
-  protected $last_query = NULL;
+  protected $last_query = array();
 
   final public static function factory(array $params) {
     $host  = $params['host'];
@@ -30,7 +30,8 @@ class mysqli_driver extends mysql_scheme
   }
 
   final protected function execute($sql) {
-    return mysqli_query($this->res, $this->last_query = $sql);
+    $this->last_query []= $sql;
+    return @mysqli_query($this->res, $sql);
   }
 
   final protected function real_escape($test) {

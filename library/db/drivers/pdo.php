@@ -10,7 +10,7 @@ if ( ! class_exists('PDO')) {
 
 class pdo_driver
 {
-  protected $last_query = NULL;
+  protected $last_query = array();
 
   private static $defs = array('pgsql', 'mysql');
 
@@ -54,7 +54,8 @@ class pdo_driver
   }
 
   final protected function execute($sql) {
-    if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $this->last_query = $sql)) {
+    $this->last_query []= $sql;
+    if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $sql)) {
       return @$this->res->exec($sql);
     }
     return @$this->res->query($sql);

@@ -10,7 +10,7 @@ if ( ! class_exists('SQLite3')) {
 
 class sqlite_driver extends sqlite_scheme
 {
-  protected $last_query = NULL;
+  protected $last_query = array();
 
   final public static function factory(array $params) {
     $db_file = $params['host'] . $params['path'];
@@ -50,7 +50,8 @@ class sqlite_driver extends sqlite_scheme
   }
 
   final protected function execute($sql) {//FIX
-    return @$this->res->query($this->last_query = $sql);
+    $this->last_query []= $sql;
+    return @$this->res->query($sql);
   }
 
   final protected function real_escape($test) {
@@ -76,7 +77,7 @@ class sqlite_driver extends sqlite_scheme
   }
 
   final protected function count_rows($res) {//FIX
-    $sql = sprintf('SELECT COUNT(*) FROM (%s)', $this->last_query);
+    $sql = sprintf('SELECT COUNT(*) FROM (%s)', end($this->last_query));
     return $this->last_query ? $this->fetch_result($this->execute($sql)) : FALSE;
   }
 
