@@ -33,6 +33,34 @@ class pgsql_scheme extends sql_scheme
               'string' => array('type' => 'CHARACTER varying', 'length' => 255),
             );
 
+  final public function rename_table($from, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
+  }
+
+  final public function add_column($to, $name, $type) {
+    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
+  }
+
+  final public function remove_column($from, $name) {
+    return $this->execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
+  }
+
+  final public function rename_column($from, $name, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
+  }
+
+  final public function change_column($from, $name, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, $this->a_field($to)));
+  }
+
+  final public function add_index($to, $name, $column, $unique = FALSE) {
+    return $this->execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
+  }
+
+  final public function remove_index($name) {
+    return $this->execute(sprintf('DROP INDEX "%s"', $name));
+  }
+
   final protected function begin_transaction() {
     return $this->execute('BEGIN');
   }
@@ -118,34 +146,6 @@ class pgsql_scheme extends sql_scheme
 
   final protected function ensure_limit($from, $to) {
     return $to ? "\nLIMIT $to OFFSET $from" : "\nLIMIT $from\n";
-  }
-
-  final protected function rename_table($from, $to) {
-    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
-  }
-
-  final protected function add_column($to, $name, $type) {
-    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
-  }
-
-  final protected function remove_column($from, $name) {
-    return $this->execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
-  }
-
-  final protected function rename_column($from, $name, $to) {
-    return $this->execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
-  }
-
-  final protected function change_column($from, $name, $to) {
-    return $this->execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, $this->a_field($to)));
-  }
-
-  final protected function add_index($to, $name, $column, $unique = FALSE) {
-    return $this->execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
-  }
-
-  final protected function remove_index($name) {
-    return $this->execute(sprintf('DROP INDEX "%s"', $name));
   }
 
   final protected function quote_string($test) {

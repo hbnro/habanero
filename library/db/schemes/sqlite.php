@@ -38,6 +38,69 @@ class sqlite_scheme extends sql_scheme
               'binary' => array('type' => 'BLOB'),
             );
 
+  final public function rename_table($from, $to) {
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
+  }
+
+  final public function add_column($to, $name, $type) {
+    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
+  }
+
+  final public function remove_column($from, $name) {
+    return $this->change_column($from, $name, NULL);
+  }
+
+  final public function rename_column($from, $name, $to) {
+    $set = $this->columns($from);
+    $old = $set[$name];
+
+    $this->add_column($from, $to, array(
+      $old['type'],
+      $old['length'],
+      $old['default'],
+    ));
+
+    $this->execute(sprintf('UPDATE "%s" SET "%s" = "%s"', $from, $to, $name));
+
+    return $this->remove_column($from, $name);
+  }
+
+  final public function change_column($from, $name, $to) {
+    $new = array();
+
+    foreach ($this->columns($from) as $key => $val) {
+      if ($key === $name) {
+        if (is_array($to)) {
+          $new[$key] = $to;
+        }
+        continue;
+      }
+      $new[$key] = array(
+        $val['type'],
+        $val['length'],
+        $val['default'],
+      );
+    }
+
+    $this->begin();
+
+    $this->execute($this->build_table($old = uniqid($from), $new));
+    $this->execute(sprintf('INSERT INTO "%s" SELECT "%s" FROM "%s"', $old, join('", "', array_keys($new)), $from));
+    $this->execute(sprintf('DROP TABLE "%s"', $from));
+
+    $this->rename_table($old, $from);
+
+    return $this->commit();
+  }
+
+  final public function add_index($to, $name, $column, $unique = FALSE) {
+    return $this->execute(sprintf('CREATE%sINDEX IF NOT EXISTS "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
+  }
+
+  final public function remove_index($name) {
+    return $this->execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
+  }
+
   final protected function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
   }
@@ -101,69 +164,6 @@ class sqlite_scheme extends sql_scheme
 
   final protected function ensure_limit($from, $to) {
     return "\nLIMIT $from" . ($to ? ",$to\n" : "\n");
-  }
-
-  final protected function rename_table($from, $to) {
-    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
-  }
-
-  final protected function add_column($to, $name, $type) {
-    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
-  }
-
-  final protected function remove_column($from, $name) {
-    return $this->change_column($from, $name, NULL);
-  }
-
-  final protected function rename_column($from, $name, $to) {
-    $set = $this->columns($from);
-    $old = $set[$name];
-
-    $this->add_column($from, $to, array(
-      $old['type'],
-      $old['length'],
-      $old['default'],
-    ));
-
-    $this->execute(sprintf('UPDATE "%s" SET "%s" = "%s"', $from, $to, $name));
-
-    return $this->remove_column($from, $name);
-  }
-
-  final protected function change_column($from, $name, $to) {
-    $new = array();
-
-    foreach ($this->columns($from) as $key => $val) {
-      if ($key === $name) {
-        if (is_array($to)) {
-          $new[$key] = $to;
-        }
-        continue;
-      }
-      $new[$key] = array(
-        $val['type'],
-        $val['length'],
-        $val['default'],
-      );
-    }
-
-    $this->begin();
-
-    $this->execute($this->build_table($old = uniqid($from), $new));
-    $this->execute(sprintf('INSERT INTO "%s" SELECT "%s" FROM "%s"', $old, join('", "', array_keys($new)), $from));
-    $this->execute(sprintf('DROP TABLE "%s"', $from));
-
-    $this->rename_table($old, $from);
-
-    return $this->commit();
-  }
-
-  final protected function add_index($to, $name, $column, $unique = FALSE) {
-    return $this->execute(sprintf('CREATE%sINDEX IF NOT EXISTS "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
-  }
-
-  final protected function remove_index($name) {
-    return $this->execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
   }
 
   final protected function quote_string($test) {

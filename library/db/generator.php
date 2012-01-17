@@ -16,6 +16,12 @@ app_generator::alias('db:show_table', 'db:show show');
 app_generator::alias('db:drop_table', 'db:drop drop');
 app_generator::alias('db:create_table', 'db:create table');
 app_generator::alias('db:rename_table', 'db:rename rename');
+app_generator::alias('db:add_column', 'add_column');
+app_generator::alias('db:remove_column', 'remove_column');
+app_generator::alias('db:rename_column', 'rename_column');
+app_generator::alias('db:change_column', 'change_column');
+app_generator::alias('db:add_index', 'add_index');
+app_generator::alias('db:remove_index', 'remove_index');
 
 
 

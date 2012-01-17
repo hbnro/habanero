@@ -44,6 +44,49 @@ class mysql_scheme extends sql_scheme
               'binary' => array('type' => 'BLOB'),
             );
 
+  final public function rename_table($from, $to) {
+    return $this->execute(sprintf('RENAME TABLE `%s` TO `%s`', $from, $to));
+  }
+
+  final public function add_column($to, $name, $type) {
+    return $this->execute(sprintf('ALTER TABLE `%s` ADD `%s` %s', $to, $name, $this->a_field($type)));
+  }
+
+  final public function remove_column($from, $name) {
+    return $this->execute(sprintf('ALTER TABLE `%s` DROP COLUMN `%s`', $from, $name));
+  }
+
+  final public function rename_column($from, $name, $to) {
+    static $map = array(
+              '/^VARCHAR$/' => 'VARCHAR(255)',
+              '/^INT(?:EGER)$/' => 'INT(11)',
+            );
+
+
+    $set  = $this->columns($from);
+    $test = $this->a_field($set[$name]['type'], $set[$name]['length']);
+    $type = substr($test, 0, strpos($test, ' '));
+
+    foreach ($map as $key => $val) {
+      $type = preg_replace($key, $val, $type);
+    }
+
+    return $this->execute(sprintf('ALTER TABLE `%s` CHANGE `%s` `%s` %s', $from, $name, $to, $type));
+  }
+
+  final public function change_column($from, $name, $to) {
+    return $this->execute(sprintf('ALTER TABLE `%s` MODIFY `%s` %s', $from, $name, $this->a_field($to)));
+  }
+
+  final public function add_index($to, $name, $column, $unique = FALSE) {
+    $query  = sprintf('CREATE%sINDEX `%s` ON `%s` (`%s`)', $unique ? ' UNIQUE ' : ' ', $name, $to, join('`, `', $column));
+    return $this->execute($query);
+  }
+
+  final public function remove_index($name, $table) {
+    return $this->execute(sprintf('DROP INDEX `%s` ON `%s`', $name, $table));
+  }
+
   final protected function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
   }
@@ -112,49 +155,6 @@ class mysql_scheme extends sql_scheme
 
   final protected function ensure_limit($from, $to) {
     return "\nLIMIT {$from}" . ( ! empty($to) ? ",$to\n" : "\n");
-  }
-
-  final protected function rename_table($from, $to) {
-    return $this->execute(sprintf('RENAME TABLE `%s` TO `%s`', $from, $to));
-  }
-
-  final protected function add_column($to, $name, $type) {
-    return $this->execute(sprintf('ALTER TABLE `%s` ADD `%s` %s', $to, $name, $this->a_field($type)));
-  }
-
-  final protected function remove_column($from, $name) {
-    return $this->execute(sprintf('ALTER TABLE `%s` DROP COLUMN `%s`', $from, $name));
-  }
-
-  final protected function rename_column($from, $name, $to) {
-    static $map = array(
-              '/^VARCHAR$/' => 'VARCHAR(255)',
-              '/^INT(?:EGER)$/' => 'INT(11)',
-            );
-
-
-    $set  = $this->columns($from);
-    $test = $this->a_field($set[$name]['type'], $set[$name]['length']);
-    $type = substr($test, 0, strpos($test, ' '));
-
-    foreach ($map as $key => $val) {
-      $type = preg_replace($key, $val, $type);
-    }
-
-    return $this->execute(sprintf('ALTER TABLE `%s` CHANGE `%s` `%s` %s', $from, $name, $to, $type));
-  }
-
-  final protected function change_column($from, $name, $to) {
-    return $this->execute(sprintf('ALTER TABLE `%s` MODIFY `%s` %s', $from, $name, $this->a_field($to)));
-  }
-
-  final protected function add_index($to, $name, $column, $unique = FALSE) {
-    $query  = sprintf('CREATE%sINDEX `%s` ON `%s` (`%s`)', $unique ? ' UNIQUE ' : ' ', $name, $to, join('`, `', $column));
-    return $this->execute($query);
-  }
-
-  final protected function remove_index($name, $table) {
-    return $this->execute(sprintf('DROP INDEX `%s` ON `%s`', $name, $table));
   }
 
   final protected function quote_string($test) {

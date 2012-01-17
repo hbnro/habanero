@@ -37,6 +37,6 @@ if ( ! is_file($migration_file)) {
   write($migration_file, $code, 1);
 }
 
-@eval($code);
+eval($code);
 
 /* EOF: ./library/db/scripts/build_migration.php */
