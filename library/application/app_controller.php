@@ -28,11 +28,9 @@ class app_controller extends prototype
 
   // output response
   public static $response = array(
-    'status' => 200,
-    'headers' => array(
-      'content-type' => 'text/html',
-    ),
-  );
+                  'type' => 'text/html',
+                  'status' => 200,
+                );
 
   /**#@-*/
 
