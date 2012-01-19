@@ -347,7 +347,7 @@ class cssp extends prototype
     if ( ! empty($out)) {
 
       if ( ! empty($set['@children'])) {
-        $parent .= ',' . join(',', $set['@children']);
+        $parent .= ',' . join(',', (array) $set['@children']);
       }
 
       $rules = static::do_solve(join("\n", $out));
