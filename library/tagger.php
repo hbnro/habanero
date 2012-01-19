@@ -561,4 +561,4 @@ class tag extends prototype {
 
 }
 
-/* EOF: ./spandex.php */
+/* EOF: ./library/tagger.php */
