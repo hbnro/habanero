@@ -474,35 +474,6 @@ class html extends prototype
     return tag('img', $attrs);
   }
 
-
-  /**
-   * Magic tags
-   *
-   * @param     string Method
-   * @param     mixed  Arguments
-   * @staticvar array  HTML tags
-   * @return    string
-   */
-  final public static function missing($method, $arguments) {
-    static $test = NULL;
-
-
-    if (is_null($test)) {
-      $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
-      $test = array_merge($test['complete'], $test['empty']);
-    }
-
-
-    if ( ! in_array($method, $test)) {
-      raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
-    }
-
-    $text  = array_shift($arguments);
-    $args  = is_array($text) ? $text : array_shift($arguments);
-
-    return tag($method, $args, ! is_array($text) ? $text : '');
-  }
-
 }
 
 /* EOF: ./library/html.php */
