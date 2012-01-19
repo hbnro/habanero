@@ -4,7 +4,7 @@
  * Vagely inspirated on jQuery/XHP syntax
  */
 
-class dom extends prototype {
+class tag extends prototype {
   static function missing($method, $arguments) {
     return new spandex("<$method/>", $arguments);
   }
