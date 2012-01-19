@@ -97,6 +97,7 @@ class cssp extends prototype
 
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
+    $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
     $text = preg_replace('/ +/', ' ', $text);
 
@@ -250,6 +251,7 @@ class cssp extends prototype
   final private static function parse_buffer($text) {
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
+    $text = preg_replace('/&(#?\w+);?/', '__ENTITY\\1__', $text);
     $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, $text);
     $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', 'static::fetch_externals', $text);
     $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', 'static::fetch_properties', $text);
