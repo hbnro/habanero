@@ -43,20 +43,20 @@ class spandex
 
     if (preg_match("/^.*<$fulltag>(.*?)<\/\\1>.*$/Uis", $tag, $match)) {
       $this->tag = strtolower($match[1]);
-      $test = $this->_fetchArgs($match[2]);
+      $test = $this->_fetch_args($match[2]);
       $this->node []= new self($match[3]);
     } elseif (preg_match("/^\s*<$fulltag\/>\s*$/", $tag, $match)) {
       $this->tag = strtolower($match[1]);
-      $test = $this->_fetchArgs($match[2]);
+      $test = $this->_fetch_args($match[2]);
     } else {
       $test = array();
       $this->tag = 'TEXT';
       $this->node []= $tag;
     }
 
-    $args = ! is_array($args) ? $this->_fetchArgs($args) : $args;
+    $args = ! is_array($args) ? $this->_fetch_args($args) : $args;
 
-    $this->_fillProps(array_merge($test, $args));
+    $this->_fill_props(array_merge($test, $args));
   }
 
 
@@ -65,7 +65,7 @@ class spandex
    *
    * @return object
    */
-  final public function cloneNode() {
+  final public function clone_node() {
     return clone $this;
   }
 
@@ -75,7 +75,7 @@ class spandex
    *
    * @return void
    */
-  final public function emptyNode() {
+  final public function empty_node() {
     $this->node = array();
   }
 
@@ -85,8 +85,8 @@ class spandex
    *
    * @return void
    */
-  final public function removeNode() {
-    $this->emptyNode();
+  final public function remove_node() {
+    $this->empty_node();
 
     $this->tag = '';
     $this->attrs = array();
@@ -112,7 +112,7 @@ class spandex
    */
   final public function wrap($tag, $args = array()) {
     $old = new self($tag, $args);
-    $new = $this->cloneNode();
+    $new = $this->clone_node();
 
     $this->attrs = array();
 
@@ -120,7 +120,7 @@ class spandex
     $this->node []= $new;
 
     $this->tag = $old->tag;
-    $this->_fillProps($old->attrs);
+    $this->_fill_props($old->attrs);
 
     return $new;
   }
@@ -131,7 +131,7 @@ class spandex
    *
    * @return Spandex
    */
-  final public function unWrap() {
+  final public function unwrap() {
     $this->tag = 'TEXT';
 
     return $this;
@@ -144,7 +144,7 @@ class spandex
    * @param  object Spandex element
    * @return object
    */
-  final public function appendTo($node) {
+  final public function append_to($node) {
     $node->append($this);
 
     return $this;
@@ -170,7 +170,7 @@ class spandex
    * @param  object Spandex element
    * @return object
    */
-  final public function prependTo($node) {
+  final public function prepend_to($node) {
     $node->prepend($this);
 
     return $this;
@@ -229,7 +229,7 @@ class spandex
       if (func_num_args() !== 1) {
         $this->attrs[$key] = $value;
       } elseif (preg_match('/^[@#.]/', $key)) {
-        return $this->attr($this->_fetchArgs($key));
+        return $this->attr($this->_fetch_args($key));
       }
       return ! empty($this->attrs[$key]) ? $this->attrs[$key] : FALSE;
     } elseif (is_array($key)) {
@@ -272,7 +272,7 @@ class spandex
    */
   final public function text($value = '') {
     if (func_num_args() === 0) {
-      return strip_tags($this->_buildText($this->node, FALSE));
+      return strip_tags($this->_build_text($this->node, FALSE));
     }
 
     $this->node = array();
@@ -290,7 +290,7 @@ class spandex
    */
   final public function html($value = '') {
     if (func_num_args() === 0) {
-      return $this->_buildText($this->node, TRUE);
+      return $this->_build_text($this->node, TRUE);
     }
 
     $this->node = array();
@@ -341,11 +341,11 @@ class spandex
    * @param  string Class name
    * @return object
    */
-  final public function addClass($name) {
+  final public function add_class($name) {
     $args = func_get_args();
 
-    $set = $this->_fetchClasses();
-    $test = $this->_fetchClasses($args);
+    $set = $this->_fetch_classes();
+    $test = $this->_fetch_classes($args);
 
     $set = array_unique(array_merge($set, $test));
     $this->attr('class', join(' ', $set));
@@ -360,11 +360,11 @@ class spandex
    * @param  string Class name
    * @return object
    */
-  final public function removeClass($name) {
+  final public function remove_class($name) {
     $args = func_get_args();
-    $set = $this->_fetchClasses();
+    $set = $this->_fetch_classes();
 
-    foreach ($this->_fetchClasses($args) as $one) {
+    foreach ($this->_fetch_classes($args) as $one) {
       $key = array_search($one, $set);
 
       if ($key !== FALSE) {
@@ -385,11 +385,11 @@ class spandex
    * @param  string Class name
    * @return object
    */
-  final public function toggleClass($name) {
-    if (in_array($name, $this->_fetchClasses())) {
-      $this->removeClass($name);
+  final public function toggle_class($name) {
+    if (in_array($name, $this->_fetch_classes())) {
+      $this->remove_class($name);
     } else {
-      $this->addClass($name);
+      $this->add_class($name);
     }
 
     return $this;
@@ -440,8 +440,8 @@ class spandex
     }
 
 
-    $attrs = $this->_buildAtts($this->attrs);
-    $str = $this->_buildText($this->node, !! $single);
+    $attrs = $this->_build_atts($this->attrs);
+    $str = $this->_build_text($this->node, !! $single);
 
     if ($this->tag === 'TEXT') {
       return $str;
@@ -473,12 +473,12 @@ class spandex
   }
 
   // arguments from attributes string
-  final protected function _fetchArgs($text) {
+  final protected function _fetch_args($text) {
     return args($text);
   }
 
   // retrieve node classes
-  final protected function _fetchClasses($test = '') {
+  final protected function _fetch_classes($test = '') {
     if ( ! empty($test)) {
       $test = preg_split('/[\s\.,]/', join(',', $test));
     } else {
@@ -492,12 +492,12 @@ class spandex
   }
 
   // assemble dynamic attributes
-  final protected function _buildAtts($args) {
+  final protected function _build_atts($args) {
     return attrs($args);
   }
 
   // retrieve the current node text
-  final protected function _buildText($set, $re) {
+  final protected function _build_text($set, $re) {
     $out = '';
 
     ksort($set);
@@ -517,7 +517,7 @@ class spandex
   }
 
   // assign the node attributes
-  final protected function _fillProps($set) {
+  final protected function _fill_props($set) {
     foreach ($set as $key => $val) {
       if (preg_match('/^[a-z][a-z0-9:-]+$/', $key)) {
         $this->attrs[$key] = $val;
