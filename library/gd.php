@@ -41,24 +41,14 @@ class gd
 
   // constructor
   private function __construct($path) {
-    if (is_file($path)) {
-      $test = getimagesize($path);
+    $test = getimagesize($path);
+    $tmp  = imagecreatefromstring(read($path));
 
-      $this->type = end(explode('/', $test['mime']));
-      $this->mime = $test['mime'];
-      $this->file = realpath($path);
+    $this->type = end(explode('/', $test['mime']));
+    $this->mime = $test['mime'];
+    $this->file = realpath($path);
 
-      $callback = "imagecreatefrom$this->type";
-
-      if ( ! function_exists($callback)) {
-        trigger_error(sprintf(ln('Not implemented yet: %s'), $callback)) +exit;
-      }
-
-      $this->resource = $this->fix_alpha($callback($path));
-    } else {
-      $this->mime = "image/$path";
-      $this->type = $path;
-    }
+    $this->resource = $this->fix_alpha($tmp);
   }
   /**#@-*/
 
@@ -69,10 +59,9 @@ class gd
    * @param  string $path Ruta fisica del SO
    * @return void
    */
-  final public function import($path)
-  {
+  final public function import($path) {
     if ( ! is_file($path)) {
-      return FALSE;
+      raise(ln('file_not_exists', array('name' => $path)));
     }
     return new static($path);
   }
@@ -85,7 +74,7 @@ class gd
    * @param  string $type Tipo de imagen
    * @return mixed
    */
-  final public function save($test = '', $type = '') {
+  final public function export($test = '', $type = '') {
     $ext = str_replace(JPEG, 'jpg', $this->type);
 
     if ( ! empty($test) && is_dir($test)) {
@@ -126,7 +115,7 @@ class gd
       $this->type = $type;
       $this->file = preg_replace('/\.\w+$/', ".$type", $this->file);
       $this->mime = "image/$type";
-      $this->save(NULL, $type);
+      $this->export(NULL, $type);
 
       $out = ob_get_contents();
       ob_end_clean();
@@ -266,7 +255,7 @@ class gd
    * @return boolean
    */
   final public function file() {
-    return is_file($this->file) ? realpath($this->file) : FALSE;
+    return $this->file;
   }
 
 
@@ -456,8 +445,7 @@ class gd
    * @return void
    */
   final public function blur() {
-    $this->filter('gaussian_blur');
-    return $this;
+    return $this->filter('gaussian_blur');
   }
 
 
@@ -468,8 +456,7 @@ class gd
    * @return  void
    */
   final public function negative() {
-    $this->filter('negate');
-    return $this;
+    return $this->filter('negate');
   }
 
 
@@ -588,7 +575,7 @@ class gd
     $this->fix_dimset($width, $cw = $this->width());
     $this->fix_dimset($height, $ch = $this->height());
     $this->fix_dimset($x, $left, $cw, $width);
-    $this->fix_dimset($y, $left, $ch, $height);
+    $this->fix_dimset($y, $top, $ch, $height);
 
     $stroke = $this->allocate($this->resource, $color, $opacity);
     imagefilledrectangle($this->resource, $x, $y, $x + $width, $y + $height, $stroke);
@@ -671,7 +658,9 @@ class gd
     array_unshift($args, $type);
     array_unshift($args, $this->resource);
 
-    return call_user_func_array('imagefilter', $args);
+    call_user_func_array('imagefilter', $args);
+
+    return $this;
   }
 
   final private function resample( &$tmp, $tx, $ty, $tw, $th, $sx, $sy, $sw, $sh) {
@@ -803,8 +792,7 @@ class gd
     return $out;
   }
 
-  final private function fix_dimset( &$test, $offset, $max = NULL, $min = NULL)
-  {
+  final private function fix_dimset( &$test, $offset, $max = NULL, $min = NULL) {
     if (strrpos($test, '%')) {
       $test = floor(((func_num_args() == 2 ? $offset : $max) / 100) * ((int) $test));
     }
@@ -819,6 +807,7 @@ class gd
       }
     }
   }
+
   /**#@-*/
 }
 
