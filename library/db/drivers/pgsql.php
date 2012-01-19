@@ -12,7 +12,7 @@ class pgsql_driver extends pgsql_scheme
 {
   protected $last_query = array();
 
-  final protected function factory(array $params) {
+  final public static function factory(array $params) {
     $obj = new static;
 
     $conn  = "dbname=" . trim($params['path'], '/');
