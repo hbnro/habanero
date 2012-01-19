@@ -1,19 +1,11 @@
 <?php
 
 /**
- * Vagely inspirated on jQuery/XHP syntax
+ * Fancy tag helper
  */
 
 class tag extends prototype {
-  static function missing($method, $arguments) {
-    return new spandex("<$method/>", $arguments);
-  }
-}
-
-class spandex
-{
-
-  /**#@+
+  /**#@+q
    * @ignore
    */
 
@@ -26,37 +18,109 @@ class spandex
   // node attributes
   protected $attrs = array();
 
-  /**#@-*/
 
-
-
-  /**
-   * Class constructor
-   *
-   * @param  string Tag name
-   * @param  mixed  Attributes
-   * @return object
-   */
-  final public function __construct($tag, $args = array()) {
+  // hidden constructor
+  private function __construct($tag, array $args = array()) {
     static $fulltag = '([a-z][a-z0-9:-]*)([^>]*)';
 
 
     if (preg_match("/^.*<$fulltag>(.*?)<\/\\1>.*$/Uis", $tag, $match)) {
       $this->tag = strtolower($match[1]);
-      $test = $this->_fetch_args($match[2]);
+      $test = args(attrs($match[2]));
       $this->node []= new self($match[3]);
     } elseif (preg_match("/^\s*<$fulltag\/>\s*$/", $tag, $match)) {
       $this->tag = strtolower($match[1]);
-      $test = $this->_fetch_args($match[2]);
+      $test = args(attrs($match[2]));
     } else {
       $test = array();
       $this->tag = 'TEXT';
       $this->node []= $tag;
     }
 
-    $args = ! is_array($args) ? $this->_fetch_args($args) : $args;
-
     $this->_fill_props(array_merge($test, $args));
+  }
+
+  /**#@-*/
+
+
+   /**
+   * Magic tags
+   *
+   * @param     string Method
+   * @param     mixed  Arguments
+   * @staticvar array  HTML tags
+   * @return    string
+   */
+  final public static function missing($method, array $arguments) {
+    static $test = NULL,
+           $close = array();
+
+
+    if (is_null($test)) {
+      $close = $test['empty'];
+
+      $test  = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
+      $test  = array_merge($test['complete'], $test['empty']);
+    }
+
+
+    if ( ! in_array($method, $test)) {
+      raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
+    }
+
+
+    $plain = '';
+    $first = array_shift($arguments);
+
+    if ( ! is_array($first)) {
+      $plain = (string) $first;
+    } else {
+      array_unshift($arguments, $first);
+    }
+
+    foreach ($arguments as $i => $val) {
+      is_string($arguments[$i]) && $arguments[$i] = args(attrs($arguments[$i]));
+    }
+
+    $el = static::create("<$method/>", call_user_func_array('array_merge', $arguments));
+
+    switch ($method) {
+      case 'link';
+        $el->rel($plain);
+      break;
+      case 'base';
+        $el->href($plain);
+      break;
+      case 'source';
+        $el->src($plain);
+      break;
+      case 'track';
+        $el->default($plain);
+      break;
+      case 'meta';
+        $el->name($plain);
+      break;
+      case 'img';
+        $el->alt($plain);
+      break;
+      default;
+        $el->text($plain);
+      break;
+    }
+
+    return $el;
+  }
+
+
+  /**
+   * Elements
+   *
+   * @param  string Tag name
+   * @param  mixed  Attributes
+   * @return object
+   */
+  final public static function create($tag, array $args = array()) {
+    return new static($tag, $args);
   }
 
 
@@ -88,7 +152,7 @@ class spandex
   final public function remove_node() {
     $this->empty_node();
 
-    $this->tag = '';
+    $this->tag   = '';
     $this->attrs = array();
   }
 
@@ -110,16 +174,16 @@ class spandex
    * @param  mixed  Attributes
    * @return object
    */
-  final public function wrap($tag, $args = array()) {
+  final public function wrap($tag, array $args = array()) {
     $old = new self($tag, $args);
     $new = $this->clone_node();
 
-    $this->attrs = array();
+    $this->attrs  = array();
 
-    $this->node = $old->node;
+    $this->node   = $old->node;
     $this->node []= $new;
 
-    $this->tag = $old->tag;
+    $this->tag    = $old->tag;
     $this->_fill_props($old->attrs);
 
     return $new;
@@ -229,7 +293,7 @@ class spandex
       if (func_num_args() !== 1) {
         $this->attrs[$key] = $value;
       } elseif (preg_match('/^[@#.]/', $key)) {
-        return $this->attr($this->_fetch_args($key));
+        return $this->attr(args(attrs($key)));
       }
       return ! empty($this->attrs[$key]) ? $this->attrs[$key] : FALSE;
     } elseif (is_array($key)) {
@@ -275,7 +339,7 @@ class spandex
       return strip_tags($this->_build_text($this->node, FALSE));
     }
 
-    $this->node = array();
+    $this->node   = array();
     $this->node []= htmlspecialchars((string) $value);
 
     return $this;
@@ -293,7 +357,7 @@ class spandex
       return $this->_build_text($this->node, TRUE);
     }
 
-    $this->node = array();
+    $this->node   = array();
     $this->node []= $value;
 
     return $this;
@@ -344,10 +408,10 @@ class spandex
   final public function add_class($name) {
     $args = func_get_args();
 
-    $set = $this->_fetch_classes();
+    $set  = $this->_fetch_classes();
     $test = $this->_fetch_classes($args);
 
-    $set = array_unique(array_merge($set, $test));
+    $set  = array_unique(array_merge($set, $test));
     $this->attr('class', join(' ', $set));
 
     return $this;
@@ -362,7 +426,7 @@ class spandex
    */
   final public function remove_class($name) {
     $args = func_get_args();
-    $set = $this->_fetch_classes();
+    $set  = $this->_fetch_classes();
 
     foreach ($this->_fetch_classes($args) as $one) {
       $key = array_search($one, $set);
@@ -419,20 +483,7 @@ class spandex
 
   // build html output
   final public function __toString() {
-    static $close = array(
-              'img',
-              'base',
-              'link',
-              'meta',
-              'embed',
-              'param',
-              'source',
-              'track',
-              'area',
-            );
-
-
-    $num = func_num_args();
+    $num    = func_num_args();
     $single = ! ($num > 0 && func_get_arg(0));
 
     if ($num === 0) {
@@ -440,7 +491,6 @@ class spandex
     }
 
 
-    $attrs = $this->_build_atts($this->attrs);
     $str = $this->_build_text($this->node, !! $single);
 
     if ($this->tag === 'TEXT') {
@@ -450,15 +500,7 @@ class spandex
     }
 
 
-    $out = '';
-
-    if (in_array($this->tag, $close)) {
-      $out .= "<{$this->tag}$attrs/>\n";
-    } else {
-      $str = preg_replace('/^/m', $this->tag === 'pre' ? '<!--#PRE#-->' : ' ', $str);
-      $out .= "<{$this->tag}$attrs>\n$str\n</{$this->tag}>\n";
-    }
-
+    $out = tag($this->tag, $this->attrs, $str);
 
     if ( ! $num) {
       $out = preg_replace('/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s', '<\\1\\2>\\3</\\1>', $out);
@@ -470,11 +512,6 @@ class spandex
     $out = preg_replace('/[\r\n]+(?=<)/m', "\n", $out);
 
     return $out;
-  }
-
-  // arguments from attributes string
-  final protected function _fetch_args($text) {
-    return args($text);
   }
 
   // retrieve node classes
@@ -489,11 +526,6 @@ class spandex
     $test = array_filter($test);
 
     return $test;
-  }
-
-  // assemble dynamic attributes
-  final protected function _build_atts($args) {
-    return attrs($args);
   }
 
   // retrieve the current node text
