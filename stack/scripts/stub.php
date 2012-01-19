@@ -44,11 +44,8 @@ if ( !! `php -v`) {
 
   foreach ($test as $one) {
     $in_file = escapeshellarg($one);
-
     $output  = `php -w $in_file`;
-    $output  = substr($output, strpos($output, ' ') + 1);
-
-    write($one, '<' . "?php $output\n");
+    write($one, "$output\n");
   }
   cli::writeln('OK');
 }
