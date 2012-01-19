@@ -12,6 +12,7 @@ $lang['function_param_missing'] = 'Param %{input} for %{name}() is missing';
 $lang['file_not_exists'] = 'The file %{name} not exists and is required';
 $lang['class_not_exists'] = 'The class %{name} not exists and is required';
 $lang['application_error'] = 'The system has not started yet?';
+$lang['not_implemented'] = 'Not implemented yet: %{name}';
 
 $lang['failed_to_execute'] = 'Failed to execute lambda: %{callback}';
 $lang['exception_error'] = 'Exception %{message} on %{file}, line %{number}';

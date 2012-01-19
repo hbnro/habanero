@@ -12,6 +12,7 @@ $lang['function_param_missing'] = 'El parámetro %{input} para %{name}() hace fa
 $lang['file_not_exists'] = 'El archivo %{name} no existe y es necesario';
 $lang['class_not_exists'] = 'La clase %{name} no existe y es necesaria';
 $lang['application_error'] = 'El sistema no ha iniciado ya?';
+$lang['not_implemented'] = 'No implementado: %{name}';
 
 $lang['failed_to_execute'] = 'No se pudo ejecutar: %{callback}';
 $lang['exception_error'] = 'Excepción %{message} en %{file}, linea %{number}';
