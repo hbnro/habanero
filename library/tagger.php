@@ -53,7 +53,15 @@ class tag extends prototype {
    */
   final public static function missing($method, array $arguments) {
     static $test = NULL,
-           $close = array();
+           $close = array(),
+           $default = array(
+             'link' => 'rel',
+             'base' => 'href',
+             'source' => 'src',
+             'track' => 'default',
+             'meta' => 'name',
+             'img' => 'alt',
+           );
 
 
     if (is_null($test)) {
@@ -84,28 +92,10 @@ class tag extends prototype {
 
     $el = static::create("<$method/>", call_user_func_array('array_merge', $arguments));
 
-    switch ($method) {
-      case 'link';
-        $el->rel($plain);
-      break;
-      case 'base';
-        $el->href($plain);
-      break;
-      case 'source';
-        $el->src($plain);
-      break;
-      case 'track';
-        $el->default($plain);
-      break;
-      case 'meta';
-        $el->name($plain);
-      break;
-      case 'img';
-        $el->alt($plain);
-      break;
-      default;
-        $el->text($plain);
-      break;
+    if ( ! empty($default[$method])) {
+      $el->{$default[$method]}($plain);
+    } else {
+      $el->text($plain);
     }
 
     return $el;
