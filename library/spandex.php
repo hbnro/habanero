@@ -37,24 +37,18 @@ class spandex
    * @param  mixed  Attributes
    * @return object
    */
-  final public function __construct($tag, $args = array())
-  {
+  final public function __construct($tag, $args = array()) {
     static $fulltag = '([a-z][a-z0-9:-]*)([^>]*)';
 
 
-    if (preg_match("/^.*<$fulltag>(.*?)<\/\\1>.*$/Uis", $tag, $match))
-    {
+    if (preg_match("/^.*<$fulltag>(.*?)<\/\\1>.*$/Uis", $tag, $match)) {
       $this->tag = strtolower($match[1]);
       $test = $this->_fetchArgs($match[2]);
       $this->node []= new self($match[3]);
-    }
-    elseif (preg_match("/^\s*<$fulltag\/>\s*$/", $tag, $match))
-    {
+    } elseif (preg_match("/^\s*<$fulltag\/>\s*$/", $tag, $match)) {
       $this->tag = strtolower($match[1]);
       $test = $this->_fetchArgs($match[2]);
-    }
-    else
-    {
+    } else {
       $test = array();
       $this->tag = 'TEXT';
       $this->node []= $tag;
@@ -71,8 +65,7 @@ class spandex
    *
    * @return object
    */
-  final public function cloneNode()
-  {
+  final public function cloneNode() {
     return clone $this;
   }
 
@@ -82,8 +75,7 @@ class spandex
    *
    * @return void
    */
-  final public function emptyNode()
-  {
+  final public function emptyNode() {
     $this->node = array();
   }
 
@@ -93,8 +85,7 @@ class spandex
    *
    * @return void
    */
-  final public function removeNode()
-  {
+  final public function removeNode() {
     $this->emptyNode();
 
     $this->tag = '';
@@ -107,8 +98,7 @@ class spandex
    *
    * @return integer
    */
-  final public function length()
-  {
+  final public function length() {
     return sizeof(array_filter($this->node, 'is_object')) - 1;
   }
 
@@ -120,8 +110,7 @@ class spandex
    * @param  mixed  Attributes
    * @return object
    */
-  final public function wrap($tag, $args = array())
-  {
+  final public function wrap($tag, $args = array()) {
     $old = new self($tag, $args);
     $new = $this->cloneNode();
 
@@ -142,8 +131,7 @@ class spandex
    *
    * @return Spandex
    */
-  final public function unWrap()
-  {
+  final public function unWrap() {
     $this->tag = 'TEXT';
 
     return $this;
@@ -156,8 +144,7 @@ class spandex
    * @param  object Spandex element
    * @return object
    */
-  final public function appendTo($node)
-  {
+  final public function appendTo($node) {
     $node->append($this);
 
     return $this;
@@ -170,8 +157,7 @@ class spandex
    * @param  object Spandex element
    * @return object
    */
-  final public function append($node)
-  {
+  final public function append($node) {
     $this->node []= $node;
 
     return $this;
@@ -184,8 +170,7 @@ class spandex
    * @param  object Spandex element
    * @return object
    */
-  final public function prependTo($node)
-  {
+  final public function prependTo($node) {
     $node->prepend($this);
 
     return $this;
@@ -198,8 +183,7 @@ class spandex
    * @param  object Spandex element
    * @return object
    */
-  final public function prepend($node)
-  {
+  final public function prepend($node) {
     $key = (sizeof($this->node) + 1) * -1;
     $this->node[$key] = $node;
 
@@ -213,19 +197,15 @@ class spandex
    * @param  integer Index
    * @return mixed
    */
-  final public function eq($num)
-  {
+  final public function eq($num) {
     $inc = 0;
 
-    foreach (array_keys($this->node) as $index)
-    {
-      if ( ! is_object($this->node[$index]))
-      {
+    foreach (array_keys($this->node) as $index) {
+      if ( ! is_object($this->node[$index])) {
         continue;
       }
 
-      if ($num === $inc)
-      {
+      if ($num === $inc) {
         return $this->node[$index];
       }
       $inc += 1;
@@ -240,29 +220,20 @@ class spandex
    * @param  mixed Value
    * @return mixed
    */
-  final public function attr($key, $value = '')
-  {
-    if (is_string($key))
-    {
-      if ( ! preg_match('/^[a-z][a-z0-9:-]+$/', $key))
-      {
+  final public function attr($key, $value = '') {
+    if (is_string($key)) {
+      if ( ! preg_match('/^[a-z][a-z0-9:-]+$/', $key)) {
         continue;
       }
 
-      if (func_num_args() !== 1)
-      {
+      if (func_num_args() !== 1) {
         $this->attrs[$key] = $value;
-      }
-      elseif (preg_match('/^[@#.]/', $key))
-      {
+      } elseif (preg_match('/^[@#.]/', $key)) {
         return $this->attr($this->_fetchArgs($key));
       }
       return ! empty($this->attrs[$key]) ? $this->attrs[$key] : FALSE;
-    }
-    elseif (is_array($key))
-    {
-      foreach ($key as $k => $v)
-      {
+    } elseif (is_array($key)) {
+      foreach ($key as $k => $v) {
         $this->attr($k, $v);
       }
     }
@@ -278,19 +249,14 @@ class spandex
    * @param  mixed  Value
    * @return object
    */
-  final public function data($key, $value = '')
-  {
-    if ( ! isset($this->attrs['data']))
-    {
+  final public function data($key, $value = '') {
+    if ( ! isset($this->attrs['data'])) {
       $this->attrs['data'] = array();
     }
 
-    if (is_array($key))
-    {
+    if (is_array($key)) {
       $this->attrs['data'] += $key;
-    }
-    else
-    {
+    } else {
       $this->attrs['data'][$key] = $value;
     }
 
@@ -304,10 +270,8 @@ class spandex
    * @param  string Value
    * @return mixed
    */
-  final public function text($value = '')
-  {
-    if (func_num_args() === 0)
-    {
+  final public function text($value = '') {
+    if (func_num_args() === 0) {
       return strip_tags($this->_buildText($this->node, FALSE));
     }
 
@@ -324,10 +288,8 @@ class spandex
    * @param  mixed Content
    * @return mixed
    */
-  final public function html($value = '')
-  {
-    if (func_num_args() === 0)
-    {
+  final public function html($value = '') {
+    if (func_num_args() === 0) {
       return $this->_buildText($this->node, TRUE);
     }
 
@@ -345,34 +307,26 @@ class spandex
    * @param  mixed Expression
    * @return mixed
    */
-  final public function css($prop, $value = '')
-  {
-    if (is_string($prop))
-    {
+  final public function css($prop, $value = '') {
+    if (is_string($prop)) {
       $test  = array();
       $style = explode(';', $this->attr('style'));
 
-      foreach (array_map('trim', $style) as $rule)
-      {
+      foreach (array_map('trim', $style) as $rule) {
         $syntax = array_map('trim', explode(':', $rule));
 
-        if ($prop === $syntax[0])
-        {
+        if ($prop === $syntax[0]) {
           return ! empty($syntax[1]) ? $syntax[1] : FALSE;
         }
         $test []= join(':', $syntax);
       }
 
-      if (func_num_args() === 2)
-      {
+      if (func_num_args() === 2) {
         $test []= "$prop:$value";
       }
       $this->attr('style', trim(join(';', $test), ';'));
-    }
-    elseif (is_array($prop))
-    {
-      foreach($prop as $k => $v)
-      {
+    } elseif (is_array($prop)) {
+      foreach($prop as $k => $v) {
         $this->css($k, $v);
       }
     }
@@ -387,8 +341,7 @@ class spandex
    * @param  string Class name
    * @return object
    */
-  final public function addClass($name)
-  {
+  final public function addClass($name) {
     $args = func_get_args();
 
     $set = $this->_fetchClasses();
@@ -407,17 +360,14 @@ class spandex
    * @param  string Class name
    * @return object
    */
-  final public function removeClass($name)
-  {
+  final public function removeClass($name) {
     $args = func_get_args();
     $set = $this->_fetchClasses();
 
-    foreach ($this->_fetchClasses($args) as $one)
-    {
+    foreach ($this->_fetchClasses($args) as $one) {
       $key = array_search($one, $set);
 
-      if ($key !== FALSE)
-      {
+      if ($key !== FALSE) {
         unset($set[$key]);
       }
     }
@@ -435,14 +385,10 @@ class spandex
    * @param  string Class name
    * @return object
    */
-  final public function toggleClass($name)
-  {
-    if (in_array($name, $this->_fetchClasses()))
-    {
+  final public function toggleClass($name) {
+    if (in_array($name, $this->_fetchClasses())) {
       $this->removeClass($name);
-    }
-    else
-    {
+    } else {
       $this->addClass($name);
     }
 
@@ -456,20 +402,15 @@ class spandex
    */
 
   // dynamic attributes setter
-  final public function __call($method, array $args = array())
-  {
-    if ( ! $args)
-    {
+  final public function __call($method, array $args = array()) {
+    if ( ! $args) {
       return $this->attr($method);
     }
 
 
-    if (sizeof($args) > 1)
-    {
+    if (sizeof($args) > 1) {
       $this->attr($method, $args);
-    }
-    else
-    {
+    } else {
       $this->attr($method, array_shift($args));
     }
 
@@ -477,8 +418,7 @@ class spandex
   }
 
   // build html output
-  final public function __toString()
-  {
+  final public function __toString() {
     static $close = array(
               'img',
               'base',
@@ -495,8 +435,7 @@ class spandex
     $num = func_num_args();
     $single = ! ($num > 0 && func_get_arg(0));
 
-    if ($num === 0)
-    {
+    if ($num === 0) {
       $single = TRUE;
     }
 
@@ -504,31 +443,24 @@ class spandex
     $attrs = $this->_buildAtts($this->attrs);
     $str = $this->_buildText($this->node, !! $single);
 
-    if ($this->tag === 'TEXT')
-    {
+    if ($this->tag === 'TEXT') {
       return $str;
-    }
-    elseif (strlen($this->tag) === 0)
-    {
+    } elseif (strlen($this->tag) === 0) {
       return FALSE;
     }
 
 
     $out = '';
 
-    if (in_array($this->tag, $close))
-    {
+    if (in_array($this->tag, $close)) {
       $out .= "<{$this->tag}$attrs/>\n";
-    }
-    else
-    {
+    } else {
       $str = preg_replace('/^/m', $this->tag === 'pre' ? '<!--#PRE#-->' : ' ', $str);
       $out .= "<{$this->tag}$attrs>\n$str\n</{$this->tag}>\n";
     }
 
 
-    if ( ! $num)
-    {
+    if ( ! $num) {
       $out = preg_replace('/<([\w:-]+)([^<>]*)>\s*([^<>]+?)\s*<\/\\1>/s', '<\\1\\2>\\3</\\1>', $out);
       $out = preg_replace('/<(a|pre)([^<>]*)>\s*(.+?)\s*<\/\\1>/s', '<\\1\\2>\\3</\\1>', $out);
       $out = preg_replace('/^\s*<!--#PRE#-->/m', '', $out);
@@ -541,20 +473,15 @@ class spandex
   }
 
   // arguments from attributes string
-  final protected function _fetchArgs($text)
-  {
+  final protected function _fetchArgs($text) {
     return args($text);
   }
 
   // retrieve node classes
-  final protected function _fetchClasses($test = '')
-  {
-    if ( ! empty($test))
-    {
+  final protected function _fetchClasses($test = '') {
+    if ( ! empty($test)) {
       $test = preg_split('/[\s\.,]/', join(',', $test));
-    }
-    else
-    {
+    } else {
       $test = explode(' ', $this->attr('class'));
     }
 
@@ -565,31 +492,24 @@ class spandex
   }
 
   // assemble dynamic attributes
-  final protected function _buildAtts($args)
-  {
+  final protected function _buildAtts($args) {
     return attrs($args);
   }
 
   // retrieve the current node text
-  final protected function _buildText($set, $re)
-  {
+  final protected function _buildText($set, $re) {
     $out = '';
 
     ksort($set);
 
-    foreach ($set as $key => $val)
-    {
-      if (is_object($val))
-      {
+    foreach ($set as $key => $val) {
+      if (is_object($val)) {
         $out .= $val->__toString( ! $re);
 
-        if ($re !== TRUE)
-        {
+        if ($re !== TRUE) {
           break;
         }
-      }
-      else
-      {
+      } else {
         $out .= (string) $val;
       }
     }
@@ -597,12 +517,9 @@ class spandex
   }
 
   // assign the node attributes
-  final protected function _fillProps($set)
-  {
-    foreach ($set as $key => $val)
-    {
-      if (preg_match('/^[a-z][a-z0-9:-]+$/', $key))
-      {
+  final protected function _fillProps($set) {
+    foreach ($set as $key => $val) {
+      if (preg_match('/^[a-z][a-z0-9:-]+$/', $key)) {
         $this->attrs[$key] = $val;
       }
     }
