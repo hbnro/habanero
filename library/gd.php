@@ -24,22 +24,33 @@ class gd
   /**#@+
    * @ignore
    */
+
+  // allowed formats
   private $allow = array(JPEG, PNG, GIF);
 
-  private $transparency = '#000';
+  // transparent color
+  private $transparency = '#ff00ff';
+
+  // default value
   private $alpha = 127;
-  private $swidth = 160;
-  private $sheight = 40;
 
-
-
+  // filepath
   private $file = '';
-  private $size = 0;
-  private $type = JPEG;
-  private $mime = 'image/jpeg';
-  private $resource = -1;
 
-  // constructor
+  // size in bytes
+  private $size = 0;
+
+  // image type
+  private $type = JPEG;
+
+  // image MIME
+  private $mime = 'image/jpeg';
+
+  // the image
+  private $resource = NULL;
+
+
+  // hidden constructor
   private function __construct($path) {
     $test = getimagesize($path);
     $tmp  = imagecreatefromstring(read($path));
@@ -47,6 +58,7 @@ class gd
     $this->type = end(explode('/', $test['mime']));
     $this->mime = $test['mime'];
     $this->file = realpath($path);
+    $this->size = filesize($path);
 
     $this->resource = $this->fix_alpha($tmp);
   }
@@ -54,10 +66,10 @@ class gd
 
 
   /**
-   * Importar una imagen
+   * Image load
    *
-   * @param  string $path Ruta fisica del SO
-   * @return void
+   * @param  string File path
+   * @return image
    */
   final public function import($path) {
     if ( ! is_file($path)) {
@@ -68,9 +80,9 @@ class gd
 
 
   /**
-   * Exportar la imagen
+   * Image export
    *
-   * @param  mixed  $test Nombre|Ruta fisica del SO|Tipo
+   * @param  string Name|Path
    * @param  string $type Tipo de imagen
    * @return mixed
    */
@@ -78,7 +90,7 @@ class gd
     $ext = str_replace(JPEG, 'jpg', $this->type);
 
     if ( ! empty($test) && is_dir($test)) {
-      $output = rtrim($test, '\\/').DS;
+      $output  = rtrim($test, '\\/').DS;
       $output .= extn($this->file, TRUE);
       $output .= '.' . $ext;
     } elseif (func_num_args() == 0) {
@@ -90,20 +102,22 @@ class gd
     $callback = 'image' . (in_array($type, $this->allow) ? $type : $this->type);
 
     if ( ! is_callable($callback)) {
-      trigger_error(sprintf(ln('Not implemented yet: %s'), $callback)) +exit;
+      raise(ln('not_implemented', array('name' => $callback)));
     } elseif ( ! empty($output)) {
       $callback($this->resource, $output);
+      imagedestroy($this->resource);
       return $output;
     }
     $callback($this->resource);
+    imagedestroy($this->resource);
   }
 
 
   /**
-   * Convertir imagen
+   * Image conversion
    *
-   * @param  string  $type  Tipo de imagen
-   * @param  boolean $force Forzar tipo?
+   * @param  string  Type
+   * @param  boolean Force?
    * @return void
    */
   final public function convert($type, $force = FALSE) {
@@ -122,6 +136,10 @@ class gd
 
       $tmp = imagecreatefromstring($out);
       $tmp = $this->fix_alpha($tmp);
+
+      imagedestroy($this->resource);
+
+      $this->size = strlen($out);
       $this->resource = $tmp;
     }
     return $this;
@@ -129,11 +147,12 @@ class gd
 
 
   /**
-   * Enviar imagen al navegador
+   * Image output
    *
    * @return void
    */
   final public function output() {
+    header("Content-Length: $this->size");
     header("Content-Type: $this->mime");
     $this->export(NULL, $this->type);
     exit;
@@ -141,41 +160,36 @@ class gd
 
 
   /**
-   * Informacion de la imagen
+   * Image info
    *
    * @return array
    */
   final public function info() {
-    $set = array(
+    return array(
       'width' => $this->width(),
       'height' => $this->height(),
       'mime' => $this->mime,
       'type' => $this->type,
+      'path' => dirname($this->file),
+      'name' => extn($this->file, TRUE),
+
+      'ctime' => filectime($this->file),
+      'mtime' => filemtime($this->file),
+      'atime' => fileatime($this->file),
+
+      'ext' => ext($this->file, TRUE),
+      'file' => $this->file,
+      'size' => $this->size,
     );
-
-    if (is_file($old = $this->file())) {
-      $set = array_merge($set, array(
-        'path' => dirname($old),
-        'name' => extn($old, TRUE),
-
-        'ctime' => filectime($old),
-        'mtime' => filemtime($old),
-        'atime' => fileatime($old),
-
-        'ext' => ext($old, TRUE),
-        'file' => $old,
-      ));
-    }
-    return $set;
   }
 
 
   /**
-   * Obtener paleta de colores
+   * Color palette
    *
    * @link   http://www.phpbuilder.com/board/showpost.php?p=10868783&postcount=2
-   * @param  integer $limit Limitar resultado
-   * @param  integer $step  Avance por pixel
+   * @param  integer Limit
+   * @param  integer Step
    * @return array
    */
   final public function palette($limit = 10, $step = 5) {
@@ -216,58 +230,52 @@ class gd
 
 
   /**
-   * Tipo
+   * Image type
    *
-   * @param  boolean $mime Devolver MIME?
+   * @param  boolean MIME?
    * @return string
    */
   final public function type($mime = FALSE) {
-    if (is_true($mime)) {
-      return $this->mime;
-    }
-    return $this->type;
+    return is_true($mime) ? $this->mime : $this->type;
   }
 
 
   /**
-   * Ancho
+   * Image width
    *
    * @return integer
    */
   final public function width() {
-    return ($out = @imagesx($this->resource)) ?: $this->swidth;
+    return imagesx($this->resource);
   }
 
 
   /**
-   * Alto
+   * Image height
    *
    * @return integer
    */
   final public function height() {
-    return ($out = @imagesy($this->resource)) ?: $this->sheight;
+    return imagesy($this->resource);
   }
 
 
   /**
-   * Archivo
+   * Image filepath
    *
-   * @return boolean
+   * @return string
    */
   final public function file() {
     return $this->file;
   }
 
 
-
-  // ---------------------------------------------------------------------------
-
   /**
-   * Miniatura de la imagen
+   * Thumbnail
    *
-   * @param  integer $width  Ancho
-   * @param  integer $height Alto
-   * @return void
+   * @param  integer Width
+   * @param  integer Height
+   * @return image
    */
   final public function thumb($width = 120, $height = 0) {
     $this->fix_dimset($width, $w = $this->width());
@@ -295,11 +303,11 @@ class gd
 
 
   /**
-   * Escalar imagen
+   * Scaling
    *
-   * @param  integer $width  Ancho
-   * @param  integer $height Alto
-   * @return void
+   * @param  integer Width
+   * @param  integer Height
+   * @return image
    */
   final public function scale($width, $height = 0) {
     $this->fix_dimset($width, $w = $this->width());
@@ -322,11 +330,11 @@ class gd
 
 
   /**
-   * Redimensionar imagen
+   * Resizing
    *
-   * @param  integer $width  Ancho
-   * @param  integer $height Alto
-   * @return void
+   * @param  integer Width
+   * @param  integer Height
+   * @return image
    */
   final public function resize($width, $height = 0) {
     $this->fix_dimset($width, $w = $this->width());
@@ -346,13 +354,13 @@ class gd
 
 
   /**
-   * Recortar imagen
+   * Cropping
    *
-   * @param  integer $width  Ancho
-   * @param  integer $height Alto
-   * @param  integer $left   Offset X
-   * @param  integer $top  Offset Y
-   * @return void
+   * @param  integer Width
+   * @param  integer Height
+   * @param  integer Offset X
+   * @param  integer Offset Y
+   * @return image
    */
   final public function crop($width, $height, $left = 0, $top = 0) {
     $this->fix_dimset($width, $w = $this->width());
@@ -371,31 +379,31 @@ class gd
 
 
   /**
-   * Rotar imagen
+   * Rotating
    *
-   * @param  integer $angle   Angulo
-   * @param  mixed   $bgcolor HEX|RGB
-   * @return void
+   * @param  integer Angle
+   * @param  mixed   HEX|RGB
+   * @return image
    */
   final public function rotate($angle = 45, $bgcolor = '#fff') {
     if (($angle % 180) <> 0) {
       $bg  = $this->allocate($this->resource, $bgcolor);
       $tmp = imagerotate($this->resource, $angle, $bg, $this->type === PNG);
 
-      is_resource($tmp) && $this->resource = $tmp;
+      if (is_resource($tmp)) {
+        imagedestroy($this->resource);
+        $this->resource = $tmp;
+      }
     }
     return $this;
   }
 
 
-
-  // --------------------------------------------------------------------------
-
   /**
-   * Ajustar brillo
+   * Adjust brightness
    *
-   * @param  integer $mnt Porcentaje
-   * @return void
+   * @param  integer Amount
+   * @return image
    */
   final public function brightness($mnt = 13) {
     $mnt && $this->filter(__FUNCTION__, $mnt);
@@ -404,10 +412,10 @@ class gd
 
 
   /**
-   * Ajustar contraste
+   * Adjust contrast
    *
-   * @param  integer Porcentaje
-   * @return void
+   * @param  integer Amount
+   * @return image
    */
   final public function contrast($mnt = 20) {
     $mnt && $this->filter(__FUNCTION__, $mnt);
@@ -416,11 +424,11 @@ class gd
 
 
   /**
-   * Colorear imagen
+   * Colorized image
    *
-   * @param  integer $mnt   Porcentaje
-   * @param  mixed   $mask  Color de mascara
-   * @return void
+   * @param  integer Amount
+   * @param  mixed   HEX|RGB
+   * @return image
    */
   final public function colorize($mnt = 33, $mask = '#aa0') {
     $mnt = is_num($mnt) ? $mnt : 25;
@@ -440,9 +448,9 @@ class gd
 
 
   /**
-   * Distorsion
+   * Gaussian blur
    *
-   * @return void
+   * @return image
    */
   final public function blur() {
     return $this->filter('gaussian_blur');
@@ -450,24 +458,20 @@ class gd
 
 
   /**
-   * Negativo
+   * Image negative
    *
-   * @staticvar mixed Callback
-   * @return  void
+   * @return image
    */
   final public function negative() {
     return $this->filter('negate');
   }
 
 
-
-  // --------------------------------------------------------------------------
-
   /**
-   * Voltear imagen
+   * Image flip
    *
-   * @param  mixed $vertical Girar verticalmente?
-   * @return void
+   * @param  mixed Vertical?
+   * @return image
    */
   final public function mirror($vertical = FALSE) {
     $width  = $this->width();
@@ -495,18 +499,18 @@ class gd
   /**
    * Aplicar mascara
    *
-   * @param  mixed   $test  Imagen
-   * @param  integer $left  Offset X
-   * @param  integer $top   Offset Y
-   * @param  integer $width   Ancho
-   * @param  integer $height  Altura
-   * @param  integer $opacity Opacidad
-   * @return void
+   * @param  mixed   Image
+   * @param  integer Offset X
+   * @param  integer Offset Y
+   * @param  integer Width
+   * @param  integer Height
+   * @param  integer Opacity
+   * @return image
    */
   final public function mask($test, $left = 0, $top = 0, $width = '100%', $height = '100%', $opacity = 100) {
     if (is_num($opacity, 0, 1)) {
       $opacity *= 100;
-    }
+    } // TODO: fixit
 
     $this->fix_dimset($x, $left, $cw = $this->width(), $w = $test->width());
     $this->fix_dimset($y, $top, $ch = $this->height(), $h = $test->height());
@@ -515,8 +519,8 @@ class gd
 
     $tmp = $this->fix_alpha(imagecreatetruecolor($width, $height));
 
-    for ($wmax = ceil($width / $w), $r = $x, $m = 0; $m < $wmax; $m += 1, $r += $w) {
-      for ($hmax = ceil($height / $h), $s = $y, $n = 0; $n < $hmax; $n += 1, $s += $h) {
+    for ($wmax = ceil($width / $w), $r = 0, $m = 0; $m < $wmax; $m += 1, $r += $w) {
+      for ($hmax = ceil($height / $h), $s = 0, $n = 0; $n < $hmax; $n += 1, $s += $h) {
         imagecopymerge($tmp, $test->resource, $r, $s, 0, 0, $w, $h, 100);
       }
     }
@@ -529,17 +533,17 @@ class gd
 
 
   /**
-   * Dibujar texto
+   * Draw text
    *
-   * @param  string  $text  Cadena
-   * @param  integer $left  Offset X
-   * @param  integer $top   Offset Y
-   * @param  integer $size  Tamaño
-   * @param  mixed   $color   Color
-   * @param  mixed   $opacity Opacidad
-   * @param  string  $font  Fuente TrueType
-   * @param  mixed   $angle   Inclinacion
-   * @return void
+   * @param  string  Text
+   * @param  integer Offset X
+   * @param  integer Offset Y
+   * @param  integer Font size
+   * @param  mixed   Font color
+   * @param  mixed   Opacity
+   * @param  string  Font
+   * @param  mixed   Angle
+   * @return image
    */
   final public function draw($text, $left = 0, $top = 0, $size = 5, $color = '#000', $opacity = 100, $font = '', $angle = 0) {
     $font = realpath($font);
@@ -561,15 +565,15 @@ class gd
 
 
   /**
-   * Rellenar area
+   * Fill rectangle
    *
-   * @param  mixed $color   Color
-   * @param  mixed $left  Offset X
-   * @param  mixed $top   Offset Y
-   * @param  mixed $width   Ancho
-   * @param  mixed $height  Altura
-   * @param  mixed $opacity Opacidad
-   * @return void
+   * @param  mixed Color
+   * @param  mixed Offset X
+   * @param  mixed Offset Y
+   * @param  mixed Width
+   * @param  mixed Height
+   * @param  mixed Opacity
+   * @return image
    */
   final public function fill($color, $left = 0, $top = 0, $width = '100%', $height = '100%', $opacity = 100) {
     $this->fix_dimset($width, $cw = $this->width());
@@ -585,18 +589,18 @@ class gd
 
 
   /**
-   * Rellenar area
+   * Gradients
    *
-   * @param  mixed $from  Color de origen
-   * @param  mixed $to    Color de destino
-   * @param  mixed $left  Offset X
-   * @param  mixed $top   Offset Y
-   * @param  mixed $width   Ancho
-   * @param  mixed $height  Altura
-   * @param  mixed $step  Pixeles
-   * @param  mixed $opacity Opacidad
+   * @param  mixed From
+   * @param  mixed To
+   * @param  mixed Offset X
+   * @param  mixed Offset Y
+   * @param  mixed Width
+   * @param  mixed Height
+   * @param  mixed Step
+   * @param  mixed Opacity
    * @return void
-   */
+   */ // TODO: add angle?
   final public function gradient($from, $to, $left, $top, $width = '100%', $height = '100%', $step = 1, $opacity = 100, $vertical = FALSE) {
     //http://blog.themeforest.net/tutorials/fun-with-the-php-gd-library-part-2/
     $base = $this->fix_rgbhex($from);
@@ -637,10 +641,11 @@ class gd
 
 
 
-  // ---------------------------------------------------------------------------
   /**#@+
    * @ignore
    */
+
+  // color allocating
   final private function allocate( &$test, $color, $opacity = 100) {
     $old = $this->fix_rgbhex($color);
     if ($opacity < 100) {
@@ -650,6 +655,7 @@ class gd
     return imagecolorallocate($test, $old[0], $old[1], $old[2]);
   }
 
+  // filter callback
   final private function filter() {
     $args = func_get_args();
     $test = array_shift($args);
@@ -663,6 +669,7 @@ class gd
     return $this;
   }
 
+  // better resampling?
   final private function resample( &$tmp, $tx, $ty, $tw, $th, $sx, $sy, $sw, $sh) {
     if (($tw > $sw) OR ($th > $sh)) {
       return imagecopyresampled($tmp, $this->resource, $tx, $ty, $sx, $sy, $tw, $th, $sw, $sh);
@@ -698,20 +705,24 @@ class gd
     }
   }
 
+  // compute for gray colors
   final private function gray_value($r, $g, $b) {
     return round(($r * 0.3) + ($g * 0.59) + ($b * 0.11));
   }
 
+  // make a single pixel gray
   final private function gray_pixel($orig) {
     $gray = $this->gray_value($orig[0], $orig[1], $orig[2]);
     return array(0 => $gray, 1 => $gray, 2 => $gray);
   }
 
+  // retrieve the pixel at position
   final private function getdot($x = 0, $y = 0) {
     $test = imagecolorsforindex($this->resource, @imagecolorat($this->resource, $x, $y));
     return array_values($test);
   }
 
+  // compute TTF box
   final private function outerbox($test, $size = 5, $angle = 0, $file = NULL) {
     $file = realpath($file);
 
@@ -739,7 +750,7 @@ class gd
     );
   }
 
-
+  // fixate alpha channel
   final private function fix_alpha($tmp) {// TODO: PNG/GIF bad handling...
     if (in_array($this->type, array(PNG, GIF))) {
       $index = imagecolortransparent($tmp);
@@ -765,6 +776,7 @@ class gd
     return $tmp;
   }
 
+  // normalize RGB values
   final private function fix_rgbhex($test) {
     if ($test === 'transparent') {
       $index = imagecolortransparent($this->resource);
@@ -792,6 +804,7 @@ class gd
     return $out;
   }
 
+  // compute offset/dimension values
   final private function fix_dimset( &$test, $offset, $max = NULL, $min = NULL) {
     if (strrpos($test, '%')) {
       $test = floor(((func_num_args() == 2 ? $offset : $max) / 100) * ((int) $test));
