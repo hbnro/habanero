@@ -16,7 +16,7 @@ class html extends prototype
    */
   final public static function missing($method, array $arguments) {
     array_unshift($arguments, $method);
-    return call_user_func('tag', $arguments);
+    return call_user_func_array('tag', $arguments);
   }
 
 
