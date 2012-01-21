@@ -8,16 +8,43 @@ is_dir($tetl_path) && unfile($tetl_path, '*', DIR_RECURSIVE | DIR_EMPTY);
 mkpath($tetl_path);
 
 
+// auto-generation
+$stub_file = APP_PATH.DS.'Stubfile';
+
+if ( ! is_file($stub_file)) {
+  $test = dir2arr(APP_PATH, '*'.EXT, DIR_RECURSIVE | DIR_MAP);
+  $test = array_filter($test, 'is_file');
+
+  $stub = array();
+
+  foreach ($test as $file) {
+    if (preg_match_all('/\bimport\s*\(([\'"])(\w+)\\1\)/', read($file), $matches)) {
+      $stub += $matches[2];
+    }
+  }
+
+  if (in_array('application', $stub)) {
+    $stub []= 'server';
+    $stub []= 'partial';
+  }
+
+  $text = join("\n- ", $stub);
+  $text = "# dependencies\n- $text";
+
+  write($stub_file, $text);
+}
+
+
 $libs = array();
 $base = dirname(LIB);
-$stub = read(APP_PATH.DS.'Stubfile');
+$stub = read($stub_file);
 
 preg_match_all('/\s*-\s*(\S+)/m', $stub, $matches);
 
 ! empty($matches[1]) && $libs = $matches[1];
 
 // TODO: allow + to copy full paths? i.e. + stack/console
-success(ln('copying_stub_path', array('name' => 'framework', 'path' => $tetl_path)));
+success(ln('copying_stub_path', array('name' => 'framework', 'path' => str_replace(APP_PATH, '.', $tetl_path))));
 cpfiles(LIB, $tetl_path.DS.'framework', '*', TRUE);
 
 $stub_path = $tetl_path.DS.'library';
@@ -28,7 +55,7 @@ foreach ((array) option('import_path', array()) as $path) {
       $import = str_replace($path.DS, '', $one);
 
       if (in_array(extn($import), $libs)) {
-        success(ln('copying_stub_path', array('name' => $import, 'path' => $stub_path)));
+        success(ln('copying_stub_path', array('name' => extn($import), 'path' => str_replace(APP_PATH, '.', $stub_path))));
         is_dir($one) ? cpfiles($one, $stub_path.DS.$import, '*', TRUE) : copy($one, mkpath($stub_path).DS.$import);
       }
     }
