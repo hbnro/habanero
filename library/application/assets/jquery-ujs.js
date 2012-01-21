@@ -9,8 +9,10 @@
 
       return evt.result !== false;
     },
-    ajax: function(options) {
-      return $.ajax(options);
+    setup: function(options) {
+      $.ajaxSetup($.extend({
+        headers: { 'X-CSRF-Token': $ujs.token }
+      }, options || {}));
     },
     handle: function(el) {
       var that = $(el),
@@ -82,7 +84,6 @@
         options = {
           type: method || 'GET', data: data, dataType: el.data('type') || null,
           beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader('X-CSRF-Token', $ujs.token);
             return $ujs.fire(el, 'ajax:before', [xhr, settings]);
           },
           success: function(data, status, xhr) {
@@ -189,5 +190,7 @@
   $('form').live('submit.ujs', function() {
     return $ujs.handle(this);
   });
+
+  $ujs.setup();
 
 })(window.jQuery);
