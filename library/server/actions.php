@@ -162,7 +162,7 @@ function link_to($text, $url = NULL, $args = array()) {
 
   return tag('a', array_merge(array(
     'rel' => $params['method'] <> GET ? 'nofollow' : FALSE,
-    'href' => substr($params['action'], 0, 1) === '/' ? $params['action'] : url_for($params),
+    'href' => $params['action'],
     'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
     'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
     'data-params' => $params['params'] ? json_encode($params['params']) : FALSE,
@@ -350,7 +350,7 @@ function button_to($name, $url = NULL, array $args = array()) {
 
   return tag('form', array(
     'class' => 'button_to',
-    'action' => url_for($params['action']),
+    'action' => $params['action'],
     'method' => 'post',
     'data-type' => $params['type'] ?: FALSE,
     'data-confirm' => $params['confirm'] ?: FALSE,
