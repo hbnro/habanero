@@ -1,4 +1,7 @@
 .git
 tasks
+Stubfile
 error.log
 access.log
+.gitignore
+.develop
