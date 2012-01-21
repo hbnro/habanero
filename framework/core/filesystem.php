@@ -27,13 +27,12 @@ function unfile($path, $filter = '*', $options = FALSE) {
     $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
     $test  = dir2arr($path, $filter, $options | DIR_MAP | DIR_SORT);
 
-    foreach ($test as $file) {
-      is_file($file) && @unlink($file);
-      is_dir($file) && rmdir($file);
+    foreach ($test as $one) {
+      is_file($one) && @unlink($one);
+      is_dir($one) && $empty && @rmdir($one);
     }
 
-
-    $empty && rmdir($path);
+    $empty && @rmdir($path);
 
     return TRUE;
   }
