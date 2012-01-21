@@ -32,14 +32,18 @@ switch (APP_ENV) {
 
     unfile($static_dir, '*', DIR_RECURSIVE);
 
-    if ($test = dir2arr($img_path, '*', DIR_RECURSIVE | DIR_MAP)) {
+    if ($test = dir2arr($img_path, '*.(jpe?g|png|gif)', DIR_RECURSIVE | DIR_MAP)) {
       foreach ($test as $file) {
-        $file_hash  = md5(md5_file($file) . filesize($file));
-        $file_name  = extn($file, TRUE) . $file_hash . ext($file, TRUE);
+        if (is_dir($file)) {
+          mkpath($static_dir.DS.basename($file));
+        } else {
+          $file_hash  = md5(md5_file($file) . filesize($file));
+          $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
 
-        $static_img = $static_dir.DS.$file_name;
+          $static_img = $static_dir.DS.$file_name;
 
-        ! is_file($static_img) && copy($file, $static_img);
+          ! is_file($static_img) && copy($file, $static_img);
+        }
       }
     }
 
@@ -59,6 +63,8 @@ switch (APP_ENV) {
   break;
 }
 
-redirect(path_to($type.DS.basename($out_file)));
+response(read($out_file), array(
+  'type' => mime($type),
+));
 
 /* EOF: ./library/application/scripts/serving.php */
