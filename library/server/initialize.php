@@ -142,7 +142,10 @@ call_user_func(function () {
 
         // session conf
         if ( ! request::is_local()) {
-          session_set_cookie_params(86400, ROOT, '.' . server());
+          $host = server();
+          $host = is_ip($host) ? $host : ".$host";
+
+          session_set_cookie_params(86400, ROOT, $host);
         }
 
         session_name('--a-' . preg_replace('/\W/', '-', phpversion()));
