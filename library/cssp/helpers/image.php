@@ -43,6 +43,7 @@ cssp_helper::implement('image_path', function ($path) {
     $file_name = extn($path, TRUE) . $file_hash . ext($path, TRUE);
 
     $path = str_replace(basename($path), $file_name, $path);
+    $path = str_replace('../', ROOT . 'static/', $path);
   }
   return "url!($path)";
 });
