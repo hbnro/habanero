@@ -63,7 +63,7 @@ class taml extends prototype
     }
 
 
-    $php_file = TMP.DS.md5($file);
+    $php_file = TMP.DS.strtr($file, '\\/', '__');
 
     if (is_file($php_file)) {
       if (filemtime($file) > filemtime($php_file)) {
