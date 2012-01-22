@@ -68,9 +68,9 @@ class upload extends prototype
    * @return boolean
    */
   final public static function validate($skip = FALSE, array $input = array()) {
-    // reset
-    static::s3_load();
+    static::s3_init();
 
+    // reset
     static::$handle = NULL;
     static::$files  = array();
     static::$error  = array();
@@ -257,7 +257,20 @@ class upload extends prototype
    * @return mixed
    */
   final public static function missing($method, $arguments) {
-    return call_user_func_array(array(static::$s3, camelcase($method)), $arguments);
+    static::s3_init();
+
+    if (static::$s3) {
+      $key    = substr($method, 4);
+      $method = camelcase($method);
+
+      if (method_exists(static::$s3, $method)) {
+        return call_user_func_array(array(static::$s3, $method), $arguments);
+      } elseif (isset(static::$s3->$key)) {
+        return static::$s3->$key;
+      }
+    }
+
+    raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
   }
 
 
@@ -322,7 +335,7 @@ class upload extends prototype
   }
 
   // S3 check
-  final private static function s3_load() {
+  final private static function s3_init() {
     if (is_null(static::$s3)) {
       if (static::$defs['s3_key'] && static::$defs['s3_secret']) {
         /**
