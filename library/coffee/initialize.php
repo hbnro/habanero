@@ -16,7 +16,9 @@ if (class_exists('partial')) {
       'bare' => TRUE,
     ));
   });
+}
 
+if (class_exists('assets')) {
   // assets compiler
   assets::compile('coffee', function ($file) {
     return partial::render($file);
