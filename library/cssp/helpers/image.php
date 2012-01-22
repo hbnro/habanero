@@ -17,9 +17,7 @@ cssp_helper::implement('image_size', function ($path, $key = -1) {
 
   if (empty($cache[$path])) {
     $img_file = cssp::path($path);
-    if (is_file($img_file)) {
-      $cache[$path] = getimagesize($img_file);
-    }
+    $cache[$path] = getimagesize($img_file);
   }
 
   $test = $cache[$path];
@@ -38,7 +36,7 @@ cssp_helper::implement('image_size', function ($path, $key = -1) {
 cssp_helper::implement('image_path', function ($path) {
   $img_file = cssp::path($path);
 
-  if (is_file($img_file)) {
+  if (defined('ROOT') && is_file($img_file)) {
     $file_hash = md5(md5_file($img_file) . filesize($img_file));
     $file_name = extn($path, TRUE) . $file_hash . ext($path, TRUE);
 
