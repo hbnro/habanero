@@ -48,9 +48,11 @@ class partial extends prototype
     }
 
 
+    $tmp    = str_replace(array('\\', '/'), '.', $file);
+    $test   = TMP.DS.'_'.trim($tmp, '.');
+
     $parts  = explode('.', basename($file));
     $name   = array_shift($parts);
-    $test   = TMP.DS.md5($file);
     $output = read($file);
 
     write($test, $output);
