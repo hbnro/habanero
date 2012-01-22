@@ -47,6 +47,11 @@ switch (APP_ENV) {
       }
     }
 
+    if (class_exists('cssp')) {
+      // default path
+      cssp::config('path', APP_PATH.DS.'views'.DS.'assets'.DS.'css');
+    }
+
     // css and js
     $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
       use($base_path, $type) {

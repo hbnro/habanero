@@ -17,7 +17,6 @@ call_user_func(function () {
   // render callback
   if (class_exists('partial')) {
     partial::register('cssp', function ($file, array $vars = array()) {
-      cssp::config('path', APP_PATH.DS.'views'.DS.'assets'.DS.'css');
       return cssp::render($file);
     });
   }
