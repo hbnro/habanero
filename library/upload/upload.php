@@ -11,6 +11,9 @@ class upload extends prototype
    * @ignore
    */
 
+  // S3 instance
+  private static $s3 = NULL;
+
   // files pointer
   private static $handle = NULL;
 
@@ -49,6 +52,8 @@ class upload extends prototype
                     'skip_error' => FALSE,
                     'multiple' => FALSE,
                     'unique' => FALSE,
+                    's3_key' => '',
+                    's3_secret' => '',
                   );
 
   /**#@-*/
@@ -59,10 +64,13 @@ class upload extends prototype
    * Execute upload
    *
    * @param  boolean Override skip_error
+   * @param  array   Input files
    * @return boolean
    */
-  final public static function validate($skip = FALSE) {
+  final public static function validate($skip = FALSE, array $input = array()) {
     // reset
+    static::s3_load();
+
     static::$handle = NULL;
     static::$files  = array();
     static::$error  = array();
@@ -70,12 +78,13 @@ class upload extends prototype
 
     $out = FALSE;
 
-    if ( ! is_dir(static::$defs['path'])) {
+    if ( ! static::is_dir(static::$defs['path'])) {
       return static::set_error(UPLOAD_ERR_PATH);
     }
 
+    (func_num_args() <= 1) && $input = $_FILES;
 
-    $set = static::fix_files(value($_FILES, static::$defs['name'], array()));
+    $set = static::fix_files(value($input, static::$defs['name'], array()));
 
     if (empty($set)) {
       return static::set_error(UPLOAD_ERR_NO_FILE);
@@ -128,7 +137,6 @@ class upload extends prototype
         return static::set_error(UPLOAD_ERR_EXT);
       }
 
-
       $name = slug($set['name'][$i], '_');
       $file = static::$defs['path'].DS.$name;
 
@@ -136,7 +144,7 @@ class upload extends prototype
         $new = ext($name, TRUE);
         $old = basename($name, $new);
 
-        while (is_file($file)) {
+        while (static::is_file($file)) {
           $file  = static::$defs['path'].DS;
           $file .= uniqid($old);
           $file .= $new;
@@ -144,14 +152,15 @@ class upload extends prototype
       }
 
 
-      if (move_uploaded_file($tmp = $set['tmp_name'][$i], $file) OR copy($tmp, $file)) //FIX
+      if ($test = static::move_file($tmp = $set['tmp_name'][$i], $file))
       {
-        static::$files []= array(
+        static::$files []= array_merge(array(
+          'info' => $test,
           'file' => $file,
           'type' => $set['type'][$i],
           'size' => $set['size'][$i],
           'name' => basename($file),
-        );
+        ));
 
         $out = TRUE;
       }
@@ -187,6 +196,16 @@ class upload extends prototype
     }
 
     return $out;
+  }
+
+
+  /**
+   * Retrieve metainfo (S3)
+   *
+   * @return string
+   */
+  final public static function get_info() {
+    return ! empty(static::$handle['info']) ? static::$handle['info'] : FALSE;
   }
 
 
@@ -230,6 +249,18 @@ class upload extends prototype
   }
 
 
+  /**
+   * Callbacks
+   *
+   * @param  string Method
+   * @param  array  Arguments
+   * @return mixed
+   */
+  final public static function missing($method, $arguments) {
+    return call_user_func_array(array(static::$s3, camelcase($method)), $arguments);
+  }
+
+
 
   /**#@+
    * @ignore
@@ -254,6 +285,69 @@ class upload extends prototype
     }
 
     return $out;
+  }
+
+  // filesystem upload
+  final private static function move_file($from, $to) {
+    if (static::$s3) {// TODO: is not enough?
+      @list($bucket, $path) = explode(DS, strtr($to, '\\/', DS), 2);
+
+      static::put_object_file($from, $bucket, $path, S3::ACL_PUBLIC_READ);
+
+      return array_merge(static::get_object_info($bucket, $path), array(
+        'url' => static::s3_url($to, TRUE),
+      ));
+    } else {
+      return move_uploaded_file($from, $to) OR copy($from, $to);
+    }
+  }
+
+  // file check
+  final private static function is_file($path) {
+    if (static::$s3) {
+    return !! @file_get_contents(static::s3_url($path), 0, null, 0, 1);
+    } else {
+      return is_file($path);
+    }
+  }
+
+  // dir check
+  final private static function is_dir($path) {
+    if (static::$s3) {
+      @list($bucket) = explode(DS, strtr($path, '\\/', DS), 2);
+      return array_key_exists($bucket, static::$s3->buckets);
+    } else {
+      return is_dir($path);
+    }
+  }
+
+  // S3 check
+  final private static function s3_load() {
+    if (is_null(static::$s3)) {
+      if (static::$defs['s3_key'] && static::$defs['s3_secret']) {
+        /**
+         * @ignore
+         */
+        require __DIR__.DS.'vendor'.DS.'S3'.EXT;
+
+        static::$s3 = new S3(static::$defs['s3_key'], static::$defs['s3_secret']);
+        static::$s3->buckets = array();
+
+        foreach (static::list_buckets() as $one) {// TODO: consider cache?
+          static::$s3->buckets[$one] = strtolower(static::get_bucket_location($one));
+        }
+      }
+    }
+  }
+
+  final private static function s3_url($path, $secure = FALSE) {
+    @list($bucket, $path) = explode(DS, strtr($path, '\\/', DS), 2);// TODO: HTTPs?
+
+    $location = ! empty(static::$s3->buckets[$bucket]) ? static::$s3->buckets[$bucket] : 'us';
+    $location = $location <> 'us' ? $location : 's3';// its right?
+    $secure   = $secure ? 's' : '';
+
+    return "http$secure://$bucket.$location.amazonaws.com/$path";
   }
 
   /**#@-*/
