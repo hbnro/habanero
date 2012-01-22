@@ -10,6 +10,8 @@ run(function () {
   i18n::load_path(__DIR__.DS.'locale');
 
 
+  cli::clear();
+
   $args = cli::args();
 
   $mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT;
