@@ -9,116 +9,54 @@ class sql_query extends sql_base
   /**
    * Select
    *
-   * @param  mixed   Table(s)
-   * @param  mixed   Column(s)
-   * @param  mixed   Conditions
-   * @param  mixed   Params
-   * @param  boolean Return SQL?
+   * @param  mixed Table(s)
+   * @param  mixed Column(s)
+   * @param  mixed Conditions
+   * @param  mixed Params
    * @return mixed
    */
-  final public function select($table, $fields = ALL, array $where = array(), array $options = array(), $return = FALSE) {
-    $sql  = "SELECT\n" . $this->build_fields($fields);
-    $sql .= "\nFROM\n" . $this->build_fields($table);
-
-    if ( ! empty($where)) {
-      $sql .= "\nWHERE\n" . $this->build_where($where);
-    }
-
-    if ( ! empty($options['group'])) {
-      $sql .= "\nGROUP BY";
-
-      if (is_array($options['group'])) {
-        $sql .= "\n" . join(', ', array_map(array('sql', 'names'), $options['group']));
-      } else {
-        $sql .= "\n" . $this->protect_names($options['group']);
-      }
-    }
-
-    if ( ! empty($options['order'])) {
-      $inc  = 0;
-      $sql .= "\nORDER BY";
-
-      foreach ($options['order'] as $one => $set) {
-        if (($inc += 1) > 1) {
-          $sql .= ', ';
-        }
-
-        if (is_num($one)) {//FIX
-          $sql .= $set === $this->random ? "\n$set" : "\n" . $this->protect_names($set[0]) . " $set[1]";
-          continue;
-        }
-
-        $one  = $this->protect_names($one);
-        $sql .= "\n$one $set";
-      }
-    }
-
-    $limit  = ! empty($options['limit']) ? $options['limit'] : 0;
-    $offset = ! empty($options['offset']) ? $options['offset'] : 0;
-
-    if ($limit > 0) {
-      $sql .= "\nLIMIT " . ($offset > 0 ? "$offset," : '') . $limit;
-    }
-
-    return is_true($return) ? $sql : $this->query($sql);
+  final public function select($table, $fields = ALL, array $where = array(), array $options = array()) {
+    return $this->query($this->build_select($table, $fields, $where, $options));
   }
 
 
   /**
    * Insert
    *
-   * @param  mixed   Table(s)
-   * @param  mixed   Column(s)
-   * @param  string  Primary key|Index
-   * @param  boolean Return SQL?
+   * @param  mixed  Table(s)
+   * @param  mixed  Column(s)
+   * @param  string Primary key|Index
    * @return mixed
    */
-  final public function insert($table, $values, $column = NULL, $return = FALSE) {
-    $sql  = "INSERT INTO\n" . $this->build_fields($table);
-    $sql .= $this->build_values($values, TRUE);
-
-    return is_true($return) ? $sql : $this->inserted($this->query($sql), $table, $column);
+  final public function insert($table, $values, $column = NULL) {
+    return $this->inserted($this->query($this->build_insert($table, $values)), $table, $column);
   }
 
 
   /**
    * Delete
    *
-   * @param  mixed   Table(s)
-   * @param  mixed   Conditions
-   * @param  mixed   Rows to delete
-   * @param  boolean Return SQL?
+   * @param  mixed Table(s)
+   * @param  mixed Conditions
+   * @param  mixed Rows to delete
    * @return mixed
    */
-  final public function delete($table, array $where = array(), $limit = 0, $return = FALSE) {
-    $sql = "DELETE FROM\n" . $this->build_fields($table);
-
-    if ( ! empty($where)) {
-      $sql .= "\nWHERE\n" . $this->build_where($where);
-    }
-    $sql .= $limit > 0 ? "\nLIMIT $limit" : '';
-
-    return is_true($return) ? $sql : $this->affected($this->query($sql));
+  final public function delete($table, array $where = array(), $limit = 0) {
+    return $this->affected($this->query($this->build_delete($table, $where, $limit)));
   }
 
 
   /**
    * Update
    *
-   * @param  mixed   Table(s)
-   * @param  mixed   Column(s)
-   * @param  mixed   Conditions
-   * @param  mixed   Rows to update
-   * @param  boolean Return SQL?
+   * @param  mixed Table(s)
+   * @param  mixed Column(s)
+   * @param  mixed Conditions
+   * @param  mixed Rows to update
    * @return mixed
    */
-  final public function update($table, $fields, array $where = array(), $limit = 0, $return = FALSE) {
-    $sql  = "UPDATE\n" . $this->build_fields($table);
-    $sql .= "\nSET\n" . $this->build_values($fields, FALSE);
-    $sql .= "\nWHERE\n" . $this->build_where($where);
-    $sql .= $limit > 0 ? "\nLIMIT {$limit}" : '';
-
-    return is_true($return) ? $sql : $this->affected($this->query($sql));
+  final public function update($table, $fields, array $where = array(), $limit = 0) {
+    return is_true($return) ? $sql : $this->affected($this->query($this->build_update($table, $fields, $where, $limit)));
   }
 
 

@@ -8,6 +8,7 @@ call_user_func(function () {
   define('ALL', '*');
   define('ASC', 'ASC');
   define('DESC', 'DESC');
+  define('RANDOM', 'RANDOM');
 
   define('IS_NULL', NULL);
   define('NOT_NULL', "<> ''");
@@ -22,6 +23,7 @@ call_user_func(function () {
    */
   require __DIR__.DS.'db'.EXT;
 
+  require __DIR__.DS.'sql_raw'.EXT;
   require __DIR__.DS.'sql_base'.EXT;
   require __DIR__.DS.'sql_query'.EXT;
   require __DIR__.DS.'sql_scheme'.EXT;
