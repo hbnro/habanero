@@ -97,26 +97,29 @@ app_generator::implement('ar:backup', function ($model = '') {
 app_generator::implement('ar:console', function () {
   import('a_record');
 
-  $vars = array();
+  /**
+   * @ignore
+   */
+  function __set($val = NULL, array $vars = array()) {
+    static $set = array();
 
-  function ____($k=NULL,$v=NULL){
-    static $l =array();
-    if (func_num_args()===0)return $l;
-    elseif($k)$l[$k]=$v;
-    return $v;
+    if (func_num_args() === 0) {
+      return $set;
+    } elseif (is_assoc($vars)) {
+      $set = array_merge($set, $vars);
+    }
+    return $val;
   }
 
-  cli::main(function ()
-    use(&$vars) {
 
-    $test = cli::readln('>>> ');
+  cli::main(function () {
 
-    if (in_array($test, array('exit', 'quit'))) {
+    $_ = cli::readln('>>> ');
+
+    if (in_array($_, array('exit', 'quit'))) {
       cli::quit();
     } else {// TODO: any less dirty solution?
-      $out = "extract(____());return $test;";
-      $out = preg_replace('/(\$(\w+)\s*[-+*\/%.]?=([^;]+?));*$/', '____(\'\\2\',\\1);', $out);
-      $out = (array) @eval($out);
+      $out = (array) @eval("extract(__set());return __set($_,get_defined_vars());");
 
       pretty(function ()
         use($out) {
