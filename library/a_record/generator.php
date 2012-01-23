@@ -97,36 +97,34 @@ app_generator::implement('ar:backup', function ($model = '') {
 app_generator::implement('ar:console', function () {
   import('a_record');
 
-  $scope = new stdClass;
+  $vars = array();
+
+  function ____($k=NULL,$v=NULL){
+    static $l =array();
+    if (func_num_args()===0)return $l;
+    elseif($k)$l[$k]=$v;
+    return $v;
+  }
 
   cli::main(function ()
-    use($scope) {
+    use(&$vars) {
 
     $test = cli::readln('>>> ');
 
     if (in_array($test, array('exit', 'quit'))) {
       cli::quit();
-    } else {
-      // TODO: implement more expressions!
-      if (preg_match('/^(\w+\.\w+)(?:\s+(.*?))?$/', $test, $match)) {
-        $test = explode('.', $match[1]);
-        $args = explode(' ', ! empty($match[2]) ? trim($match[2]) : '');
+    } else {// TODO: any less dirty solution?
+      $out = "extract(____());return $test;";
+      $out = preg_replace('/(\$(\w+)\s*[-+*\/%.]?=([^;]+?));*$/', '____(\'\\2\',\\1);', $out);
+      $out = (array) @eval($out);
 
-        $out  = @$test[0]::apply($test[1], $args);
-
-        pretty(function ()
-          use($out) {
-          if (is_array($out)) {
-            $max = sizeof($out) - 1;
-            foreach ($out as $i => $one) {
-              echo "\bcyan(>>>)\b $one\n";
-              ($i < $max) && print("\n");
-            }
-          } else {
-            ! is_null($out) ? print("\bcyan(>>>)\b $out\n") : print(">>> $out\n");
-          }
-        });
-      }
+      pretty(function ()
+        use($out) {
+        foreach ($out as $key => $one) {
+          $one = dump($one);
+          echo is_num($key) ? "\bcyan(>>>)\b $one\n" : "\bgreen($key)\b $one\n";
+        }
+      });
     }
   });
 });
