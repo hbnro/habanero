@@ -185,7 +185,7 @@ class db_model extends a_record
         }
       }
 
-      if ( ! static::$cache[$idx]) {
+      if ( ! isset(static::$cache[$idx])) {
         raise(ln('ar.primary_key_missing', array('model' => get_called_class())));
       }
     }
