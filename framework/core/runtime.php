@@ -357,7 +357,7 @@ function dump($var, $show = FALSE, $depth = 99) {
     }
 
     foreach ($test as $key => $val) {
-      $key = preg_replace('/^\W.*?\W/', '', $key);
+      $key = preg_replace('/^[^\w]*?(?=\w)/', '', $key);
 
       $old = dump($val, FALSE, $depth - 1, $limit + 1);
       $pre = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
