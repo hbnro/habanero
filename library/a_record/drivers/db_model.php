@@ -79,6 +79,7 @@ class db_model extends a_record
 
     if ( ! empty($options['where'])) {
       $where = (array) $options['where'];
+      unset($options['where']);
     }
 
     $what = ! empty($options['select']) ? $options['select'] : ALL;
