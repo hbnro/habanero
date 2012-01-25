@@ -217,13 +217,11 @@ class sql_base extends sql_raw
 
   // hardcore SQL fixes!
   final protected function query_repare($test) {
-    static $delete_expr = '/^\s*DELETE\s+FROM\s+(\S+)\s*$/is';
+    static $delete_expr = '/^\s*DELETE\s+FROM\s+(\S+)\s*$/is',
+           $limit_expr = '/\s+LIMIT\s+(\d+)(?:\s*(?:,|\s+TO\s+)\s*(\d+))?\s*$/ei';
 
     if (method_exists($this, 'ensure_limit')) {
-      $limit_expr = '/\s+LIMIT\s+(\d+)(?:\s*(?:,|\s+TO\s+)\s*(\d+))?\s*$/i';
-      $test       = preg_replace_callback($limit_expr, function ($match) {
-        return $this->ensure_limit($match[1], $match[2]);
-      }, $test);
+      $test = preg_replace($limit_expr, '$this->ensure_limit("\\1","\\2");', $test);
     }
 
     $test = preg_replace($delete_expr, 'DELETE FROM \\1 WHERE 1=1', $test);
