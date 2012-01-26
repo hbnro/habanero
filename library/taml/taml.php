@@ -11,6 +11,9 @@ class taml extends prototype
    * @ignore
    */
 
+  // lambdas
+  private static $fn = '/\bfunction\s*\(.*?\)\s*$/';
+
   // quotes
   private static $qt = array(
                     '\\' => '<!--#BS#-->',
@@ -24,8 +27,8 @@ class taml extends prototype
                     '/\?>\s*<\//' => '?></',
                     '/\s*(?=[\r\n])/s' => '',
                     '/\s*<!--#PRE#-->/' => "\n",
-                    '/\s*<!--#CONCAT#-->/s' => '',
-                    '/<([\w:-]+)([^<>]*)>[|\s]*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
+                    //'/\s*<!--#CONCAT#-->/s' => '',
+                    //'/<([\w:-]+)([^<>]*)>[|\s]*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
                     '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
@@ -200,15 +203,13 @@ class taml extends prototype
 
   // compile lines
   final private static function compile($tree) {
-    static $fn = '/\bfunction\s*\(.*?\)\s*$/';
-
     $out  = array();
     $expr = sprintf('-\s*%s', static::$open);
 
     if ( ! empty($tree[-1])) {
       $sub[$tree[-1]] = array_slice($tree, 1);
 
-      if (preg_match($fn, $tree[-1])) {
+      if (preg_match(static::$fn, $tree[-1])) {
         $sub[$tree[-1]] []= '- })';
       } elseif (preg_match("/^\s*$expr/", $tree[-1])) {
         $sub[$tree[-1]] []= '- }';
@@ -219,7 +220,7 @@ class taml extends prototype
       foreach ($tree as $key => $value) {
         if ( ! is_scalar($value)) {
           continue;
-        } elseif (preg_match($fn, $value)) {
+        } elseif (preg_match(static::$fn, $value)) {
           $tree []= '- })';
         } elseif (preg_match("/^\s*$expr/", $value)) {
           $tree []= '- }';
@@ -289,7 +290,7 @@ class taml extends prototype
         $key = trim(substr($key, 1));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
 
-        $sep = strpos($key, 'function') ? ' {' : ';';
+        $sep = preg_match(static::$fn, $key) ? ' {' : ';';
 
         return "<?php echo $key$sep ?>$text";
       break;
