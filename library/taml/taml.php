@@ -271,8 +271,8 @@ class taml extends prototype
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
       break;
-      case '|';
-        return sprintf("<!--#CONCAT#-->%s$text", substr($key, 1));
+      #case '|';
+      #  return sprintf("<!--#CONCAT#-->%s$text", substr($key, 1));
       break;case '<';
         // html
         return $key . $text;
@@ -283,6 +283,11 @@ class taml extends prototype
         $key   = rtrim(join(' ', static::tokenize($key)), ';');
         $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : ';';
 
+        $is = preg_match(static::$fn, $key);
+        $is && $key .= ' use($_)';
+        $is && $key = "\$_=get_defined_vars();$key";
+        $is && $close .= 'extract($_);unset($_);';
+
         return static::indent("<?php $key$close ?>\n$text");
       break;
       case '=';
@@ -290,9 +295,16 @@ class taml extends prototype
         $key = trim(substr($key, 1));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
 
-        $sep = preg_match(static::$fn, $key) ? ' {' : ';';
 
-        return "<?php echo $key$sep ?>$text";
+        $is  = preg_match(static::$fn, $key);
+
+        // TODO: hmmm
+        $pre = $is ? '$_=get_defined_vars();' : '';
+        $fix = $is ? 'use($_){extract($_);unset($_);' : '{';
+        $sep = $is ? $fix : ';';
+
+
+        return "<?php {$pre}echo $key$sep ?>$text";
       break;
       case ';';
         continue;
