@@ -200,13 +200,17 @@ class taml extends prototype
 
   // compile lines
   final private static function compile($tree) {
+    static $fn = '/\bfunction\s*\(.*?\)\s*$/';
+
     $out  = array();
     $expr = sprintf('-\s*%s', static::$open);
 
     if ( ! empty($tree[-1])) {
       $sub[$tree[-1]] = array_slice($tree, 1);
 
-      if (preg_match("/^\s*$expr/", $tree[-1])) {
+      if (preg_match($fn, $tree[-1])) {
+        $sub[$tree[-1]] []= '- })';
+      } elseif (preg_match("/^\s*$expr/", $tree[-1])) {
         $sub[$tree[-1]] []= '- }';
       }
 
@@ -215,6 +219,8 @@ class taml extends prototype
       foreach ($tree as $key => $value) {
         if ( ! is_scalar($value)) {
           continue;
+        } elseif (preg_match($fn, $value)) {
+          $tree []= '- })';
         } elseif (preg_match("/^\s*$expr/", $value)) {
           $tree []= '- }';
         }
@@ -283,7 +289,9 @@ class taml extends prototype
         $key = trim(substr($key, 1));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
 
-        return static::indent("<?php echo $key; ?>$text");
+        $sep = strpos($key, 'function') ? ' {' : ';';
+
+        return "<?php echo $key$sep ?>$text";
       break;
       case ';';
         continue;
@@ -405,7 +413,7 @@ class taml extends prototype
 
           case T_IF; // if
           case T_AS; // as
-          case T_FOR; // for
+          case T_FOR; // for => $x | for="..." | for (...)
           case T_FOREACH; // foreach
           case T_ELSE; // else case T_ELSEIF; // elseif
           case T_SWITCH; // switch
@@ -418,7 +426,8 @@ class taml extends prototype
           case T_ENDIF; // endif
           case T_ENDSWITCH; // endswitch
           case T_ENDWHILE; // endwhile
-          case T_CLASS; // FIX? class=""
+          case T_CLASS; // class="..."
+          case T_FUNCTION; // blocks
 
             $out []= $val[1];
           break;
