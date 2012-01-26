@@ -71,13 +71,9 @@ class taml extends prototype
     }
 
 
-    if ( ! is_file($php_file)) {// intentionally hidden
-      $old = ini_set('log_errors', 0);
+    if ( ! is_file($php_file)) {
       $out = static::parse(read($file), $file);
-
       write($php_file, $out);
-
-      ini_set('log_errors', $old);
     }
 
     return render($php_file, TRUE, array(
