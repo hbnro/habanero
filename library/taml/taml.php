@@ -463,6 +463,7 @@ class taml extends prototype
   // apply fixes
   final private static function fixate($code) {
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
+    $code = preg_replace_callback('/#\{(.+?)\}/', 'static::value', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
 
     return $code;
