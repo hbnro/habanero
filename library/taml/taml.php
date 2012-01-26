@@ -128,11 +128,11 @@ class taml extends prototype
         }
       }
 
-      $code .= "$key ";
+      $code .= $key;
 
       $line  = static::escape(rtrim($line));
 
-      $code .= $indent > $tab ? "= array(-1 => '$line')" : "[]= '$line'";
+      $code .= $indent > $tab ? "=array(-1=>'$line')" : "[]='$line'";
       $code .= ";\n";
     }
 
@@ -195,8 +195,12 @@ class taml extends prototype
 
   // compile lines
   final private static function compile($tree) {
+    static $expr = NULL;
+
+    is_null($expr) && $expr = sprintf('-\s*%s', static::$open);
+
+
     $out  = array();
-    $expr = sprintf('-\s*%s', static::$open);
 
     if ( ! empty($tree[-1])) {
       $sub[$tree[-1]] = array_slice($tree, 1);
@@ -274,8 +278,9 @@ class taml extends prototype
         $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : ';';
 
         $is = preg_match(static::$fn, $key);
-        $is && $key .= ' use($_)';
-        $is && $key = "\$_=get_defined_vars();$key";
+
+        $is && $key   .= 'use($_)';
+        $is && $key    = "\$_=get_defined_vars();$key";
         $is && $close .= 'extract($_);unset($_);';
 
         return "<?php $key$close ?>\n$text";
@@ -288,7 +293,6 @@ class taml extends prototype
 
         $is  = preg_match(static::$fn, $key);
 
-        // TODO: hmmm
         $pre = $is ? '$_=get_defined_vars();' : '';
         $fix = $is ? 'use($_){extract($_);unset($_);' : '{';
         $sep = $is ? $fix : ';';
@@ -359,8 +363,8 @@ class taml extends prototype
             );
 
 
-    $sym  = FALSE;
-    $out  = array();
+    $sym = FALSE;
+    $out = array();
     $set = token_get_all('<' . "?php $code");
 
     foreach ($set as $val) {
