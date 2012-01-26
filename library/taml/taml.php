@@ -24,11 +24,15 @@ class taml extends prototype
   // code fixes
   private static $fix = array(
                     '/\s*<\?/' => '<?',
+                    '/\s*\}/s' => ' }',
                     '/\?>\s*<\//' => '?></',
+                    '/\s*<\/pre>/s' => '</pre>',
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
                     '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
                     '/\};?\s*else(?=if|\b)/' => '} else',
+                    '/\s*<!--#PRE#-->\s*/s' => "\n",
+                    '/^\s*\|(.*?)$/m' => '\\1',
                   );
 
   // open blocks
@@ -241,7 +245,7 @@ class taml extends prototype
     }
 
     $out = join("\n", array_filter($out));
-    $out = preg_replace('/\?>\s*<\?php/', "\n", $out);
+    $out = preg_replace('/\?>\s*<\?php\s*/', "\n", $out);
 
     return $out;
   }
@@ -460,8 +464,6 @@ class taml extends prototype
   final private static function fixate($code) {
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
-    $code = preg_replace('/\s*<!--#PRE#-->\s*/s', "\n", $code);
-    $code = preg_replace('/^\s*\|(.*?)$/m', '\\1', $code);
 
     return $code;
   }
