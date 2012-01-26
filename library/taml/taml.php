@@ -25,10 +25,6 @@ class taml extends prototype
   private static $fix = array(
                     '/\s*<\?/' => '<?',
                     '/\?>\s*<\//' => '?></',
-                    '/\s*(?=[\r\n])/s' => '',
-                    '/\s*<!--#PRE#-->/' => "\n",
-                    //'/\s*<!--#CONCAT#-->/s' => '',
-                    //'/<([\w:-]+)([^<>]*)>[|\s]*([^<>]+?)\s*<\/\\1>/s' => '<\\1\\2>\\3</\\1>',
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
                     '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
@@ -232,7 +228,7 @@ class taml extends prototype
         $indent = strlen($key) - strlen(ltrim($key));
 
         if (is_string($value)) {
-          $out []= static::line($value, '', $indent);
+          $out []= static::line($value, '', $indent - static::$defs['indent']);
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
           $value = join("\n", static::flatten($value));
@@ -271,8 +267,6 @@ class taml extends prototype
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
       break;
-      #case '|';
-      #  return sprintf("<!--#CONCAT#-->%s$text", substr($key, 1));
       break;case '<';
         // html
         return $key . $text;
@@ -288,10 +282,10 @@ class taml extends prototype
         $is && $key = "\$_=get_defined_vars();$key";
         $is && $close .= 'extract($_);unset($_);';
 
-        return static::indent("<?php $key$close ?>\n$text");
+        return "<?php $key$close ?>\n$text";
       break;
       case '=';
-        // print
+          // print
         $key = trim(substr($key, 1));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
 
@@ -346,7 +340,7 @@ class taml extends prototype
 
         if ( ! empty($match[0])) {
           $key  = trim(substr(trim($key), 1));
-          $text = static::indent("<?php echo $key; ?>$text");
+          $text = "<?php echo $key; ?>$text";
         } elseif ( ! is_numeric($key)) {
           $text = trim($key) . $text;
         }
@@ -464,15 +458,27 @@ class taml extends prototype
 
   // apply fixes
   final private static function fixate($code) {
-    $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
+    $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
+    $code = preg_replace('/\s*<!--#PRE#-->\s*/s', "\n", $code);
+    $code = preg_replace('/^\s*\|(.*?)$/m', '\\1', $code);
 
     return $code;
   }
 
   // indentation
   final private static function indent($text, $max = 0) {
-    return preg_replace('/^/m', str_repeat(' ', $max ?: static::$defs['indent']), $text);
+    $repl = str_repeat(' ', $max ?: static::$defs['indent']);
+    $test = explode("\n", $text);
+    $last = array_pop($test);
+
+    $text = join("\n", array_map(function ($line)
+      use($repl) {
+      return "$repl$line";
+    }, $test));
+    $text .= "\n$last";
+
+    return $text;
   }
 
   // errors
