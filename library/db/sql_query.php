@@ -56,7 +56,7 @@ class sql_query extends sql_base
    * @return mixed
    */
   final public function update($table, $fields, array $where = array(), $limit = 0) {
-    return is_true($return) ? $sql : $this->affected($this->query($this->build_update($table, $fields, $where, $limit)));
+    return $this->affected($this->query($this->build_update($table, $fields, $where, $limit)));
   }
 
 
