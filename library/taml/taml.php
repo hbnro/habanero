@@ -12,7 +12,7 @@ class taml extends prototype
    */
 
   // lambdas
-  private static $fn = '/(?<=[(,])\s*->\s*$/';
+  private static $fn = '(?<=[(,])\s*->\s*';
 
   // quotes
   private static $qt = array(
@@ -199,19 +199,16 @@ class taml extends prototype
 
   // compile lines
   final private static function compile($tree) {
-    static $expr = NULL;
-
-    is_null($expr) && $expr = sprintf('-\s*%s', static::$open);
-
-
-    $out  = array();
+    $open  = sprintf('/^\s*-\s*%s/', static::$open);
+    $block = sprintf('/[-=]\s*(.+?)\s*%s/', static::$fn);
+    $out   = array();
 
     if ( ! empty($tree[-1])) {
       $sub[$tree[-1]] = array_slice($tree, 1);
 
-      if (preg_match(static::$fn, $tree[-1])) {
+      if (preg_match($block, $tree[-1])) {
         $sub[$tree[-1]] []= '- })';
-      } elseif (preg_match("/^\s*$expr/", $tree[-1])) {
+      } elseif (preg_match($open, $tree[-1])) {
         $sub[$tree[-1]] []= '- }';
       }
 
@@ -220,9 +217,9 @@ class taml extends prototype
       foreach ($tree as $key => $value) {
         if ( ! is_scalar($value)) {
           continue;
-        } elseif (preg_match(static::$fn, $value)) {
+        } elseif (preg_match($block, $value)) {
           $tree []= '- })';
-        } elseif (preg_match("/^\s*$expr/", $value)) {
+        } elseif (preg_match($open, $value)) {
           $tree []= '- }';
         }
       }
@@ -250,7 +247,6 @@ class taml extends prototype
     return $out;
   }
 
-
   // parse single line
   final private static function line($key, $text = '', $indent = 0) {
     static $tags = NULL;
@@ -277,34 +273,19 @@ class taml extends prototype
       break;
       case '-';
         // php
-        $key   = substr($key, 1);
-        $key   = rtrim(join(' ', static::tokenize($key)), ';');
-        $close = preg_match(sprintf('/^\s*%s/', static::$open), $key) ? ' {' : ';';
+        $key = substr($key, 1);
+        $key = rtrim(join(' ', static::tokenize($key)), ';');
+        $key = static::block($key);
 
-        $is = preg_match(static::$fn, $key);
-
-        $is && $key   .= 'use($_)' . (substr($close, -1) <> '{' ? '{' : '');
-        $is && $key    = "\$_=get_defined_vars();$key";
-        $is && $close .= 'extract($_);unset($_);';
-        $is && $key    = preg_replace('/->\s*(?=(?:use)\()/', 'function()', $key);
-
-        return "<?php $key$close ?>\n$text";
+        return "<?php $key ?>\n$text";
       break;
       case '=';
           // print
         $key = trim(substr($key, 1));
         $key = rtrim(join(' ', static::tokenize($key)), ';');
+        $key = static::block($key, TRUE);
 
-
-        $is  = preg_match(static::$fn, $key);
-
-        $pre = $is ? '$_=get_defined_vars();' : '';
-        $fix = $is ? 'use($_){extract($_);unset($_);' : '{';
-        $sep = $is ? $fix : ';';
-        $is && $key = preg_replace('/->\s*(?=(?:use)\(|$)/', 'function()', $key);
-
-
-        return "<?php {$pre}echo $key$sep ?>$text";
+        return "<?php $key ?>$text";
       break;
       case ';';
         continue;
@@ -359,6 +340,23 @@ class taml extends prototype
     }
   }
 
+  // parse blocks
+  final private static function block($line, $echo = FALSE) {
+    $suffix = ';';
+    $prefix = $echo ? 'echo ' : '';
+
+    if (strpos($line, '->')) {
+      $suffix = '';
+      $prefix = "\$_=get_defined_vars();$prefix";
+
+      $line   = preg_replace(sprintf('/%s/', static::$fn), 'function()', $line);
+      $line  .= 'use($_){extract($_);unset($_);';
+    } elseif (preg_match(sprintf('/^\s*%s/', static::$open), $line)) {
+      $suffix = '{';
+    }
+
+    return "$prefix$line$suffix";
+  }
 
   // retrieve expression tokens
   final private static function tokenize($code) {
