@@ -283,7 +283,7 @@ class taml extends prototype
 
         $is = preg_match(static::$fn, $key);
 
-        $is && $key   .= 'use($_){';
+        $is && $key   .= 'use($_)' . (substr($close, -1) <> '{' ? '{' : '');
         $is && $key    = "\$_=get_defined_vars();$key";
         $is && $close .= 'extract($_);unset($_);';
 
