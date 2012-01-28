@@ -150,8 +150,10 @@ function is_assoc($set) {
  * @param  scalar  String
  * @return boolean
  */
-function is_time($test) {
-  return preg_match('/^((0?[1-9]|1[012])(:[0-5]\d){0,2}([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$/', $test) > 0;
+if ( ! function_exists('is_time')) {
+  function is_time($test) {
+    return preg_match('/^((0?[1-9]|1[012])(:[0-5]\d){0,2}([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$/', $test) > 0;
+  }
 }
 
 
@@ -163,30 +165,32 @@ function is_time($test) {
  * @staticvar array   Regex bag
  * @return    boolean
  */
-function is_date($test, $type = 'Ymd') {
-  static $set = array(
-            'y' => '[0-9][0-9]|[0-9][0-9]',
-            'Y' => '[1][9][0-9][0-9]|[2][0-9][0-9][0-9]',
-            'm' => '0[123456789]|10|11|12',
-            'M' => 'Jan(?:uary)?|Feb(?:ruary)?|Ma(?:r(?:ch)?|y)|Apr(?:il)?|Ju(?:(?:ly?)|(?:ne?))|Aug(?:ust)?|Oct(?:ober)?|(?:Sep(?=\\b|t)t?|Nov|Dec)(?:ember)?',
-            'd' => '[0-3](?:1|2)|[0-2][0-9]',
-            'D' => '(?:Mon|Tues?|Wed(?:nes)?|Thu(?:rs)?|Fri|Sat(?:ur)?|Sun)(?:day)?',
-          );
+if ( ! function_exists('is_date')) {
+  function is_date($test, $type = 'Ymd') {
+    static $set = array(
+              'y' => '[0-9][0-9]|[0-9][0-9]',
+              'Y' => '[1][9][0-9][0-9]|[2][0-9][0-9][0-9]',
+              'm' => '0[123456789]|10|11|12',
+              'M' => 'Jan(?:uary)?|Feb(?:ruary)?|Ma(?:r(?:ch)?|y)|Apr(?:il)?|Ju(?:(?:ly?)|(?:ne?))|Aug(?:ust)?|Oct(?:ober)?|(?:Sep(?=\\b|t)t?|Nov|Dec)(?:ember)?',
+              'd' => '[0-3](?:1|2)|[0-2][0-9]',
+              'D' => '(?:Mon|Tues?|Wed(?:nes)?|Thu(?:rs)?|Fri|Sat(?:ur)?|Sun)(?:day)?',
+            );
 
 
-  $tmp = array();
+    $tmp = array();
 
-  foreach (array_filter(preg_split('//', $type)) as $one) {
-    if ( ! array_key_exists($one, $set)) {
-      continue;
+    foreach (array_filter(preg_split('//', $type)) as $one) {
+      if ( ! array_key_exists($one, $set)) {
+        continue;
+      }
+
+      $tmp []= '(?:' . $set[$one] . ')';
     }
 
-    $tmp []= '(?:' . $set[$one] . ')';
+    $expr = sprintf('/^%s$/', join('\D*?', $tmp));
+
+    return preg_match($expr, $test) > 0;
   }
-
-  $expr = sprintf('/^%s$/', join('\D*?', $tmp));
-
-  return preg_match($expr, $test) > 0;
 }
 
 
@@ -314,28 +318,30 @@ function is_password($test, $min = 8, $max = 15) {
  * @staticvar string  RegExp
  * @return    boolean
  */
-function is_email($test, $multi = FALSE, $check = FALSE) {
-  static $regex = '/^([\w\+\-:]+)(\.[\w\+\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i';
+if ( ! function_exists('is_email')) {
+  function is_email($test, $multi = FALSE, $check = FALSE) {
+    static $regex = '/^([\w\+\-:]+)(\.[\w\+\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i';
 
 
-  $test = preg_split('/[,;\|]+/', (string) $test);
+    $test = preg_split('/[,;\|]+/', (string) $test);
 
-  if ( ! $multi && (sizeof($test) > 1)) {
-    return FALSE;
-  } elseif (empty($test)) {
-    return FALSE;
-  }
-
-
-  foreach ($test as $value) {
-    if ( ! preg_match($regex, $value)) {
+    if ( ! $multi && (sizeof($test) > 1)) {
       return FALSE;
-    } elseif (is_true($check) && ! checkdnsrr(substr($value, strpos($value, '@') + 1), 'MX')) {
+    } elseif (empty($test)) {
       return FALSE;
     }
-  }
 
-  return TRUE;
+
+    foreach ($test as $value) {
+      if ( ! preg_match($regex, $value)) {
+        return FALSE;
+      } elseif (is_true($check) && ! checkdnsrr(substr($value, strpos($value, '@') + 1), 'MX')) {
+        return FALSE;
+      }
+    }
+
+    return TRUE;
+  }
 }
 
 
@@ -495,32 +501,34 @@ function is_md5($test) {
  * @param  scalar  String
  * @return boolean
  */
-function is_serialized($test) {
-  if ( ! is_string($test)) {// TODO: include WP url
+if ( ! function_exists('is_serialized')) {
+  function is_serialized($test) {
+    if ( ! is_string($test)) {// TODO: include WP url
+      return FALSE;
+    }
+
+    if ($test == 'N;') {
+      return TRUE;
+    } elseif ( ! preg_match('/^([adObis]):/', $test, $match)) {
+      return FALSE;
+    }
+
+    switch ($match[1]) {
+      case 'a'; case 'O'; case 's';
+      if (preg_match("/^{$match[1]}:[0-9]+:.*[;}]\$/s", $test)) {
+          return TRUE;
+        }
+      break;
+      case 'b'; case 'i'; case 'd';
+        if (preg_match("/^{$match[1]}:[0-9\.E-]+;\$/", $test)) {
+          return TRUE;
+        }
+      break;
+      default; break;
+    }
+
     return FALSE;
   }
-
-  if ($test == 'N;') {
-    return TRUE;
-  } elseif ( ! preg_match('/^([adObis]):/', $test, $match)) {
-    return FALSE;
-  }
-
-  switch ($match[1]) {
-    case 'a'; case 'O'; case 's';
-    if (preg_match("/^{$match[1]}:[0-9]+:.*[;}]\$/s", $test)) {
-        return TRUE;
-      }
-    break;
-    case 'b'; case 'i'; case 'd';
-      if (preg_match("/^{$match[1]}:[0-9\.E-]+;\$/", $test)) {
-        return TRUE;
-      }
-    break;
-    default; break;
-  }
-
-  return FALSE;
 }
 
 
