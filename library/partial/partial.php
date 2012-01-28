@@ -48,9 +48,7 @@ class partial extends prototype
     }
 
 
-    $tmp    = str_replace(array('\\', '/'), '.', $file);
-    $test   = TMP.DS.'_'.trim($tmp, '.');
-
+    $test   = TMP.DS.'_'.trim(strtr($file, '\\/', '__'), '_');
     $parts  = explode('.', basename($file));
     $name   = array_shift($parts);
     $output = read($file);
