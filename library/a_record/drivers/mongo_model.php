@@ -60,90 +60,6 @@ class mongo_model extends a_record
 
 
   /**
-   * Find rows
-   *
-   * @param  mixed ID|Properties|...
-   * @return mixed
-   */
-  final public static function find() {
-    $args    = func_get_args();
-
-    $wich    = array_shift($args);
-    $params  = array_pop($args);
-
-    $where   =
-    $options = array();
-
-    if ($params && ! is_assoc($params)) {
-      $args []= $params;
-    } else {
-      $options = (array) $params;
-    }
-
-    if ( ! empty($options['where'])) {
-      $where = (array) $options['where'];
-    }
-
-    $what = ! empty($options['select']) ? $options['select'] : array();
-
-
-    switch ($wich) {
-      case 'first';
-      case 'last';
-        $row = static::select($what, $where, array(
-          'offset' => $wich === 'first' ? 0 : static::count($where) - 1,
-          'limit' => 1,
-        ));
-
-        return $row ? new static(array_shift($row), 'after_find') : FALSE;
-      break;
-      case 'all';
-        $out = array();
-        $res = static::select($what, $where, $options);
-
-        while ($row = array_shift($res)) {
-          $out []= new static($row, 'after_find');
-        }
-        return $out;
-      break;
-      default;
-        array_unshift($args, $wich);
-      break;
-    }
-
-    $row = static::select($what, array(
-      '_id' => array_shift($args),
-    ), $options);
-
-    return $row ? new static($row, 'after_find') : FALSE;
-  }
-
-
-  /**
-   * Iteration blocks
-   *
-   * @param  mixed Options|Function callback
-   * @param  mixed Function callback
-   * @return void
-   */
-  final public static function each($params = array(), Closure $lambda = NULL) {
-    if (is_closure($params)) {
-      $lambda = $params;
-      $params = array();
-    }
-
-    $get   = ! empty($params['select']) ? $params['select'] : array();
-    $where = ! empty($params['where']) ? (array) $params['where'] : array();
-
-    $res = static::select($get, $where, $params);
-
-    while ($row = array_shift($res)) {
-      $lambda(new static($row, 'after_find'));
-    }
-  }
-
-
-  /**
    * Handle missing methods
    *
    * @param  string Method
@@ -306,6 +222,47 @@ class mongo_model extends a_record
       static::$cache[$idx] = $mongo->$database;
     }
     return static::$cache[$idx]->{static::table()};
+  }
+
+  // each iteration
+  final protected static function block($get, $where, $params, $lambda) {
+    $res = static::select($get, $where, $params);
+    while ($row = array_shift($res)) {
+      $lambda(new static($row, 'after_find'));
+    }
+  }
+
+  // find rows
+  final protected static function finder($wich, $what, $where, $options) {
+    switch ($wich) {
+      case 'first';
+      case 'last';
+        $row = static::select($what, $where, array(
+          'offset' => $wich === 'first' ? 0 : static::count($where) - 1,
+          'limit' => 1,
+        ));
+
+        return $row ? new static(array_shift($row), 'after_find') : FALSE;
+      break;
+      case 'all';
+        $out = array();
+        $res = static::select($what, $where, $options);
+
+        while ($row = array_shift($res)) {
+          $out []= new static($row, 'after_find');
+        }
+        return $out;
+      break;
+      default;
+        array_unshift($args, $wich);
+      break;
+    }
+
+    $row = static::select($what, array(
+      '_id' => array_shift($args),
+    ), $options);
+
+    return $row ? new static($row, 'after_find') : FALSE;
   }
 
   /**#@-*/

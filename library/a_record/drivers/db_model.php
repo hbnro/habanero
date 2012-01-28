@@ -57,94 +57,6 @@ class db_model extends a_record
 
 
   /**
-   * Find rows
-   *
-   * @param  mixed ID|Properties|...
-   * @return mixed
-   */
-  final public static function find() {
-    $args    = func_get_args();
-
-    $wich    = array_shift($args);
-    $params  = array_pop($args);
-
-    $where   =
-    $options = array();
-
-    if (is_assoc($params)) {
-      $options = (array) $params;
-    } else {
-      $args []= $params;
-    }
-
-    if ( ! empty($options['where'])) {
-      $where = (array) $options['where'];
-      unset($options['where']);
-    }
-
-    $what = ! empty($options['select']) ? $options['select'] : ALL;
-
-
-    switch ($wich) {
-      case 'first';
-      case 'last';
-        $options['limit'] = 1;
-        $options['order'] = array(
-          static::pk() => $wich === 'first' ? ASC : DESC,
-        );
-
-        $row = static::conn()->fetch(static::conn()->select(static::table(), $what, $where, $options), AS_ARRAY);
-
-        return $row ? new static($row, 'after_find') : FALSE;
-      break;
-      case 'all';
-        $out = array();
-        $res = static::conn()->select(static::table(), $what, $where, $options);
-
-        while ($row = static::conn()->fetch($res, AS_ARRAY)) {
-          $out []= new static($row, 'after_find');
-        }
-        return $out;
-      break;
-      default;
-        array_unshift($args, $wich);
-      break;
-    }
-
-
-    $row = static::conn()->fetch(static::conn()->select(static::table(), $what, array(
-      static::pk() => array_shift($args),
-    ), $options), AS_ARRAY);
-
-    return $row ? new static($row, 'after_find') : FALSE;
-  }
-
-
-  /**
-   * Iteration blocks
-   *
-   * @param  mixed Options|Function callback
-   * @param  mixed Function callback
-   * @return void
-   */
-  final public static function each($params = array(), Closure $lambda = NULL) {
-    if (is_closure($params)) {
-      $lambda = $params;
-      $params = array();
-    }
-
-    $get   = ! empty($params['select']) ? $params['select'] : ALL;
-    $where = ! empty($params['where']) ? (array) $params['where'] : array();
-
-    $res = static::conn()->select(static::table(), $get, $where, $params);
-
-    while ($row = static::conn()->fetch($res, AS_ARRAY)) {
-      $lambda(new static($row, 'after_find'));
-    }
-  }
-
-
-  /**
    * Handle missing methods
    *
    * @param  string Method
@@ -248,6 +160,50 @@ class db_model extends a_record
   // cached connection
   final private static function conn() {
     return db::connect(option('database.' . static::$database));
+  }
+
+  // each iteration
+  final protected static function block($get, $where, $params, $lambda) {
+    $res = static::conn()->select(static::table(), $get ?: ALL, $where, $params);
+    while ($row = static::conn()->fetch($res, AS_ARRAY)) {
+      $lambda(new static($row, 'after_find'));
+    }
+  }
+
+  // find rows
+  final protected static function finder($wich, $what, $where, $options) {
+    switch ($wich) {
+      case 'first';
+      case 'last';
+        $options['limit'] = 1;
+        $options['order'] = array(
+          static::pk() => $wich === 'first' ? ASC : DESC,
+        );
+
+        $row = static::conn()->fetch(static::conn()->select(static::table(), $what ?: ALL, $where, $options), AS_ARRAY);
+
+        return $row ? new static($row, 'after_find') : FALSE;
+      break;
+      case 'all';
+        $out = array();
+        $res = static::conn()->select(static::table(), $what ?: ALL, $where, $options);
+
+        while ($row = static::conn()->fetch($res, AS_ARRAY)) {
+          $out []= new static($row, 'after_find');
+        }
+        return $out;
+      break;
+      default;
+        array_unshift($args, $wich);
+      break;
+    }
+
+
+    $row = static::conn()->fetch(static::conn()->select(static::table(), $what ?: ALL, array(
+      static::pk() => array_shift($args),
+    ), $options), AS_ARRAY);
+
+    return $row ? new static($row, 'after_find') : FALSE;
   }
 
   /**#@-*/
