@@ -23,10 +23,9 @@ class taml extends prototype
 
   // code fixes
   private static $fix = array(
-                    '/\s*<\?/' => '<?',
-                    '/\s*\}/s' => ' }',
+                    '/>\s*<\?/' => '><?',
                     '/\?>\s*<\//' => '?></',
-                    '/\s*<\/pre>/s' => '</pre>',
+                    '/\s*<\/pre>/s' => "\n</pre>",
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
                     '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
