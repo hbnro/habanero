@@ -12,7 +12,7 @@ class taml extends prototype
    */
 
   // lambdas
-  private static $fn = '/\bfunction\s*\(.*?\)\s*$/';
+  private static $fn = '/(?<=[(,])\s*->\s*$/';
 
   // quotes
   private static $qt = array(
@@ -286,6 +286,7 @@ class taml extends prototype
         $is && $key   .= 'use($_)' . (substr($close, -1) <> '{' ? '{' : '');
         $is && $key    = "\$_=get_defined_vars();$key";
         $is && $close .= 'extract($_);unset($_);';
+        $is && $key    = preg_replace('/->\s*(?=(?:use)\()/', 'function()', $key);
 
         return "<?php $key$close ?>\n$text";
       break;
@@ -300,6 +301,7 @@ class taml extends prototype
         $pre = $is ? '$_=get_defined_vars();' : '';
         $fix = $is ? 'use($_){extract($_);unset($_);' : '{';
         $sep = $is ? $fix : ';';
+        $is && $key = preg_replace('/->\s*(?=(?:use)\(|$)/', 'function()', $key);
 
 
         return "<?php {$pre}echo $key$sep ?>$text";
