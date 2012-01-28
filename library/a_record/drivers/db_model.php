@@ -121,6 +121,30 @@ class db_model extends a_record
 
 
   /**
+   * Iteration blocks
+   *
+   * @param  mixed Options|Function callback
+   * @param  mixed Function callback
+   * @return void
+   */
+  final public static function each($params = array(), Closure $lambda = NULL) {
+    if (is_closure($params)) {
+      $lambda = $params;
+      $params = array();
+    }
+
+    $get   = ! empty($params['select']) ? $params['select'] : ALL;
+    $where = ! empty($params['where']) ? (array) $params['where'] : array();
+
+    $res = static::conn()->select(static::table(), $get, $where, $params);
+
+    while ($row = static::conn()->fetch($res, AS_ARRAY)) {
+      $lambda(new static($row, 'after_find'));
+    }
+  }
+
+
+  /**
    * Handle missing methods
    *
    * @param  string Method

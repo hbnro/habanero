@@ -86,6 +86,7 @@ class mongo_model extends a_record
 
     $what = ! empty($options['select']) ? $options['select'] : array();
 
+
     switch ($wich) {
       case 'first';
       case 'last';
@@ -115,6 +116,30 @@ class mongo_model extends a_record
     ), $options);
 
     return $row ? new static($row, 'after_find') : FALSE;
+  }
+
+
+  /**
+   * Iteration blocks
+   *
+   * @param  mixed Options|Function callback
+   * @param  mixed Function callback
+   * @return void
+   */
+  final public static function each($params = array(), Closure $lambda = NULL) {
+    if (is_closure($params)) {
+      $lambda = $params;
+      $params = array();
+    }
+
+    $get   = ! empty($params['select']) ? $params['select'] : array();
+    $where = ! empty($params['where']) ? (array) $params['where'] : array();
+
+    $res = static::select($get, $where, $params);
+
+    while ($row = array_shift($res)) {
+      $lambda(new static($row, 'after_find'));
+    }
   }
 
 
