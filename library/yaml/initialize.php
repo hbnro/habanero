@@ -9,6 +9,7 @@ call_user_func(function () {
    * @ignore
    */
   require __DIR__.DS.'vendor'.DS.'spyc'.EXT;
+  require __DIR__.DS.'functions'.EXT;
 
   if ( ! function_exists('yaml_parse')) {
     function yaml_parse($text) {
