@@ -246,6 +246,63 @@ class a_record extends prototype
 
 
   /**
+   * Find rows
+   *
+   * @param  mixed ID|Properties|...
+   * @return mixed
+   */
+  final public static function find() {
+    $args    = func_get_args();
+
+    $wich    = array_shift($args);
+    $params  = array_pop($args);
+
+    $where   =
+    $options = array();
+
+    if (is_assoc($params)) {
+      $options = (array) $params;
+    } else {
+      $args []= $params;
+    }
+
+    if ( ! empty($options['where'])) {
+      $where = (array) $options['where'];
+      unset($options['where']);
+    }
+
+    $what = array();
+
+    if ( ! empty($options['select'])) {
+      $what = (array) $options['select'];
+      unset($options['select']);
+    }
+
+    return static::finder($wich, $what, $where, $options);
+  }
+
+
+  /**
+   * Iteration blocks
+   *
+   * @param  mixed Options|Function callback
+   * @param  mixed Function callback
+   * @return void
+   */
+  final public static function each($params = array(), Closure $lambda = NULL) {
+    if (is_closure($params)) {
+      $lambda = $params;
+      $params = array();
+    }
+
+    $get   = ! empty($params['select']) ? $params['select'] : array();
+    $where = ! empty($params['where']) ? (array) $params['where'] : array();
+
+    return static::block($get, $where, $params, $lambda);
+  }
+
+
+  /**
    * Create row without saving
    *
    * @param  array Properties
