@@ -266,7 +266,7 @@ class taml extends prototype
         // <!-- ... -->
         return sprintf("<!--%s-->$text", trim(substr($key, 1)));
       break;
-      break;case '<';
+      case '<';
         // html
         return $key . $text;
       break;
@@ -331,8 +331,10 @@ class taml extends prototype
           $text = trim($key) . $text;
         }
 
-        $out = ($tag OR $args) ? static::markup($tag ?: 'div', $args, "\n$text\n") : $text;
-        $out = static::indent($out);
+        $text && $text = "\n$text\n";
+
+        $out  = ($tag OR $args) ? static::markup($tag ?: 'div', $args, $text) : $text;
+        $out  = static::indent(trim($out));
 
         return $out;
       break;
@@ -470,14 +472,11 @@ class taml extends prototype
 
   // indentation
   final private static function indent($text, $max = 0) {
-    $repl = str_repeat(' ', $max ?: static::$defs['indent']);
-    $test = explode("\n", $text);
-    $last = array_pop($test);
+    $repl  = str_repeat(' ', $max ?: static::$defs['indent']);
+    $test  = explode("\n", $text);
+    $last  = array_pop($test);
 
-    $text = join("\n", array_map(function ($line)
-      use($repl) {
-      return "$repl$line";
-    }, $test));
+    $text  = join("\n$repl", $test);
     $text .= "\n$last";
 
     return $text;
