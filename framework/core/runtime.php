@@ -89,12 +89,21 @@ function render($content, $partial = FALSE, array $params = array()) {
 
   // curiously the last lambda render breaks! why?
   $output = function () {
+    // TODO: eval() is the only way to debug? (try*)
     ob_start();
+    @ini_set('log_errors', 0);
 
     extract(func_get_arg(1));
-    require func_get_arg(0);
+    eval('?' . '>' . read(func_get_arg(0)));
 
-    return ob_get_clean();
+    $check = ob_get_clean();
+    @ini_set('log_errors', 1);
+
+    if (preg_match('/(?:Parse|syntax)\s+error/', $check)) {
+      preg_match('/(.+?\s+in).*?on\s+line\s+(\d+)/', $check, $match);
+      raise(sprintf("$match[1] %s#$match[2]", func_get_arg(0)));
+    }
+    return $check;
   };
 
   $output = $output($params['content'], $params['locals']);
