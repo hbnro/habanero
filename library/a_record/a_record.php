@@ -331,6 +331,24 @@ class a_record extends prototype
   }
 
 
+  final public static function with() {
+    // if has_scope then prefetch all related rows
+    /* i.e.
+    blog_posts::with(array('blog_authors' => 'author'))->each(function ($one) {
+      dump($one->author->name,1);
+    });
+
+    internally:
+
+    $x = select * from tbl_posts
+    $y = select * from tbl_authors where id in ( $x )
+
+    $x->author = cache[tbl_author_id_and_tbl_posts_author_id]
+
+    */
+  }
+
+
   /**
    * Create row without saving
    *
