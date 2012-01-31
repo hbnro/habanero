@@ -66,11 +66,8 @@ call_user_func(function () {
     }
 
     foreach (array(dirname(LIB), APP_PATH) as $path) {
-      $lib_path = $path.DS.'library'.DS.$class;
-
-      if (is_dir($lib_path)) {
-        $lib_path .= DS.'initialize'.EXT;
-      }
+      $lib_path  = $path.DS.'library'.DS.$class;
+      $lib_path .= is_dir($lib_path) ? DS.'initialize'.EXT : EXT;
 
       if (is_file($lib_path)) {
         require $lib_path;
