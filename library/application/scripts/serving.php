@@ -19,11 +19,6 @@ switch (APP_ENV) {
     }
   break;
   default;
-    // filters
-    assets::compile('php', function ($file) {
-      return partial::render($file);
-    });
-
     // images
     $img_path   = APP_PATH.DS.'views'.DS.'assets'.DS.'img';
     $static_dir = APP_PATH.DS.'static'.DS.'img';
@@ -47,7 +42,7 @@ switch (APP_ENV) {
       }
     }
 
-    if (class_exists('cssp')) {
+    if (class_exists('cssp', FALSE)) {
       // default path
       cssp::config('path', APP_PATH.DS.'views'.DS.'assets'.DS.'css');
     }

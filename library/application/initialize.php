@@ -33,6 +33,12 @@ app::bind(function ($bootstrap) {
 });
 
 
+// filters
+assets::compile('php', function ($file) {
+  return partial::render($file);
+});
+
+
 // assets
 route('/all.:type', function () {
   require __DIR__.DS.'scripts'.DS.'serving'.EXT;

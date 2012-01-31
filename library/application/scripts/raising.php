@@ -1,8 +1,5 @@
 <?php
 
-import('partial');
-
-
 $error_status = 500;
 
 switch (APP_ENV) {
