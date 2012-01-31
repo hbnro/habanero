@@ -4,8 +4,9 @@
  * Fancy tag helper
  */
 
-class tag extends prototype {
-  /**#@+q
+class tag extends prototype
+{
+  /**#@+
    * @ignore
    */
 
@@ -551,4 +552,4 @@ class tag extends prototype {
 
 }
 
-/* EOF: ./library/tagger.php */
+/* EOF: ./library/tag.php */
