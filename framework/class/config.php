@@ -4,7 +4,7 @@
  * Magic config wrapper
  */
 
-class configure extends prototype
+class config
 {
 
   /**#@+
@@ -120,4 +120,4 @@ class configure extends prototype
 
 }
 
-/* EOF: ./framework/core/configure.php */
+/* EOF: ./framework/core/config.php */

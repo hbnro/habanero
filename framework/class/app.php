@@ -4,7 +4,12 @@
  * Application bootstrap
  */
 
-final class bootstrap extends prototype
+/**
+ * @ignore
+ */
+require __DIR__.DS.'prototype'.EXT;
+
+final class app extends prototype
 {
 
   /**#@+
@@ -24,32 +29,32 @@ final class bootstrap extends prototype
   /**
    * Adds extra functionality
    *
-   * @param  string Module name
+   * @param  string Module name|Array|...
    * @return void
    */
-  final public static function enhance($lib) {
-    $lib = strtr($lib, '\\/', DS.DS);
+  final public static function load($set) {
+    $args = is_array($set) ? $set : func_get_args();
 
-    if ( ! in_array($lib, bootstrap::$library)) {
-      $test = (array) option('import_path', array());
+    foreach ($args as $lib) {
+      $lib  = strtr($lib, '\\/', DS.DS);
 
-      foreach ($test as $dir) {
-        $helper_path  = $dir.DS.$lib;
+      if ( ! in_array($lib, static::$library)) {
+        $helper_path  = dirname(LIB).DS.'library'.DS.$lib;
+
         $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
 
-        if (is_file($helper_path)) {
-          break;
+        if ( ! is_file($helper_path)) {
+          raise($helper_path);
         }
-      }
 
-      // fallback, do not use i18n...
-      if ( ! is_loaded($helper_path)) {
         /**
           * @ignore
           */
-        require $helper_path;
+        $test = require $helper_path;
 
-        bootstrap::$library []= $lib;
+        is_closure($test) && static::$middleware []= $test;
+
+        static::$library []= $lib;
       }
     }
   }
@@ -61,9 +66,7 @@ final class bootstrap extends prototype
    * @param  mixed Function callback
    * @return void
    */
-  final public static function execute(Closure $bootstrap) {
-    require_once LIB.DS.'core'.DS.'initialize'.EXT;
-
+  final public static function exec(Closure $bootstrap) {
     if (defined('BEGIN')) {
       raise(ln('application_error'));
     }
@@ -72,7 +75,7 @@ final class bootstrap extends prototype
     // start
     define('BEGIN', ticks());
 
-    foreach (bootstrap::$middleware as $callback) {
+    foreach (static::$middleware as $callback) {
       $bootstrap = $callback($bootstrap);
     }
     $bootstrap();
@@ -86,14 +89,14 @@ final class bootstrap extends prototype
    * @return void
    */
   final public static function bind(Closure $middleware) {
-    bootstrap::$middleware []= $middleware;
+    static::$middleware []= $middleware;
   }
 
 }
 
 
 // basic output
-bootstrap::implement('raise', function ($message, $debug = NULL) {
+app::implement('raise', function ($message, $debug = NULL) {
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(FALSE), 1);
@@ -191,4 +194,4 @@ bootstrap::implement('raise', function ($message, $debug = NULL) {
   die($output);
 });
 
-/* EOF: ./framework/core/application.php */
+/* EOF: ./framework/core/app.php */
