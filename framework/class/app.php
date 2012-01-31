@@ -44,7 +44,7 @@ final class app extends prototype
         $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
 
         if ( ! is_file($helper_path)) {
-          raise($helper_path);
+          raise(ln('file_not_exists', array('name' => $lib)));
         }
 
         /**
