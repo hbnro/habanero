@@ -48,16 +48,15 @@ success(ln('copying_stub_path', array('name' => 'framework', 'path' => str_repla
 cpfiles(LIB, $tetl_path.DS.'framework', '*', TRUE);
 
 $stub_path = $tetl_path.DS.'library';
+$path      = dirname(LIB).DS.'library';
 
-foreach ((array) option('import_path', array()) as $path) {
-  if ($test = dir2arr($path, '*', DIR_RECURSIVE | DIR_MAP)) {
-    foreach ($test as $one) {
-      $import = str_replace($path.DS, '', $one);
+if ($test = dir2arr($path, '*', DIR_RECURSIVE | DIR_MAP)) {
+  foreach ($test as $one) {
+    $import = str_replace($path.DS, '', $one);
 
-      if (in_array(extn($import), $libs)) {
-        success(ln('copying_stub_path', array('name' => extn($import), 'path' => str_replace(APP_PATH, '.', $stub_path))));
-        is_dir($one) ? cpfiles($one, $stub_path.DS.$import, '*', TRUE) : copy($one, mkpath($stub_path).DS.$import);
-      }
+    if (in_array(extn($import), $libs)) {
+      success(ln('copying_stub_path', array('name' => extn($import), 'path' => str_replace(APP_PATH, '.', $stub_path))));
+      is_dir($one) ? cpfiles($one, $stub_path.DS.$import, '*', TRUE) : copy($one, mkpath($stub_path).DS.$import);
     }
   }
 }
