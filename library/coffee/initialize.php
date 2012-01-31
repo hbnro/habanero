@@ -4,7 +4,7 @@
  * Coffee wrapper initialization
  */
 
-if (class_exists('partial')) {
+if (class_exists('partial', FALSE)) {
   /**
    * @ignore
    */
@@ -18,7 +18,7 @@ if (class_exists('partial')) {
   });
 }
 
-if (class_exists('assets')) {
+if (class_exists('assets', FALSE)) {
   // assets compiler
   assets::compile('coffee', function ($file) {
     return partial::render($file);

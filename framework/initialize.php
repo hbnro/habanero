@@ -3,8 +3,8 @@
 /**
  * Web development framework for php5.3+
  *
- * @author  Alvaro Cabrera (@pateketrueke)
- * @link    https://github.com/pateketrueke/tetlphp
+ * @author Alvaro Cabrera (@pateketrueke)
+ * @link   https://github.com/pateketrueke/tetlphp
  */
 
 // do!
@@ -58,30 +58,35 @@ call_user_func(function () {
   define('IS_CLI', (bool) defined('STDIN'));
 
 
+  // lazy loading
+  spl_autoload_register(function ($class) {
+    if (is_file($core_path = __DIR__.DS.'class'.DS.$class.EXT)) {
+      require $core_path;
+      return TRUE;
+    }
+
+    $lib_path = dirname(LIB).DS.'library'.DS.$class;
+
+    if (is_dir($lib_path)) {
+      $lib_path .= DS.'initialize'.EXT;
+    }
+
+    if (is_file($lib_path)) {
+      require $lib_path;
+      return TRUE;
+    }
+  });
+
 
   // core libraries
   /**#@+
    * @ignore
    */
-  require LIB.DS.'core'.DS.'runtime'.EXT;
-  require LIB.DS.'core'.DS.'utilities'.EXT;
-
-  require LIB.DS.'core'.DS.'prototype'.EXT;
-  require LIB.DS.'core'.DS.'bootstrap'.EXT;
-
-  require LIB.DS.'core'.DS.'filesystem'.EXT;
-  require LIB.DS.'core'.DS.'conditions'.EXT;
-  require LIB.DS.'core'.DS.'configure'.EXT;
+  require __DIR__.DS.'runtime'.EXT;
+  require __DIR__.DS.'utilities'.EXT;
+  require __DIR__.DS.'filesystem'.EXT;
+  require __DIR__.DS.'conditions'.EXT;
   /**#@-*/
-
-
-  // filters
-  configure::filter('import_path', function ($value) {
-    $value = array_merge((array) $value, option('import_path', array()));
-    $value = array_unique($value);
-
-    return $value;
-  });
 
 
   // global
@@ -92,18 +97,51 @@ call_user_func(function () {
     config($GLOBALS['config']);
   }
 
-  // PATH
-  config('import_path', array(
-    dirname(LIB).DS.'library',
-    APP_PATH.DS.'library',
-  ));
+
+  // default time zone
+  $timezone = option('timezone', 'UTC');
+
+  date_default_timezone_set($timezone);
+
+  define('TIMEZONE', $timezone);
 
 
-  // lazy loading
-  spl_autoload_register(function ($class) {
-    foreach (rescue() as $test) {
-      is_closure($test) && $test($class);
-      is_array($test) && ! empty($test[$class]) && require $test[$class];
+  // ----------------------------------------------------------------------------
+
+  // OS temp path
+  if (function_exists('sys_get_temp_dir')) {
+    $temporary_files = @sys_get_temp_dir();
+  } else {
+    $temporary_files = getenv('TMP') ?: getenv('TEMP');
+
+    if ( ! is_dir($temporary_files)) {
+      $old = @tempnam('E', '');
+      $temporary_files = @dirname($old);
+      @unlink($old);
+    }
+  }
+
+  define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? rtrim($temporary_files, DS) : '/tmp');
+
+  ! is_dir(TMP) && mkpath(TMP);
+
+
+  // initialize language settings
+  require __DIR__.DS.'i18n'.DS.'initialize'.EXT;
+
+  i18n::load_path(__DIR__.DS.'locale');
+
+
+  // default error and exception hanlders
+  set_exception_handler(function ($E) {
+    raise(ln('exception_error', array('message' => $E->getMessage(), 'file' => $E->getFile(), 'number' => $E->getLine())));
+  });
+
+  set_error_handler(function ($errno, $errmsg, $file, $line, $trace) {
+    if (($errno & error_reporting()) == $errno) {
+      raise(ln('error_debug', array('error' => $errmsg, 'file' => $file, 'number' => $line)));
+
+      return TRUE;
     }
   });
 });
