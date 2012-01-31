@@ -4,21 +4,19 @@
  * Taml initialization
  */
 
-call_user_func(function () {
-  /**
-   * @ignore
-   */
+/**
+ * @ignore
+ */
 
-  require __DIR__.DS.'taml'.EXT;
+require __DIR__.DS.'taml'.EXT;
 
-  i18n::load_path(__DIR__.DS.'locale', 'taml');
+i18n::load_path(__DIR__.DS.'locale', 'taml');
 
-  if (class_exists('partial')) {
-    // allow for taml files
-    partial::register('taml', function ($file, array $vars = array()) {
-      return taml::render($file, $vars);
-    });
-  }
-});
+if (class_exists('partial', FALSE)) {
+  // allow for taml files
+  partial::register('taml', function ($file, array $vars = array()) {
+    return taml::render($file, $vars);
+  });
+}
 
 /* EOF: ./library/taml/initialize.php */

@@ -1,15 +1,15 @@
 <?php
 
 require dirname(__DIR__).'/framework/initialize.php';
+
+import('console');
+
+i18n::load_path(__DIR__.DS.'locale');
+
 require __DIR__.DS.'app_generator'.EXT;
 require __DIR__.DS.'functions'.EXT;
 
 run(function () {
-  import('console');
-
-  i18n::load_path(__DIR__.DS.'locale');
-
-
   cli::clear();
 
   $args = cli::args();
@@ -19,8 +19,8 @@ run(function () {
   if (is_file($mod_file)) {
     require $mod_file;
   } else {
-    foreach ((array) option('import_path', array()) as $path) {
-      if ($test = findfile($path, 'generator'.EXT, TRUE)) {
+    foreach (array(dirname(LIB), APP_PATH) as $path) {
+      if ($test = findfile($path.DS.'library', 'generator'.EXT, TRUE)) {
         foreach ($test as $gen_file) {
           /**
            * @ignore

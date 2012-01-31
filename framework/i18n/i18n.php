@@ -4,7 +4,7 @@
  * I18N translation library
  */
 
-class i18n extends prototype
+class i18n
 {
 
   /**
@@ -64,7 +64,7 @@ class i18n extends prototype
           $params['default'] = $one;
           break;
         } else {
-          $test = i18n::translate($one, array('scope' => $params['scope']));
+          $test = static::translate($one, array('scope' => $params['scope']));
 
           if ( ! empty($test)) {
             $params['default'] = $test;
@@ -74,7 +74,7 @@ class i18n extends prototype
       }
     }
 
-    $from    = i18n::load_locale();
+    $from    = static::load_locale();
 
     $prefix  = $params['scope'] ? "$params[scope]." : '';
     $default = $params['default'] ?: $params['string'];
@@ -99,7 +99,7 @@ class i18n extends prototype
    */
   final public static function load_path($from, $scope = '') {
     if (is_array($from)) {
-      return array_map('i18n::load_path', $from);
+      return array_map('static::load_path', $from);
     }
 
 
@@ -126,7 +126,7 @@ class i18n extends prototype
       '.csv' => 'csv',
       '.ini' => 'ini',
     ) as $ext => $type) {
-      $callback = 'i18n::load_' . $type;
+      $callback = 'static::load_' . $type;
 
       foreach (array(
         $path.DS.join('_', $test).$ext,
@@ -134,7 +134,7 @@ class i18n extends prototype
       ) as $one) {
         if (is_file($one)) {// do not use lambda here
           $lang = call_user_func($callback, $one);
-          i18n::load_locale($lang, $scope);
+          static::load_locale($lang, $scope);
           break;
         }
       }

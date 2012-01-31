@@ -5,33 +5,13 @@
  */
 
 /**
- * Add classy patch
- *
- * @param     mixed Array|Function callback
- * @staticvar array Patch stack
- * @return    void
- */
-function rescue($with = NULL) {
-  static $patch = array();
-
-
-  if (func_num_args() === 0) {
-    return $patch;
-  }
-
-  $patch []= $with;
-}
-
-
-/**
  * Load a single library file
  *
- * @param     string Identifier
- * @staticvar array  Helper bag
- * @return    void
+ * @param  string Name|Array|...
+ * @return void
  */
-function import($lib) {
-  bootstrap::enhance($lib);
+function import() {
+  call_user_func_array('app::load', func_get_args());
 }
 
 
@@ -42,7 +22,7 @@ function import($lib) {
  * @return void
  */
 function run(Closure $bootstrap) {
-  bootstrap::execute($bootstrap);
+  app::exec($bootstrap);
 }
 
 
@@ -124,11 +104,11 @@ function render($content, $partial = FALSE, array $params = array()) {
  */
 function raise($message, $debug = NULL) {
   if (is_closure($message)) {// TODO: there is another way?
-    return bootstrap::implement('raise', $message);
+    return app::implement('raise', $message);
   }
 
   // invoke custom handler
-  bootstrap::raise($message, $debug);
+  app::raise($message, $debug);
 }
 
 
@@ -140,7 +120,7 @@ function raise($message, $debug = NULL) {
  * @return mixed
  */
 function option($get, $or = FALSE) {
-  return configure::get($get, $or);
+  return config::get($get, $or);
 }
 
 
@@ -154,14 +134,14 @@ function option($get, $or = FALSE) {
  */
 function config($set = NULL, $value = NULL) {
   if (func_num_args() === 0) {
-    return configure::all();
+    return config::all();
   } elseif ( ! is_null($value)) {
-    configure::set($set, $value);
+    config::set($set, $value);
   } else {
     if ( ! is_assoc($set) && ! is_file($set)) {
-      return configure::get($set);
+      return config::get($set);
     }
-    configure::add($set);
+    config::add($set);
   }
 }
 
