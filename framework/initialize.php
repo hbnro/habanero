@@ -65,15 +65,17 @@ call_user_func(function () {
       return TRUE;
     }
 
-    $lib_path = dirname(LIB).DS.'library'.DS.$class;
+    foreach (array(dirname(LIB), APP_PATH) as $path) {
+      $lib_path = $path.DS.'library'.DS.$class;
 
-    if (is_dir($lib_path)) {
-      $lib_path .= DS.'initialize'.EXT;
-    }
+      if (is_dir($lib_path)) {
+        $lib_path .= DS.'initialize'.EXT;
+      }
 
-    if (is_file($lib_path)) {
-      require $lib_path;
-      return TRUE;
+      if (is_file($lib_path)) {
+        require $lib_path;
+        return TRUE;
+      }
     }
   });
 
