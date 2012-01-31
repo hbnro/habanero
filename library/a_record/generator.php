@@ -95,8 +95,6 @@ app_generator::implement('ar:backup', function ($model = '') {
 
 // inspect records
 app_generator::implement('ar:console', function () {
-  import('a_record');
-
   /**
    * @ignore
    */

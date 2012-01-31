@@ -1,7 +1,5 @@
 <?php
 
-import('db');
-
 /**
  * DB model
  */
