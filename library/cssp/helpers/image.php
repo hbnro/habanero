@@ -33,7 +33,7 @@ cssp_helper::implement('image_size', function ($path, $key = -1) {
  * @param  string Path
  * @return string
  */
-cssp_helper::implement('image_path', function ($path) {
+cssp_helper::implement('image_path', function ($path, $raw = FALSE) {
   $img_file = cssp::path($path);
 
   if (defined('ROOT') && is_file($img_file)) {
@@ -42,6 +42,10 @@ cssp_helper::implement('image_path', function ($path) {
 
     $path = str_replace(basename($path), $file_name, $path);
     $path = str_replace('../', ROOT . 'static/', $path);
+
+    if ($raw) {
+      return $path;
+    }
   }
   return "url!($path)";
 });
