@@ -71,9 +71,8 @@ class fb extends prototype
 
     if ( ! static::$me) {
       try {
-        static::$me = static::api('/me');
-      } catch (FacebookApiException $e) {
-      }
+        static::get_user() && static::$me = static::api('/me');
+      } catch (FacebookApiException $e) {}
     }
   }
 
