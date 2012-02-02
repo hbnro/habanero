@@ -4,8 +4,7 @@
  * GD2 library
  */
 
-if ( ! function_exists('gd_info'))
-{
+if ( ! function_exists('gd_info')) {
   raise(ln('extension_missing', array('name' => 'GD2')));
 }
 
@@ -285,20 +284,32 @@ class gd
       $height = $width;
     }
 
-    $ratio = $w / $h;
 
-    if (($width / $height) > $ratio) {
-      $h = $width / $ratio;
-      $w = $width;
+    $wr = $w / $width;
+    $hr = $h / $height;
+    $mr = max($wr, $hr);
+
+    if ($mr > 1) {
+      $ww = $w / $mr;
+      $hh = $h / $mr;
     } else {
-      $w = $height * $ratio;
-      $h = $height;
+      $ww = $w;
+      $hh = $h;
     }
+    
+    $xx = ($width - $ww) / 2;
+    $yy = ($height - $hh) / 2;
 
-    $left = ($w / 2) -($width / 2);
-    $top  = ($h / 2) -($height / 2);
+    $old = clone $this->resize($ww, $hh);
+    $tmp = $this->fix_alpha(imagecreatetruecolor($width, $height));
 
-    return $this->resize($w, $h)->crop($width, $height, $left, $top);
+    $old->resample($tmp, $xx, $yy, $ww, $hh, 0, 0, $ww, $hh);
+    $this->resource = $tmp;
+
+    imagedestroy($old->resource);
+    unset($old);
+
+    return $this;
   }
 
 
@@ -671,38 +682,7 @@ class gd
 
   // better resampling?
   final private function resample( &$tmp, $tx, $ty, $tw, $th, $sx, $sy, $sw, $sh) {
-    if (($tw > $sw) OR ($th > $sh)) {
-      return imagecopyresampled($tmp, $this->resource, $tx, $ty, $sx, $sy, $tw, $th, $sw, $sh);
-    } elseif ( ! ($tw == $sw && $th == $sh)) {
-      $rX = $sw / $tw;
-      $rY = $sh / $th;
-      $w  = 0;
-
-      for ($y = 0; $y < $th; $y += 1) {
-        $t  = 0;
-        $ow = $w;
-        $w  = round(($y +1) * $rY);
-
-        for ($x = 0; $x < $tw; $x += 1) {
-          $a  = 0;
-          $ot = $t;
-          $r  = $g = $b = 0;
-          $t  = round(($x +1) *$rX);
-
-          for ($u = 0; $u < ($w - $ow); $u += 1) {
-            for ($p = 0; $p < ($t - $ot); $p += 1) {
-              $c  = $this->getdot($ot + $p + $sx, $ow + $u + $sy);
-              $r += array_shift($c);
-              $g += array_shift($c);
-              $b += array_shift($c);
-              $a += 1;
-            }
-          }
-
-          imagesetpixel($tmp, $x, $y, imagecolorclosest($tmp, $r / $a, $g / $a, $b / $a));
-        }
-      }
-    }
+    return imagecopyresampled($tmp, $this->resource, $tx, $ty, $sx, $sy, $tw, $th, $sw, $sh);
   }
 
   // compute for gray colors
