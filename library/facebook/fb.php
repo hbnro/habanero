@@ -49,6 +49,7 @@ class fb extends prototype
     if (method_exists($instance, camelcase($method))) {
       return call_user_func_array(array($instance, camelcase($method)), $arguments);
     }
+    raise(ln('method_missing', array('class' => 'Facebook', 'name' => $method)));
   }
 
 
@@ -67,11 +68,14 @@ class fb extends prototype
 
     if (array_key_exists('X-Facebook-User', $test)) {
       static::$me = (array) json_decode($test['X-Facebook-User']);
+    } else {
+      static::$me = session('me');
     }
 
     if ( ! static::$me) {
       try {
-        static::get_user() && static::$me = static::api('/me');
+        session('uid', static::get_user());
+        session('me', static::$me = static::api('/me'));
       } catch (FacebookApiException $e) {}
     }
   }
