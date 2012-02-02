@@ -75,15 +75,6 @@ class db_model extends a_record
       $res  = static::conn()->select(static::table(), ALL, $test);
 
       return static::conn()->numrows($res) ? new static(static::conn()->fetch($res, AS_ARRAY), 'after_find') : static::create($test);
-    } elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
-      return static::find($match[1], array(
-        'where' => static::merge($match[2], $arguments),
-      ));
-    } elseif (preg_match('/^each_by_(.+)$/', $method, $match)) {
-      return static::each(array(
-        'block' => array_pop($arguments),
-        'where' => static::merge($match[1], $arguments),
-      ));
     }
 
     if (method_exists(static::conn(), $method)) {

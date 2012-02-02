@@ -79,15 +79,6 @@ class mongo_model extends a_record
       $res   = static::select(array(), $where, array('single' => TRUE));
 
       return $res ? new static($res, 'after_find') : static::create($where);
-    } elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
-      return static::find($match[1], array(
-        'where' => static::merge($match[2], $arguments),
-      ));
-    } elseif (preg_match('/^each_by_(.+)$/', $method, $match)) {
-      return static::each(array(
-        'block' => array_pop($arguments),
-        'where' => static::merge($match[1], $arguments),
-      ));
     }
 
     return static::super($method, $arguments);

@@ -361,10 +361,18 @@ class a_record extends prototype
   final protected static function super($method, $arguments) {
     if (in_array($method, array('first', 'last', 'all'))) {
       array_unshift($arguments, $method);
-
       return call_user_func_array(get_called_class() . '::find', $arguments);
     } elseif (preg_match('/^(build|create)_by_(.+)$/', $method, $match)) {
       return static::$match[1](static::merge($match[2], $arguments));
+    } elseif (preg_match('/^(?:find_)?(all|first|last)_by_(.+)$/', $method, $match)) {
+      return static::find($match[1], array(
+        'where' => static::merge($match[2], $arguments),
+      ));
+    } elseif (preg_match('/^each_by_(.+)$/', $method, $match)) {
+      return static::each(array(
+        'block' => array_pop($arguments),
+        'where' => static::merge($match[1], $arguments),
+      ));
     }
 
     raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
