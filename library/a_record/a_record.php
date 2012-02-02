@@ -293,6 +293,9 @@ class a_record extends prototype
     if (is_closure($params)) {
       $lambda = $params;
       $params = array();
+    } elseif ( ! empty($params['block'])) {
+      $lambda = $params['block'];
+      unset($params['block']);
     }
 
     $get   = ! empty($params['select']) ? $params['select'] : array();

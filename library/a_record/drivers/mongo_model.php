@@ -83,6 +83,11 @@ class mongo_model extends a_record
       return static::find($match[1], array(
         'where' => static::merge($match[2], $arguments),
       ));
+    } elseif (preg_match('/^each_by_(.+)$/', $method, $match)) {
+      return static::each(array(
+        'block' => array_pop($arguments),
+        'where' => static::merge($match[1], $arguments),
+      ));
     }
 
     return static::super($method, $arguments);
