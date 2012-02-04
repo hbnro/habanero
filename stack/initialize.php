@@ -2,8 +2,6 @@
 
 require dirname(__DIR__).'/framework/initialize.php';
 
-import('console');
-
 i18n::load_path(__DIR__.DS.'locale');
 
 require __DIR__.DS.'app_generator'.EXT;
