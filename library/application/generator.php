@@ -114,20 +114,7 @@ app_generator::implement('app:precompile', function () {
 
 
 function minify_js($text) {
-  $tmp_file = TMP.DS.md5(uniqid('--jsmin-input'));
-  $min_file = TMP.DS.md5(uniqid('--jsmin-output'));
-
-  write($tmp_file, $text);
-
-  // TODO: find out a better solution?
-  @system("jsmin < $tmp_file > $min_file");
-
-  if (filesize($min_file)) {
-    $text = read($min_file);
-  }
-  @unlink($tmp_file);
-
-  return $text;
+  return jsmin::minify($text);
 }
 
 function minify_css($text) {
