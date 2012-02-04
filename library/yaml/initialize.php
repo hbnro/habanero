@@ -33,4 +33,21 @@ if ( ! function_exists('yaml_parse')) {
 }
 /**#@-*/
 
+
+/**
+ * Wrapper class
+ */
+class yaml
+{
+  // some magic
+  final public static function missing($method, $arguments) {
+    $callback = 'yaml_' . $method;
+
+    if ( ! function_exists($callback)) {
+      raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
+    }
+    return call_user_func_array($callback, $arguments):
+  }
+} 
+
 /* EOF: ./library/yaml/initialize.php */

@@ -4,7 +4,7 @@
  * Application initialization
  */
 
-import('server');
+import('www');
 import('partial');
 
 $bootstrap = app::methods();

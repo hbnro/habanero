@@ -4,7 +4,7 @@
  * Basic registry library
  */
 
-class registry extends prototype
+class registry
 {
 
   /**#@+

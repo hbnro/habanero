@@ -44,7 +44,7 @@ class tag extends prototype
   /**#@-*/
 
 
-   /**
+  /**
    * Magic tags
    *
    * @param     string Method

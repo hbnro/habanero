@@ -4,7 +4,7 @@
  * Validation utilities library
  */
 
-class valid extends prototype
+class valid
 {
 
   /**#@+

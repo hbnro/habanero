@@ -7,6 +7,6 @@
 /**
  * @ignore
  */
-require __DIR__.DS.'functions'.EXT;
+require __DIR__.DS.'ua'.EXT;
 
 /* EOF: ./library/client/ua/initialize.php */
