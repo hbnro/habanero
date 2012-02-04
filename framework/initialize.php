@@ -143,6 +143,11 @@ call_user_func(function () {
       return TRUE;
     }
   });
+
+  // autoload
+  foreach ((array) option('autoload') as $one) {
+    $one && import($one);
+  }
 });
 
 /* EOF: ./framework/initialize.php */
