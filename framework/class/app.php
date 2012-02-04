@@ -35,6 +35,11 @@ final class app extends prototype
   final public static function load($set) {
     $args = is_array($set) ? $set : func_get_args();
 
+    if (is_assoc($set)) {
+      $tmp  = ! empty($set[APP_ENV]) ? $set[APP_ENV] : NULL;
+      $args = $tmp ?: array();
+    }
+
     foreach ($args as $lib) {
       $lib  = strtr($lib, '\\/', DS.DS);
 
