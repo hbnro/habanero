@@ -33,6 +33,13 @@ app::bind(function ($bootstrap) {
     }
   }
 
+  if (APP_ENV <> 'production') {
+    compile_images();
+  }
+
+  /**
+   * @ignore
+   */
   require __DIR__.DS.'scripts'.DS.'binding'.EXT;
   return $bootstrap;
 });
@@ -42,14 +49,5 @@ app::bind(function ($bootstrap) {
 assets::compile('php', function ($file) {
   return partial::render($file);
 });
-
-return function ($bootstrap) {
-  (APP_ENV <> 'production') && compile_images();
-  if (class_exists('cssp', FALSE)) {
-    // default path
-    cssp::config('path', APP_PATH.DS.'views'.DS.'assets'.DS.'css');
-  };
-  return $bootstrap;
-};
 
 /* EOF: ./library/application/initialize.php */

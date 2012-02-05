@@ -13,7 +13,8 @@ request::implement('dispatch', function (array $params = array())
     $request['dispatch']($params);
   } else {
     params($params['matches']);
-    application::apply('execute', explode('#', (string) $params['to']));
+    $output = application::apply('execute', explode('#', (string) $params['to']));
+    response($output);
   }
 });
 

@@ -51,7 +51,11 @@ class application extends prototype
 
 
   /**
+   * Executable actions
    *
+   * @param  string Controller
+   * @param  string Action
+   * @return void
    */
   public static function execute($controller, $action = 'index') {
     $controller_file = APP_PATH.DS.'controllers'.DS.$controller.EXT;
@@ -85,15 +89,6 @@ class application extends prototype
       $view = partial("$controller/$action.html", (array) $class_name::$view);
 
       if ( ! is_false($class_name::$layout)) {
-        $params = array();
-
-        $class_name::$source && $params['locals'] = array('src' => $class_name::$source);
-
-        $class_name::$head []= tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
-        $class_name::$head []= tag('link', array('rel' => 'stylesheet', 'href' => url_for('/all.css', $params)));
-
-        assets::inline(tag('script', array('src' => url_for('/all.js', $params))), 'body');
-
         $layout_file = "layouts/{$class_name::$layout}";
 
         $view = partial($layout_file, array(
@@ -106,9 +101,9 @@ class application extends prototype
 
     $output = $class_name::$response;
     $output['output'] = $view;
-    response($output);
-  }
 
+    return $output;
+  }
 }
 
 /* EOF: ./library/application/app_controller.php */
