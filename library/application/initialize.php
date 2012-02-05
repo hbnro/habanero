@@ -4,6 +4,11 @@
  * Application initialization
  */
 
+/**
+ * @ignore
+ */
+require __DIR__.DS.'functions'.EXT;
+
 import('www');
 import('partial');
 
@@ -38,14 +43,13 @@ assets::compile('php', function ($file) {
   return partial::render($file);
 });
 
-
-// assets
-route('/all.:type', function () {
-  require __DIR__.DS.'scripts'.DS.'serving'.EXT;
-}, array(
-  'constraints' => array(
-    ':type' => '(css|js)',
-  ),
-));
+return function ($bootstrap) {
+  (APP_ENV <> 'production') && compile_images();
+  if (class_exists('cssp', FALSE)) {
+    // default path
+    cssp::config('path', APP_PATH.DS.'views'.DS.'assets'.DS.'css');
+  };
+  return $bootstrap;
+};
 
 /* EOF: ./library/application/initialize.php */

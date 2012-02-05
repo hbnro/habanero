@@ -164,7 +164,7 @@ class assets extends prototype
       case 'css';
       case 'js';
         $out = array();
-        
+
         foreach (static::$set[$method] as $file) {
           if (is_file($file)) {
             $text  = static::process($file);
