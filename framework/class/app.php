@@ -41,25 +41,28 @@ final class app extends prototype
     }
 
     foreach ($args as $lib) {
-      $lib  = strtr($lib, '\\/', DS.DS);
+      $lib = strtr($lib, '\\/', DS.DS);
 
       if ( ! in_array($lib, static::$library)) {
-        $helper_path  = dirname(LIB).DS.'library'.DS.$lib;
+        foreach (array(dirname(LIB), APP_PATH) as $path) {
+          $helper_path  = $path.DS.'library'.DS.$lib;
+          $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
 
-        $helper_path .= is_dir($helper_path) ? DS.'initialize'.EXT : EXT;
+          if (in_array($lib, static::$library)) {
+            continue;
+          } elseif (is_file($helper_path)) {
+            /**
+              * @ignore
+              */
+            $test = require $helper_path;
 
-        if ( ! is_file($helper_path)) {
-          raise(ln('file_not_exists', array('name' => $lib)));
+            is_closure($test) && static::$middleware []= $test;
+
+            static::$library []= $lib;
+          }
         }
 
-        /**
-          * @ignore
-          */
-        $test = require $helper_path;
-
-        is_closure($test) && static::$middleware []= $test;
-
-        static::$library []= $lib;
+        ! in_array($lib, static::$library) && raise(ln('file_not_exists', array('name' => $lib)));
       }
     }
   }
