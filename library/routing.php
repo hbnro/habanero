@@ -106,10 +106,10 @@ class routing
         }
 
         // TODO: still using the same token against XHR?
-        define('TOKEN', request::is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
-        define('CHECK', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
+        config('csrf_token', request::is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
+        config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
 
-        $params['protect'] && $_SESSION['--csrf-token'] = TOKEN;
+        $params['protect'] && $_SESSION['--csrf-token'] = option('crsf_token');
 
         request::dispatch($params);
       }

@@ -10,7 +10,7 @@ function stylesheet_for($name) {
 }
 
 function csrf_meta_tag() {
-  echo tag('meta', array('name' => 'csrf-token', 'content' => TOKEN));
+  echo tag('meta', array('name' => 'csrf-token', 'content' => option('crsf_token')));
 }
 
 function compile_assets($from, $type) {
