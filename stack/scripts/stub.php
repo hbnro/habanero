@@ -8,32 +8,7 @@ is_dir($tetl_path) && unfile($tetl_path, '*', DIR_RECURSIVE | DIR_EMPTY);
 mkpath($tetl_path);
 
 
-// auto-generation
 $stub_file = APP_PATH.DS.'Stubfile';
-
-if ( ! is_file($stub_file)) {
-  $test = dir2arr(APP_PATH, '*'.EXT, DIR_RECURSIVE | DIR_MAP);
-  $test = array_filter($test, 'is_file');
-
-  $stub = array();
-
-  foreach ($test as $file) {
-    if (preg_match_all('/\bimport\s*\(([\'"])(\w+)\\1\)/', read($file), $matches)) {
-      $stub += $matches[2];
-    }
-  }
-
-  if (in_array('application', $stub)) {
-    $stub []= 'server';
-    $stub []= 'partial';
-  }
-
-  $text = join("\n- ", $stub);
-  $text = "# dependencies\n- $text";
-
-  write($stub_file, $text);
-}
-
 
 $libs = array();
 $base = dirname(LIB);
