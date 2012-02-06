@@ -12,7 +12,7 @@ require __DIR__.DS.'dispatch'.EXT;
 require __DIR__.DS.'functions'.EXT;
 /**#@-*/
 
-return function ($bootstrap) {
+app::bind(function ($bootstrap) {
   // root
   $url = array();
 
@@ -162,6 +162,6 @@ return function ($bootstrap) {
     use($bootstrap) {
     routing::execute($bootstrap());
   };
-};
+});
 
 /* EOF: ./library/www/initialize.php */
