@@ -7,8 +7,6 @@
 /**
  * @ignore
  */
-require __DIR__.DS.'prototype'.EXT;
-
 final class app extends prototype
 {
 
