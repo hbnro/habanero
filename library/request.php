@@ -304,15 +304,15 @@ class request extends prototype
    * @return    boolean
    */
   final public static function is_safe() {
-    static $check = NULL,
-           $_token = NULL;
+    static $_token = NULL;
 
 
-    if (is_null($check)) {
-      $check  = defined('CHECK') ? CHECK : NULL;
+    if (is_null($_token)) {
       $_token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
     }
 
+
+    $check = option('csrf_check');
 
     @list($old_time, $old_token) = explode(' ', $check);
     @list($new_time, $new_token) = explode(' ', $_token);
