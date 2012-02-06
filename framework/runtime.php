@@ -319,7 +319,7 @@ function dump($var, $show = FALSE, $depth = 99) {
     $out []= is_true($var) ? 'TRUE' : 'FALSE';
   } elseif (is_scalar($var)) {
     $out []= strtr($var, $repl);
-  } elseif (is_callable($var)) {
+  } elseif (is_closure($var)) {
     $args = array();
     $code = reflection($var);
 

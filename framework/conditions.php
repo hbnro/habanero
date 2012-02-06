@@ -638,7 +638,7 @@ function is_loaded($file) {
  * @return boolean
  */
 function is_iterable($test) {
-  return ! is_callable($test) && (is_array($test) OR is_object($test));
+  return is_array($test) OR is_object($test);
 }
 
 

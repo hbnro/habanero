@@ -250,15 +250,13 @@ class mongo_model extends a_record
         return $out;
       break;
       default;
-        array_unshift($args, $wich);
+        $row = static::select($what, array(
+          '_id' => $wich,
+        ), $options);
+
+        return $row ? new static($row, 'after_find') : FALSE;
       break;
     }
-
-    $row = static::select($what, array(
-      '_id' => array_shift($args),
-    ), $options);
-
-    return $row ? new static($row, 'after_find') : FALSE;
   }
 
   /**#@-*/
