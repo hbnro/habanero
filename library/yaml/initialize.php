@@ -8,7 +8,6 @@
  * @ignore
  */
 require __DIR__.DS.'vendor'.DS.'spyc'.EXT;
-require __DIR__.DS.'functions'.EXT;
 
 if ( ! function_exists('yaml_parse')) {
   function yaml_parse($text) {
@@ -39,6 +38,21 @@ if ( ! function_exists('yaml_parse')) {
  */
 class yaml extends prototype
 {
+  // blocks
+  function block(Closure $lambda) {
+    ob_start() && $lambda();
+
+    $test = ob_get_clean();
+
+    preg_match('/^(\s*?)---/', $test, $match);
+
+    ! empty($match[1]) && $indent = strlen($match[1]);
+
+    $indent && $test = preg_replace("/^\s{{$indent}}/m", '', $test);
+
+    return yaml_parse($test);
+  }
+
   // some magic
   final public static function missing($method, $arguments) {
     $callback = 'yaml_' . $method;
