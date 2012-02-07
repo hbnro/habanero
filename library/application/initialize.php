@@ -7,10 +7,11 @@
 /**
  * @ignore
  */
-require __DIR__.DS.'functions'.EXT;
-
 import('www');
 import('partial');
+
+assets::init();
+assets::images();
 
 $bootstrap = app::methods();
 
@@ -31,10 +32,6 @@ app::bind(function ($bootstrap) {
     foreach (dir2arr($init_path, '*'.EXT) as $file) {
       require $file;
     }
-  }
-
-  if (APP_ENV <> 'production') {
-    compile_images();
   }
 
   /**

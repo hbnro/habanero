@@ -219,4 +219,4 @@ table {
   @include selection;
 }
 
-/* EOF: ./library/cssp/assets/styles/reset.css */
+/* EOF: ./library/cssp/assets/styles/reset.cssp */

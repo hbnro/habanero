@@ -13,11 +13,13 @@ switch (APP_ENV) {
   break;
 }
 
-$error_file = APP_PATH.DS.'views'.DS.'errors'.DS."$error_status.html";
-
-response(partial::load($error_file), array(
-  'status' => $error_status,
+$error_file = "errors/$error_status.html";
+$content    = partial($error_file, array(
   'message' => $message,
+));
+
+response($content, array(
+  'status' => $error_status
 ));
 
 /* EOF: ./library/application/scripts/raising.php */

@@ -20,9 +20,6 @@ class application extends prototype
   // default title
   public static $title = '';
 
-  // default assets
-  public static $source = '';
-
   // default layout
   public static $layout = 'default.html';
 

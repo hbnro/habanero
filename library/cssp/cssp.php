@@ -39,12 +39,6 @@ class cssp extends prototype
     '/\{/' => "{\n",
   );
 
-  // defaults
-  protected static $defs = array(
-    'path' => APP_PATH,
-    'extension' => '.css',
-  );
-
   /**#@-*/
 
 
@@ -113,7 +107,7 @@ class cssp extends prototype
    */
   final public static function path($path) {
     if ( ! is_url($path)) {
-      $root = static::$defs['path'];
+      $root = APP_PATH.DS.'views'.DS.'assets'.DS.'css';
 
       $path = str_replace(array('\\', '/'), DS, $path);
       $path = preg_replace(sprintf('/^\.%s/', preg_quote(DS, '/')), $root, $path);
@@ -139,7 +133,7 @@ class cssp extends prototype
       $path = static::path($path);
 
       if (is_false(strrpos(basename($path), '.'))) {
-        $path .= static::$defs['extension'];
+        $path .= '.cssp';
       }
     }
 
@@ -169,8 +163,8 @@ class cssp extends prototype
   final private static function fetch_externals($match) {
     switch ($match[1]) {
       case 'require';
-        $inc_file  = static::$defs['path'].DS.$match[3];
-        $inc_file .= static::$defs['extension'];
+        $inc_file  = APP_PATH.DS.'views'.DS.'assets'.DS.'css'.DS.$match[3];
+        $inc_file .= '.cssp';
 
         if ( ! is_file($inc_file)) {
           raise(ln('file_not_exists', array('name' => $inc_file)));
