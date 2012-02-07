@@ -12,7 +12,7 @@ class taml extends prototype
    */
 
   // lambdas
-  private static $fn = '(?<=[(,])\s*~>\b';
+  private static $fn = '(?<=[(,])\s*~\s*>(?=\b|$)';
 
   // quotes
   private static $qt = array(
@@ -199,7 +199,7 @@ class taml extends prototype
   // compile lines
   final private static function compile($tree) {
     $open  = sprintf('/^\s*-\s*%s/', static::$open);
-    $block = sprintf('/[-=]\s*(.+?)\s*%s/', static::$fn);
+    $block = sprintf('/[-=].+?%s/', static::$fn);
     $out   = array();
 
     if ( ! empty($tree[-1])) {
