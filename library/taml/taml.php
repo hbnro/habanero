@@ -286,6 +286,9 @@ class taml extends prototype
 
         return "<?php $key ?>$text";
       break;
+      case '\\';
+        return substr($key, 1) . $text;
+      break;
       case ';';
         continue;
       break;
