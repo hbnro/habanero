@@ -313,6 +313,25 @@ class assets extends prototype
     $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
   }
 
+  // javascript minification
+  final private static function minify_js($text) {
+    return jsmin::minify($text);
+  }
+
+  // css minification
+  final private static function minify_css($text) {
+    static $expr = array(
+                      '/;+/' => ';',
+                      '/;?[\r\n\t\s]*\}\s*/s' => '}',
+                      '/\/\*.*?\*\/|[\r\n]+/s' => '',
+                      '/\s*([\{;:,\+~\}>])\s*/' => '\\1',
+                      '/:first-l(etter|ine)\{/' => ':first-l\\1 {', //FIX
+                      '/(?<!=)\s*#([a-f\d])\\1([a-f\d])\\2([a-f\d])\\3/i' => '#\\1\\2\\3',
+                    );
+
+    return preg_replace(array_keys($expr), $expr, $text);
+  }
+
   /**#@-*/
 
 }
