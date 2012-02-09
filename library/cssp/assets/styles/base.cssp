@@ -35,10 +35,9 @@
   @include size($size, $size);
 }
 
-@mixin sprite_box($x, $y, $w: 16px, $h: 16px) {
-  background-position: [$x * $w] [$y * $h];
+@mixin sprite_box($x, $y, $w: 16px, $h: 16px, $left: 0, $top: 0) {
+  background-position: -[[$x * $w] + $left] -[[$y * $h] + $top];
   @include size($w, $h);
-  text-indent: -9999px;
 }
 
 @mixin inline_image($src: 'blank.gif') {
