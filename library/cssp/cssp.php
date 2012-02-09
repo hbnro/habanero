@@ -179,7 +179,7 @@ class cssp extends prototype
 
         static::$imports []= $match[3];
 
-        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].css";
+        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].cssp";
 
         if ( ! is_file($css_file)) {
           raise(ln('file_not_exists', array('name' => $css_file)));
