@@ -29,7 +29,7 @@ class assets extends prototype
 
 
   public static function init() {
-    $cache_file = APP_PATH.DS.'resources'.EXT;
+    $cache_file = APP_PATH.DS.'config'.DS.'resources'.EXT;
 
     ! is_file($cache_file) && write($cache_file, '<' . "?php return array();\n");
 
@@ -44,7 +44,7 @@ class assets extends prototype
     $out = static::$cache;
     $out = var_export(array_filter($out, 'is_md5'), TRUE);
 
-    write(APP_PATH.DS.'resources'.EXT, '<' . "?php return $out;\n");
+    write(APP_PATH.DS.'config'.DS.'resources'.EXT, '<' . "?php return $out;\n");
   }
 
   public static function assign($key, $val = NULL) {
