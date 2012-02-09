@@ -9,6 +9,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path);
    create_dir($app_path.DS.'config');
   create_file($app_path.DS.'config'.DS.'application'.EXT, "<?php\n");
+  create_file($app_path.DS.'config'.DS.'resources'.EXT, "<?php return array();\n");
 
    create_dir($app_path.DS.'config'.DS.'environments');
     copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'development'.EXT);
