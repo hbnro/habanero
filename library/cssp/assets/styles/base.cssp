@@ -35,6 +35,12 @@
   @include size($size, $size);
 }
 
+@mixin sprite_box($x, $y, $w: 16px, $h: 16px) {
+  background-position: [$x * $w] [$y * $h];
+  @include size($w, $h);
+  text-indent: -9999px;
+}
+
 @mixin inline_image($src: 'blank.gif') {
   @include size(image_size($src, 0), image_size($src, 1));
   background: image_path($src) no-repeat;
