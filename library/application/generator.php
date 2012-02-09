@@ -10,7 +10,6 @@ app_generator::alias('app:action', 'action');
 app_generator::alias('app:controller', 'controller');
 app_generator::alias('app:execute', 'execute exec run');
 app_generator::alias('app:configure', 'configure config conf');
-app_generator::alias('app:precompile', 'build compile precompile');
 
 
 // create application
@@ -90,25 +89,6 @@ app_generator::implement('app:execute', function ($name = '') {
 // configuration status
 app_generator::implement('app:configure', function () {
   require __DIR__.DS.'scripts'.DS.'configuration'.EXT;
-});
-
-
-// compress compiled assets
-app_generator::implement('app:precompile', function () {
-  foreach (array('css', 'js') as $type) {
-    $base_path = APP_PATH.DS.'static'.DS.$type;
-
-    foreach (dir2arr($base_path, "*.$type") as $one) {
-      $text = read($one);
-      $name = extn($one, TRUE);
-
-      if (substr($name, -4) <> '.min') {
-        success(ln('app.compiling_asset', array('name' => basename($one))));
-        $test = ($type === 'css' ? minify_css($text) : minify_js($text));
-        write(dirname($one).DS."$name.min.$type", $test ?: $text);
-      }
-    }
-  }
 });
 
 
