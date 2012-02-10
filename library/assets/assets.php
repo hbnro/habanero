@@ -48,10 +48,22 @@ class assets extends prototype
   }
 
   public static function assign($key, $val = NULL) {
-    is_array($key) && static::$cache = array_merge(static::$cache, $key);
-    is_md5($val) && static::$cache[$key] = $val;
+    if (is_md5($val)) {
+      $old = ! empty(static::$cache[$key]) ? static::$cache[$key] : NULL;
 
-    static::save();
+      if ($old <> $val) {
+        $ext  = ext($key);
+        $name = extn($key);
+
+        $path  = APP_PATH.DS.'static'.DS;
+        $path .= in_array($ext, array('css', 'js')) ? $ext : 'img';
+        $path .= DS."$name$old";
+
+        is_file($min = "$path.$ext") && unlink($min);
+        is_file($new = "$path.min.$ext") && unlink($new);
+      }
+      static::$cache[$key] = $val;
+    }
   }
 
   public static function fetch($name) {
@@ -93,6 +105,7 @@ class assets extends prototype
 
         write($min_file, $type === 'css' ? static::minify_css($test) : static::minify_js($test));
         assets::assign("$from.$type", $hash);
+        assets::save();
 
         copy($tmp, $out_file);
         unlink($tmp);
@@ -111,8 +124,6 @@ class assets extends prototype
 
       $set = array();
 
-      unfile($static_dir, '*', DIR_RECURSIVE);
-
       if ($test = dir2arr($img_path, '*.(jpe?g|png|gif)$', DIR_RECURSIVE | DIR_MAP)) {
         foreach (array_filter($test, 'is_file') as $file) {
           $file_hash  = md5(md5_file($file) . filesize($file));
@@ -124,12 +135,10 @@ class assets extends prototype
           ! is_file($static_img) && copy($file, $static_img);
 
           if ( ! array_key_exists($file_name, $set)) {
-            $set[str_replace($file_hash, '', $file_name)] = $file_hash;
+            static::assign(str_replace($file_hash, '', $file_name), $file_hash);
           }
         }
       }
-
-      assets::assign($set);
       assets::save();
     }
   }
