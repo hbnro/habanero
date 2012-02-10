@@ -67,7 +67,6 @@ class assets extends prototype
       $test = read($base_file);
 
       if (APP_ENV === 'production') {
-        // TODO: minify without CLI?
         $out_file = $out_path.DS.$from.static::fetch("$from.$type").".min.$type";
       } else {
         $tmp = TMP.DS."$from.$type.tmp";
@@ -83,13 +82,16 @@ class assets extends prototype
         }, $test);
 
         $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+        $test = assets::$type($test);
 
-        write($tmp, assets::$type($test));
+        write($tmp, $test);
 
         $hash     = md5(md5_file($tmp) . filesize($tmp));
         $suffix   = APP_ENV === 'production' ? '.min' : '';
         $out_file = $out_path.DS.$from.$hash.$suffix.".$type";
+        $min_file = $out_path.DS.$from.$hash.$suffix.".min.$type";
 
+        write($min_file, $type === 'css' ? static::minify_css($test) : static::minify_js($test));
         assets::assign("$from.$type", $hash);
 
         copy($tmp, $out_file);
