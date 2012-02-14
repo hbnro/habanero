@@ -67,23 +67,14 @@ function render($content, $partial = FALSE, array $params = array()) {
     raise(ln('file_not_exists', array('name' => $params['content'])));
   }
 
-  // curiously the last lambda render breaks! why?
+  // TODO: try to find out another "solution" ?
   $output = function () {
-    // TODO: eval() is the only way to debug? (try*)
     ob_start();
-    @ini_set('log_errors', 0);
 
     extract(func_get_arg(1));
-    eval('?' . '>' . read(func_get_arg(0)));
+    require func_get_arg(0);
 
-    $check = ob_get_clean();
-    @ini_set('log_errors', 1);
-
-    if (preg_match('/(?:Parse|syntax)\s+error/', $check)) {
-      preg_match('/(.+?\s+in).*?on\s+line\s+(\d+)/', $check, $match);
-      raise(sprintf("$match[1] %s#$match[2]", func_get_arg(0)));
-    }
-    return $check;
+    return ob_get_clean();
   };
 
   $output = $output($params['content'], $params['locals']);
