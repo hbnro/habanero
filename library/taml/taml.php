@@ -12,7 +12,7 @@ class taml extends prototype
    */
 
   // lambdas
-  private static $fn = '(?<=[(,])\s*~\s*>(?=\b|$)';
+  private static $fn = '(?<=[(,])(?:\s*\((.+?)\)\s*|())\s*~\s*>(?=\b|$)';
 
   // quotes
   private static $qt = array(
@@ -353,8 +353,9 @@ class taml extends prototype
       $suffix = '';
       $prefix = "\$_=get_defined_vars();$prefix";
 
-      $line   = str_replace($match[0], 'function()', $line);
-      $line  .= 'use($_){extract($_);unset($_);';
+      $args   = ! empty($match[1]) ? $match[1] : '';
+      $line   = str_replace($match[0], "function($args)", $line);
+      $line  .= 'use($_){extract($_,EXTR_SKIP|EXTR_REFS);unset($_);';
     } elseif (preg_match(sprintf('/^\s*%s/', static::$open), $line)) {
       $suffix = '{';
     }
