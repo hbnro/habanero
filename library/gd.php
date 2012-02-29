@@ -74,7 +74,7 @@ class gd
     if ( ! is_file($path)) {
       raise(ln('file_not_exists', array('name' => $path)));
     }
-    return new static($path);
+    return new self($path);
   }
 
 
@@ -95,7 +95,7 @@ class gd
     } elseif (func_num_args() == 0) {
       $output = $this->file;
     } elseif ( ! empty($test)) {
-      $output = dirname($this->file).DS.extn($test, TRUE).".$ext";
+      $output = $test;
     }
 
     $callback = 'image' . (in_array($type, $this->allow) ? $type : $this->type);
@@ -296,7 +296,7 @@ class gd
       $ww = $w;
       $hh = $h;
     }
-    
+
     $xx = ($width - $ww) / 2;
     $yy = ($height - $hh) / 2;
 

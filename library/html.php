@@ -50,7 +50,7 @@ class html extends prototype
       $text = chunk_split($text);
     }
 
-    return "data:$type;base64,$text";
+    return "data:$mime;base64,$text";
   }
 
 
