@@ -46,6 +46,10 @@ class routing
 
     $test[1] <> '/' && $params['match'] = rtrim($params['match'], '/');
 
+    if ( ! empty($params['path'])) {
+      url_for::register($params['path'], end(explode(' ', $params['match'])));
+    }
+
     static::$routes []= $params;
   }
 
