@@ -17,6 +17,9 @@ define('MD5', 'md5');
 define('SHA1', 'sha1');
 /**#@-*/
 
+! defined('GET') && define('GET', 'GET');
+! defined('POST') && define('POST', 'POST');
+
 /**
  * Initialize OAuth object
  *
