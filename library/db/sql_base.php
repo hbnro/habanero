@@ -80,7 +80,7 @@ class sql_base extends sql_raw
       } else {
         return array_map(array($this, 'fixate_string'), $test);
       }
-    } elseif (is_string($test) && $test) {
+    } elseif ( ! is_num($test) && ! is_bool($test)) {
       $test = "'" . $this->real_escape($test) . "'";
     } elseif (is_bool($test)) {
       $test = ($test ? 'TRUE' : 'FALSE');
