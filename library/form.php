@@ -516,6 +516,24 @@ class form extends prototype
       $test = $test['types'];
     }
 
+    @list($method, $key) = explode('_', $method);
+
+    switch ($method) {
+      case 'get';
+      case 'put';
+      case 'post';
+      case 'delete';
+        $params = compact('method');
+        $key && $params[$key] = TRUE;
+
+        $arguments []= $params;
+
+        return static::apply('to', $arguments);
+      break;
+      default;
+      break;
+    }
+
 
     $type = strtr($method, '_', '-');
 
