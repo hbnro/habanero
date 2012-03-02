@@ -113,7 +113,7 @@ class routing
         config('csrf_token', request::is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
         config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
 
-        $params['protect'] && $_SESSION['--csrf-token'] = option('crsf_token');
+        $params['protect'] && $_SESSION['--csrf-token'] = option('csrf_token');
 
         request::dispatch($params);
       }
