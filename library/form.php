@@ -73,7 +73,7 @@ class form extends prototype
     $input  = tag('input', array(
       'type' => 'hidden',
       'name' => '_token',
-      'value' => defined('TOKEN') ? TOKEN : '',
+      'value' => option('csrf_token'),
     ));
 
 

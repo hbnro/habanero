@@ -344,7 +344,7 @@ function button_to($name, $url = NULL, array $args = array()) {
   $extra .= tag('input', array(
     'type' => 'hidden',
     'name' => '_token',
-    'value' => TOKEN,
+    'value' => option('csrf_token'),
   ));
 
 

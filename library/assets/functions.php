@@ -16,7 +16,7 @@ function stylesheet_for($name) {
 
 // includes security ;-)
 function csrf_meta_tag() {
-  echo tag('meta', array('name' => 'csrf-token', 'content' => option('crsf_token')));
+  echo tag('meta', array('name' => 'csrf-token', 'content' => option('csrf_token')));
 }
 
 // good for routing at mockz!
