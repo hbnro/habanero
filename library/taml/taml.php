@@ -35,7 +35,7 @@ class taml extends prototype
                   );
 
   // open blocks
-  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)';
+  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)\s*(?=\()';
 
   // filter blocks
   private static $blocks = array();
