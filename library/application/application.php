@@ -66,8 +66,8 @@ class application extends prototype
      * @ignore
      */
     require $controller_file;
-
-    $class_name  = $controller . '_controller';
+    // TODO: basename or underscore?
+    $class_name  = basename($controller) . '_controller';
 
 
     if ( ! class_exists($class_name)) {
