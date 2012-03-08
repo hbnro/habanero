@@ -166,6 +166,7 @@ function db() {
   if (is_null($res)) {
     $name = cli::flag('database') ?: 'default';
     $dsn  = option("database.$name");
+    $res  = new stdClass;
 
     $res->conn = db::connect($dsn);
     $res->name = $name;
