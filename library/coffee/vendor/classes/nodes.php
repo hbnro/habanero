@@ -56,7 +56,7 @@ function unfold_soak($options, $parent, $name)
 {
   if ( ! (isset($parent->{$name}) && $parent->{$name} && $ifn = $parent->{$name}->unfold_soak($options)))
   {
-    return;
+    return NULL;
   }
 
   $parent->{$name} = $ifn->body;
@@ -77,8 +77,7 @@ function utility($name)
 /**
  * Since PHP can't return values from __construct, and some of the node
  * classes rely heavily on this feature in JavaScript, we use this function
- * instead of the new keyword to instantiate and implicitly call the
- * constructor.
+ * instead of 'new'.
  */
 function yy($type)
 {

@@ -4,7 +4,7 @@ namespace CoffeeScript;
 
 class yy_If extends yy_Base
 {
-  public $children = array('condition', 'body', 'elsebody');
+  public $children = array('condition', 'body', 'else_body');
 
   function constructor($condition, $body, $options = array())
   {
@@ -112,14 +112,20 @@ class yy_If extends yy_Base
   function is_statement($options = array())
   {
     return (isset($options['level']) && $options['level'] === LEVEL_TOP) ||
-      $this->body_node()->is_statement($options) || 
-      ( ($tmp = $this->else_body_node()) && $tmp && $tmp->is_statement($options));
+      $this->body_node()->is_statement($options) ||
+      (($tmp = $this->else_body_node()) && $tmp->is_statement($options));
   }
 
   function jumps($options = array())
   {
-    return $this->body->jumps($options) || 
-      (isset($this->else_body) && $this->else_body && $this->else_body->jumps($options));
+    $tmp = $this->body->jumps($options);
+
+    if ( ! $tmp && isset($this->else_body))
+    {
+      $tmp = $this->else_body->jumps($options);
+    }
+
+    return $tmp;
   }
 
   function make_return()
