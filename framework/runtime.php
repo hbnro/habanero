@@ -198,10 +198,11 @@ function match($expr, $subject = NULL, array $constraints = array()) {
 
 
   $regex = preg_replace(array_keys($tokens), $tokens, $expr);
+  $mod   = IS_UNICODE ? 'u' : ''; // tha 'u' flag doesn't work without Unicode!
 
   if (func_num_args() === 1) {
     return "/$regex/";
-  } elseif (@preg_match("/$regex/u", $subject, $matches)) {
+  } elseif (preg_match("/$regex/$mod", $subject, $matches)) {
     return $matches;
   }
 
