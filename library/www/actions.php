@@ -193,7 +193,7 @@ function mail_to($address, $text = NULL, array $args = array()) {
   if (is_assoc($text)) {
     $params = array_merge($text, $params);
   } elseif ( ! isset($params['text'])) {
-    $params['text'] = $text;
+    $params['text'] = is_string($address) ? $address : $text;
   }
 
 
