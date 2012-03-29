@@ -99,7 +99,7 @@ class html extends prototype
   /**
    * Meta tag
    *
-   * @param  string  Key name
+   * @param  mixed   Key name|Options
    * @param  string  Value|Description
    * @param  boolean Employ http-equiv?
    * @return string
@@ -107,8 +107,11 @@ class html extends prototype
   final public static function meta($name, $content, $http = FALSE) {
     $attrs = compact('content');
 
-    $attrs[is_true($http) ? 'http-equiv' : 'name'] = $name;
-
+    if (is_assoc($name)) {
+      $attrs = array_merge($attrs, $name);
+    } else {
+      $attrs[is_true($http) ? 'http-equiv' : 'name'] = $name;
+    }
     return tag('meta', $attrs);
   }
 
