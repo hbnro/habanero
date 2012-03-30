@@ -270,6 +270,42 @@ class gd
 
 
   /**
+   * Auto-crop centered square
+   *
+   * @param  integer Width
+   * @param  integer Height
+   * @param  integer Left
+   * @param  integer Top
+   * @return string
+   */
+  final public function square($width = 0, $height = 0, $left = 0, $top = 0) {
+    $y =
+    $x = 0;
+
+    $w = $this->width();
+    $h = $this->height();
+
+    $size = min($w, $h);
+
+    if ($h < $w) {
+      $x = ($w - $h) / 2;
+    } else {
+      $y = ($h - $w) / 2;
+    }
+
+
+    $this->crop($size, $size, $x, $y);
+
+    if ($width OR $height) {
+      $size = max($width ?: $w, $height ?: $h);
+      $this->resize($size)->crop($width, $height, $left, $top);
+    }
+
+    return $this;
+  }
+
+
+  /**
    * Thumbnail
    *
    * @param  integer Width
