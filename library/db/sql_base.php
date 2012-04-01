@@ -130,7 +130,7 @@ class sql_base extends sql_raw
         $out []= $val;
       } else {
         $val = $this->fixate_string($val, TRUE);
-        $val = is_num($val) ? $val : ($val ?: 'NULL');
+        $val = is_num($val) ? $val : $val;
 
         if (is_true($insert)) {
           $out []= $val;
