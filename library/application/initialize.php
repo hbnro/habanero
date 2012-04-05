@@ -4,14 +4,14 @@
  * Application initialization
  */
 
-/**
+/**#@+
  * @ignore
  */
+require __DIR__.DS.'assets'.EXT;
+require __DIR__.DS.'functions'.EXT;
+
 import('www');
 import('partial');
-
-assets::init();
-assets::images();
 
 $bootstrap = app::methods();
 
@@ -46,5 +46,8 @@ app::bind(function ($bootstrap) {
 assets::compile('php', function ($file) {
   return partial::render($file);
 });
+
+assets::initialize();
+/**#@-*/
 
 /* EOF: ./library/application/initialize.php */

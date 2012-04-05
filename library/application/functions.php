@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Asset helpers
+ * Application assets
  */
 
 // includes js
@@ -24,4 +24,4 @@ function asset_url($for) {
   return path_to(assets::fetch($for), TRUE);
 }
 
-/* EOF: ./library&assets/functions.php */
+/* EOF: ./library/application/functions.php */
