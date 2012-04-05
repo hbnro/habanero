@@ -70,7 +70,7 @@ class assets extends prototype
           }
         }
       }
-      assets::save();
+      static::save();
     }
   }
 
@@ -103,29 +103,42 @@ class assets extends prototype
       if (APP_ENV === 'production') {
         $out_file = $out_path.DS.$from.static::fetch("$from.$type").".min.$type";
       } else {
+        $set = array();
         $tmp = TMP.DS."$from.$type.tmp";
 
         // css and js
         $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
-          use($base_path, $type) {
+          use($base_path, $type, &$set) {
             $test_file = $base_path.DS.$type.DS."$match[1].$type";
 
             @list($path, $name) = array(dirname($test_file), basename($test_file));
 
-            assets::append(findfile($path, $name, FALSE, 1), $type);
+            $set []= findfile($path, $name, FALSE, 1);
         }, $test);
 
-        $test = preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
-        $test = assets::$type($test);
 
-        write($tmp, $test);
+
+        $out = array();
+
+        foreach ($set as $file) {
+          if (is_file($file)) {
+            $text  = static::process($file);
+            $path  = str_replace(APP_PATH.DS, '', $file);
+            $now   = date('Y-m-d H:i:s', filemtime($file));
+
+            $out []= sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+          }
+        }
+
+        $out []= preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+
+        write($tmp, join("\n", $out));
 
         $hash     = md5(md5_file($tmp) . filesize($tmp));
-        $suffix   = APP_ENV === 'production' ? '.min' : '';
-        $out_file = $out_path.DS.$from.$hash.$suffix.".$type";
+        $out_file = $out_path.DS."$from$hash.$type";
 
-        assets::assign("$from.$type", $hash);
-        assets::save();
+        static::assign("$from.$type", $hash);
+        static::save();
 
         copy($tmp, $out_file);
         unlink($tmp);
@@ -264,40 +277,6 @@ class assets extends prototype
   }
 
 
-  /**
-   * @param
-   * @param
-   * @return void
-   */
-  final public static function missing($method, $arguments) {
-    switch ($method) {
-      case 'css';
-      case 'js';
-        $out = array();
-
-        foreach (static::$set[$method] as $file) {
-          if (is_file($file)) {
-            $text  = static::process($file);
-            $path  = str_replace(APP_PATH.DS, '', $file);
-            $now   = date('Y-m-d H:i:s', filemtime($file));
-
-            $out []= sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
-          }
-        }
-
-        $output  = join("\n", $out);
-        $output .= join("\n", $arguments);
-
-        return $output;
-      break;
-      default;
-        raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
-      break;
-    }
-  }
-
-
-
   /**#@+
    * @ignore
    */
@@ -313,7 +292,7 @@ class assets extends prototype
 
   // generic aggregator
   final private static function push($on, $test, $prepend = FALSE) {
-    $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
+      $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
   }
 
   /**#@-*/
