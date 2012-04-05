@@ -115,7 +115,7 @@ function dir2arr($from, $filter = '*', $options = FALSE) {
       unset($items[$old]);
 
       ! $map && ksort($items);
-    } elseif ( ! match($filter, $value)) {
+    } elseif (($filter <> '*') && ! match($filter, $value)) {
       unset($items[$old]);
     } else {
       $value = ! $map ? basename($value) : $value;
@@ -217,7 +217,13 @@ function mkpath($dir, $perms = 0755) {
 function findfile($path, $filter = '*', $recursive = FALSE, $index = 0) {
   if (is_dir($path)) {
     $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
-    $output    = array_filter(dir2arr($path, $filter, $recursive | DIR_MAP), 'is_file');
+    $output    = dir2arr($path, '*', $recursive | DIR_MAP);
+
+    foreach ($output as $key => $file) {
+      if ( ! match($filter, basename($file)) OR ! is_file($file)) {
+        unset($output[$key]);
+      }
+    }
 
     sort($output);
 
