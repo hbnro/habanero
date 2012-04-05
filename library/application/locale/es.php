@@ -77,7 +77,7 @@ $lang['generator_usage'] = <<<HELP
     \bgreen(app:execute)\b \bcyan(script[:param])\b [...]
 
   \clight_gray(Genera los assets de la aplicación para producción)\c
-    \bgreen(app:precompile)\b
+    \bgreen(app:prepare)\b
 
 
 HELP;
