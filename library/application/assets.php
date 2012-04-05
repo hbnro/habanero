@@ -109,13 +109,12 @@ class assets extends prototype
         // css and js
         $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
           use($base_path, $type, &$set) {
-            $test_file = $base_path.DS.$type.DS."$match[1].$type";
+            $test_file = $base_path.DS.$type.DS.$match[1];
 
             @list($path, $name) = array(dirname($test_file), basename($test_file));
 
             $set []= findfile($path, $name, FALSE, 1);
         }, $test);
-
 
 
         $out = array();
