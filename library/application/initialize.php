@@ -7,9 +7,6 @@
 /**#@+
  * @ignore
  */
-require __DIR__.DS.'assets'.EXT;
-require __DIR__.DS.'functions'.EXT;
-
 import('www');
 import('partial');
 
@@ -34,9 +31,6 @@ app::bind(function ($bootstrap) {
     }
   }
 
-  /**
-   * @ignore
-   */
   require __DIR__.DS.'scripts'.DS.'binding'.EXT;
   return $bootstrap;
 });

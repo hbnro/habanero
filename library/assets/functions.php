@@ -24,4 +24,4 @@ function asset_url($for) {
   return path_to(assets::fetch($for), TRUE);
 }
 
-/* EOF: ./library/application/functions.php */
+/* EOF: ./library/assets/functions.php */
