@@ -37,7 +37,7 @@ class form extends prototype
 
     $params = array_merge(array(
       'action'    => '.',
-      'method'    => GET,
+      'method'    => 'GET',
       'content'   => 'raise',
       'multipart' => FALSE,
     ), $params);
@@ -47,7 +47,7 @@ class form extends prototype
     }
 
 
-    if ( ! empty($params['method']) && ($params['method'] <> GET)) {
+    if ( ! empty($params['method']) && ($params['method'] <> 'GET')) {
       if (is_true($params['multipart'])) {
         $params['enctype'] = 'multipart/form-data';
       }
@@ -61,7 +61,7 @@ class form extends prototype
 
     unset($params['multipart'], $params['content'], $params['type']);
 
-    $params['method'] = strtolower($params['method'] ?: GET);
+    $params['method'] = strtolower($params['method'] ?: 'GET');
     $params['action'] = $params['action'] === '.' ? '' : $params['action'];
 
 
@@ -492,7 +492,7 @@ class form extends prototype
   * @return string
   */
   final public static function value($from, $or = FALSE) {
-    $set   = value($_SERVER, 'REQUEST_METHOD') <> GET ? $_POST : $_GET;
+    $set   = value($_SERVER, 'REQUEST_METHOD') <> 'GET' ? $_POST : $_GET;
     $value = value($set, $from, $or);
 
     return $value;

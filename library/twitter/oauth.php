@@ -17,8 +17,6 @@ define('MD5', 'md5');
 define('SHA1', 'sha1');
 /**#@-*/
 
-! defined('GET') && define('GET', 'GET');
-! defined('POST') && define('POST', 'POST');
 
 /**
  * Initialize OAuth object
@@ -52,7 +50,7 @@ function oauth_init($consumer_key = '', $consumer_secret = '', $token = '', $tok
  * @param  string SHA1|MD5
  * @return array
  */
-function oauth_parse($request, $url, $vars = array(), $method = GET, $callback = SHA1) {// TODO: improve?
+function oauth_parse($request, $url, $vars = array(), $method = 'GET', $callback = SHA1) {// TODO: improve?
   $data['oauth_version'] = '1.0';
   $data['oauth_timestamp'] = time();
   $data['oauth_signature_method'] = strtoupper("hmac-$callback");
@@ -85,7 +83,7 @@ function oauth_parse($request, $url, $vars = array(), $method = GET, $callback =
  * @param  string Method
  * @return mixed
  */
-function oauth_exec($request, $url, $vars = array(), $method = GET) {
+function oauth_exec($request, $url, $vars = array(), $method = 'GET') {
   // normalize URL
   $parts  = @parse_url($url);
   $scheme = strtolower($parts['scheme']);
@@ -109,7 +107,7 @@ function oauth_exec($request, $url, $vars = array(), $method = GET) {
 
   // define method
   switch ($method) {
-    case POST; // TODO: manage @uploads?
+    case 'POST'; // TODO: manage @uploads?
       ! empty($query) && curl_setopt($resource, CURLOPT_POSTFIELDS, trim($query, '='));
 
       curl_setopt($resource, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -119,7 +117,7 @@ function oauth_exec($request, $url, $vars = array(), $method = GET) {
     default;
       ! empty($query) && $url .= '?' . trim($query, '=');
 
-      $method <> GET && curl_setopt($resource, CURLOPT_CUSTOMREQUEST, $method);
+      $method <> 'GET' && curl_setopt($resource, CURLOPT_CUSTOMREQUEST, $method);
     break;
   }
 
@@ -153,7 +151,7 @@ function oauth_exec($request, $url, $vars = array(), $method = GET) {
  * @param  string SHA1|MD5
  * @return string
  */
-function oauth_sign($request, $url, $vars = array(), $method = GET, $callback = SHA1) {
+function oauth_sign($request, $url, $vars = array(), $method = 'GET', $callback = SHA1) {
   $key  = oauth_encode($request->consumer_secret) . '&' . oauth_encode($request->token_secret);
   $old  = oauth_encode(str_replace('+', '%20', http_build_query($vars, NULL, '&')));
   $test = sprintf('%s&%s&%s', $method, oauth_encode($url), $old);
