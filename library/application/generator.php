@@ -10,7 +10,7 @@ app_generator::alias('app:action', 'action');
 app_generator::alias('app:controller', 'controller');
 app_generator::alias('app:execute', 'execute exec run');
 app_generator::alias('app:configure', 'configure config conf');
-app_generator::alias('app:prepare', 'precompile compile');
+app_generator::alias('app:prepare', 'precompile compile build');
 
 
 // create application
