@@ -10,17 +10,13 @@ $out_file  = APP_PATH.DS.'static'.DS.$type.DS."$sheet.$type";
 
 #die($out_file);
 // TODO: compression, caching, gzip?
-switch (APP_ENV) {
-  case 'production';
-    $out_file = str_replace("$sheet.$type", "$sheet.min.$type", $out_file);
 
-    if ( ! is_file($out_file)) {
-      die(ln('file_not_exists', array('name' => str_replace(APP_PATH.DS, '', $out_file))));
-    }
-  break;
-  default;
+if (APP_ENV <> 'development') {
+  $out_file = str_replace("$sheet.$type", "$sheet.min.$type", $out_file);
 
-  break;
+  if ( ! is_file($out_file)) {
+    die(ln('file_not_exists', array('name' => str_replace(APP_PATH.DS, '', $out_file))));
+  }
 }
 
 response(read($out_file), array(
