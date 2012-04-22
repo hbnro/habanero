@@ -38,7 +38,7 @@ class assets extends prototype
     $static_dir = APP_PATH.DS.'static';
 
     // TODO: improve handling?
-    if (APP_ENV == 'development') {
+    if (APP_ENV <> 'production') {
       // cleanup
       foreach (array('css', 'img', 'js') as $one) {
         foreach (dir2arr($static_dir.DS.$one, '*', DIR_RECURSIVE | DIR_MAP) as $file) {
