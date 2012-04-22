@@ -1,5 +1,7 @@
 <?php
 
+error_log($message);
+
 $error_status = 500;
 
 switch (APP_ENV) {
@@ -13,13 +15,13 @@ switch (APP_ENV) {
   break;
 }
 
-$error_file = "errors/$error_status.html";
-$content    = partial($error_file, array(
-  'message' => $message,
-));
+$methods[500] = 'unknown';
+$methods[404] = 'not_found';
 
-response($content, array(
-  'status' => $error_status
-));
+$output = application::execute('error', $methods[$error_status]);
+
+response($output);
+
+exit;
 
 /* EOF: ./library/application/scripts/raising.php */
