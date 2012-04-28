@@ -79,10 +79,10 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html'.EXT);
 
    create_dir($app_path.DS.'views'.DS.'layouts');
-    copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html'.EXT);
+    copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html.tamal');
 
    create_dir($app_path.DS.'views'.DS.'home');
-    copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
+    copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html.tamal');
 
 
     $ignored_files = array(
