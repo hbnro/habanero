@@ -4,7 +4,7 @@
  * CSS manipulation library
  */
 
-class cssp extends prototype
+class chess extends prototype
 {
 
   /**#@+
@@ -133,7 +133,7 @@ class cssp extends prototype
       $path = static::path($path);
 
       if (is_false(strrpos(basename($path), '.'))) {
-        $path .= '.cssp';
+        $path .= '.chess';
       }
     }
 
@@ -164,7 +164,7 @@ class cssp extends prototype
     switch ($match[1]) {
       case 'require';
         $inc_file  = APP_PATH.DS.'views'.DS.'assets'.DS.'css'.DS.$match[3];
-        $inc_file .= '.cssp';
+        $inc_file .= '.chess';
 
         if ( ! is_file($inc_file)) {
           raise(ln('file_not_exists', array('name' => $inc_file)));
@@ -179,7 +179,7 @@ class cssp extends prototype
 
         static::$imports []= $match[3];
 
-        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].cssp";
+        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].chess";
 
         if ( ! is_file($css_file)) {
           raise(ln('file_not_exists', array('name' => $css_file)));
@@ -486,11 +486,11 @@ class cssp extends prototype
     $args = static::do_solve($match[2]);
     $args = array_map('trim', explode(',', $args));
 
-    if ( ! cssp_helper::defined($match[1])) {
+    if ( ! chess_helper::defined($match[1])) {
       return "$match[1]!($match[2])" . ( ! empty($match[3]) ? $match[3] : '');
     }
 
-    $out = cssp_helper::apply($match[1], $args);
+    $out = chess_helper::apply($match[1], $args);
     $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : $out;
 
     return $out;
@@ -534,4 +534,4 @@ class cssp extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/cssp/cssp.php */
+/* EOF: ./library/chess/chess.php */

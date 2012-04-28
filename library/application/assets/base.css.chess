@@ -1,0 +1,36 @@
+@use reset
+
+#wrapper {
+  margin: 33px auto 0 auto;
+  width: 640px;
+  > header {
+    text-transform: uppercase;
+    font-family: Bangers,sans-serif;
+    font-size: 1.9em;
+  }
+  > section {
+    padding: .8em;
+    background: #f4f4f4;
+    border: 1px solid #ededed;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    > header {
+      font-weight: bold;
+      margin-bottom: .5em;
+      padding-bottom: .5em;
+      border-bottom: 1px solid #ededed;
+    }
+    > pre {
+      color: #6f6f6f;
+    }
+  }
+  > footer {
+    text-align: right;
+    font-size: .9em;
+    color: #bfbfbf;
+  }
+}

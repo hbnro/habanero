@@ -443,4 +443,4 @@ return array(
   'lightgreen' => '#90ee90',
 );
 
-/* EOF: ./library/cssp/assets/scripts/named_colors.php */
+/* EOF: ./library/chess/assets/scripts/named_colors.php */

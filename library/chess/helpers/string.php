@@ -10,7 +10,7 @@
  * @param  mixed  Text|...
  * @return string
  */
-cssp_helper::implement('%q', function() {
+chess_helper::implement('%q', function() {
   $args = array();
   foreach (func_get_args() as $one) {
     $args []= strrpos($one, ' ') ? "'$one'" : $one;
@@ -26,7 +26,7 @@ cssp_helper::implement('%q', function() {
  * @param  mixed  Arguments|...
  * @return string
  */
-cssp_helper::implement('%', function($text) {
+chess_helper::implement('%', function($text) {
   $args = array_slice(func_get_args(), 1);
   return vsprintf($text, $args);
 });
@@ -39,9 +39,9 @@ cssp_helper::implement('%', function($text) {
  * @param  mixed  Arguments|...
  * @return string
  */
-cssp_helper::implement('#', function($text, $index = 1, $default = FALSE) {
+chess_helper::implement('#', function($text, $index = 1, $default = FALSE) {
   $args = preg_split('/\s+/', $text);
   return isset($args[$index - 1]) ? $args[$index - 1] : $default;
 });
 
-/* EOF: ./library/cssp/helpers/string.php */
+/* EOF: ./library/chess/helpers/string.php */

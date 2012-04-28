@@ -4,7 +4,7 @@
  * Template markup library
  */
 
-class taml extends prototype
+class tamal extends prototype
 {
 
   /**#@+
@@ -488,9 +488,9 @@ class taml extends prototype
 
   // errors
   final private static function error($i, $line, $desc = 'unknown', $file = '') {
-    $error   = is_file($file) ? 'taml.error_file' : 'taml.error_line';
+    $error   = is_file($file) ? 'tamal.error_file' : 'tamal.error_line';
     $message = ln($error, array('line' => $i, 'text' => $line, 'name' => $file));
-    $desc    = ln("taml.$desc");
+    $desc    = ln("tamal.$desc");
 
     raise("$message ($desc)");
   }
@@ -508,4 +508,4 @@ class taml extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/taml/taml.php */
+/* EOF: ./library/tamal/tamal.php */
