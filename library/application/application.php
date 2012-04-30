@@ -40,8 +40,8 @@ class application extends prototype
    * @param  integer Response status
    * @return void
    */
-  public static function to_json($obj, $status = 200) {
-    return array($status, json_encode($obj), array(
+  public static function to_json($obj, $status = 200, $raw = FALSE) {
+    return array($status, $raw ? $obj : json_encode($obj), array(
       'content-type' => 'application/json',
     ));
   }
