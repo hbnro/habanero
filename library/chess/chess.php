@@ -94,6 +94,7 @@ class chess extends prototype
     $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
     $text = preg_replace('/ +/', ' ', $text);
+    $text = preg_replace('/ +&/', '', $text);
 
     return $text;
   }
