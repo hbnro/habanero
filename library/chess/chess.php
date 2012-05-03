@@ -93,7 +93,6 @@ class chess extends prototype
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
-    $text = preg_replace('/ +/', ' ', $text);
     $text = preg_replace('/ +&/', '', $text);
 
     return $text;
@@ -130,14 +129,7 @@ class chess extends prototype
 
   // load file
   final private static function load_file($path, $parse = FALSE) {
-    if ( ! is_file($path)) {
-      $path = static::path($path);
-
-      if (is_false(strrpos(basename($path), '.'))) {
-        $path .= '.chess';
-      }
-    }
-
+    ! is_file($path) && $path = static::path($path);
 
     if ( ! is_file($path)) {
       raise(ln('file_not_exists', array('name' => $path)));
@@ -165,7 +157,6 @@ class chess extends prototype
     switch ($match[1]) {
       case 'require';
         $inc_file  = APP_PATH.DS.'views'.DS.'assets'.DS.'css'.DS.$match[3];
-        $inc_file .= '.chess';
 
         if ( ! is_file($inc_file)) {
           raise(ln('file_not_exists', array('name' => $inc_file)));
@@ -330,7 +321,7 @@ class chess extends prototype
       } elseif (is_array($val)) {
         if (substr($parent, 0, 1) === '@') {
           $out []= static::build_rules($val, $key);
-        } elseif ($tmp = static::build_rules($val, "$parent $key")) {
+        } elseif ($tmp = static::build_rules($val, trim("$parent $key"))) {
           static::$css []= $tmp;
         }
       } elseif (substr($key, 0, 1) <> '@') {
@@ -348,24 +339,18 @@ class chess extends prototype
       $rules = static::do_solve(join("\n", $out));
       $parts = preg_split('/\s*,+\s*/', $parent);
 
-      $top  = '';
-      $rule = array();
+      $rule   = array();
+      $rule []= $top = array_shift($parts);
 
+      // TODO: hrmmm...
+      $top = substr($top, 0, strrpos($top, ' '));
 
       foreach ($parts as $one) {
-        $pos = strpos($one, '&');
-
-        if ( ! is_false($pos)) {
-          if ($pos > 0) {
-            $top = trim(substr($one, 0, $pos));
-          }
-          $rule []= $top . substr($one, $pos + 1);
-        } else {
-          $rule []= trim($one);
-        }
+        $rule []= "$top $one";
       }
 
-      $top = join(', ', $rule);
+
+      $top = trim(join(', ', $rule));
       $out  = "$top {\n$rules\n}";
 
       return $out;
