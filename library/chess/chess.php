@@ -93,7 +93,6 @@ class chess extends prototype
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
-    $text = preg_replace('/ +&/', '', $text);
 
     return $text;
   }
@@ -336,22 +335,38 @@ class chess extends prototype
         $parent .= ',' . join(',', (array) $set['@children']);
       }
 
-      $rules = static::do_solve(join("\n", $out));
-      $parts = preg_split('/\s*,+\s*/', $parent);
+      $rules  = static::do_solve(join("\n", $out));
+      $parts  = preg_split('/\s*,+\s*/', $parent);
 
       $rule   = array();
       $rule []= $top = array_shift($parts);
 
-      // TODO: hrmmm...
-      $top = substr($top, 0, strrpos($top, ' '));
+      $old = array_pop($parts);
+      $sub = '';
 
-      foreach ($parts as $one) {
-        $rule []= "$top $one";
+      if (strpos($old, ' ')) {
+        $sub = trim(substr($old, strpos($old, ' ')));
+        $sub && $parts []= substr($old, 0, - strlen($sub));
+
+        $sub <> $old && $rule[0] = trim("$rule[0] $sub");
+      } else {
+        $parts []= $old;
       }
 
+      if ($top = substr($top, 0, strrpos($top, ' '))) {
+        foreach ($parts as $one) {
+          $one && $rule []= trim("$top $one $sub");
+        }
+      }
+
+      // TODO: fix it?
 
       $top = trim(join(', ', $rule));
-      $out  = "$top {\n$rules\n}";
+
+      $top = preg_replace('/([#.]\w+)\s*?&(\w+)/', '\\2\\1', $top);
+      $top = preg_replace('/ {2,}/', ' ', preg_replace('/ +&/', '', $top));
+
+      $out = "$top {\n$rules\n}";
 
       return $out;
     }
