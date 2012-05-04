@@ -40,9 +40,6 @@ class tamal extends prototype
   // filter blocks
   private static $blocks = array();
 
-  // content
-  private static $source = NULL;
-
   // defaults
   protected static $defs = array(
     'indent' => 2,
@@ -97,12 +94,10 @@ class tamal extends prototype
     $stack = array();
 
     // TODO: improve this?
-    $text = preg_replace('/\belseif\b/', 'else if', $text);
-    $text = preg_replace_callback('/\{[^{}]+?\}/s', function ($match) {
+    $text  = preg_replace_callback('/\{[^{}]+?\}/s', function ($match) {
       return preg_replace("/[\r\n\t]+/", ' ', $match[0]);
     }, $text);
 
-    static::$source = $text;
 
     $test  = array_filter(explode("\n", $text));
     $file  = func_num_args() > 1 ? func_get_arg(1) : '';
