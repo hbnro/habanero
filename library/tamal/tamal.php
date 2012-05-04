@@ -200,7 +200,7 @@ class tamal extends prototype
 
   // variable interpolation
   final private static function value($match) {
-    return sprintf('<?php echo %s; ?>', join(' ', static::tokenize($match[1])));
+    return "<?php echo $match[1]; ?>";
   }
 
   // compile lines
@@ -279,8 +279,7 @@ class tamal extends prototype
       break;
       case '-';
         // php
-        $key = substr($key, 1);
-        $key = rtrim(join(' ', static::tokenize($key)), ';');
+        $key = rtrim(substr($key, 1), ';');
         $key = preg_replace('/\belse\s*;/', 'else{', static::block($key));
 
         return "<?php $key ?>\n$text";
@@ -288,8 +287,7 @@ class tamal extends prototype
       case '=';
           // print
         $key = trim(substr($key, 1));
-        $key = rtrim(join(' ', static::tokenize($key)), ';');
-        $key = static::block($key, TRUE);
+        $key = static::block(rtrim($key, ';'), TRUE);
 
         return "<?php $key ?>$text";
       break;
@@ -326,9 +324,7 @@ class tamal extends prototype
 
         if ( ! empty($match[0])) {
           $key    = str_replace($match[0], '', $key);
-          $hash   = join('', static::tokenize($match[1]));
-
-          $args []= $hash;
+          $args []= $match[1];
         }
 
         // output
@@ -371,100 +367,6 @@ class tamal extends prototype
     }
 
     return "$prefix$line$suffix";
-  }
-
-  // retrieve expression tokens
-  final private static function tokenize($code) {
-    static $expr = array(
-              'array',
-              'empty',
-              'list',
-            );
-
-
-    $sym = FALSE;
-    $out = array();
-    $set = token_get_all('<' . "?php $code");
-
-    foreach ($set as $val) {
-      if ( ! is_array($val)) {
-        $out []= $val;
-      } else {
-        switch ($val[0]) { // intentionally on cascade
-          case function_exists($val[1]);
-          case in_array($val[1], $expr);
-          case T_VARIABLE; // $var
-
-          case T_BOOLEAN_AND; // &&
-          case T_LOGICAL_AND; // and
-          case T_BOOLEAN_OR; // ||
-          case T_LOGICAL_OR; // or
-
-          case T_CONSTANT_ENCAPSED_STRING; // "foo" or 'bar'
-          case T_ENCAPSED_AND_WHITESPACE; // " $a "
-          case T_PAAMAYIM_NEKUDOTAYIM; // ::
-          case T_DOUBLE_COLON; // ::
-
-          case T_LIST; // list()
-          case T_ISSET; // isset()
-          case T_OBJECT_OPERATOR; // ->
-          case T_OBJECT_CAST; // (object)
-          case T_DOUBLE_ARROW; // =>
-          case T_ARRAY_CAST; // (array)
-          case T_ARRAY; // array()
-
-          case T_INT_CAST; // (int) or (integer)
-          case T_BOOL_CAST; // (bool) or (boolean)
-          case T_DOUBLE_CAST; // (real), (double), or (float)
-          case T_STRING_CAST; // (string)
-          case T_STRING; // "candy"
-
-          case T_DEC; // --
-          case T_INC; // ++
-          case T_DNUMBER; // 0.12, etc.
-          case T_LNUMBER; // 123, 012, 0x1ac, etc.
-          case T_NUM_STRING; // "$x[0]"
-
-          case T_IS_EQUAL; // ==
-          case T_IS_GREATER_OR_EQUAL; // >=
-          case T_IS_SMALLER_OR_EQUAL; // <=
-          case T_IS_NOT_IDENTICAL; // !==
-          case T_IS_IDENTICAL; // ===
-          case T_IS_NOT_EQUAL; // != or <>
-          case T_CONCAT_EQUAL; // .=
-          case T_DIV_EQUAL; // /=
-          case T_MUL_EQUAL; // *=
-          case T_MINUS_EQUAL; // -=
-          case T_PLUS_EQUAL; // +=
-
-          case T_IF; // if
-          case T_AS; // as
-          case T_FOR; // for => $x | for="..." | for (...)
-          case T_FOREACH; // foreach
-          case T_ELSE; // else case T_ELSEIF; // elseif
-          case T_SWITCH; // switch
-          case T_CASE; // case
-          case T_BREAK; // break
-          case T_DEFAULT; // default
-          case T_WHILE; // while
-          case T_ENDFOR; // endfor
-          case T_ENDFOREACH; // endforeach
-          case T_ENDIF; // endif
-          case T_ENDSWITCH; // endswitch
-          case T_ENDWHILE; // endwhile
-          case T_CLASS; // class="..."
-          case T_FUNCTION; // blocks
-
-            $out []= $val[1];
-          break;
-
-          default;
-          break;
-        }
-      }
-    }
-
-    return $out;
   }
 
   // flatten array
