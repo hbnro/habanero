@@ -282,7 +282,7 @@ class chess extends prototype
       $key = preg_replace('/!\d*$/', '', $key);
 
       if (is_array($val)) {//FIX
-        static::build_properties($val, trim("$parent $key"));
+        static::build_properties($val, trim("$parent %$key"));
       } else {
         switch($key) {
           case '@extend';
@@ -320,7 +320,7 @@ class chess extends prototype
       } elseif (is_array($val)) {
         if (substr($parent, 0, 1) === '@') {
           $out []= static::build_rules($val, $key);
-        } elseif ($tmp = static::build_rules($val, trim("$parent $key"))) {
+        } elseif ($tmp = static::build_rules($val, trim("$parent %$key"))) {
           static::$css []= $tmp;
         }
       } elseif (substr($key, 0, 1) <> '@') {
@@ -344,8 +344,8 @@ class chess extends prototype
       $old = array_pop($parts);
       $sub = '';
 
-      if (strpos($old, ' ')) {
-        $sub = trim(substr($old, strpos($old, ' ')));
+      if (strpos($old, '%')) {
+        $sub = trim(substr($old, strpos($old, '%')));
         $sub && $parts []= substr($old, 0, - strlen($sub));
 
         $sub <> $old && $rule[0] = trim("$rule[0] $sub");
@@ -353,16 +353,15 @@ class chess extends prototype
         $parts []= $old;
       }
 
-      if ($top = substr($top, 0, strrpos($top, ' '))) {
-        foreach ($parts as $one) {
-          $one && $rule []= trim("$top $one $sub");
-        }
+      $top = substr($top, 0, strrpos($top, '%'));
+
+      foreach ($parts as $one) {
+        $one && $rule []= trim("$top $one $sub");
       }
 
       // TODO: fix it?
 
-      $top = trim(join(', ', $rule));
-
+      $top = str_replace('%', '', trim(join(', ', $rule)));
       $top = preg_replace('/([#.]\w+)\s*?&(\w+)/', '\\2\\1', $top);
       $top = preg_replace('/ {2,}/', ' ', preg_replace('/ +&/', '', $top));
 
