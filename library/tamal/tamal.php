@@ -96,7 +96,7 @@ class tamal extends prototype
     $stack = array();
 
     // TODO: improve this?
-    $text = preg_replace('/^\s*-\s*elseif/m', '- else if', $text);
+    $text = preg_replace('/\belseif\b/', 'else if', $text);
     $text = preg_replace_callback('/\{[^{}]+?\}/s', function ($match) {
       return preg_replace("/[\r\n\t]+/", ' ', $match[0]);
     }, $text);
@@ -356,11 +356,14 @@ class tamal extends prototype
     $prefix = $echo ? 'echo ' : '';
 
     if (preg_match(sprintf('/%s/', static::$fn), $line, $match)) {
+      $open   =
       $suffix = '';
       $prefix = "\$__=get_defined_vars();$prefix";
 
+      (substr(trim(substr($line, 0, - strlen($match[0]))), -1) === '=') ? '(' : '';
+
       $args   = ! empty($match[1]) ? $match[1] : '';
-      $line   = str_replace($match[0], "(function($args)", $line) . 'use($__){extract($__,EXTR_SKIP);unset($__);';
+      $line   = str_replace($match[0], "{$open}function($args)", $line) . 'use($__){extract($__,EXTR_SKIP);unset($__);';
     } elseif (preg_match(sprintf('/^\s*(%s)(.+?)$/', static::$open), $line, $match)) {
       $line   = "$match[1]($match[2])";
       $suffix = '{';
