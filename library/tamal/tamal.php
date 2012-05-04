@@ -12,7 +12,7 @@ class tamal extends prototype
    */
 
   // lambdas
-  private static $fn = '(?<=[(,])(?:\s*\((.+?)\)\s*|())\s*~\s*>(?=\b|$)';
+  private static $fn = '(?:\s*\((.+?)\)\s*|())\s*~\s*>(?=\b|$)';
 
   // quotes
   private static $qt = array(
@@ -357,11 +357,10 @@ class tamal extends prototype
 
     if (preg_match(sprintf('/%s/', static::$fn), $line, $match)) {
       $suffix = '';
-      $prefix = "\$_=get_defined_vars();$prefix";
+      $prefix = "\$__=get_defined_vars();$prefix";
 
       $args   = ! empty($match[1]) ? $match[1] : '';
-      $line   = str_replace($match[0], "function($args)", $line);
-      $line  .= 'use($_){extract($_,EXTR_SKIP|EXTR_REFS);unset($_);';
+      $line   = str_replace($match[0], "(function($args)", $line) . 'use($__){extract($__,EXTR_SKIP);unset($__);';
     } elseif (preg_match(sprintf('/^\s*(%s)(.+?)$/', static::$open), $line, $match)) {
       $line   = "$match[1]($match[2])";
       $suffix = '{';
