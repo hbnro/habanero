@@ -64,8 +64,9 @@ class tamal extends prototype
       return FALSE;
     }
 
-
-    $php_file = TMP.DS.strtr($file, '\\/', '__');
+    // TODO: improve local caching?
+    $php_file = APP_PATH.DS.'views'.DS.'cache'.DS.str_replace(TMP.DS, '', $file);
+    $php_file = mkpath(dirname($php_file)).DS.basename($php_file);
 
     if (is_file($php_file)) {
       if (filemtime($file) > filemtime($php_file)) {
