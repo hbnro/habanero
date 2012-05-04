@@ -198,11 +198,6 @@ class tamal extends prototype
     return $out;
   }
 
-  // variable interpolation
-  final private static function value($match) {
-    return "<?php echo $match[1]; ?>";
-  }
-
   // compile lines
   final private static function compile($tree) {
     $open  = sprintf('/^\s*-\s*%s/', static::$open);
@@ -380,8 +375,8 @@ class tamal extends prototype
   // apply fixes
   final private static function fixate($code) {
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
-    $code = preg_replace_callback('/#\{(.+?)\}/', 'static::value', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
+    $code = preg_replace('/#\{(.+?)\}/', '<?php echo \\1; ?>', $code);
 
     return $code;
   }
