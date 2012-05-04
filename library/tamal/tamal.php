@@ -35,7 +35,7 @@ class tamal extends prototype
                   );
 
   // open blocks
-  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)\s*(?=\()';
+  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)\b';
 
   // filter blocks
   private static $blocks = array();
@@ -94,6 +94,12 @@ class tamal extends prototype
   final public static function parse($text) {
     $code  = '';
     $stack = array();
+
+    // TODO: improve this?
+    $text = preg_replace('/^\s*-\s*elseif/m', '- else if', $text);
+    $text = preg_replace_callback('/\{[^{}]+?\}/s', function ($match) {
+      return preg_replace("/[\r\n\t]+/", ' ', $match[0]);
+    }, $text);
 
     static::$source = $text;
 
@@ -274,7 +280,7 @@ class tamal extends prototype
         // php
         $key = substr($key, 1);
         $key = rtrim(join(' ', static::tokenize($key)), ';');
-        $key = static::block($key);
+        $key = preg_replace('/\belse\s*;/', 'else{', static::block($key));
 
         return "<?php $key ?>\n$text";
       break;
@@ -356,7 +362,8 @@ class tamal extends prototype
       $args   = ! empty($match[1]) ? $match[1] : '';
       $line   = str_replace($match[0], "function($args)", $line);
       $line  .= 'use($_){extract($_,EXTR_SKIP|EXTR_REFS);unset($_);';
-    } elseif (preg_match(sprintf('/^\s*%s/', static::$open), $line)) {
+    } elseif (preg_match(sprintf('/^\s*(%s)(.+?)$/', static::$open), $line, $match)) {
+      $line   = "$match[1]($match[2])";
       $suffix = '{';
     }
 
