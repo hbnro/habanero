@@ -12,7 +12,7 @@ class tamal extends prototype
    */
 
   // lambdas
-  private static $fn = '(?:\s*\((.+?)\)\s*|())\s*~\s*>(?=\b|$)';
+  private static $fn = '(?:\s*\(([^()]+?)\)\s*|())\s*~\s*>(?=\b|$)';
 
   // quotes
   private static $qt = array(
