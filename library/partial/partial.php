@@ -48,9 +48,9 @@ class partial extends prototype
     }
 
 
-    $test   = TMP.DS.'_'.trim(strtr($file, '\\/', '__'), '_');
+    $test   = TMP.DS.str_replace(APP_PATH.DS.'views'.DS, '', $file);
+    $test   = mkpath(dirname($test)).DS.basename($file);
     $parts  = explode('.', basename($file));
-    $name   = array_shift($parts);
     $output = read($file);
 
     write($test, $output);
@@ -58,7 +58,7 @@ class partial extends prototype
     while ($parts) {
       $type = array_pop($parts);
 
-      if ($type && array_key_exists($type, static::$render)) {
+      if ((sizeof($parts) > 1) && array_key_exists($type, static::$render)) {
         $output = call_user_func(static::$render[$type], $test, $vars);
 
         write($test, $output);
