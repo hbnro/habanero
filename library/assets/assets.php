@@ -117,15 +117,30 @@ class assets extends prototype
         }, $test);
 
 
-        $out = array();
+        $out   = array();
+        $paths = array(APP_PATH.DS.'views'.DS, TMP.DS);
 
         foreach ($set as $file) {
           if (is_file($file)) {
-            $text  = static::process($file);
-            $path  = str_replace(APP_PATH.DS, '', $file);
-            $now   = date('Y-m-d H:i:s', filemtime($file));
+            $old_file = APP_PATH.DS.'views'.DS.'cache'.DS.str_replace($paths, '', $file);
+            $old_file = mkpath(dirname($old_file)).DS.basename($old_file);
 
-            $out []= sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+            if (is_file($old_file)) {
+              if (filemtime($file) > filemtime($old_file)) {
+                unlink($old_file);
+              }
+            }
+
+            if ( ! is_file($old_file)) {
+              $text = static::process($file);
+              $path = str_replace(APP_PATH.DS, '', $file);
+              $now  = date('Y-m-d H:i:s', filemtime($file));
+              $old  = sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+
+              write($old_file, $out []= $old);
+            } else {
+              $out []= read($old_file);
+            }
           }
         }
 
