@@ -50,8 +50,10 @@ class sqlite_driver extends sqlite_scheme
   }
 
   final protected function execute($sql) {//FIX
-    $this->last_query []= $sql;
-    return @$this->res->query($sql);
+    $this->debug($sql, TRUE);
+    $out = @$this->res->query($sql);
+    $this->debug(FALSE);
+    return $out;
   }
 
   final protected function real_escape($test) {

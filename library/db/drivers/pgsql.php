@@ -31,8 +31,10 @@ class pgsql_driver extends pgsql_scheme
   }
 
   final protected function execute($sql) {
-    $this->last_query []= $sql;
-    return @pg_query($this->res, $sql);
+    $this->debug($sql, TRUE);
+    $out = @pg_query($this->res, $sql);
+    $this->debug(FALSE);
+    return $out;
   }
 
   final protected function real_escape($test) {
