@@ -27,6 +27,17 @@ function run(Closure $bootstrap) {
 
 
 /**
+ * Common debugging
+ *
+ * @param  string Message
+ * @return void
+ */
+function debug($text) {
+  (APP_ENV <> 'production') && write(APP_PATH.DS.'debug.log', "$text\n", 1);
+}
+
+
+/**
  * Load partial content
  *
  * @param  mixed Content file|Options hash
@@ -378,7 +389,7 @@ function dump($var, $show = FALSE, $depth = 99) {
 function ticks($start = NULL, $end = FALSE, $round = 4) {
   if (func_num_args() == 0) {
     return microtime(TRUE);
-  } elseif (func_num_args() == 1) {
+  } elseif (func_num_args() === 1) {
     $end = microtime(TRUE);
   }
 
