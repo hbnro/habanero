@@ -8,6 +8,30 @@ class sql_raw
 {
 
   /**
+   * Internal SQL debug
+   *
+   * @param  string  Query
+   * @param  boolean Breakpoint
+   * @return void
+   */
+  final public function debug($sql, $begin = FALSE) {
+    static $query = '',
+           $start = NULL;
+
+
+    if (is_true($begin)) {
+      $start = ticks();
+      $this->last_query []= $sql;
+      $query = str_replace("\n", ' ', preg_replace('/^ +/m', '', $sql));
+    } elseif (is_false($sql)) {
+      debug(sprintf("(%s) $query", ticks($start)));
+    } else {
+      debug($sql);
+    }
+  }
+
+
+  /**
    * SELECT
    *
    * @param  string FROM
