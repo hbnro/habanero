@@ -144,6 +144,11 @@ call_user_func(function () {
     }
   });
 
+  // TODO: shutdown WAT?
+  register_shutdown_function(function () {
+    debug('EOX'); // EndOfExecution!
+  });
+
   // autoload
   foreach ((array) option('autoload') as $one) {
     $one && import($one);
