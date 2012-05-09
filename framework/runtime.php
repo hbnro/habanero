@@ -33,7 +33,7 @@ function run(Closure $bootstrap) {
  * @return void
  */
 function debug() {
-  if (APP_ENV <> 'production') {
+  if (APP_ENV === 'development') {
     $text = join(func_get_args(), '');
     write(APP_PATH.DS.'debug.log', "$text\n", 1);
   }
