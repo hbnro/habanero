@@ -29,11 +29,14 @@ function run(Closure $bootstrap) {
 /**
  * Common debugging
  *
- * @param  string Message
+ * @param  mixed Arguments
  * @return void
  */
-function debug($text) {
-  (APP_ENV <> 'production') && write(APP_PATH.DS.'debug.log', "$text\n", 1);
+function debug() {
+  if (APP_ENV <> 'production') {
+    $text = join(func_get_args(), '');
+    write(APP_PATH.DS.'debug.log', "$text\n", 1);
+  }
 }
 
 

@@ -148,6 +148,8 @@ call_user_func(function () {
   foreach ((array) option('autoload') as $one) {
     $one && import($one);
   }
+
+  debug('---');
 });
 
 /* EOF: ./framework/initialize.php */
