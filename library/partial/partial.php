@@ -48,8 +48,7 @@ class partial extends prototype
     }
 
     $start  = ticks();
-    $test   = TMP.DS.str_replace(APP_PATH.DS.'views'.DS, '', $file);
-    $test   = mkpath(dirname($test)).DS.basename($file);
+    $test   = TMP.DS.strtr($file, array(DS => '__DS__'));
     $parts  = explode('.', basename($file));
     $output = read($file);
 
@@ -70,7 +69,7 @@ class partial extends prototype
 
     @unlink($test);
 
-    $path = str_replace(TMP.DS, '', $test);
+    $path = str_replace('__DS__', DS, basename($test));
     debug("Render: ($path)\n", '  ', ticks($start));
 
     return $output;

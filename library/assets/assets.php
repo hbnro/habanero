@@ -132,12 +132,11 @@ class assets extends prototype
         }, $test);
 
 
-        $out   = array();
-        $paths = array(APP_PATH.DS.'views'.DS, TMP.DS);
+        $out = array();
 
         foreach ($set as $file) {
           if (is_file($file)) {
-            $old_file = APP_PATH.DS.'views'.DS.'cache'.DS.str_replace($paths, '', $file);
+            $old_file = APP_PATH.DS.'cache'.DS.strtr(basename($file), array('__DS__' => DS));
             $old_file = mkpath(dirname($old_file)).DS.basename($old_file);
 
             if (is_file($old_file)) {
