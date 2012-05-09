@@ -47,7 +47,7 @@ class partial extends prototype
       return ln('partial.view_missing', array('path' => dirname($file), 'action' => $action));
     }
 
-
+    $start  = ticks();
     $test   = TMP.DS.str_replace(APP_PATH.DS.'views'.DS, '', $file);
     $test   = mkpath(dirname($test)).DS.basename($file);
     $parts  = explode('.', basename($file));
@@ -69,6 +69,9 @@ class partial extends prototype
     }
 
     @unlink($test);
+
+    $path = str_replace(TMP.DS, '', $test);
+    debug("Render: ($path)\n", '  ', ticks($start));
 
     return $output;
   }

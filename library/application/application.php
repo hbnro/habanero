@@ -76,6 +76,8 @@ class application extends prototype
       raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
     }
 
+    debug("Start: ($controller#$action)");
+
     $start = ticks();
     $class_name::defined('init') && $class_name::init();
 

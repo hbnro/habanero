@@ -98,6 +98,8 @@ class routing
    * @return void
    */
   final public static function execute() {
+    $start = ticks();
+
     foreach (static::$routes as $params) {
       $expr = "^$params[match]$";
       $test = request::method() . ' ' . URI;
@@ -114,6 +116,8 @@ class routing
         config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
 
         $params['protect'] && $_SESSION['--csrf-token'] = option('csrf_token');
+
+        debug("On: ($params[match])\n  ", ticks($start));
 
         request::dispatch($params);
       }

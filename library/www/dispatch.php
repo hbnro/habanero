@@ -128,6 +128,13 @@ function response($content, array $params = array()) {
 
   status($params['status'], $params['headers']);
   echo $params['output'];
+
+  unset($params['output']);
+  extract($params);
+
+  debug("Status: ($status)\n  ", dump($headers));
+  debug("Output: ($type#$charset)\n  ", ticks(BEGIN));
+
   exit;
 }
 
@@ -176,8 +183,12 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
   }
 
 
+  $url = str_replace('&amp;', '&', $params['to']);
   status($params['status'], $params['headers']);
-  header('Location: ' . str_replace('&amp;', '&', $params['to']), TRUE);
+  header("Location: $url", TRUE);
+
+  debug("Redirect: $url");
+
   exit;
 }
 
