@@ -172,7 +172,7 @@ class sqlite_scheme extends sql_scheme
 
   final protected function ensure_type($test) {
     if (is_bool($test)) {
-      $test = $test ? 0 : 1;
+      $test = $test ? 1 : 0;
     } elseif (is_null($test)) {
       $test = 'NULL';
     }
