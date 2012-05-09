@@ -76,7 +76,7 @@ class application extends prototype
       raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
     }
 
-
+    $start = ticks();
     $class_name::defined('init') && $class_name::init();
 
     if ($test = $class_name::$action()) {
@@ -95,6 +95,8 @@ class application extends prototype
         ));
       }
     }
+
+    debug("Execute: ($controller#$action)\n", '  ', ticks($start));
 
     $output = $class_name::$response;
     $output['output'] = $view;
