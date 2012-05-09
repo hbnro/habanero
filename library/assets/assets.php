@@ -38,7 +38,7 @@ class assets extends prototype
     $static_dir = APP_PATH.DS.'static';
 
     // TODO: improve handling?
-    if (APP_ENV <> 'production') {
+    if (APP_ENV === 'development') {
       $rm    =
       $add   = 0;
       $start = ticks();
