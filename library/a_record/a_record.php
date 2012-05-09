@@ -420,7 +420,7 @@ class a_record extends prototype
     $current = date('Y-m-d H:i:s');
 
     foreach ($fields as $key => $val) {
-      if ( ! in_array($key, $changed)) {
+      if ( ! $new && ! in_array($key, $changed)) {
         unset($fields[$key]);
       }
     }
