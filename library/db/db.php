@@ -78,6 +78,8 @@ class db extends prototype
       /**#@-*/
 
       static::$multi[$dsn_string] = $driver_class::factory($parts);
+
+      debug("Connect:\n  $dsn_string");
     }
     return static::$multi[$dsn_string];
   }
