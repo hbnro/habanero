@@ -25,7 +25,7 @@ class db_model extends a_record
     }
 
 
-    $fields = static::stamp($this->props, $this->is_new());
+    $fields = static::stamp($this->changed, $this->props, $this->is_new());
 
     unset($fields[static::pk()]);
 
@@ -45,11 +45,21 @@ class db_model extends a_record
 
 
   /**
+   * MAX value
+   *
+   * @return integer
+   */
+  final public static function max($field, array $params = array()) {
+    return (int) static::conn()->result(static::conn()->select(static::table(), "MAX($field)", ! empty($params['where']) ? $params['where'] : $params));
+  }
+
+
+  /**
    * Row count
    *
    * @return integer
    */
-  final public static function count($params = array()) {
+  final public static function count(array $params = array()) {
     return (int) static::conn()->result(static::conn()->select(static::table(), 'COUNT(*)', ! empty($params['where']) ? $params['where'] : $params));
   }
 
@@ -170,9 +180,12 @@ class db_model extends a_record
       case 'first';
       case 'last';
         $options['limit'] = 1;
-        $options['order'] = array(
-          static::pk() => $wich === 'first' ? ASC : DESC,
-        );
+
+        if (empty($options['order'])) {
+          $options['order'] = array(
+            static::pk() => $wich === 'first' ? ASC : DESC,
+          );
+        }
 
         $row = static::conn()->fetch(static::conn()->select(static::table(), static::defaults($what), $where, $options), AS_ARRAY);
 
