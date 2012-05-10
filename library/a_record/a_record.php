@@ -79,7 +79,7 @@ class a_record extends prototype
       raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
 
-    $this->changed []= $key;
+    ! in_array($key, $this->changed) && $this->changed []= $key;
     $this->props[$key] = $value;
   }
 
