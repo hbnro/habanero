@@ -34,7 +34,7 @@ call_user_func(function () {
 
 
   // the default environment
-  define('APP_ENV', getenv('ENV') ?: 'unknown');
+  define('APP_ENV', getenv('ENV') ?: 'development');
 
 
   // the root-script name
