@@ -215,7 +215,8 @@ class db_model extends a_record
     if ( ! $out) {
       $out = ALL;
     } else {
-      $id = static::pk();
+      $id  = static::pk();
+      $out = (array) $out; // FIX?
       ! in_array($id, $out) && array_unshift($out, $id);
     }
     return $out;
