@@ -22,7 +22,22 @@ if (class_exists('partial', FALSE)) {
  */
 class md
 {
-	// file render
+  // blocks
+	function block(Closure $lambda) {
+    ob_start() && $lambda();
+
+    $indent = 0;
+    $test   = ob_get_clean();
+
+    preg_match('/^(\s*?)(?=\w+)/m', $test, $match);
+
+    ! empty($match[1]) && $indent = strlen($match[1]);
+
+    $indent && $test = preg_replace("/^\s{0,{$indent}}/m", '', $test);
+
+    return static::parse($test);
+  }
+  // file render
   final public static function compile($file) {
     return Markdown(read($file));
   }
