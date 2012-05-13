@@ -61,10 +61,8 @@ class tamal extends prototype
       return FALSE;
     }
 
-    // TODO: improve local caching?
-    $php_file = strtr($file, array('__DS__' => DS, TMP.DS => ''));
-    $php_file = APP_PATH.DS.'cache'.DS.strtr($php_file, array(APP_PATH.DS => ''));
-    $php_file = mkpath(dirname($php_file)).DS.basename($php_file);
+
+    $php_file = TMP.DS.md5($file);
 
     if (is_file($php_file) && (APP_ENV === 'development')) {
       if (filemtime($file) > filemtime($php_file)) {
