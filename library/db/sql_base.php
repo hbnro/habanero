@@ -179,7 +179,7 @@ class sql_base extends sql_raw
           } else {
             $sql .= $this->build_where($val, $operator);
           }
-        } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
+        } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=?|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
           $oper = '';
           $key  = $this->protect_names($match[1]);
 

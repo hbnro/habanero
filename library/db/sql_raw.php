@@ -24,7 +24,7 @@ class sql_raw
       $this->last_query []= $sql;
       $query = str_replace("\n", ' ', preg_replace('/^ +/m', '', $sql));
     } elseif (is_false($sql)) {
-      debug(sprintf("(%s) $query", ticks($start)));
+      debug(sprintf('(%s) %s', ticks($start), $query));
     } else {
       debug($sql);
     }
@@ -62,7 +62,7 @@ class sql_raw
       $inc  = 0;
       $sql .= "\nORDER BY";
 
-      foreach ($options['order'] as $one => $set) {
+      foreach ((array) $options['order'] as $one => $set) {
         if (($inc += 1) > 1) {
           $sql .= ', ';
         }

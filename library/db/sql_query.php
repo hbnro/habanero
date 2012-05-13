@@ -92,7 +92,7 @@ class sql_query extends sql_base
       $sql  = $this->prepare($sql, $args);
     }
 
-    $out = @$this->execute($this->query_repare($sql));
+    $out = $this->execute($this->query_repare($sql));
 
     if ($message = $this->has_error()) {// FIX
       raise(ln('db.database_query_error', array('message' => $message, 'sql' => end($this->last_query))));
