@@ -214,7 +214,7 @@ function is_datetime($test) {
  * @return boolean
  */
 function is_keyword($test) {
-  return preg_match('/^(?:and|not|x?or)$/', $test) > 0;
+  return preg_match('/^(?:and|not|x?or)$/i', $test) > 0;
 }
 
 
