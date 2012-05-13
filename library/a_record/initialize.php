@@ -9,6 +9,7 @@ i18n::load_path(__DIR__.DS.'locale', 'ar');
 /**#@+
  * @ignore
  */
+require __DIR__.DS.'a_chain'.EXT;
 require __DIR__.DS.'a_query'.EXT;
 require __DIR__.DS.'a_record'.EXT;
 require __DIR__.DS.'a_relation'.EXT;

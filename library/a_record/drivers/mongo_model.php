@@ -181,7 +181,7 @@ class mongo_model extends a_record
         foreach (explode('_or_') as $one) {
           $test['$or'] []= array($one => $val);
         }
-      } elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*|)$/', $key, $match)) {
+      } elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=?|<>|NOT|R?LIKE)\s*|)$/', $key, $match)) {
         switch ($match[2]) {// TODO: do testing!
           case 'NOT'; case '<>'; case '!'; case '!=';
             $test[$match[1]] = array(is_array($val) ? '$nin': '$ne' => $val);

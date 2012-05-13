@@ -65,7 +65,7 @@ class a_record extends prototype
   // properties getter
   public function __get($key) {
     if ( ! array_key_exists($key, $this->columns())) {
-      if ($on = static::has_scope($key)) {
+      if ($on = static::has_relation($key)) {
         return a_relation::match($this, $on);
       }
       raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
@@ -270,6 +270,11 @@ class a_record extends prototype
    * @return mixed
    */
   final public static function find() {
+    if ( ! func_num_args()) {
+      return a_chain::fetch(get_called_class());
+    }
+
+
     $args    = func_get_args();
 
     $wich    = array_shift($args);
@@ -398,8 +403,8 @@ class a_record extends prototype
     raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
   }
 
-  // relationship scopes
-  final protected static function has_scope($key) {
+  // relationships
+  final protected static function has_relation($key) {
     if ( ! empty(static::$related_to[$key])) {
       return array_merge(array(
         'from' => $key,
