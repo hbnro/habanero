@@ -30,6 +30,7 @@ cli::writeln(pretty(function () {
   }
 
   info(ln("app.{$what}_configuration"));
+  bold($file);
 
   $config = isset($file) ? $trap($file) : config();
 
