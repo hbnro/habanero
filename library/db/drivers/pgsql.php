@@ -46,15 +46,18 @@ class pgsql_driver extends pgsql_scheme
   }
 
   final protected function fetch_result($res) {
-    return pg_fetch_result($res, 0);
+    $out = pg_fetch_result($res, 0); // TODO: see below...
+    ($out === 'f') && $out = FALSE;
+    ($out === 't') && $out = TRUE;
+    return $out;
   }
 
   final protected function fetch_assoc($res) {
-    return pg_fetch_assoc($res);
+    return $this->fixate_bools(pg_fetch_assoc($res));
   }
 
   final protected function fetch_object($res) {
-    return pg_fetch_object($res);
+    return (object) $this->fixate_bools(pg_fetch_assoc($res));
   }
 
   final protected function count_rows($res) {
@@ -84,6 +87,16 @@ class pgsql_driver extends pgsql_scheme
     $tmp = pg_fetch_row(pg_query($this->res, $sql), 0);
 
     return $tmp[0];
+  }
+
+  final protected function fixate_bools($set) {
+    if (is_array($set)) { // TODO: check the right data-type so?
+      foreach ($set as $key => $val) {
+        ($val === 'f') && $set[$key] = FALSE;
+        ($val === 't') && $set[$key] = TRUE;
+      }
+    }
+    return $set;
   }
 }
 
