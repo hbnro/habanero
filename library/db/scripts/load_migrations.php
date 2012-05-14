@@ -15,7 +15,7 @@ if (cli::flag('schema')) {
   }
 } else {
   if ( ! cli::flag('seed')) {
-    info(ln('db.verifying_database'));
+    info(ln('db.verifying_databases'));
     bold(db()->dsn);
 
     if (cli::flag('drop-all')) {
