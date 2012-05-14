@@ -30,8 +30,10 @@ class mysqli_driver extends mysql_scheme
   }
 
   final protected function execute($sql) {
-    $this->last_query []= $sql;
-    return @mysqli_query($this->res, $sql);
+    $this->debug($sql, TRUE);
+    $out = @mysqli_query($this->res, $sql);
+    $this->debug(FALSE);
+    return $out;
   }
 
   final protected function real_escape($test) {

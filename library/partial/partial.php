@@ -47,10 +47,9 @@ class partial extends prototype
       return ln('partial.view_missing', array('path' => dirname($file), 'action' => $action));
     }
 
-
-    $test   = TMP.DS.'_'.trim(strtr($file, '\\/', '__'), '_');
+    $start  = ticks();
+    $test   = TMP.DS.strtr($file, array(DS => '__DS__'));
     $parts  = explode('.', basename($file));
-    $name   = array_shift($parts);
     $output = read($file);
 
     write($test, $output);
@@ -58,7 +57,7 @@ class partial extends prototype
     while ($parts) {
       $type = array_pop($parts);
 
-      if ($type && array_key_exists($type, static::$render)) {
+      if ((sizeof($parts) > 1) && array_key_exists($type, static::$render)) {
         $output = call_user_func(static::$render[$type], $test, $vars);
 
         write($test, $output);
@@ -69,6 +68,9 @@ class partial extends prototype
     }
 
     @unlink($test);
+
+    $path = str_replace('__DS__', DS, basename($test));
+    debug("Render: ($path)\n", '  ', ticks($start));
 
     return $output;
   }

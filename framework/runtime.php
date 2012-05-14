@@ -27,6 +27,21 @@ function run(Closure $bootstrap) {
 
 
 /**
+ * Common debugging
+ *
+ * @param  mixed Arguments
+ * @return void
+ */
+function debug() {
+  if (APP_ENV === 'development') {
+    $file = APP_PATH.DS.'debug.log';
+    $text = join(func_get_args(), '');
+    is_file($file) && write($file, "$text\n", 1);
+  }
+}
+
+
+/**
  * Load partial content
  *
  * @param  mixed Content file|Options hash
@@ -338,7 +353,7 @@ function dump($var, $show = FALSE, $depth = 99) {
     }
 
     foreach ($test as $key => $val) {
-      $key = preg_replace('/^[^\w]*?(?=\w)/', '', $key);
+      //$key = preg_replace('/^[^\w]*?(?=\w)/', '', $key);
 
       $old = dump($val, FALSE, $depth - 1, $limit + 1);
       $pre = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
@@ -378,7 +393,7 @@ function dump($var, $show = FALSE, $depth = 99) {
 function ticks($start = NULL, $end = FALSE, $round = 4) {
   if (func_num_args() == 0) {
     return microtime(TRUE);
-  } elseif (func_num_args() == 1) {
+  } elseif (func_num_args() === 1) {
     $end = microtime(TRUE);
   }
 

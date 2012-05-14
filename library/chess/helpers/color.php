@@ -10,7 +10,7 @@
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('hex', function ($color) {
+chess_helper::implement('hex', function ($color) {
   $color = preg_replace('/[^a-fA-F\d]/', '', $color);
 
   if (strlen($color) == 3) {
@@ -29,8 +29,8 @@ cssp_helper::implement('hex', function ($color) {
  * @param  mixed  HEX color|...
  * @return string
  */
-cssp_helper::implement('hsl', function () {
-  return cssp_helper::rgb2hex(cssp_helper::hsl2rgb(func_get_args()));
+chess_helper::implement('hsl', function () {
+  return chess_helper::rgb2hex(chess_helper::hsl2rgb(func_get_args()));
 });
 
 
@@ -40,8 +40,8 @@ cssp_helper::implement('hsl', function () {
  * @param  mixed  HEX color|...
  * @return string
  */
-cssp_helper::implement('hsla', function () {
-  return cssp_helper::rgba(cssp_helper::hsl2rgb(func_get_args()));
+chess_helper::implement('hsla', function () {
+  return chess_helper::rgba(chess_helper::hsl2rgb(func_get_args()));
 });
 
 
@@ -53,8 +53,8 @@ cssp_helper::implement('hsla', function () {
  * @param  mixed  Blue
  * @return string
  */
-cssp_helper::implement('rgb', function ($red, $green = 0, $blue = 0) {
-  return cssp_helper::rgba($red, $green, $blue);
+chess_helper::implement('rgb', function ($red, $green = 0, $blue = 0) {
+  return chess_helper::rgba($red, $green, $blue);
 });
 
 
@@ -67,21 +67,21 @@ cssp_helper::implement('rgb', function ($red, $green = 0, $blue = 0) {
  * @param  mixed  Alpha value
  * @return string
  */
-cssp_helper::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 100) {
+chess_helper::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 100) {
   $args = func_get_args();
 
   if (is_array($red)) {
     $alpha = $green;
     $args  = $red;
   } elseif (is_hex($red)) {
-    $args  = cssp_helper::hex2rgb($red);
+    $args  = chess_helper::hex2rgb($red);
     $alpha = $green;
   }
 
 
   $alpha = isset($args[3]) ? $args[3] : $alpha;
   $alpha = $alpha > 1 ? ((int) $alpha / 100) : (float) $alpha;
-  $args  = cssp_helper::rgb_safe($args);
+  $args  = chess_helper::rgb_safe($args);
 
   if ((sizeof($args) < 3) OR ($alpha === 0)) {
     return 'transparent';
@@ -99,8 +99,8 @@ cssp_helper::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 1
  * @param  mixed  Max value
  * @return string
  */
-cssp_helper::implement('darken', function ($test, $inc = 50) {
-  return cssp_helper::mask($test, 100 - ((int) $inc), 0);
+chess_helper::implement('darken', function ($test, $inc = 50) {
+  return chess_helper::mask($test, 100 - ((int) $inc), 0);
 });
 
 
@@ -111,8 +111,8 @@ cssp_helper::implement('darken', function ($test, $inc = 50) {
  * @param  mixed  Max value
  * @return string
  */
-cssp_helper::implement('lighten', function ($test, $inc = 50) {
-  return cssp_helper::mask($test, 100 - ((int) $inc), 255);
+chess_helper::implement('lighten', function ($test, $inc = 50) {
+  return chess_helper::mask($test, 100 - ((int) $inc), 255);
 });
 
 
@@ -123,11 +123,11 @@ cssp_helper::implement('lighten', function ($test, $inc = 50) {
  * @param  mixed  Max value
  * @return string
  */
-cssp_helper::implement('saturate', function ($test, $inc = 50) {
-  $hsl    = cssp_helper::rgb2hsl($test);
+chess_helper::implement('saturate', function ($test, $inc = 50) {
+  $hsl    = chess_helper::rgb2hsl($test);
   $hsl[1] = min(100, max(0, $hsl[1] + $inc));
 
-  return cssp_helper::rgb2hex(cssp_helper::hsl2rgb($hsl));
+  return chess_helper::rgb2hex(chess_helper::hsl2rgb($hsl));
 });
 
 
@@ -138,11 +138,11 @@ cssp_helper::implement('saturate', function ($test, $inc = 50) {
  * @param  mixed  Max value
  * @return string
  */
-cssp_helper::implement('desaturate', function ($test, $inc = 50) {
-  $hsl    = cssp_helper::rgb2hsl($test);
+chess_helper::implement('desaturate', function ($test, $inc = 50) {
+  $hsl    = chess_helper::rgb2hsl($test);
   $hsl[1] = min(100, max(0, $hsl[1] - $inc));
 
-  return cssp_helper::rgb2hex(cssp_helper::hsl2rgb($hsl));
+  return chess_helper::rgb2hex(chess_helper::hsl2rgb($hsl));
 });
 
 
@@ -154,10 +154,10 @@ cssp_helper::implement('desaturate', function ($test, $inc = 50) {
  * @param  mixed  Change level
  * @return string
  */
-cssp_helper::implement('mask', function ($color, $new = 0, $level = 128) {
+chess_helper::implement('mask', function ($color, $new = 0, $level = 128) {
   $new /= 100;
   $new  = $new > 1 ? 1 : ($new < 0 ? 0 : $new);
-  $rgb  = cssp_helper::hex2rgb($color);
+  $rgb  = chess_helper::hex2rgb($color);
 
 
   for ($i = 0; $i < 3; $i += 1) {
@@ -165,7 +165,7 @@ cssp_helper::implement('mask', function ($color, $new = 0, $level = 128) {
     $rgb[$i] = $old > 255 ? 255 : ($old < 0 ? 0 : $old);
   }
 
-  return cssp_helper::rgb2hex($rgb);
+  return chess_helper::rgb2hex($rgb);
 });
 
 
@@ -177,15 +177,15 @@ cssp_helper::implement('mask', function ($color, $new = 0, $level = 128) {
  * @param  mixed  Average value
  * @return string
  */
-cssp_helper::implement('merge', function ($color, $new = '#fff', $average = 50) {
+chess_helper::implement('merge', function ($color, $new = '#fff', $average = 50) {
   while ((int) $average > 0) {
     $average /= 100;
   }
 
-  $old = cssp_helper::hex2rgb($color);
-  $new = cssp_helper::hex2rgb($new);
+  $old = chess_helper::hex2rgb($color);
+  $new = chess_helper::hex2rgb($new);
 
-  return cssp_helper::rgb2hex(array(
+  return chess_helper::rgb2hex(array(
     (int) (($old[0] - $new[0]) * $average + $new[0]),
     (int) (($old[1] - $new[1]) * $average + $new[1]),
     (int) (($old[2] - $new[2]) * $average + $new[2]),
@@ -200,11 +200,11 @@ cssp_helper::implement('merge', function ($color, $new = '#fff', $average = 50) 
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('combine', function ($color, $new = '#fff') {
-  $old = cssp_helper::hex2rgb($color);
-  $new = cssp_helper::hex2rgb($new);
+chess_helper::implement('combine', function ($color, $new = '#fff') {
+  $old = chess_helper::hex2rgb($color);
+  $new = chess_helper::hex2rgb($new);
 
-  return cssp_helper::rgb2hex(array($old[0] ^ $new[0], $old[1] ^ $new[1], $old[2] ^ $new[2]));
+  return chess_helper::rgb2hex(array($old[0] ^ $new[0], $old[1] ^ $new[1], $old[2] ^ $new[2]));
 });
 
 
@@ -214,10 +214,10 @@ cssp_helper::implement('combine', function ($color, $new = '#fff') {
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('inverse', function ($color) {
-  $old = cssp_helper::hex2rgb($color);
+chess_helper::implement('inverse', function ($color) {
+  $old = chess_helper::hex2rgb($color);
 
-  return cssp_helper::rgb2hex(array($old[0] ^ 255, $old[1] ^ 255, $old[2] ^ 255));
+  return chess_helper::rgb2hex(array($old[0] ^ 255, $old[1] ^ 255, $old[2] ^ 255));
 });
 
 
@@ -227,10 +227,10 @@ cssp_helper::implement('inverse', function ($color) {
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('red', function ($color) {
-  $old = cssp_helper::hex2rgb($color);
+chess_helper::implement('red', function ($color) {
+  $old = chess_helper::hex2rgb($color);
 
-  return cssp_helper::rgb2hex(array($old[0], 255, 255));
+  return chess_helper::rgb2hex(array($old[0], 255, 255));
 });
 
 
@@ -240,10 +240,10 @@ cssp_helper::implement('red', function ($color) {
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('green', function ($color) {
-  $old = cssp_helper::hex2rgb($color);
+chess_helper::implement('green', function ($color) {
+  $old = chess_helper::hex2rgb($color);
 
-  return cssp_helper::rgb2hex(array(255, $old[1], 255));
+  return chess_helper::rgb2hex(array(255, $old[1], 255));
 });
 
 
@@ -253,10 +253,10 @@ cssp_helper::implement('green', function ($color) {
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('blue', function ($color) {
-  $old = cssp_helper::hex2rgb($color);
+chess_helper::implement('blue', function ($color) {
+  $old = chess_helper::hex2rgb($color);
 
-  return cssp_helper::rgb2hex(array(255, 255, $old[2]));
+  return chess_helper::rgb2hex(array(255, 255, $old[2]));
 });
 
 
@@ -266,11 +266,11 @@ cssp_helper::implement('blue', function ($color) {
  * @param  string HEX color
  * @return string
  */
-cssp_helper::implement('gray', function ($color) {
-  $old = cssp_helper::hex2rgb($color);
+chess_helper::implement('gray', function ($color) {
+  $old = chess_helper::hex2rgb($color);
   $new = (int) ($old[0] * .3 + $old[1] * .59 + $old[2] * .11);
 
-  return cssp_helper::rgb2hex(array($new, $new, $new));
+  return chess_helper::rgb2hex(array($new, $new, $new));
 });
 
 
@@ -284,7 +284,7 @@ cssp_helper::implement('gray', function ($color) {
  * @staticvar mixed   Function callback
  * @return    string
  */
-cssp_helper::implement('gradient', function ($color, $to, $index = 0, $step = 10) {
+chess_helper::implement('gradient', function ($color, $to, $index = 0, $step = 10) {
   static $deg = NULL;
 
 
@@ -299,10 +299,10 @@ cssp_helper::implement('gradient', function ($color, $to, $index = 0, $step = 10
     $index *= ($step / 100);
   }
 
-  $old = cssp_helper::hex2rgb($color);
-  $new = cssp_helper::hex2rgb($to);
+  $old = chess_helper::hex2rgb($color);
+  $new = chess_helper::hex2rgb($to);
 
-  return cssp_helper::rgb2hex(array(
+  return chess_helper::rgb2hex(array(
     $deg($old[0], $new[0], $step, $index),
     $deg($old[1], $new[1], $step, $index),
     $deg($old[2], $new[2], $step, $index),
@@ -317,11 +317,11 @@ cssp_helper::implement('gradient', function ($color, $to, $index = 0, $step = 10
  * @param  mixed  Max value
  * @return string
  */
-cssp_helper::implement('spin', function ($test, $inc = 10) {
-  $hsl    = cssp_helper::rgb2hsl(cssp_helper::hex2rgb($color));
+chess_helper::implement('spin', function ($test, $inc = 10) {
+  $hsl    = chess_helper::rgb2hsl(chess_helper::hex2rgb($color));
   $hsl[0] = min(360, max(0, $hsl[0] + $inc));
 
-  return cssp_helper::rgb2hex(cssp_helper::hsl2rgb($hsl));
+  return chess_helper::rgb2hex(chess_helper::hsl2rgb($hsl));
 });
 
 
@@ -331,8 +331,8 @@ cssp_helper::implement('spin', function ($test, $inc = 10) {
  * @param  string  Hex color
  * @return integer
  */
-cssp_helper::implement('hue', function ($color) {
-  $hsl = cssp_helper::rgb2hsl(cssp_helper::hex2rgb($color));
+chess_helper::implement('hue', function ($color) {
+  $hsl = chess_helper::rgb2hsl(chess_helper::hex2rgb($color));
 
   return round($hsl[0]);
 });
@@ -344,8 +344,8 @@ cssp_helper::implement('hue', function ($color) {
  * @param  string  Hex color
  * @return integer
  */
-cssp_helper::implement('saturation', function ($color) {
-  $hsl = cssp_helper::rgb2hsl(cssp_helper::hex2rgb($color));
+chess_helper::implement('saturation', function ($color) {
+  $hsl = chess_helper::rgb2hsl(chess_helper::hex2rgb($color));
 
   return round($hsl[1]);
 });
@@ -357,8 +357,8 @@ cssp_helper::implement('saturation', function ($color) {
  * @param  string  Hex color
  * @return integer
  */
-cssp_helper::implement('lightness', function ($color) {
-  $hsl = cssp_helper::rgb2hsl(cssp_helper::hex2rgb($color));
+chess_helper::implement('lightness', function ($color) {
+  $hsl = chess_helper::rgb2hsl(chess_helper::hex2rgb($color));
 
   return round($hsl[2]);
 });
@@ -371,7 +371,7 @@ cssp_helper::implement('lightness', function ($color) {
  * @staticvar mixed  Function callback
  * @return    string
  */
-cssp_helper::implement('hex_safe', function ($color) {
+chess_helper::implement('hex_safe', function ($color) {
   static $safe = NULL;
 
 
@@ -383,8 +383,8 @@ cssp_helper::implement('hex_safe', function ($color) {
   }
 
 
-  $color = array_map($safe, cssp_helper::hex2rgb($color));
-  $color = cssp_helper::rgb2hex($color);
+  $color = array_map($safe, chess_helper::hex2rgb($color));
+  $color = chess_helper::rgb2hex($color);
 
   return $color;
 });
@@ -398,7 +398,7 @@ cssp_helper::implement('hex_safe', function ($color) {
  * @param  integer Blue value
  * @return array
  */
-cssp_helper::implement('rgb_safe', function ($red, $green = -1, $blue = -1) {
+chess_helper::implement('rgb_safe', function ($red, $green = -1, $blue = -1) {
   $color = func_get_args();
 
   if (is_array($red)) {
@@ -425,7 +425,7 @@ cssp_helper::implement('rgb_safe', function ($red, $green = -1, $blue = -1) {
  * @param  integer Blue value
  * @return string
  */
-cssp_helper::implement('rgb2hex', function ($red, $green = -1, $blue = -1) {
+chess_helper::implement('rgb2hex', function ($red, $green = -1, $blue = -1) {
   $color = func_get_args();
 
   if (is_array($red)) {
@@ -444,13 +444,13 @@ cssp_helper::implement('rgb2hex', function ($red, $green = -1, $blue = -1) {
  * @param integer Blue value
  * @return array
  */
-cssp_helper::implement('rgb2hsl', function ($red, $green = -1, $blue = -1) {
+chess_helper::implement('rgb2hsl', function ($red, $green = -1, $blue = -1) {
   $color = func_get_args();
 
   if (is_array($red)) {
     $color = $red;
   } elseif (is_hex($red)) {
-    $color = cssp_helper::hex2rgb($red);
+    $color = chess_helper::hex2rgb($red);
   }
 
 
@@ -495,7 +495,7 @@ cssp_helper::implement('rgb2hsl', function ($red, $green = -1, $blue = -1) {
  * @staticvar mixed Function callback
  * @return    array
  */
-cssp_helper::implement('hsl2rgb', function ($hue, $saturation = -1, $lightness = -1) {
+chess_helper::implement('hsl2rgb', function ($hue, $saturation = -1, $lightness = -1) {
   static $value = NULL;
 
 
@@ -553,8 +553,8 @@ cssp_helper::implement('hsl2rgb', function ($hue, $saturation = -1, $lightness =
  * @param  string HEX color|...
  * @return array
  */
-cssp_helper::implement('hex2rgb', function ($color) {
-  $color = cssp_helper::hex($color);
+chess_helper::implement('hex2rgb', function ($color) {
+  $color = chess_helper::hex($color);
 
   return array(
     hexdec(substr($color, 0, 2)),
@@ -563,4 +563,4 @@ cssp_helper::implement('hex2rgb', function ($color) {
   );
 });
 
-/* EOF: ./library/cssp/helpers/color.php */
+/* EOF: ./library/chess/helpers/color.php */

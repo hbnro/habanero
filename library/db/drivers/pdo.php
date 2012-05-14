@@ -54,11 +54,13 @@ class pdo_driver
   }
 
   final protected function execute($sql) {
-    $this->last_query []= $sql;
+    $this->debug($sql, TRUE);
     if (preg_match('/^\s*(UPDATE|DELETE)\s+/', $sql)) {
-      return @$this->res->exec($sql);
+      $out = @$this->res->exec($sql);
     }
-    return @$this->res->query($sql);
+    $out = @$this->res->query($sql);
+    $this->debug(FALSE);
+    return $out;
   }
 
   final protected function real_escape($test) {

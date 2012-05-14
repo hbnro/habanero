@@ -1,5 +1,18 @@
 # dependencies
 
+- a_record
 - application
+- assets
+- db
 - partial
-- server
+- taml
+- www
+- form
+- html
+- request
+- routing
+- text
+- url_for
+- valid
+- chess
+- coffee

@@ -11,7 +11,7 @@ $out_file  = APP_PATH.DS.'static'.DS.$type.DS."$sheet.$type";
 #die($out_file);
 // TODO: compression, caching, gzip?
 
-if (APP_ENV == 'production') {
+if (APP_ENV === 'production') {
   $out_file = str_replace("$sheet.$type", "$sheet.min.$type", $out_file);
 
   if ( ! is_file($out_file)) {

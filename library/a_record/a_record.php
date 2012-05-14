@@ -14,6 +14,9 @@ class a_record extends prototype
   // model properties
   protected $props = array();
 
+  // changed properties
+  protected $changed = array();
+
   // new record?
   protected $new_record = NULL;
 
@@ -62,7 +65,7 @@ class a_record extends prototype
   // properties getter
   public function __get($key) {
     if ( ! array_key_exists($key, $this->columns())) {
-      if ($on = static::has_scope($key)) {
+      if ($on = static::has_relation($key)) {
         return a_relation::match($this, $on);
       }
       raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
@@ -75,12 +78,17 @@ class a_record extends prototype
     if ( ! array_key_exists($key, $this->columns())) {
       raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
+
+    ! in_array($key, $this->changed) && $this->changed []= $key;
     $this->props[$key] = $value;
   }
 
   // scopes shortcut
   public function __call($method, $arguments) {
-    $what = '';
+    $what  = '';
+    $class = get_called_class();
+
+    debug("\nCall: ($class#$method)");
 
     if ((substr($method, 0, 4) === 'all_') OR (substr($method, 0, 6) === 'count_')) {
       @list($what, $method) = explode('_', $method, 2);
@@ -161,6 +169,16 @@ class a_record extends prototype
 
 
   /**
+   * The record has changed?
+   *
+   * @return boolean
+   */
+  final public function has_changed() {
+    return ! empty($this->changed);
+  }
+
+
+  /**
    * Retrieve validation errors
    *
    * @return array
@@ -176,7 +194,7 @@ class a_record extends prototype
    * @param  array Values
    * @return self
    */
-  final public function update() {
+  final public function update($props = array()) {
     if ( ! isset($this)) {
       @list($id, $props) = func_get_args();
 
@@ -189,14 +207,14 @@ class a_record extends prototype
       return FALSE;
     }
 
-    $props   = (array) func_get_arg(0);
-    $columns = array_keys($this->fields());
 
-    foreach ($props as $key => $value) {
-      in_array($key, $columns) && $this->$key = $value;
+    if ( ! empty($props)) {
+      foreach ($props as $key => $value) {
+        $this->$key = $value;
+      }
     }
 
-    return $this->save();
+    return $this->has_changed() ? $this->save() : FALSE;
   }
 
 
@@ -252,6 +270,11 @@ class a_record extends prototype
    * @return mixed
    */
   final public static function find() {
+    if ( ! func_num_args()) {
+      return a_chain::fetch(get_called_class());
+    }
+
+
     $args    = func_get_args();
 
     $wich    = array_shift($args);
@@ -290,6 +313,8 @@ class a_record extends prototype
    * @return void
    */
   final public static function each($params = array(), Closure $lambda = NULL) {
+    $start = ticks();
+
     if (is_closure($params)) {
       $lambda = $params;
       $params = array();
@@ -378,8 +403,8 @@ class a_record extends prototype
     raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
   }
 
-  // relationship scopes
-  final protected static function has_scope($key) {
+  // relationships
+  final protected static function has_relation($key) {
     if ( ! empty(static::$related_to[$key])) {
       return array_merge(array(
         'from' => $key,
@@ -395,11 +420,17 @@ class a_record extends prototype
   }
 
   // make timestamps
-  final protected static function stamp($fields, $new) {
+  final protected static function stamp($changed, $fields, $new) {
     $props   = static::columns();
     $current = date('Y-m-d H:i:s');
 
-    if ($new && array_key_exists('created_at', $props)) {
+    if ( ! $new) {
+      foreach ($fields as $key => $val) {
+        if ( ! in_array($key, $changed)) {
+          unset($fields[$key]);
+        }
+      }
+    } elseif (array_key_exists('created_at', $props)) {
       $fields['created_at'] = $current;
     }
 

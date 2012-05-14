@@ -64,60 +64,15 @@ class sql_query extends sql_base
    * Prepare SQL query
    *
    * @param  string Query
-   * @param  array  Params|Arguments
+   * @param  array  Params
    * @return string
    */
   final public function prepare($sql, array $vars = array()) {
-    if (is_array($vars)) {
+    if (is_assoc($vars)) {
       $sql = strtr($sql, $this->fixate_string($vars, FALSE));
-    } elseif (func_num_args() > 1) {
-      $args = $this->fixate_string(array_slice(func_get_args(), 1), FALSE);
+    } else {
+      $args = $this->fixate_string(array_slice($vars, 1), FALSE);
       $sql  = preg_replace('/((?<!\\\)\?)/e', 'array_shift($args);', $sql);
-    }
-
-    return $sql;
-  }
-
-
-  /**
-   * Automatic escape
-   *
-   * @param     mixed Query
-   * @param     mixed Params|Arguments
-   * @staticvar mixed Function callback
-   * @return    mixed
-   */
-  final public function escape($sql, $vars = array()) {
-    static $repl = NULL;
-
-
-    if (is_null($repl)) {
-      $repl = function ($type, $value = NULL) {
-        switch($type) {
-          case '%n';
-            return ! strlen(trim($value, "\\'")) ? 'NULL' : $value;
-          break;
-          case '%f';
-            return (float) $value;
-          break;
-          case '%d';
-            return (int) $value;
-          break;
-          default;
-            return $value;
-          break;
-        }
-      };
-    }
-
-
-    $args = array_slice(func_get_args(), 1);
-
-    if (is_array($vars) && ! empty($vars)) {
-      $sql = strtr($sql, $this->fixate_string($vars, FALSE));
-    } elseif ( ! empty($args)) {
-      $vars = $this->fixate_string($args, FALSE);
-      $sql  = preg_replace('/\b%[dsnf]\b/e', '$repl("\\0", array_shift($vars));', $sql);
     }
 
     return $sql;
@@ -128,14 +83,16 @@ class sql_query extends sql_base
    * Execute raw query
    *
    * @param  string Query
+   * @param  array  Params
    * @return mixed
    */
-  final public function query($sql) {
-    $args     = func_get_args();
-    $callback = array($this, strpos($sql, '?') > 0 ? 'prep' : 'escape');
-    $sql      = sizeof($args) > 1 ? call_user_func_array($callback, $args) : $sql;
+  final public function query($sql, $repl = array()) {
+    if (func_num_args() > 1) {
+      $args = func_num_args() > 2 ? func_get_args() : (array) $repl;
+      $sql  = $this->prepare($sql, $args);
+    }
 
-    $out = @$this->execute($this->query_repare($sql));
+    $out = $this->execute($this->query_repare($sql));
 
     if ($message = $this->has_error()) {// FIX
       raise(ln('db.database_query_error', array('message' => $message, 'sql' => end($this->last_query))));

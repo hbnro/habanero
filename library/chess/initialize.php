@@ -7,22 +7,22 @@
 /**#@+
  * @ignore
  */
-require __DIR__.DS.'cssp'.EXT;
+require __DIR__.DS.'chess'.EXT;
 
-class cssp_helper extends prototype
+class chess_helper extends prototype
 {// fake class
 }
 
 // render callback
 if (class_exists('partial', FALSE)) {
-  partial::register('cssp', function ($file, array $vars = array()) {
-    return cssp::render($file);
+  partial::register('chess', function ($file, array $vars = array()) {
+    return chess::render($file);
   });
 }
 
 // asset compiler
 if (class_exists('assets', FALSE)) {
-  assets::compile('cssp', function ($file) {
+  assets::compile('chess', function ($file) {
     return partial::render($file);
   });
 }
@@ -34,4 +34,4 @@ require __DIR__.DS.'helpers'.DS.'number'.EXT;
 require __DIR__.DS.'helpers'.DS.'string'.EXT;
 /**#@-*/
 
-/* EOF: ./library/cssp/initialize.php */
+/* EOF: ./library/chess/initialize.php */

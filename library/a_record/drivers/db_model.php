@@ -25,7 +25,7 @@ class db_model extends a_record
     }
 
 
-    $fields = static::stamp($this->props, $this->is_new());
+    $fields = static::stamp($this->changed, $this->props, $this->is_new());
 
     unset($fields[static::pk()]);
 
@@ -45,11 +45,21 @@ class db_model extends a_record
 
 
   /**
+   * MAX value
+   *
+   * @return integer
+   */
+  final public static function max($field, array $params = array()) {
+    return (int) static::conn()->result(static::conn()->select(static::table(), "MAX($field)", ! empty($params['where']) ? $params['where'] : $params));
+  }
+
+
+  /**
    * Row count
    *
    * @return integer
    */
-  final public static function count($params = array()) {
+  final public static function count(array $params = array()) {
     return (int) static::conn()->result(static::conn()->select(static::table(), 'COUNT(*)', ! empty($params['where']) ? $params['where'] : $params));
   }
 
@@ -158,7 +168,7 @@ class db_model extends a_record
 
   // each iteration
   final protected static function block($get, $where, $params, $lambda) {
-    $res = static::conn()->select(static::table(), $get ?: ALL, $where, $params);
+    $res = static::conn()->select(static::table(), static::defaults($get), $where, $params);
     while ($row = static::conn()->fetch($res, AS_ARRAY)) {
       $lambda(new static($row, 'after_find'));
     }
@@ -170,17 +180,20 @@ class db_model extends a_record
       case 'first';
       case 'last';
         $options['limit'] = 1;
-        $options['order'] = array(
-          static::pk() => $wich === 'first' ? ASC : DESC,
-        );
 
-        $row = static::conn()->fetch(static::conn()->select(static::table(), $what ?: ALL, $where, $options), AS_ARRAY);
+        if (empty($options['order'])) {
+          $options['order'] = array(
+            static::pk() => $wich === 'first' ? ASC : DESC,
+          );
+        }
+
+        $row = static::conn()->fetch(static::conn()->select(static::table(), static::defaults($what), $where, $options), AS_ARRAY);
 
         return $row ? new static($row, 'after_find') : FALSE;
       break;
       case 'all';
         $out = array();
-        $res = static::conn()->select(static::table(), $what ?: ALL, $where, $options);
+        $res = static::conn()->select(static::table(), static::defaults($what), $where, $options);
 
         while ($row = static::conn()->fetch($res, AS_ARRAY)) {
           $out []= new static($row, 'after_find');
@@ -188,13 +201,25 @@ class db_model extends a_record
         return $out;
       break;
       default;
-        $row = static::conn()->fetch(static::conn()->select(static::table(), $what ?: ALL, array(
+        $row = static::conn()->fetch(static::conn()->select(static::table(), static::defaults($what), array(
           static::pk() => $wich,
         ), $options), AS_ARRAY);
 
         return $row ? new static($row, 'after_find') : FALSE;
       break;
     }
+  }
+
+  // populate fields in some WAT fashion!
+  final private static function defaults($out) {
+    if ( ! $out) {
+      $out = ALL;
+    } else {
+      $id  = static::pk();
+      $out = (array) $out; // FIX?
+      ! in_array($id, $out) && array_unshift($out, $id);
+    }
+    return $out;
   }
 
   /**#@-*/

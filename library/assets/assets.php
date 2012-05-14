@@ -38,12 +38,19 @@ class assets extends prototype
     $static_dir = APP_PATH.DS.'static';
 
     // TODO: improve handling?
-    if (APP_ENV <> 'production') {
+    if (APP_ENV === 'development') {
+      $rm    =
+      $add   = 0;
+      $start = ticks();
+
       // cleanup
       foreach (array('css', 'img', 'js') as $one) {
         foreach (dir2arr($static_dir.DS.$one, '*', DIR_RECURSIVE | DIR_MAP) as $file) {
           if (preg_match('/\w+([a-f0-9]{32})\.\w+/', basename($file), $match)) {
-            ! in_array($match[1], static::$cache) && unlink($file);
+            if ( ! in_array($match[1], static::$cache)) {
+              unlink($file);
+              $rm += 1;
+            }
           }
         }
       }
@@ -67,9 +74,13 @@ class assets extends prototype
 
           if ( ! array_key_exists($file_name, $set)) {
             static::assign(str_replace($file_hash, '', $file_name), $file_hash);
+            $add += 1;
           }
         }
       }
+
+      debug("Cleanup: ($rm/$add)\n  ", ticks($start));
+
       static::save();
     }
   }
@@ -106,6 +117,10 @@ class assets extends prototype
         $set = array();
         $tmp = TMP.DS."$from.$type.tmp";
 
+        $total =
+        $cache = 0;
+        $start = ticks();
+
         // css and js
         $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
           use($base_path, $type, &$set) {
@@ -121,11 +136,27 @@ class assets extends prototype
 
         foreach ($set as $file) {
           if (is_file($file)) {
-            $text  = static::process($file);
-            $path  = str_replace(APP_PATH.DS, '', $file);
-            $now   = date('Y-m-d H:i:s', filemtime($file));
+            $old_file = TMP.DS.md5($file);
 
-            $out []= sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+            if (is_file($old_file)) {
+              if (filemtime($file) > filemtime($old_file)) {
+                unlink($old_file);
+              }
+            }
+
+            if ( ! is_file($old_file)) {
+              $total += 1;
+
+              $text = static::process($file);
+              $path = str_replace(APP_PATH.DS, '', $file);
+              $now  = date('Y-m-d H:i:s', filemtime($file));
+              $old  = sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+
+              write($old_file, $out []= $old);
+            } else {
+              $out  []= read($old_file);
+              $cache += 1;
+            }
           }
         }
 
@@ -135,6 +166,8 @@ class assets extends prototype
 
         $hash     = md5(md5_file($tmp) . filesize($tmp));
         $out_file = $out_path.DS."$from$hash.$type";
+
+        debug("Assemble: ($total/$cache#$from.$type)\n  ", ticks($start));
 
         static::assign("$from.$type", $hash);
         static::save();

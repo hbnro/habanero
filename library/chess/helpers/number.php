@@ -10,7 +10,7 @@
  * @param  mixed  Number|...
  * @return integer
  */
-cssp_helper::implement('min', function () {
+chess_helper::implement('min', function () {
   return min(func_get_args());
 });
 
@@ -21,7 +21,7 @@ cssp_helper::implement('min', function () {
  * @param  mixed  Number|...
  * @return integer
  */
-cssp_helper::implement('max', function () {
+chess_helper::implement('max', function () {
   return max(func_get_args());
 });
 
@@ -32,7 +32,7 @@ cssp_helper::implement('max', function () {
  * @param  mixed  Number|...
  * @return integer
  */
-cssp_helper::implement('avg', function () {
+chess_helper::implement('avg', function () {
   $args  = func_get_args();
   $total = array_sum($args);
 
@@ -46,7 +46,7 @@ cssp_helper::implement('avg', function () {
  * @param  mixed  Number
  * @return integer
  */
-cssp_helper::implement('ceil', function ($num) {
+chess_helper::implement('ceil', function ($num) {
   return ceil($num);
 });
 
@@ -57,7 +57,7 @@ cssp_helper::implement('ceil', function ($num) {
  * @param  mixed  Number
  * @return integer
  */
-cssp_helper::implement('floor', function ($num) {
+chess_helper::implement('floor', function ($num) {
   return floor($num);
 });
 
@@ -68,7 +68,7 @@ cssp_helper::implement('floor', function ($num) {
  * @param  mixed Number
  * @return float
  */
-cssp_helper::implement('round', function ($num) {
+chess_helper::implement('round', function ($num) {
   $args = func_get_args();
   return call_user_func_array('round', $args);
 });
@@ -80,7 +80,7 @@ cssp_helper::implement('round', function ($num) {
  * @param  mixed   Number
  * @return integer
  */
-cssp_helper::implement('abs', function ($num) {
+chess_helper::implement('abs', function ($num) {
   return abs($num);
 });
 
@@ -91,7 +91,7 @@ cssp_helper::implement('abs', function ($num) {
  * @param  mixed   Number
  * @return integer
  */
-cssp_helper::implement('fval', function ($num) {
+chess_helper::implement('fval', function ($num) {
   return (float) (strpos($num, '%') ? (int) $num / 100 : $num);
 });
 
@@ -101,8 +101,8 @@ cssp_helper::implement('fval', function ($num) {
  * @param  mixed   Number
  * @return integer
  */
-cssp_helper::implement('perc', function ($num) {
+chess_helper::implement('perc', function ($num) {
   return sprintf('%d%%', (float) $num > 1 ? (int) $num : $num * 100);
 });
 
-/* EOF: ./library/cssp/helpers/number.php */
+/* EOF: ./library/chess/helpers/number.php */

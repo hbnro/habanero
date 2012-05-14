@@ -28,7 +28,7 @@ class mongo_model extends a_record
     }
 
 
-    $fields = static::stamp($this->props, $this->is_new());
+    $fields = static::stamp($this->changed, $this->props, $this->is_new());
 
     unset($fields['_id']);
 
@@ -139,6 +139,7 @@ class mongo_model extends a_record
 
   // selection
   final private static function select($fields, $where, $options) {
+    $start  = ticks();
     $where  = static::parse($where);
     $method = ! empty($options['single']) ? 'findOne' : 'find';
 
@@ -160,7 +161,11 @@ class mongo_model extends a_record
       $row->sort($options['order']);
     }
 
-    return is_object($row) ? iterator_to_array($row) : $row;
+    $params = dump(compact('fields', 'where', 'options'));
+    $out    = is_object($row) ? iterator_to_array($row) : $row;
+    debug(sprintf('(%s) %s %s', ticks($start), static::table(), $params));
+
+    return $out;
   }
 
   // dynamic where
@@ -176,7 +181,7 @@ class mongo_model extends a_record
         foreach (explode('_or_') as $one) {
           $test['$or'] []= array($one => $val);
         }
-      } elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=|<>|NOT|R?LIKE)\s*|)$/', $key, $match)) {
+      } elseif (preg_match('/^(.+?)(\s+(!=?|[<>]=?|<>|NOT|R?LIKE)\s*|)$/', $key, $match)) {
         switch ($match[2]) {// TODO: do testing!
           case 'NOT'; case '<>'; case '!'; case '!=';
             $test[$match[1]] = array(is_array($val) ? '$nin': '$ne' => $val);
@@ -216,6 +221,8 @@ class mongo_model extends a_record
       $database = $database ?: 'default';
 
       static::$cache[$idx] = $mongo->$database;
+
+      debug("Connect:\n  mongodb:$database@$mongo");
     }
     return static::$cache[$idx]->{static::table()};
   }

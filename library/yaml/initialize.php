@@ -42,7 +42,8 @@ class yaml extends prototype
   function block(Closure $lambda) {
     ob_start() && $lambda();
 
-    $test = ob_get_clean();
+    $indent = 0;
+    $test   = ob_get_clean();
 
     preg_match('/^(\s*?)---/', $test, $match);
 

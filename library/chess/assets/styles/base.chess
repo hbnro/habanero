@@ -72,4 +72,4 @@
 	opacity: $num;
 }
 
-/* EOF: ./library/cssp/assets/styles/base.cssp */
+/* EOF: ./library/chess/assets/styles/base.chess */

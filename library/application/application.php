@@ -40,8 +40,8 @@ class application extends prototype
    * @param  integer Response status
    * @return void
    */
-  public static function to_json($obj, $status = 200) {
-    return array($status, json_encode($obj), array(
+  public static function to_json($obj, $status = 200, $raw = FALSE) {
+    return array($status, $raw ? $obj : json_encode($obj), array(
       'content-type' => 'application/json',
     ));
   }
@@ -76,7 +76,9 @@ class application extends prototype
       raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
     }
 
+    debug("Start: ($controller#$action)");
 
+    $start = ticks();
     $class_name::defined('init') && $class_name::init();
 
     if ($test = $class_name::$action()) {
@@ -95,6 +97,8 @@ class application extends prototype
         ));
       }
     }
+
+    debug("Execute: ($controller#$action)\n", '  ', ticks($start));
 
     $output = $class_name::$response;
     $output['output'] = $view;

@@ -34,14 +34,14 @@ class a_query
         return sizeof($out) > 1 ? $out : end($out);
       break;
       case 'count'; case 'first'; case 'last'; case 'all';
-        return call_user_func(array($this->model, $method), $this->defs);
+        return call_user_func("$this->model::$method", $this->defs);
       break;
       case 'where'; case 'select'; case 'order'; case 'group'; case 'limit';
         $this->defs[$method] = sizeof($arguments) > 1 ? $arguments : array_shift($arguments);
         return $this;
       break;
       default;
-        raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
+        raise(ln('method_missing', array('class' => $this->model, 'name' => $method)));
       break;
     }
   }

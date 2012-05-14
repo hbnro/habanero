@@ -15,8 +15,12 @@ if (cli::flag('schema')) {
   }
 } else {
   if ( ! cli::flag('seed')) {
-    info(ln('db.verifying_database'));
-    bold(db()->dsn);
+    info(ln('db.verifying_databases'));
+
+    $name = db()->name;
+    $dsn  = db()->dsn;
+
+    bold("$name - $dsn");
 
     if (cli::flag('drop-all')) {
       foreach (db::tables() as $one) {

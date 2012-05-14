@@ -4,7 +4,7 @@
  * Template markup library
  */
 
-class taml extends prototype
+class tamal extends prototype
 {
 
   /**#@+
@@ -12,7 +12,7 @@ class taml extends prototype
    */
 
   // lambdas
-  private static $fn = '(?<=[(,])(?:\s*\((.+?)\)\s*|())\s*~\s*>(?=\b|$)';
+  private static $fn = '(?:\s*\(([^()]+?)\)\s*|())\s*~\s*>(?=\b|$)';
 
   // quotes
   private static $qt = array(
@@ -35,13 +35,10 @@ class taml extends prototype
                   );
 
   // open blocks
-  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)\s*(?=\()';
+  private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)\b';
 
   // filter blocks
   private static $blocks = array();
-
-  // content
-  private static $source = NULL;
 
   // defaults
   protected static $defs = array(
@@ -65,9 +62,9 @@ class taml extends prototype
     }
 
 
-    $php_file = TMP.DS.strtr($file, '\\/', '__');
+    $php_file = TMP.DS.md5($file);
 
-    if (is_file($php_file)) {
+    if (is_file($php_file) && (APP_ENV === 'development')) {
       if (filemtime($file) > filemtime($php_file)) {
         unlink($php_file);
       }
@@ -95,7 +92,11 @@ class taml extends prototype
     $code  = '';
     $stack = array();
 
-    static::$source = $text;
+    // TODO: improve this?
+    $text  = preg_replace_callback('/\{[^{}]+?\}/s', function ($match) {
+      return preg_replace("/[\r\n\t]+/", ' ', $match[0]);
+    }, $text);
+
 
     $test  = array_filter(explode("\n", $text));
     $file  = func_num_args() > 1 ? func_get_arg(1) : '';
@@ -191,11 +192,6 @@ class taml extends prototype
     return $out;
   }
 
-  // variable interpolation
-  final private static function value($match) {
-    return sprintf('<?php echo %s; ?>', join(' ', static::tokenize($match[1])));
-  }
-
   // compile lines
   final private static function compile($tree) {
     $open  = sprintf('/^\s*-\s*%s/', static::$open);
@@ -272,17 +268,15 @@ class taml extends prototype
       break;
       case '-';
         // php
-        $key = substr($key, 1);
-        $key = rtrim(join(' ', static::tokenize($key)), ';');
-        $key = static::block($key);
+        $key = rtrim(substr($key, 1), ';');
+        $key = preg_replace('/\belse\s*;/', 'else{', static::block($key));
 
         return "<?php $key ?>\n$text";
       break;
       case '=';
           // print
         $key = trim(substr($key, 1));
-        $key = rtrim(join(' ', static::tokenize($key)), ';');
-        $key = static::block($key, TRUE);
+        $key = static::block(rtrim($key, ';'), TRUE);
 
         return "<?php $key ?>$text";
       break;
@@ -319,9 +313,7 @@ class taml extends prototype
 
         if ( ! empty($match[0])) {
           $key    = str_replace($match[0], '', $key);
-          $hash   = join('', static::tokenize($match[1]));
-
-          $args []= $hash;
+          $args []= $match[1];
         }
 
         // output
@@ -350,111 +342,20 @@ class taml extends prototype
     $prefix = $echo ? 'echo ' : '';
 
     if (preg_match(sprintf('/%s/', static::$fn), $line, $match)) {
+      $open   =
       $suffix = '';
-      $prefix = "\$_=get_defined_vars();$prefix";
+      $prefix = "\$__=get_defined_vars();$prefix";
+
+      (substr(trim(substr($line, 0, - strlen($match[0]))), -1) === '=') ? '(' : '';
 
       $args   = ! empty($match[1]) ? $match[1] : '';
-      $line   = str_replace($match[0], "function($args)", $line);
-      $line  .= 'use($_){extract($_,EXTR_SKIP|EXTR_REFS);unset($_);';
-    } elseif (preg_match(sprintf('/^\s*%s/', static::$open), $line)) {
+      $line   = str_replace($match[0], "{$open}function($args)", $line) . 'use($__){extract($__,EXTR_SKIP);unset($__);';
+    } elseif (preg_match(sprintf('/^\s*(%s)(.+?)$/', static::$open), $line, $match)) {
+      $line   = "$match[1]($match[2])";
       $suffix = '{';
     }
 
     return "$prefix$line$suffix";
-  }
-
-  // retrieve expression tokens
-  final private static function tokenize($code) {
-    static $expr = array(
-              'array',
-              'empty',
-              'list',
-            );
-
-
-    $sym = FALSE;
-    $out = array();
-    $set = token_get_all('<' . "?php $code");
-
-    foreach ($set as $val) {
-      if ( ! is_array($val)) {
-        $out []= $val;
-      } else {
-        switch ($val[0]) { // intentionally on cascade
-          case function_exists($val[1]);
-          case in_array($val[1], $expr);
-          case T_VARIABLE; // $var
-
-          case T_BOOLEAN_AND; // &&
-          case T_LOGICAL_AND; // and
-          case T_BOOLEAN_OR; // ||
-          case T_LOGICAL_OR; // or
-
-          case T_CONSTANT_ENCAPSED_STRING; // "foo" or 'bar'
-          case T_ENCAPSED_AND_WHITESPACE; // " $a "
-          case T_PAAMAYIM_NEKUDOTAYIM; // ::
-          case T_DOUBLE_COLON; // ::
-
-          case T_LIST; // list()
-          case T_ISSET; // isset()
-          case T_OBJECT_OPERATOR; // ->
-          case T_OBJECT_CAST; // (object)
-          case T_DOUBLE_ARROW; // =>
-          case T_ARRAY_CAST; // (array)
-          case T_ARRAY; // array()
-
-          case T_INT_CAST; // (int) or (integer)
-          case T_BOOL_CAST; // (bool) or (boolean)
-          case T_DOUBLE_CAST; // (real), (double), or (float)
-          case T_STRING_CAST; // (string)
-          case T_STRING; // "candy"
-
-          case T_DEC; // --
-          case T_INC; // ++
-          case T_DNUMBER; // 0.12, etc.
-          case T_LNUMBER; // 123, 012, 0x1ac, etc.
-          case T_NUM_STRING; // "$x[0]"
-
-          case T_IS_EQUAL; // ==
-          case T_IS_GREATER_OR_EQUAL; // >=
-          case T_IS_SMALLER_OR_EQUAL; // <=
-          case T_IS_NOT_IDENTICAL; // !==
-          case T_IS_IDENTICAL; // ===
-          case T_IS_NOT_EQUAL; // != or <>
-          case T_CONCAT_EQUAL; // .=
-          case T_DIV_EQUAL; // /=
-          case T_MUL_EQUAL; // *=
-          case T_MINUS_EQUAL; // -=
-          case T_PLUS_EQUAL; // +=
-
-          case T_IF; // if
-          case T_AS; // as
-          case T_FOR; // for => $x | for="..." | for (...)
-          case T_FOREACH; // foreach
-          case T_ELSE; // else case T_ELSEIF; // elseif
-          case T_SWITCH; // switch
-          case T_CASE; // case
-          case T_BREAK; // break
-          case T_DEFAULT; // default
-          case T_WHILE; // while
-          case T_ENDFOR; // endfor
-          case T_ENDFOREACH; // endforeach
-          case T_ENDIF; // endif
-          case T_ENDSWITCH; // endswitch
-          case T_ENDWHILE; // endwhile
-          case T_CLASS; // class="..."
-          case T_FUNCTION; // blocks
-
-            $out []= $val[1];
-          break;
-
-          default;
-          break;
-        }
-      }
-    }
-
-    return $out;
   }
 
   // flatten array
@@ -468,8 +369,8 @@ class taml extends prototype
   // apply fixes
   final private static function fixate($code) {
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
-    $code = preg_replace_callback('/#\{(.+?)\}/', 'static::value', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
+    $code = preg_replace('/#\{(.+?)\}/', '<?php echo \\1; ?>', $code);
 
     return $code;
   }
@@ -488,9 +389,9 @@ class taml extends prototype
 
   // errors
   final private static function error($i, $line, $desc = 'unknown', $file = '') {
-    $error   = is_file($file) ? 'taml.error_file' : 'taml.error_line';
+    $error   = is_file($file) ? 'tamal.error_file' : 'tamal.error_line';
     $message = ln($error, array('line' => $i, 'text' => $line, 'name' => $file));
-    $desc    = ln("taml.$desc");
+    $desc    = ln("tamal.$desc");
 
     raise("$message ($desc)");
   }
@@ -508,4 +409,4 @@ class taml extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/taml/taml.php */
+/* EOF: ./library/tamal/tamal.php */

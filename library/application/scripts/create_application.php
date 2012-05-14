@@ -60,7 +60,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'css');
   create_file($app_path.DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */\n");
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css');
+    copy_file($app_path.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css.chess');
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js');
   create_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
@@ -72,25 +72,26 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib');
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'console.js');
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'jquery-ujs.js');
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'script.js');
+    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'script.js.coffee');
 
-   create_dir($app_path.DS.'views'.DS.'errors');
-    copy_file($app_path.DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'404.html'.EXT);
-    copy_file($app_path.DS.'views'.DS.'errors', $skel_dir.DS.'errors'.DS.'500.html'.EXT);
+   create_dir($app_path.DS.'views'.DS.'error');
+    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'not_found.html'.EXT);
+    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html'.EXT);
 
    create_dir($app_path.DS.'views'.DS.'layouts');
-    copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html'.EXT);
+    copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html.tamal');
 
    create_dir($app_path.DS.'views'.DS.'home');
-    copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html'.EXT);
+    copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html.tamal');
 
 
     $ignored_files = array(
       '.develop',
       'access.log',
       'error.log',
-      'static/css/all.css',
-      'static/js/all.js',
+      'static/img/*',
+      'static/css/*',
+      'static/js/*',
       'database/db.sqlite',
     );
 
@@ -100,7 +101,6 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
     copy_file($app_path, $skel_dir.DS.'Stubfile');
     copy_file($app_path, $skel_dir.DS.'favicon.ico');
-    copy_file($app_path, $skel_dir.DS.'migrate'.EXT);
     copy_file($app_path, $skel_dir.DS.'config'.EXT);
     copy_file($app_path, $skel_dir.DS.'routes'.EXT);
     copy_file($app_path, $skel_dir.DS.'index'.EXT);

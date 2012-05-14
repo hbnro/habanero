@@ -60,17 +60,4 @@ $lang['october'] = 'Octubre';
 $lang['november'] = 'Noviembre';
 $lang['december'] = 'Diciembre';
 
-$lang['jan'] = 'Ene';
-$lang['feb'] = 'Feb';
-$lang['mar'] = 'Mar';
-$lang['apr'] = 'Abr';
-$lang['may'] = 'May';
-$lang['jun'] = 'Jun';
-$lang['jul'] = 'Jul';
-$lang['aug'] = 'Ago';
-$lang['sep'] = 'Sep';
-$lang['oct'] = 'Oct';
-$lang['nov'] = 'Nov';
-$lang['dec'] = 'Dic';
-
 /* EOF: ./library/date_time/locale/es.php */

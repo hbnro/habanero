@@ -4,7 +4,7 @@
  * CSS manipulation library
  */
 
-class cssp extends prototype
+class chess extends prototype
 {
 
   /**#@+
@@ -93,7 +93,6 @@ class cssp extends prototype
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
-    $text = preg_replace('/ +/', ' ', $text);
 
     return $text;
   }
@@ -129,14 +128,7 @@ class cssp extends prototype
 
   // load file
   final private static function load_file($path, $parse = FALSE) {
-    if ( ! is_file($path)) {
-      $path = static::path($path);
-
-      if (is_false(strrpos(basename($path), '.'))) {
-        $path .= '.cssp';
-      }
-    }
-
+    ! is_file($path) && $path = static::path($path);
 
     if ( ! is_file($path)) {
       raise(ln('file_not_exists', array('name' => $path)));
@@ -164,7 +156,6 @@ class cssp extends prototype
     switch ($match[1]) {
       case 'require';
         $inc_file  = APP_PATH.DS.'views'.DS.'assets'.DS.'css'.DS.$match[3];
-        $inc_file .= '.cssp';
 
         if ( ! is_file($inc_file)) {
           raise(ln('file_not_exists', array('name' => $inc_file)));
@@ -179,7 +170,7 @@ class cssp extends prototype
 
         static::$imports []= $match[3];
 
-        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].cssp";
+        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].chess";
 
         if ( ! is_file($css_file)) {
           raise(ln('file_not_exists', array('name' => $css_file)));
@@ -291,7 +282,7 @@ class cssp extends prototype
       $key = preg_replace('/!\d*$/', '', $key);
 
       if (is_array($val)) {//FIX
-        static::build_properties($val, trim("$parent $key"));
+        static::build_properties($val, trim("$parent %$key"));
       } else {
         switch($key) {
           case '@extend';
@@ -329,7 +320,7 @@ class cssp extends prototype
       } elseif (is_array($val)) {
         if (substr($parent, 0, 1) === '@') {
           $out []= static::build_rules($val, $key);
-        } elseif ($tmp = static::build_rules($val, "$parent $key")) {
+        } elseif ($tmp = static::build_rules($val, trim("$parent %$key"))) {
           static::$css []= $tmp;
         }
       } elseif (substr($key, 0, 1) <> '@') {
@@ -344,28 +335,37 @@ class cssp extends prototype
         $parent .= ',' . join(',', (array) $set['@children']);
       }
 
-      $rules = static::do_solve(join("\n", $out));
-      $parts = preg_split('/\s*,+\s*/', $parent);
+      $rules  = static::do_solve(join("\n", $out));
+      $parts  = preg_split('/\s*,+\s*/', $parent);
 
-      $top  = '';
-      $rule = array();
+      $rule   = array();
+      $rule []= $top = array_shift($parts);
 
+      $old = array_pop($parts);
+      $sub = '';
 
-      foreach ($parts as $one) {
-        $pos = strpos($one, '&');
+      if (strpos($old, '%')) {
+        $sub = trim(substr($old, strpos($old, '%')));
+        $sub && $parts []= substr($old, 0, - strlen($sub));
 
-        if ( ! is_false($pos)) {
-          if ($pos > 0) {
-            $top = trim(substr($one, 0, $pos));
-          }
-          $rule []= $top . substr($one, $pos + 1);
-        } else {
-          $rule []= trim($one);
-        }
+        $sub <> $old && $rule[0] = trim("$rule[0] $sub");
+      } else {
+        $parts []= $old;
       }
 
-      $top = join(', ', $rule);
-      $out  = "$top {\n$rules\n}";
+      $top = substr($top, 0, strrpos($top, '%'));
+
+      foreach ($parts as $one) {
+        $one && $rule []= trim("$top $one $sub");
+      }
+
+      // TODO: fix it?
+
+      $top = str_replace('%', '', trim(join(', ', $rule)));
+      $top = preg_replace('/([#.]\w+)\s*?&(\w+)/', '\\2\\1', $top);
+      $top = preg_replace('/ {2,}/', ' ', preg_replace('/ +&/', '', $top));
+
+      $out = "$top {\n$rules\n}";
 
       return $out;
     }
@@ -486,11 +486,11 @@ class cssp extends prototype
     $args = static::do_solve($match[2]);
     $args = array_map('trim', explode(',', $args));
 
-    if ( ! cssp_helper::defined($match[1])) {
+    if ( ! chess_helper::defined($match[1])) {
       return "$match[1]!($match[2])" . ( ! empty($match[3]) ? $match[3] : '');
     }
 
-    $out = cssp_helper::apply($match[1], $args);
+    $out = chess_helper::apply($match[1], $args);
     $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : $out;
 
     return $out;
@@ -534,4 +534,4 @@ class cssp extends prototype
   /**#@-*/
 }
 
-/* EOF: ./library/cssp/cssp.php */
+/* EOF: ./library/chess/chess.php */
