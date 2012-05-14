@@ -150,11 +150,15 @@ class sql_base extends sql_raw
   // dynamic WHERE building
   final protected function build_where($test, $operator = 'AND') {
     if ( ! empty($test)) {
+      // TODO: fix and improve it!!
       $operator = strtoupper($operator);
       $test     = (array) $test;
       $length   = sizeof($test);
 
-      $inc = $count = $sql = '';
+      $inc   =
+      $sql   =
+      $count = '';
+      $ors   = array();
 
       foreach ($test as $key => $val) {
         if (preg_match('/_(?:or|and)_/', $key)) {
@@ -164,8 +168,8 @@ class sql_base extends sql_raw
           $count += 1;
           continue;
         } elseif (is_keyword($key)) {
-          $out  = $this->build_where($val, $key);
-          $sql .= strtoupper($key) . "\n$out";
+          $out = $this->build_where($val, $key);
+          ($key == 'AND') ? $sql .= "\n" . strtoupper($key) . "\n(\n$out )" : $ors []= $out;
 
           $count += 1;
           continue;
@@ -206,10 +210,14 @@ class sql_base extends sql_raw
 
       $sql = $count > 0 ? " (\n$sql )\n" : $sql;
 
+      foreach ($ors as $one) {
+        $sql .= "OR (\n$one )\n";
+      }
+
       $sql = preg_replace('/(AND|OR)\s*(AND|OR)/s', '\\1', $sql);
       $sql = preg_replace('/(?<=\()\s*AND|OR\s*(?=\))/s', '', $sql);
 
-      return trim($sql);
+      return trim($sql, ' ');
     }
   }
 
