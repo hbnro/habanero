@@ -597,7 +597,7 @@ class cli extends prototype
     // TODO: make it work on large amount of data?
     $set  = array_values($set);
     $max  = static::$width / sizeof($set[0]);
-    $max -= sizeof($set[0]);
+    //$max -= sizeof($set[0]);
 
     $head =
     $sep  =
