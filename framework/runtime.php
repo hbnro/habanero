@@ -33,11 +33,9 @@ function run(Closure $bootstrap) {
  * @return void
  */
 function debug() {
-  if (APP_ENV === 'development') {
-    $file = APP_PATH.DS.'debug.log';
-    $text = join(func_get_args(), '');
-    is_file($file) && write($file, "$text\n", 1);
-  }
+  $file = APP_PATH.DS.'debug.log';
+  $text = join(func_get_args(), '');
+  is_file($file) && write($file, "$text\n", 1);
 }
 
 
