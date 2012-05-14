@@ -34,6 +34,7 @@ $lang['missing_php_ini'] = 'Not found a suitable php.ini file on your system!';
 $lang['update_include_path'] = 'Updating include_path';
 $lang['without_changes'] = 'Without changes';
 $lang['launch_vhost'] = 'Launching vhost';
+$lang['compressing_files'] = 'Compressing files...';
 $lang['copying_libraries'] = 'Copying entire libraries';
 $lang['copying_stub_path'] = 'Copying %{name} into %{path}';
 $lang['verifying_vhosts'] = 'Verifying vhost availability';
