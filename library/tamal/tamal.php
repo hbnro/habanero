@@ -62,7 +62,7 @@ class tamal extends prototype
     }
 
 
-    $php_file = TMP.DS.md5($file);
+    $php_file = TMP.DS.str_replace(DS, '__DS__', $file);
 
     if (is_file($php_file) && (APP_ENV === 'development')) {
       if (filemtime($file) > filemtime($php_file)) {

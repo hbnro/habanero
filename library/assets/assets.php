@@ -136,7 +136,7 @@ class assets extends prototype
 
         foreach ($set as $file) {
           if (is_file($file)) {
-            $old_file = TMP.DS.md5($file);
+            $old_file = TMP.DS.str_replace(DS, '__DS__', $file);
 
             if (is_file($old_file)) {
               if (filemtime($file) > filemtime($old_file)) {
