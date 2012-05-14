@@ -101,7 +101,6 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
     copy_file($app_path, $skel_dir.DS.'Stubfile');
     copy_file($app_path, $skel_dir.DS.'favicon.ico');
-    copy_file($app_path, $skel_dir.DS.'migrate'.EXT);
     copy_file($app_path, $skel_dir.DS.'config'.EXT);
     copy_file($app_path, $skel_dir.DS.'routes'.EXT);
     copy_file($app_path, $skel_dir.DS.'index'.EXT);
