@@ -52,11 +52,12 @@ class a_record extends prototype
     $this->new_record = (bool) $new;
 
     foreach (array_keys(static::columns()) as $key) {
-      if ($new) {
-        isset($params[$key]) && $this->props[$key] = $params[$key];
-      } else {
+      // TODO: this is fine?
+      #if ($new) {
+      #  isset($params[$key]) && $this->props[$key] = $params[$key];
+      #} else {
         $this->props[$key] = isset($params[$key]) ? $params[$key] : NULL;
-      }
+      #}
     }
 
     static::callback($this, $method);
