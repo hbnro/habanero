@@ -301,7 +301,7 @@ class form extends prototype
     }
 
     if (empty($params['id'])) {
-      $args['id']   = strtr($key, '.', '_');
+      $args['id'] = $params['name'];
     }
     $args['name'] = $params['name'];
 
