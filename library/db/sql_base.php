@@ -217,7 +217,7 @@ class sql_base extends sql_raw
       $sql = preg_replace('/(AND|OR)\s*(AND|OR)/s', '\\1', $sql);
       $sql = preg_replace('/(?<=\()\s*AND|OR\s*(?=\))/s', '', $sql);
 
-      return trim($sql, ' ');
+      return $sql;
     }
   }
 
