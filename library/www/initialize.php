@@ -110,25 +110,7 @@ app::bind(function ($bootstrap) {
   // http://php.net/session_set_save_handler
 
   if ( ! session_id()) {
-    session_set_save_handler(function () {
-      return TRUE;
-    }, function () {
-      return TRUE;
-    }, function ($id) {
-      return read(TMP.DS."sess_$id");
-    }, function ($id, $data) {
-      return write(TMP.DS."sess_$id", $data);
-    }, function ($id) {
-      return @unlink(TMP.DS."sess_$id");
-    }, function ($max) {
-      foreach (dir2arr(TMP, "sess_*") as $one) {
-        if ((@filemtime(TMP.DS.$one) + $max) < time()) {
-          @unlink(TMP.DS.$one);
-        }
-      }
-    });
-
-
+    // TODO: try another session drivers?
     // session conf
     if ( ! request::is_local()) {
       $host = server();
