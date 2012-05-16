@@ -384,9 +384,9 @@ function flash($key = -1, $value = FALSE) {
       return $output;
     }
 
-    $output = array_filter((array) session::get('--flash-data'));
+    $output = array_filter((array) session('--flash-data'));
 
-    session::set('--flash-data', array());
+    session('--flash-data', array());
 
     return $output;
   }
@@ -403,7 +403,7 @@ function flash($key = -1, $value = FALSE) {
     $set[$key] []= $value;
   }
 
-  session::set('--flash-data', $set, array(
+  session('--flash-data', $set, array(
     'hops' => 1,
   ));
 }
