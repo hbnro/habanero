@@ -46,7 +46,7 @@ class a_chain
       return $model::all($this->params());
     }
 
-    return call_user_func_array("$this->model::$method", $arguments);
+    return call_user_func_array("$model::$method", $arguments);
   }
 
   /**#@-*/
