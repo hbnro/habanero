@@ -26,6 +26,9 @@ class a_record extends prototype
   // validation errors
   protected $error_list = array();
 
+  // mixin caching by class
+  protected static $with = array();
+
   // internal caching by class
   protected static $cache = array();
 
@@ -51,13 +54,8 @@ class a_record extends prototype
   protected function __construct(array $params = array(), $method = NULL, $new = FALSE) {
     $this->new_record = (bool) $new;
 
-    foreach (array_keys(static::columns()) as $key) {
-      // TODO: this is fine?
-      #if ($new) {
-      #  isset($params[$key]) && $this->props[$key] = $params[$key];
-      #} else {
-        $this->props[$key] = isset($params[$key]) ? $params[$key] : NULL;
-      #}
+    foreach (array_keys(static::columns()) as $key) { // TODO: this is fine?
+      $this->props[$key] = isset($params[$key]) ? $params[$key] : NULL;
     }
 
     static::callback($this, $method);
@@ -65,22 +63,25 @@ class a_record extends prototype
 
   // properties getter
   public function __get($key) {
-    if ( ! array_key_exists($key, $this->columns())) {
-      if ($on = static::has_relation($key)) {
-        return a_relation::match($this, $on);
+    if ( ! in_array($key, static::$with)) {
+      if ( ! array_key_exists($key, $this->columns())) {
+        if ($on = static::has_relation($key)) {
+          return a_relation::match($this, $on);
+        }
+        raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
       }
-      raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
     }
     return $this->props[$key];
   }
 
   // properties setter
   public function __set($key, $value) {
-    if ( ! array_key_exists($key, $this->columns())) {
-      raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
+    if ( ! in_array($key, static::$with)) {
+      if ( ! array_key_exists($key, $this->columns())) {
+        raise(ln('ar.undefined_property', array('name' => $key, 'class' => get_called_class())));
+      }
+      ! in_array($key, $this->changed) && $this->changed []= $key;
     }
-
-    ! in_array($key, $this->changed) && $this->changed []= $key;
     $this->props[$key] = $value;
   }
 
@@ -88,8 +89,6 @@ class a_record extends prototype
   public function __call($method, $arguments) {
     $what  = '';
     $class = get_called_class();
-
-    debug("\nCall: ($class#$method)");
 
     if ((substr($method, 0, 4) === 'all_') OR (substr($method, 0, 6) === 'count_')) {
       @list($what, $method) = explode('_', $method, 2);
@@ -331,21 +330,33 @@ class a_record extends prototype
   }
 
 
-  final public static function with() {
-    // if has_scope then prefetch all related rows
-    /* i.e.
-    blog_posts::with(array('blog_authors' => 'author'))->each(function ($one) {
-      dump($one->author->name,1);
-    });
+  /**
+   * Eager load
+   *
+   * @param  mixed Options|Model
+   * @return model
+   */
+  final public static function with($from) {
+    $params = array();
 
-    internally:
+    if (is_assoc($from)) {
+      $params = $from;
+    } else {
+      $params['from'] = $from;
+    }
 
-    $x = select * from tbl_posts
-    $y = select * from tbl_authors where id in ( $x )
+    // TODO: make it multiple?
+    $params = array_merge(array(
+      'as' => $params['from'],
+      'pk' => $params['from']::pk(),
+      'fk' => $params['from'] . '_id',
+      'with' => get_called_class(),
+      'select' => '*',
+    ), $params);
 
-    $x->author = cache[tbl_author_id_and_tbl_posts_author_id]
+    ! in_array($params['as'], static::$with) && static::$with []= $params['as'];
 
-    */
+    return a_eager::on($params);
   }
 
 

@@ -161,9 +161,14 @@ class mongo_model extends a_record
       $row->sort($options['order']);
     }
 
+
+    $options['set']    =
+    $options['select'] = NULL;
+    unset($options['select'], $options['set']);
+
     $params = dump(compact('fields', 'where', 'options'));
     $out    = is_object($row) ? iterator_to_array($row) : $row;
-    debug(sprintf('(%s) %s %s', ticks($start), static::table(), $params));
+    debug(sprintf('(%s) select#%s %s', ticks($start), static::table(), $params));
 
     return $out;
   }
@@ -231,7 +236,7 @@ class mongo_model extends a_record
   final protected static function block($get, $where, $params, $lambda) {
     $res = static::select($get, $where, $params);
     while ($row = array_shift($res)) {
-      $lambda(new static($row, 'after_find'));
+      $lambda(a_eager::extend(new static($row, 'after_find'), $params));
     }
   }
 
@@ -245,14 +250,14 @@ class mongo_model extends a_record
           'limit' => 1,
         ));
 
-        return $row ? new static(array_shift($row), 'after_find') : FALSE;
+        return $row ? a_eager::extend(new static(array_shift($row), 'after_find'), $options) : FALSE;
       break;
       case 'all';
         $out = array();
         $res = static::select($what, $where, $options);
 
         while ($row = array_shift($res)) {
-          $out []= new static($row, 'after_find');
+          $out []= a_eager::extend(new static($row, 'after_find'), $options);
         }
         return $out;
       break;
@@ -261,7 +266,7 @@ class mongo_model extends a_record
           '_id' => $wich,
         ), $options);
 
-        return $row ? new static($row, 'after_find') : FALSE;
+        return $row ? a_eager::extend(new static($row, 'after_find'), $options) : FALSE;
       break;
     }
   }
