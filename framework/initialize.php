@@ -60,7 +60,7 @@ call_user_func(function () {
 
   // lazy loading
   spl_autoload_register(function ($class) {
-    if (is_file($core_path = __DIR__.DS.'class'.DS.$class.EXT)) {
+    if (is_file($core_path = __DIR__.DS.'klass'.DS.$class.EXT)) {
       require $core_path;
       return TRUE;
     }

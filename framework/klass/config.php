@@ -120,4 +120,4 @@ class config
 
 }
 
-/* EOF: ./framework/core/config.php */
+/* EOF: ./framework/klass/config.php */
