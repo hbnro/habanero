@@ -5,7 +5,7 @@
  */
 
 $lang['method_missing'] = 'The %{class}::%{name}() method is unavailable';
-
+$lang['property_missing'] = 'The %{class}.%{name} property is unavailable';
 $lang['extension_missing'] = 'The extension %{name} does not exists and it\'s required';
 $lang['function_param_missing'] = 'Param %{input} for %{name}() is missing';
 
