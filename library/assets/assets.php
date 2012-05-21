@@ -45,7 +45,7 @@ class assets extends prototype
 
       // cleanup
       foreach (array('css', 'img', 'js') as $one) {
-        foreach (dir2arr($static_dir.DS.$one, '*', DIR_RECURSIVE | DIR_MAP) as $file) {
+        foreach (dir2arr(mkpath($static_dir.DS.$one), '*', DIR_RECURSIVE | DIR_MAP) as $file) {
           if (preg_match('/\w+([a-f0-9]{32})\.\w+/', basename($file), $match)) {
             if ( ! in_array($match[1], static::$cache)) {
               unlink($file);
