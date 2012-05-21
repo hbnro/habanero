@@ -73,7 +73,9 @@ app::bind(function ($bootstrap) {
   // URL cleanup
   $root   = preg_quote(ROOT, '/');
   $index  = preg_quote(INDEX, '/');
-  $parts  = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift(explode('?', $url)));
+
+  $parts  = explode('?', $url);
+  $parts  = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift($parts));
 
   define('URI', '/' . trim($parts, '/'));
 

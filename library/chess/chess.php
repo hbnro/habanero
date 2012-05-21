@@ -209,7 +209,8 @@ class chess extends prototype
           }
         }
       } else {
-        $name = end(explode(' ', trim($match[1])));
+        $parts = explode(' ', trim($match[1]));
+        $name  = end($parts);
       }
 
       static::$mixins[$name]['props'] = static::parse_properties($match[2]);

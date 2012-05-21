@@ -51,10 +51,11 @@ class gd
 
   // hidden constructor
   private function __construct($path) {
-    $test = getimagesize($path);
-    $tmp  = imagecreatefromstring(read($path));
+    $test  = getimagesize($path);
+    $tmp   = imagecreatefromstring(read($path));
+    $parts = explode('/', $test['mime']);
 
-    $this->type = end(explode('/', $test['mime']));
+    $this->type = end($parts);
     $this->mime = $test['mime'];
     $this->file = realpath($path);
     $this->size = filesize($path);
@@ -70,7 +71,7 @@ class gd
    * @param  string File path
    * @return image
    */
-  final public function import($path) {
+  final public static function import($path) {
     if ( ! is_file($path)) {
       raise(ln('file_not_exists', array('name' => $path)));
     }

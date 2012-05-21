@@ -58,7 +58,7 @@ class a_query
    * @param  array  Arguments
    * @return model
    */
-  final public function fetch($on, $what, array $params) {
+  final public static function fetch($on, $what, array $params) {
     $chain = new static;
     $chain->model = $on;
 
