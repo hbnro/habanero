@@ -27,10 +27,13 @@ class mongo_model extends a_record
       return FALSE;
     }
 
-
+    $start  = ticks();
     $fields = static::stamp($this->changed, $this->props, $this->is_new());
 
     unset($fields['_id']);
+
+    $params = compact('fields');
+    $type   = $this->is_new() ? 'insert' : 'update';
 
     if ($this->is_new()) {
       if (static::conn()->insert($fields, TRUE)) {
@@ -43,6 +46,7 @@ class mongo_model extends a_record
       ), $fields);
     }
 
+    static::debug($type, $start, compact('params'));
     static::callback($this, 'after_save');
 
     return $this;
@@ -54,8 +58,11 @@ class mongo_model extends a_record
    *
    * @return integer
    */
-  final public static function count($params = array()) {
-    return (int) static::conn()->count( ! empty($params['where']) ? $params['where'] : $params);
+  final public static function count(array $params = array()) {
+    $start = ticks();
+    $out   = (int) static::conn()->count( ! empty($params['where']) ? $params['where'] : $params);
+    static::debug('count', $start, compact('params'));
+    return $out;
   }
 
 
@@ -116,7 +123,9 @@ class mongo_model extends a_record
    * @return void
    */
   final public static function delete_all(array $params = array()) {
+    $start = ticks();
     static::conn()->remove($params ? $params : array());
+    static::debug('delete', $start, compact('params'));
   }
 
 
@@ -128,7 +137,9 @@ class mongo_model extends a_record
    * @return void
    */
   final public static function update_all(array $data, array $params = array()) {
+    $start = ticks();
     static::conn()->update($params, $data, array('multiple' => TRUE));
+    static::debug('update', $start, compact('params', 'data'));
   }
 
 
@@ -161,14 +172,8 @@ class mongo_model extends a_record
       $row->sort($options['order']);
     }
 
-
-    $options['set']    =
-    $options['select'] = NULL;
-    unset($options['select'], $options['set']);
-
-    $params = dump(compact('fields', 'where', 'options'));
-    $out    = is_object($row) ? iterator_to_array($row) : $row;
-    debug(sprintf('(%s) select#%s %s', ticks($start), static::table(), $params));
+    $out = is_object($row) ? iterator_to_array($row) : $row;
+    static::debug('select', $start, compact('fields', 'where'));
 
     return $out;
   }
@@ -269,6 +274,11 @@ class mongo_model extends a_record
         return $row ? a_eager::extend(new static($row, 'after_find'), $options) : FALSE;
       break;
     }
+  }
+
+  // debug
+  final protected static function debug($type, $start, $params) {
+    debug(sprintf("(%s) $type#%s %s", ticks($start), static::table(), dump($params)));
   }
 
   /**#@-*/
