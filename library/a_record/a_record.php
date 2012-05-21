@@ -194,27 +194,16 @@ class a_record extends prototype
    * @param  array Values
    * @return self
    */
-  final public function update($props = array()) {
-    if ( ! isset($this)) {
-      @list($id, $props) = func_get_args();
-
-      is_array($id) && $props = $id;
-
-      if ( ! empty($props)) {
-        $where = is_array($id) ? array() : static::merge(static::pk(), array($id));
-        return static::update_all($props, $where);
-      }
-      return FALSE;
-    }
-
-
+  final public function update(array $props = array()) {
     if ( ! empty($props)) {
       foreach ($props as $key => $value) {
         $this->$key = $value;
       }
     }
 
-    return $this->has_changed() ? $this->save() : FALSE;
+    $this->has_changed() && $this->save();
+
+    return $this;
   }
 
 
@@ -224,15 +213,6 @@ class a_record extends prototype
    * @return mixed
    */
   final public function delete() {
-    if ( ! isset($this)) {
-      if (func_num_args() > 0) {
-        $first = func_get_args(0);
-        $where = static::merge(static::pk(), func_get_args());
-        return static::delete_all(is_array($first) ? $first : $where);
-      }
-      return FALSE;
-    }
-
     static::delete_all(array(
       static::pk() => $this->props[static::pk()],
     ));
