@@ -159,7 +159,8 @@ class valid
             break;
           }
         } elseif (preg_match('/^((?:[!=]=?|[<>])=?)(.+?)$/', $rule, $match)) {
-          $expr = array_shift(static::vars($match[2]));
+          $vars = static::vars($match[2]);
+          $expr = array_shift($vars);
 
           $test = ! is_num($test) ? "'$test'" : addslashes($test);
           $expr = ! is_num($expr) ? "'$expr'" : addslashes($expr);
