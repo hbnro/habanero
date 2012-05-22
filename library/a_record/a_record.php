@@ -51,11 +51,15 @@ class a_record extends prototype
    */
 
   // model constructor
-  protected function __construct(array $params = array(), $method = NULL, $new = FALSE) {
+  protected function __construct(array $params = array(), $method = NULL, $new = FALSE, array $el = array()) {
     $this->new_record = (bool) $new;
 
     foreach (array_keys(static::columns()) as $key) { // TODO: this is fine?
       $this->props[$key] = isset($params[$key]) ? $params[$key] : NULL;
+    }
+
+    if ( ! empty($el['set']['data'])) {
+      $this->props[$el['set']['as']] = $el['set']['data'][$this->props[$el['set']['fk']]];
     }
 
     static::callback($this, $method);
@@ -331,7 +335,7 @@ class a_record extends prototype
       'pk' => $params['from']::pk(),
       'fk' => $params['from'] . '_id',
       'with' => get_called_class(),
-      'select' => '*',
+      #'select' => '*',
     ), $params);
 
     ! in_array($params['as'], static::$with) && static::$with []= $params['as'];

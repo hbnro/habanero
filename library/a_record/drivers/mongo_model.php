@@ -241,7 +241,7 @@ class mongo_model extends a_record
   final protected static function block($get, $where, $params, $lambda) {
     $res = static::select($get, $where, $params);
     while ($row = array_shift($res)) {
-      $lambda(a_eager::extend(new static($row, 'after_find'), $params));
+      $lambda(new static($row, 'after_find', FALSE, $params));
     }
   }
 
@@ -255,14 +255,14 @@ class mongo_model extends a_record
           'limit' => 1,
         ));
 
-        return $row ? a_eager::extend(new static(array_shift($row), 'after_find'), $options) : FALSE;
+        return $row ? new static(array_shift($row), 'after_find', FALSE, $options) : FALSE;
       break;
       case 'all';
         $out = array();
         $res = static::select($what, $where, $options);
 
         while ($row = array_shift($res)) {
-          $out []= a_eager::extend(new static($row, 'after_find'), $options);
+          $out []= new static($row, 'after_find', FALSE, $options);
         }
         return $out;
       break;
@@ -271,7 +271,7 @@ class mongo_model extends a_record
           '_id' => $wich,
         ), $options);
 
-        return $row ? a_eager::extend(new static($row, 'after_find'), $options) : FALSE;
+        return $row ? new static($row, 'after_find', FALSE, $options) : FALSE;
       break;
     }
   }

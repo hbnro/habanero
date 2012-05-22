@@ -170,7 +170,7 @@ class db_model extends a_record
   final protected static function block($get, $where, $params, $lambda) {
     $res = static::conn()->select(static::table(), static::defaults($get), $where, $params);
     while ($row = static::conn()->fetch($res, AS_ARRAY)) {
-      $lambda(a_eager::extend(new static($row, 'after_find'), $params));
+      $lambda(new static($row, 'after_find', FALSE, $params));
     }
   }
 
@@ -189,14 +189,14 @@ class db_model extends a_record
 
         $row = static::conn()->fetch(static::conn()->select(static::table(), static::defaults($what), $where, $options), AS_ARRAY);
 
-        return $row ? a_eager::extend(new static($row, 'after_find'), $options) : FALSE;
+        return $row ? new static($row, 'after_find', FALSE, $options) : FALSE;
       break;
       case 'all';
         $out = array();
         $res = static::conn()->select(static::table(), static::defaults($what), $where, $options);
 
         while ($row = static::conn()->fetch($res, AS_ARRAY)) {
-          $out []= a_eager::extend(new static($row, 'after_find'), $options);
+          $out []= new static($row, 'after_find', FALSE, $options);
         }
         return $out;
       break;
@@ -205,7 +205,7 @@ class db_model extends a_record
           static::pk() => $wich,
         ), $options), AS_ARRAY);
 
-        return $row ? a_eager::extend(new static($row, 'after_find'), $options) : FALSE;
+        return $row ? new static($row, 'after_find', FALSE, $options) : FALSE;
       break;
     }
   }

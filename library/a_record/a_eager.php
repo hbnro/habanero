@@ -53,22 +53,6 @@ class a_eager
 
 
   /**
-   * Eager setter
-   *
-   * @param  object Model
-   * @param  array  Options
-   * @return model
-   */
-  final public static function extend($obj, array $params) {
-    if (is_object($obj) && ! empty($params['set'])) {
-      extract($params['set']);
-      $obj->$as = $data[$obj->$fk];
-    }
-    return $obj;
-  }
-
-
-  /**
    * Eager builder
    *
    * @param  array Options
