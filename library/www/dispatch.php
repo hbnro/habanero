@@ -132,8 +132,8 @@ function response($content, array $params = array()) {
   unset($params['output']);
   extract($params);
 
-  debug("Status: ($status)\n  ", dump($headers));
-  debug("Output: ($type#$charset)\n  ", ticks(BEGIN));
+  debug("Status: ($status) ", dump($headers));
+  debug("Output: ($type#$charset) ", ticks(BEGIN));
 
   exit;
 }

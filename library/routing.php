@@ -118,7 +118,7 @@ class routing
 
         $params['protect'] && $_SESSION['--csrf-token'] = option('csrf_token');
 
-        debug("On: ({$params['matches'][0]})\n  ", ticks($start));
+        debug("On: ({$params['matches'][0]}) ", ticks($start));
 
         request::dispatch($params);
       }

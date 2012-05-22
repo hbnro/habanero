@@ -230,7 +230,7 @@ class mongo_model extends a_record
 
       static::$cache[static::$database] = $mongo->$database;
 
-      debug("Connect:\n  mongodb:$database@$mongo");
+      debug("Connect: mongodb:$database@$mongo");
     }
     return static::$cache[static::$database]->{static::table()};
   }

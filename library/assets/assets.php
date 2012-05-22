@@ -79,7 +79,7 @@ class assets extends prototype
         }
       }
 
-      debug("Cleanup: ($rm/$add)\n  ", ticks($start));
+      debug("Cleanup: ($rm/$add) ", ticks($start));
 
       static::save();
     }
@@ -167,7 +167,7 @@ class assets extends prototype
         $hash     = md5(md5_file($tmp) . filesize($tmp));
         $out_file = $out_path.DS."$from$hash.$type";
 
-        debug("Assemble: ($total/$cache#$from.$type)\n  ", ticks($start));
+        debug("Assemble: ($total/$cache#$from.$type) ", ticks($start));
 
         static::assign("$from.$type", $hash);
         static::save();

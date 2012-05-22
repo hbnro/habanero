@@ -70,7 +70,7 @@ class partial extends prototype
     @unlink($test);
 
     $path = str_replace('__DS__', DS, basename($test));
-    debug("Render: ($path)\n", '  ', ticks($start));
+    debug("Render: ($path) ", ticks($start));
 
     return $output;
   }

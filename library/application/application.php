@@ -98,7 +98,7 @@ class application extends prototype
       }
     }
 
-    debug("Execute: ($controller#$action)\n", '  ', ticks($start));
+    debug("Execute: ($controller#$action) ", ticks($start));
 
     $output = $class_name::$response;
     $output['output'] = $view;
