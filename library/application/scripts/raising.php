@@ -1,7 +1,6 @@
 <?php
 
 error_log($message);
-debug("Error:\n  $message");
 
 $error_status = 500;
 
