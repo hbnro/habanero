@@ -30,7 +30,7 @@ class a_relation
 
       ! empty($test[1]) && $method .= "_{$oper}_$test[1]";
 
-      array_unshift($arguments, $this->defs['model']->id());
+      array_unshift($arguments, $this->defs['model']->{$this->defs['scope']['fk']});
     }
 
     return call_user_func_array("{$this->defs['scope']['from']}::$method", $arguments);

@@ -137,7 +137,7 @@ class mongo_model extends a_record
    * @return void
    */
   final public static function update_all(array $data, array $params = array()) {
-    $start = ticks();
+    $start = ticks(); // TODO: use $set instead?
     static::conn()->update($params, $data, array('multiple' => TRUE));
     static::debug('update', $start, compact('params', 'data'));
   }
@@ -220,9 +220,7 @@ class mongo_model extends a_record
 
   // connection
   final private static function conn() {
-    $idx = get_called_class() . '_conn';
-
-    if (empty(static::$cache[$idx])) {
+    if (empty(static::$cache[static::$database])) {
       $dsn_string = option('database.' . static::$database);
       $database   = substr($dsn_string, strrpos($dsn_string, '/') + 1);
 
@@ -230,11 +228,11 @@ class mongo_model extends a_record
       $mongo    = $dsn_string ? new Mongo($dsn_string) : new Mongo;
       $database = $database ?: 'default';
 
-      static::$cache[$idx] = $mongo->$database;
+      static::$cache[static::$database] = $mongo->$database;
 
       debug("Connect:\n  mongodb:$database@$mongo");
     }
-    return static::$cache[$idx]->{static::table()};
+    return static::$cache[static::$database]->{static::table()};
   }
 
   // each iteration

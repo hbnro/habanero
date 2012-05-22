@@ -310,7 +310,9 @@ class a_record extends prototype
     $get   = ! empty($params['select']) ? $params['select'] : array();
     $where = ! empty($params['where']) ? (array) $params['where'] : array();
 
-    return static::block($get, $where, $params, $lambda);
+    static::block($get, $where, $params, $lambda ?: function ($row) {
+      dump($row->fields(), TRUE);
+    });
   }
 
 
@@ -326,13 +328,17 @@ class a_record extends prototype
     if (is_assoc($from)) {
       $params = $from;
     } else {
-      $params['from'] = $from;
+      if ( ! empty(static::$related_to[$from])) {
+        $params = static::$related_to[$from];
+      } else {
+        $params['from'] = $from;
+      }
     }
 
     // TODO: make it multiple?
     $params = array_merge(array(
       'as' => $params['from'],
-      'pk' => $params['from']::pk(),
+      'on' => $params['from']::pk(),
       'fk' => $params['from'] . '_id',
       'with' => get_called_class(),
       #'select' => '*',
@@ -408,8 +414,15 @@ class a_record extends prototype
         'where' => static::merge($match[2], $arguments),
       ));
     } elseif (preg_match('/^each_by_(.+)$/', $method, $match)) {
+      $test = array_pop($arguments);
+
+      if ( ! is_closure($test)) {
+        $arguments []= $test;
+        $test = NULL;
+      }
+
       return static::each(array(
-        'block' => array_pop($arguments),
+        'block' => $test,
         'where' => static::merge($match[1], $arguments),
       ));
     }

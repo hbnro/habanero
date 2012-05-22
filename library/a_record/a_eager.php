@@ -89,11 +89,11 @@ class a_eager
     $out = array_unique($out);
     $set = compact('select');
 
-    $set['where'][$pk] = $out;
+    $set['where'][$on] = $out;
 
     $from::each($set, function ($row)
-      use(&$tmp) {
-      $tmp[$row->id()] = $row;
+      use(&$tmp, $on) {
+      $tmp[$row->$on] = $row;
     });
 
     return $tmp;
