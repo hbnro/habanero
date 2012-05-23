@@ -2,7 +2,7 @@
 
 i18n::load_path(__DIR__.DS.'locale', 'app');
 
-app_generator::usage(ln('app.generator_title'), ln('app.generator_usage'));
+app_generator::usage('app', ln('app.generator_title'), ln('app.generator_usage'));
 
 app_generator::alias('app:create', 'create new');
 app_generator::alias('app:status', 'status st');

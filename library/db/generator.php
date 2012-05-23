@@ -8,7 +8,7 @@ db::implement('missing', function ($method, array $arguments) {
 
 i18n::load_path(__DIR__.DS.'locale', 'db');
 
-app_generator::usage(ln('db.generator_title'), ln('db.generator_usage'));
+app_generator::usage('db', ln('db.generator_title'), ln('db.generator_usage'));
 
 app_generator::alias('db:status', 'db');
 app_generator::alias('db:migrate', 'migrate');

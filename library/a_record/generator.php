@@ -2,7 +2,7 @@
 
 require __DIR__.DS.'initialize'.EXT;
 
-app_generator::usage(ln('ar.generator_title'), ln('ar.generator_usage'));
+app_generator::usage('ar', ln('ar.generator_title'), ln('ar.generator_usage'));
 
 app_generator::alias('ar:console', 'console c');
 app_generator::alias('ar:backup', 'backup');

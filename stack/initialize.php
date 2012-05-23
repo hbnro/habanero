@@ -44,7 +44,12 @@ run(function () {
       is_numeric($key) && $test []= $val;
     }
 
-    is_string($cmd) ? app_generator::exec($cmd, $test) : help();
+
+    if (cli::flag('help')) {
+      cli::write(cli::format(app_generator::help($cmd)));
+    } else {
+      is_string($cmd) ? app_generator::exec($cmd, $test) : help();
+    }
   }
 });
 

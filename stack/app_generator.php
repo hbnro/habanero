@@ -27,8 +27,8 @@ class app_generator extends prototype
   /**
    * Configure help
    */
-  final public static function usage() {
-    static::$help []= func_get_args();
+  final public static function usage($namespace, $title, $help) {
+    static::$help[$namespace] = array($title, $help);
   }
 
 
@@ -44,14 +44,18 @@ class app_generator extends prototype
    * Retrieve usage text
    */
   final public static function help($all = FALSE) {
-    $str = ln('generator_intro');
+    if ( ! empty(static::$help[$all])) {
+      @list($title, $text) = static::$help[$all];
 
-    if (is_true($all)) {
-      foreach (static::$help as $i => $one) {
-        @list($title, $text) = $one;
+      $pad = str_repeat('=', strlen($title) + 2);
+      $str = "  $pad\n   $title\n  $pad\n$text";
+    } else {
+      $str = ln('generator_intro');
 
-        $pad = str_repeat('=', strlen($title) + 2);
-        $str .= "  $pad\n   $title\n  $pad\n$text";
+      if (is_true($all)) {
+        foreach (array_keys(static::$help) as $one) {
+          $str .= static::help($one);
+        }
       }
     }
     return $str;
