@@ -29,7 +29,7 @@ cli::writeln(pretty(function () {
     $what = 'default';
   }
 
-  info(ln("app.{$what}_configuration"));
+  info(ln("{$what}_configuration"));
 
   $config = isset($file) ? $trap($file) : config();
 
@@ -37,7 +37,7 @@ cli::writeln(pretty(function () {
   $vars = array_diff_key($vars, array_flip(array('global', 'app', 'dev', 'prod')));
 
   if ( ! empty($vars)) {
-    success(ln("app.setting_{$what}_options"));
+    success(ln("setting_{$what}_options"));
     dump($vars, TRUE);
 
     $code = '';
@@ -63,4 +63,4 @@ cli::writeln(pretty(function () {
 
 done();
 
-/* EOF: ./library/application/scripts/configuration.php */
+/* EOF: ./stack/scripts/config.php */
