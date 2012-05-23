@@ -83,17 +83,39 @@ class app_generator extends prototype
 
 
   /**
+   * Check tasks existence
+   */
+  final public static function exists($namespace, $task = 'default') {
+    if ( ! empty(static::$tasks[$namespace])) {
+      return ! empty(static::$tasks[$namespace][$task]);
+    }
+  }
+
+
+  /**
    * Tasks registry
    */
-  final public static function task($namespace, $params) {
-    ! isset(static::$tasks[$namespace]) && static::$tasks[$namespace] = array();
-
-    if (is_closure($params)) {
-      static::$tasks[$namespace]['default'] = array('exec' => $params);
-    } elseif (empty($params['exec'])) {
-      static::$tasks[$namespace] = array_merge(static::$tasks[$namespace], $params);
+  final public static function task($namespace, $params = NULL) {
+    if (is_file($namespace)) {
+      static::$tasks[extn($namespace, TRUE)]['default'] = array('script' => $namespace);
     } else {
-      static::$tasks[$namespace]['default'] = $params;
+      if (strpos($namespace, ':')) {
+        @list($namespace, $task) = explode(':', $namespace);
+
+        $test = $params;
+        $params = array();
+        $params[$task] = $test;
+      }
+
+      ! isset(static::$tasks[$namespace]) && static::$tasks[$namespace] = array();
+
+      if (is_closure($params)) {
+        static::$tasks[$namespace]['default'] = array('exec' => $params);
+      } elseif (empty($params['exec'])) {
+        static::$tasks[$namespace] = array_merge(static::$tasks[$namespace], $params);
+      } else {
+        static::$tasks[$namespace]['default'] = $params;
+      }
     }
   }
 
@@ -103,7 +125,9 @@ class app_generator extends prototype
    */
   final public static function run($namespace, $method = 'default') {
     if ( ! empty(static::$tasks[$namespace])) {
-      if ( ! empty(static::$tasks[$namespace][$method]['exec'])) {
+      if ( ! empty(static::$tasks[$namespace][$method]['script'])) {
+        require static::$tasks[$namespace][$method]['script'];
+      } elseif ( ! empty(static::$tasks[$namespace][$method]['exec'])) {
         $config = APP_PATH.DS.'tasks'.DS.$namespace.DS.'config.php';
         call_user_func(static::$tasks[$namespace][$method]['exec'], is_file($config) ? call_user_func(function () {
           require func_get_arg(0);

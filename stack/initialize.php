@@ -20,10 +20,31 @@ run(function () {
     }
   }
 
+  $test = array();
+  $cmd  = array_shift($args);
+
+  foreach ($args as $key => $val) {
+    is_numeric($key) && $test []= $val;
+  }
+
+
+  array_map('app_generator::task', dir2arr(mkpath(APP_PATH.DS.'tasks'), '*'.EXT));
+
+  if ($set = findfile(APP_PATH.DS.'tasks', 'initialize'.EXT, TRUE)) {
+    foreach ($set as $task_file) {
+      /**
+       * @ignore
+       */
+      require $task_file;
+    }
+  }
+
+
   if (is_file($mod_file)) {
-    call_user_func(function () {
-      require func_get_arg(0);
-    }, $mod_file);
+    ! is_bool($cmd) && array_unshift($test, $cmd);
+    call_user_func(function ($args) {
+      require func_get_arg(1);
+    }, $test, $mod_file);
   } else {
     foreach (array(dirname(LIB), APP_PATH) as $path) {
       if ($test = findfile($path.DS.'library', 'generator'.EXT, TRUE)) {
@@ -34,14 +55,6 @@ run(function () {
           require $gen_file;
         }
       }
-    }
-
-
-    $test = array();
-    $cmd  = array_shift($args);
-
-    foreach ($args as $key => $val) {
-      is_numeric($key) && $test []= $val;
     }
 
 

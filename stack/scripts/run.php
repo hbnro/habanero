@@ -9,16 +9,6 @@ $name = cli::flag('run');
 if ( ! $name) {
   error(ln('missing_script_name'));
   info(ln('available_tasks'));
-
-  if ($test = findfile(APP_PATH.DS.'tasks', 'initialize'.EXT, TRUE)) {
-    foreach ($test as $task_file) {
-      /**
-       * @ignore
-       */
-      require $task_file;
-    }
-  }
-
   app_generator::all();
   done();
 } else {

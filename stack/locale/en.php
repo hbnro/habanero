@@ -13,6 +13,8 @@ $lang['generator_intro'] = <<<INTRO
 
   Extras:
     --run \bcyan(script[:param])\b    \cdark_gray(*)\c Execute tasks and scripts
+    --task \clight_gray([--php])\c \bcyan(name)\b     \cdark_gray(*)\c Generate scripts/tasks for the application
+           \clight_gray([command] [...])\c
     --config \bcyan([--item=value])\b \cdark_gray(*)\c Display and set the configuration options
              \clight_gray([...] [--global|app|dev|prod])\c
 
@@ -54,6 +56,12 @@ $lang['executing_script'] = 'Executing %{path}';
 $lang['executing_task'] = 'Executing task %{command}';
 $lang['available_tasks'] = 'Available tasks';
 $lang['verifying_script'] = 'Verifying script';
+
+$lang['verifying_namespace'] = 'Verifying script %{name}';
+$lang['creating_script'] = 'Creating script %{name}';
+$lang['creating_task'] = 'Creating task %{command}';
+$lang['script_exists'] = 'The script %{name} already exists';
+$lang['task_exists'] = 'The task %{command} already exists';
 
 $lang['missing_arguments'] = 'Missing arguments';
 $lang['undefined_cmd'] = 'Undefined %{name} command';
