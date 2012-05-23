@@ -1,39 +1,24 @@
 <?php
 
-require __DIR__.DS.'config.php';
-
 i18n::load_path(__DIR__.DS.'locale', 'rsync');
 
-class rsync_task extends prototype {
-
-  public static $default = 'go';
-
-  final public static function go() {
-    $rsync = __DIR__;
-    extract(static::$defs['dev']);
-    notice(ln('rsync.default_deploy'));
-    system("rsync --dry-run -avz --exclude-from $rsync/exclude.txt --stats --progress --delete -e '{$ssh_transport_beta}' . {$ssh_user_beta}:{$remote_root_beta}");
-  }
-
-  final public static function dev() {
-    $rsync = __DIR__;
-    extract(static::$defs['dev']);
-    notice(ln('rsync.development_deploy'));
-    system("rsync -avz --exclude-from $rsync/exclude.txt --stats --progress --delete -e '{$ssh_transport_beta}' . {$ssh_user_beta}:{$remote_root_beta}");
-  }
-
-  final public static function prod() {
-    $rsync = __DIR__;
-    extract(static::$defs['prod']);
-    notice(ln('rsync.production_deploy'));
-    system("rsync --dry-run -avz --exclude-from $rsync/exclude.txt --stats --progress --delete -e '{$ssh_transport}' . {$ssh_user}:{$remote_root}");
-  }
-
-  final public static function deploy() {
-    $rsync = __DIR__;
-    extract(static::$defs['prod']);
-    notice(ln('rsync.final_deploy'));
-    system("rsync -avzZ --exclude-from $rsync/exclude.txt --progress --stats --delete -e '{$ssh_transport}' . {$ssh_user}:{$remote_root}");
-  }
-
-}
+app_generator::task('rsync', array(
+  'default' => array(
+    'desc' => ln('rsync.default_title'),
+    'exec' => function ($config) {
+      $pwd = __DIR__;
+      extract($config);
+      notice(ln('rsync.default_deploy'));
+      system("rsync $beta_options --exclude-from $pwd/exclude.txt -e '{$beta_ssh_transport}' . {$beta_ssh_user}:{$beta_remote_root}");
+    },
+  ),
+  'go' => array(
+    'desc' => ln('rsync.final_title'),
+    'exec' => function ($config) {
+      $pwd = __DIR__;
+      extract($config);
+      notice(ln('rsync.final_deploy'));
+      system("rsync $prod_options --exclude-from $pwd/exclude.txt -e '{$prod_ssh_transport}' . {$prod_ssh_user}:{$prod_remote_root}");
+    },
+  ),
+));
