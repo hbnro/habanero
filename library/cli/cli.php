@@ -231,7 +231,7 @@ class cli extends prototype
       return trim(readline(join('', $args)));
     }
 
-    static::printf(join('', $args));
+    static::write(join('', $args));
 
     return trim(fgets(STDIN, 128));
   }
@@ -244,10 +244,10 @@ class cli extends prototype
    * @return void
    */
   final public static function writeln($text = "\n") {
-    $args = func_get_args();
+    $args   = func_get_args();
+    $args []= "\n";
 
-    static::printf(join('', $args) . "\n");
-    static::flush();
+    static::apply('write', $args);
   }
 
 
@@ -258,7 +258,8 @@ class cli extends prototype
    * @return void
    */
   final public static function write($text = '') {
-    fwrite(STDOUT, $text);
+    $args = func_get_args();
+    fwrite(STDOUT, join('', $args));
     static::flush();
   }
 
