@@ -36,7 +36,7 @@ class mongo_model extends a_record
     $type   = $this->is_new() ? 'insert' : 'update';
 
     if ($this->is_new()) {
-      if (static::conn()->insert($fields, TRUE)) {
+      if (static::conn()->insert($fields)) {
         $this->new_record = FALSE;
         $this->props = $fields;
       }
