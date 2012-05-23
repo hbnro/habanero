@@ -12,20 +12,48 @@ $lang['generator_intro'] = <<<INTRO
     atl \bgreen(<command>)\b [arguments] [...]
 
   Extras:
-    --install           \cyellow(*)\c Configure the framework
-    --uninstall         \cyellow(*)\c Remove the framework configuration
-    --vhost [--remove]  \cyellow(*)\c Create or remove virtual hosts in the system
-    --open              \cdark_gray(*)\c Launch the default browser with virtual host domain
-    --stub              \cdark_gray(*)\c Make a local copy from the system libraries
-    --help              \cdark_gray(*)\c Display the descriptions of all generators
+    --run \bcyan(script[:param])\b    \cdark_gray(*)\c Execute tasks and scripts
+    --config \bcyan([--item=value])\b \cdark_gray(*)\c Display and set the configuration options
+             \clight_gray([...] [--global|app|dev|prod])\c
+
+    --install               \cyellow(*)\c Configure the framework
+    --uninstall             \cyellow(*)\c Remove the framework configuration
+    --vhost \bred([--remove])\b      \cyellow(*)\c Create or remove virtual hosts in the system
+
+    --open                  \cdark_gray(*)\c Launch the default browser with virtual host domain
+    --stub                  \cdark_gray(*)\c Make a local copy from the system libraries
+    --help                  \cdark_gray(*)\c Display the descriptions of all generators
 
     \cyellow(* needs sudo permissions)\c
 
-  Example:
+  Examples:
     \bwhite(sudo)\b atl --vhost
+    atl --run rsync:deploy
+    atl --config --global --language=es
 
 
 INTRO;
+
+$lang['current_configuration'] = 'Loaded settings';
+$lang['application_configuration'] = 'Application settings';
+$lang['development_configuration'] = 'Development settings';
+$lang['production_configuration'] = 'Production settings';
+$lang['default_configuration'] = 'Default settings';
+
+$lang['setting_application_options'] = 'Applying application configuration';
+$lang['setting_development_options'] = 'Applying development configuration';
+$lang['setting_production_options'] = 'Applying production configuration';
+$lang['setting_default_options'] = 'Applying default configuration';
+
+$lang['missing_script_name'] = 'Missing script name';
+$lang['missing_script_file'] = 'Missing script file %{name}';
+$lang['missing_task_namespace'] = 'Missing task %{namespace}';
+$lang['unknown_task_command'] = 'Unknown task %{command}';
+
+$lang['executing_script'] = 'Executing %{path}';
+$lang['executing_task'] = 'Executing task %{command}';
+$lang['available_tasks'] = 'Available tasks';
+$lang['verifying_script'] = 'Verifying script';
 
 $lang['missing_arguments'] = 'Missing arguments';
 $lang['undefined_cmd'] = 'Undefined %{name} command';

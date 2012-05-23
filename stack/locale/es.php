@@ -12,20 +12,48 @@ $lang['generator_intro'] = <<<INTRO
     atl \bgreen(<comando>)\b [argumentos] [...]
 
   Extras:
-    --install           \cyellow(*)\c Configura el include_path de php
-    --uninstall         \cyellow(*)\c Elimina la configuración del include_path
-    --vhost [--remove]  \cyellow(*)\c Crea o elimina un host virtual en el sistema
-    --open              \cdark_gray(*)\c Abre el host virtual en el navegador por defecto
-    --stub              \cdark_gray(*)\c Crea una copia local con las librerías del sistema
-    --help              \cdark_gray(*)\c Muestra la descripción de uso de los generadores
+    --run \bcyan(script[:param])\b    \cdark_gray(*)\c Ejecuta tareas programadas
+    --config \bcyan([--item=value])\b \cdark_gray(*)\c Muestra y modifica las opciones de configuración
+             \clight_gray([...] [--global|app|dev|prod])\c
+
+    --install               \cyellow(*)\c Configura el include_path de php
+    --uninstall             \cyellow(*)\c Elimina la configuración del include_path
+    --vhost \bred([--remove])\b      \cyellow(*)\c Crea o elimina un host virtual en el sistema
+
+    --open                  \cdark_gray(*)\c Abre el host virtual en el navegador por defecto
+    --stub                  \cdark_gray(*)\c Crea una copia local con las librerías del sistema
+    --help                  \cdark_gray(*)\c Muestra la descripción de uso de los generadores
 
     \cyellow(* requiere permisos de sudo)\c
 
-  Ejemplo:
+  Ejemplos:
     \bwhite(sudo)\b atl --vhost
+    atl --run rsync:deploy
+    atl --config --global --language=en
 
 
 INTRO;
+
+$lang['current_configuration'] = 'Configuración actual';
+$lang['application_configuration'] = 'Configuración de la aplicación';
+$lang['development_configuration'] = 'Configuración del entorno de desarrollo';
+$lang['production_configuration'] = 'Configuración del entorno de producción';
+$lang['default_configuration'] = 'Configuración por defecto';
+
+$lang['setting_application_options'] = 'Aplicando configuración de la aplicación';
+$lang['setting_development_options'] = 'Aplicando configuración del entorno de desarrollo';
+$lang['setting_production_options'] = 'Aplicando configuración del entorno de producción';
+$lang['setting_default_options'] = 'Aplicando configuración por defecto';
+
+$lang['missing_script_name'] = 'Hace falta el nombre del script';
+$lang['missing_script_file'] = 'El script %{name} no existe';
+$lang['missing_task_namespace'] = 'Hace falta la tarea %{namespace}';
+$lang['unknown_task_command'] = 'Tarea desconocida %{command}';
+
+$lang['executing_script'] = 'Ejecutando %{path}';
+$lang['executing_task'] = 'Ejecutando tarea %{command}';
+$lang['available_tasks'] = 'Tareas disponibles';
+$lang['verifying_script'] = 'Verificando script';
 
 $lang['missing_arguments'] = 'Hacen falta argumentos';
 $lang['undefined_cmd'] = 'El comando %{name} no está definido';
