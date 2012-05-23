@@ -8,8 +8,6 @@ app_generator::alias('app:create', 'create new');
 app_generator::alias('app:status', 'status st');
 app_generator::alias('app:action', 'action');
 app_generator::alias('app:controller', 'controller');
-app_generator::alias('app:execute', 'execute exec run');
-app_generator::alias('app:configure', 'configure config conf');
 app_generator::alias('app:prepare', 'precompile compile build');
 
 
@@ -57,18 +55,6 @@ app_generator::implement('app:action', function($name = '') {
     require __DIR__.DS.'scripts'.DS.'create_action'.EXT;
   }
   done();
-});
-
-
-// task execution
-app_generator::implement('app:execute', function ($name = '') {
-  require __DIR__.DS.'scripts'.DS.'execute_task'.EXT;
-});
-
-
-// configuration status
-app_generator::implement('app:configure', function () {
-  require __DIR__.DS.'scripts'.DS.'configuration'.EXT;
 });
 
 
