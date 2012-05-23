@@ -23,27 +23,6 @@ app_generator::implement('app:create', function ($name = '') {
     $app_path = APP_PATH.DS.$name;
 
     if ( ! cli::flag('force') && dirsize($app_path)) {
-      /*notice(ln('app.application'));
-
-      $tmp = dir2arr($app_path, '*', DIR_RECURSIVE | DIR_EMPTY);
-      $map = function ($tree, $self, $depth = 0) {
-        foreach ($tree as $key => $val) {
-          $pre = str_repeat(' ', $depth);
-
-          if (is_array($val)) {
-            cli::writeln("$pre  \clight_gray,black($key/)\c");
-            $self($val, $self, $depth + 2);
-          } else {
-            $size = fmtsize(filesize($val));
-            $val  = basename($val);
-
-            cli::writeln("$pre  \bwhite($val)\b \clight_gray($size)\c");
-          }
-        }
-      };
-
-      $map($tmp, $map);
-*/
       error(ln('app.directory_must_be_empty'));
     } else {
       require __DIR__.DS.'scripts'.DS.'create_application'.EXT;
