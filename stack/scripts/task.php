@@ -12,8 +12,10 @@ if ( ! $ns) {
 
   if ( ! app_generator::exists($ns)) {
     if (cli::flag('php')) {
-      write($path.EXT, '<' . "?php\necho 'Hello task!';\n");
+      write($path.EXT, '<' . "?php\nnotice('Hello $ns task!');\n");
     } else {
+      $args []= 'default';
+
       mkpath($path);
       write($path.DS.'config'.EXT, '<' . "?php\n\$option = 'value';");
       write(mkpath($path.DS.'locale').DS.'en'.EXT, '<' . "?php\n\$lang['default_title'] = 'The $ns description';\n");
@@ -21,7 +23,8 @@ if ( ! $ns) {
     }
 
     notice(ln('creating_script', array('name' => $ns)));
-    $args []= 'default';
+  } else {
+    notice(ln('script_exists', array('name' => $ns)));
   }
 
   if ( ! empty($args)) {
@@ -33,8 +36,6 @@ if ( ! $ns) {
         success(ln('creating_task', array('command' => $one)));
       }
     }
-  } else {
-    error(ln('missing_arguments'));
   }
 
   done();
