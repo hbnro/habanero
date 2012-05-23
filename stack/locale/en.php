@@ -6,7 +6,7 @@
 
 $lang['generator_intro'] = <<<INTRO
 
-  ¡Welcome to the \bwhite(atl)\b console utility!
+  Welcome to the \blight_gray,black(atl)\b console utility!
 
   Usage:
     atl \bgreen(<command>)\b [arguments] [...]
