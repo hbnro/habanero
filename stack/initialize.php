@@ -10,12 +10,20 @@ require __DIR__.DS.'functions'.EXT;
 run(function () {
   cli::clear();
 
-  $args = cli::args();
+  $args     = cli::args();
+  $mod_file = FALSE;
 
-  $mod_file = __DIR__.DS.'scripts'.DS.key($args).EXT;
+  foreach ($args as $key => $val) {
+    $mod_file = __DIR__.DS.'scripts'.DS.$key.EXT;
+    if ( ! is_numeric($key)) {
+      break;
+    }
+  }
 
   if (is_file($mod_file)) {
-    require $mod_file;
+    call_user_func(function () {
+      require func_get_arg(0);
+    }, $mod_file);
   } else {
     foreach (array(dirname(LIB), APP_PATH) as $path) {
       if ($test = findfile($path.DS.'library', 'generator'.EXT, TRUE)) {
