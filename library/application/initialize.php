@@ -22,6 +22,16 @@ app::implement('raise', function ($message)
 // actions
 app::bind(function ($bootstrap) {
   i18n::load_path(APP_PATH.DS.'locale');
+
+  if (APP_ENV === 'development') {
+    get('/static/*path', function () {
+      response(array(
+        'output' => assets::read(params('path')),
+        'type' => mime(ext(params('path'))),
+      ));
+    });
+  }
+
   routing::load(APP_PATH.DS.'routes'.EXT, array('safe' => TRUE));
 
   // initializers
@@ -41,7 +51,7 @@ assets::compile('php', function ($file) {
   return partial::render($file);
 });
 
-assets::initialize();
+#assets::initialize();
 /**#@-*/
 
 /* EOF: ./library/application/initialize.php */
