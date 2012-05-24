@@ -60,4 +60,4 @@ $lang['october'] = 'Octubre';
 $lang['november'] = 'Noviembre';
 $lang['december'] = 'Diciembre';
 
-/* EOF: ./library/date_time/locale/es.php */
+/* EOF: ./library/date/locale/es.php */
