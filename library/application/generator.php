@@ -78,19 +78,77 @@ app_generator::implement('app:prepare', function () {
   }
 
 
-  $test = array();
+  $base_path  = APP_PATH.DS.'views'.DS.'assets';
+  $static_dir = APP_PATH.DS.'static';
+  $img_path   = $base_path.DS.'img';
+  $img_dir    = $static_dir.DS.'img';
 
-  $test = array_merge($test, dir2arr(APP_PATH.DS.'static'.DS.'css'));
-  $test = array_merge($test, dir2arr(APP_PATH.DS.'static'.DS.'js'));
 
-  foreach ($test as $file) {
-    if (preg_match('/(\w+)[a-f0-9]{32}\.(\w+)$/', $file, $match)) {
-      $min_file = dirname($file).DS.sprintf('%s.min.%s', extn($file, TRUE), ext($file));
-      success(ln('app.compiling_asset', array('name' => "$match[1].$match[2]")));
-
-      write($min_file, $match[2] === 'css' ? $css_min(read($file)) : jsmin::minify(read($file)));
+  foreach (array('css', 'img', 'js') as $one) {
+    if (is_dir($path = $static_dir.DS.$one)) {
+      foreach (dir2arr($path, '*', DIR_RECURSIVE | DIR_MAP) as $file) {
+        if (preg_match('/^.+?([a-f0-9]{32})\.\w+$/', basename($file), $match)) {
+          @unlink($file);
+        }
+      }
     }
   }
+
+  if ($test = dir2arr($img_path, '*.(jpe?g|png|gif)$', DIR_RECURSIVE | DIR_MAP)) {
+    foreach (array_filter($test, 'is_file') as $file) {
+      $file_hash  = md5(md5_file($file) . filesize($file));
+      $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
+
+      $static_img = $img_dir.DS.$file_name;
+
+      ! is_dir(dirname($static_img)) && mkpath(dirname($static_img));
+      ! is_file($static_img) && copy($file, $static_img);
+
+      assets::assign($path = str_replace($base_path.DS, '', $file), $file_hash);
+      success(ln('app.compiling_asset', array('name' => $path)));
+    }
+  }
+
+  foreach (array('css', 'js') as $type) {
+    if ($test = dir2arr($base_path.DS.$type, "*.$type$")) {
+      foreach ($test as $file) {
+        $out = array();
+        $set = array_map(function ($val)
+          use($base_path, $static_dir, &$out) {
+          static $regex = '/(\/\w+\.[^.]+)?\/static\/(.+?)(?=[\'"),])/';
+
+          $val = str_replace($base_path.DS, '', $val);
+          if (is_file($tmp = $static_dir.DS.$val)) {
+            $out []= preg_replace_callback($regex, function ($match) {
+              $old = assets::resolve($match[2]);
+
+              $old = str_replace($match[2], $old, $match[0]);
+              $old = str_replace($match[1], '', $old);
+
+              return $old;
+            }, read($tmp));
+          }
+        }, assets::extract($file, $type));
+
+        if ( ! empty($out)) {
+          $out = join("\n", $out);
+
+          write($tmp = TMP.DS.md5($file), $type === 'css' ? $css_min($out) : jsmin::minify($out));
+
+          $hash     = md5(md5_file($tmp) . filesize($tmp));
+          $name     = str_replace($base_path.DS, '', $file);
+          $min_file = $static_dir.DS.extn($name).$hash.ext($file, TRUE);
+
+          rename($tmp, $min_file);
+
+          assets::assign($path = str_replace($base_path.DS, '', $file), $hash);
+          success(ln('app.compiling_asset', array('name' => $path)));
+        }
+      }
+    }
+  }
+
+  assets::save();
 });
 
 
