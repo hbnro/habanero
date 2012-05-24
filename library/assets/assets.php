@@ -27,71 +27,8 @@ class assets extends prototype
 
   /**#@-*/
 
-
-  public static function initialize() {
-    $cache_file = APP_PATH.DS.'config'.DS.'resources'.EXT;
-
-    ! is_file($cache_file) && write($cache_file, '<' . "?php return array();\n");
-
-    static::$cache = (array) include $cache_file;
-
-    $static_dir = APP_PATH.DS.'static';
-
-    // TODO: improve handling?
-    if (APP_ENV === 'development') {
-      $rm    =
-      $add   = 0;
-      $start = ticks();
-
-      // cleanup
-      foreach (array('css', 'img', 'js') as $one) {
-        foreach (dir2arr(mkpath($static_dir.DS.$one), '*', DIR_RECURSIVE | DIR_MAP) as $file) {
-          if (preg_match('/\w+([a-f0-9]{32})\.\w+/', basename($file), $match)) {
-            if ( ! in_array($match[1], static::$cache)) {
-              unlink($file);
-              $rm += 1;
-            }
-          }
-        }
-      }
-
-      $img_path = APP_PATH.DS.'views'.DS.'assets'.DS.'img';
-      $img_dir  = $static_dir.DS.'img';
-
-      ! is_dir($img_dir) && mkpath($img_dir);
-
-      $set = array();
-
-      if ($test = dir2arr($img_path, '*.(jpe?g|png|gif)$', DIR_RECURSIVE | DIR_MAP)) {
-        foreach (array_filter($test, 'is_file') as $file) {
-          $file_hash  = md5(md5_file($file) . filesize($file));
-          $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
-
-          $static_img = $img_dir.DS.$file_name;
-
-          ! is_dir(dirname($static_img)) && mkpath(dirname($static_img));
-          ! is_file($static_img) && copy($file, $static_img);
-
-          if ( ! array_key_exists($file_name, $set)) {
-            static::assign(str_replace($file_hash, '', $file_name), $file_hash);
-            $add += 1;
-          }
-        }
-      }
-
-      debug("Cleanup: ($rm/$add) ", ticks($start));
-
-      static::save();
-    }
-  }
-
-  public static function path($for) {
-    return ($hash = static::item($for)) ? extn($for) . $hash . ext($for, TRUE) : $for;
-  }
-
   public static function save() {
     $out = var_export(array_filter(static::$cache, 'is_md5'), TRUE);
-
     write(APP_PATH.DS.'config'.DS.'resources'.EXT, '<' . "?php return $out;\n");
   }
 
@@ -99,27 +36,42 @@ class assets extends prototype
     static::$cache[$key] = $val;
   }
 
-  public static function fetch($name) {
-    return ! empty(static::$cache[$name]) ? static::$cache[$name] : FALSE;
+  public static function resolve($name) {
+    static $load = FALSE;
+
+
+    if ( ! $load) {
+      $cache_file = APP_PATH.DS.'config'.DS.'resources'.EXT;
+      if (is_file($cache_file)) {
+        static::$cache = (array) include $cache_file;
+      }
+      $load = TRUE;
+    }
+
+    $name = str_replace(APP_PATH.DS.'views'.DS.'assets'.DS, '', $name);
+
+    if ( ! empty(static::$cache[$name])) {
+      $name = dirname($name).DS.extn($name, TRUE).static::$cache[$name].ext($name, TRUE);
+    }
+    return $name;
   }
 
   public static function build($from, $type) {
-    $out_path   = APP_PATH.DS.'static'.DS.$type;
     $base_path  = APP_PATH.DS.'views'.DS.'assets';
     $base_file  = $base_path.DS.$type.DS."$from.$type";
 
     if (is_file($base_file)) {
       $test = read($base_file);
 
-      if (APP_ENV === 'production') {
-        $out_file = $out_path.DS.$from.static::fetch("$from.$type").".min.$type";
+      if (APP_ENV <> 'production') {
+        $path = ROOT.'static/'.static::resolve($base_file);
+        if ($type == 'css') {
+          return tag('link', array('rel' => 'stylesheet', 'href' => $path));
+        } else {
+          return tag('script', array('src' => $path));
+        }
       } else {
         $set = array();
-        $tmp = TMP.DS."$from.$type.tmp";
-
-        $total =
-        $cache = 0;
-        $start = ticks();
 
         // css and js
         $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
@@ -128,55 +80,56 @@ class assets extends prototype
 
             @list($path, $name) = array(dirname($test_file), basename($test_file));
 
-            $set []= findfile($path, $name, FALSE, 1);
+            $set []= $path.DS."$name.$type";
         }, $test);
 
 
-        $out = array();
-
-        foreach ($set as $file) {
-          if (is_file($file)) {
-            $old_file = TMP.DS.str_replace(DS, '__DS__', $file);
-
-            if (is_file($old_file)) {
-              if (filemtime($file) > filemtime($old_file)) {
-                unlink($old_file);
-              }
-            }
-
-            if ( ! is_file($old_file)) {
-              $total += 1;
-
-              $text = static::process($file);
-              $path = str_replace(APP_PATH.DS, '', $file);
-              $now  = date('Y-m-d H:i:s', filemtime($file));
-              $old  = sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
-
-              write($old_file, $out []= $old);
-            } else {
-              $out  []= read($old_file);
-              $cache += 1;
-            }
+        $set = array_map(function ($val)
+          use($base_path, $type) {
+          $path = url_for(strtr('static'.str_replace($base_path, '', $val), '\\', '/'));
+          if ($type == 'css') {
+            return tag('link', array('rel' => 'stylesheet', 'href' => $path));
+          } else {
+            return tag('script', array('src' => $path));
           }
-        }
+        }, $set);
 
-        $out []= preg_replace('/\/\*[*\s]*?\*\//s', '', $test);
+        return join("\n", $set);
+      }
+    }
+  }
 
-        write($tmp, join("\n", $out));
 
-        $hash     = md5(md5_file($tmp) . filesize($tmp));
-        $out_file = $out_path.DS."$from$hash.$type";
+  /**
+   * @param
+   * @return void
+   */
+  final public static function read($path) {
+    $file = APP_PATH.DS.'views'.DS.'assets'.DS.$path;
+    $file = findfile(dirname($file), extn($file, TRUE), FALSE, 1);
 
-        debug("Assemble: ($total/$cache#$from.$type) ", ticks($start));
-
-        static::assign("$from.$type", $hash);
-        static::save();
-
-        copy($tmp, $out_file);
-        unlink($tmp);
+    if (is_file($file)) {
+      if (preg_match('/\.(jpe?g|png|gif)$/i', $path)) {
+        return read($file);
       }
 
-      return path_to($type.DS.basename($out_file));
+      $old_file = TMP.DS.str_replace(DS, '__DS__', $path);
+
+      if (is_file($old_file)) {
+        if (filemtime($file) > filemtime($old_file)) {
+          unlink($old_file);
+        }
+      }
+
+      if ( ! is_file($old_file)) {
+        $text = static::process($file);
+        $now  = date('Y-m-d H:i:s', filemtime($file));
+        $out  = sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+
+        return $out;
+      } else {
+        return read($old_file);
+      }
     }
   }
 
@@ -270,15 +223,6 @@ class assets extends prototype
    * @param
    * @return string
    */
-  final public static function favicon($path = '') {
-    return tag('link', array('rel' => 'shortcut icon', 'href' => static::image($path ?: 'favicon.ico')));
-  }
-
-
-  /**
-   * @param
-   * @return string
-   */
   final public static function image($path) {
     return static::url_for($path, 'img');
   }
@@ -324,7 +268,7 @@ class assets extends prototype
 
   // generic aggregator
   final private static function push($on, $test, $prepend = FALSE) {
-      $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
+    $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
   }
 
   /**#@-*/
