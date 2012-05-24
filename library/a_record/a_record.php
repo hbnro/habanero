@@ -5,6 +5,7 @@
  */
 
 class a_record extends prototype
+               implements Serializable, ArrayAccess, IteratorAggregate
 {
 
   /**#@+
@@ -43,6 +44,45 @@ class a_record extends prototype
 
   // scoped relationships
   public static $related_to = array();
+
+  // Serializable
+  public function serialize() {
+    return serialize($this->props);
+  }
+  public function unserialize($data) {
+    $this->props = unserialize($data);
+  }
+
+  // ArrayAccess
+  final public function offsetSet($offset, $value) {
+    $this->$offset = $value;
+  }
+  final public function offsetExists($offset) {
+    return isset($this->props[$offset]);
+  }
+  final public function offsetUnset($offset) {
+    $this->$offset = NULL;
+    unset($this->props[$offset]);
+    if ($key = array_search($offset, $this->changed)) {
+      unset($this->changed[$key]);
+    }
+  }
+  final public function offsetGet($offset) {
+    return $this->$offset;
+  }
+
+  // ArrayAccess proxies
+  public function __isset($key) {
+    return $this->offsetExists($key);
+  }
+  public function __unset($key) {
+    return $this->offsetUnset($key);
+  }
+
+  // IteratorAggregate
+  public function getIterator() {
+    return new ArrayIterator($this->props);
+  }
 
 
 
