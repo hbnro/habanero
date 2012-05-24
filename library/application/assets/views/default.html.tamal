@@ -7,10 +7,9 @@
 head
   meta { charset => 'UTF-8' }
   title = $title
-  = assets::tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css')
-  = assets::tag_for('modernizr-2.0.6.min.js')
-  = assets::favicon()
-  = assets::before()
+  = tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css')
+  = tag_for('modernizr-2.0.6.min.js')
+  = before_body()
   = $head
 body
   #wrapper
@@ -20,8 +19,8 @@ body
       &mdash;
       = ticks(BEGIN)
     script { src => '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' }
-    <script>window.jQuery || document.write("<script src='<?php echo assets::url_for('jquery-1.7.1.min.js'); ?>'>\x3C/script>")</script>
-  = assets::after()
+    <script>window.jQuery || document.write("<script src='<?php echo asset_url('jquery-1.7.1.min.js'); ?>'>\x3C/script>")</script>
+  = after_body()
   script
     | window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
     | Modernizr.load({
