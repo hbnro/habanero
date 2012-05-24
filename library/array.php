@@ -279,7 +279,7 @@ function flatten($array, $return = array()) {
  * @param  array Values
  * @return array
  */
-function swap($set) {
+function kfill($set) {
   $out = array();
 
   foreach ($set as $key => $val) {
