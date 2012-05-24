@@ -14,18 +14,14 @@ class chess_helper extends prototype
 }
 
 // render callback
-if (class_exists('partial', FALSE)) {
-  partial::register('chess', function ($file, array $vars = array()) {
-    return chess::render($file);
-  });
-}
+partial::register('chess', function ($file, array $vars = array()) {
+  return chess::render($file);
+});
 
 // asset compiler
-if (class_exists('assets', FALSE)) {
-  assets::compile('chess', function ($file) {
-    return partial::render($file);
-  });
-}
+assets::compile('chess', function ($file) {
+  return partial::render($file);
+});
 
 // utility goodies
 require __DIR__.DS.'helpers'.DS.'color'.EXT;

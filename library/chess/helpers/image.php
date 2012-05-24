@@ -37,11 +37,8 @@ chess_helper::implement('image_path', function ($path, $raw = FALSE) {
   $img_file = chess::path($path);
 
   if (is_file($img_file)) {
-
-    $file_hash = str_replace(APP_PATH.DS.'views'.DS.'assets'.DS.'img'.DS, '', $img_file);
-    $file_name = extn($path, TRUE) . assets::fetch($file_hash) . ext($path, TRUE);
-
-    $path = str_replace(basename($path), $file_name, $path);
+    $path = assets::resolve($img_file);
+    $path = url_for("static/$path");
 
     if ($raw) {
       return $path;
