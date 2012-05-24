@@ -8,7 +8,7 @@
  * @ignore
  */
 
-require __DIR__.DS.'functions'.EXT;
+require __DIR__.DS.'date'.EXT;
 
 i18n::load_path(__DIR__.DS.'locale', 'date');
 
