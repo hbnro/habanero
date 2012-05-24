@@ -38,7 +38,7 @@ chess_helper::implement('image_path', function ($path, $raw = FALSE) {
 
   if (is_file($img_file)) {
     $path = assets::resolve($img_file);
-    $path = url_for("static/$path");
+    $path = url_for(strtr("static/$path", '\\', '/'));
 
     if ($raw) {
       return $path;
