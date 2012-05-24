@@ -27,16 +27,32 @@ class assets extends prototype
 
   /**#@-*/
 
-  public static function save() {
+
+
+  /**
+   * @return void
+   */
+  final public static function save() {
     $out = var_export(array_filter(static::$cache, 'is_md5'), TRUE);
     write(APP_PATH.DS.'config'.DS.'resources'.EXT, '<' . "?php return $out;\n");
   }
 
-  public static function assign($key, $val = NULL) {
+
+  /**
+   * @param
+   * @param
+   * @return void
+   */
+  final public static function assign($key, $val = NULL) {
     static::$cache[$key] = $val;
   }
 
-  public static function resolve($name) {
+
+  /**
+   * @param
+   * @return string
+   */
+  final public static function resolve($name) {
     static $load = FALSE;
 
 
@@ -50,49 +66,43 @@ class assets extends prototype
 
     $name = str_replace(APP_PATH.DS.'views'.DS.'assets'.DS, '', $name);
 
-    if ( ! empty(static::$cache[$name])) {
+    if ((APP_ENV === 'production') && ! empty(static::$cache[$name])) {
       $name = dirname($name).DS.extn($name, TRUE).static::$cache[$name].ext($name, TRUE);
     }
     return $name;
   }
 
-  public static function build($from, $type) {
+
+  /**
+   * @param
+   * @param
+   * @return mixed
+   */
+  final public static function build($from, $type) {
     $base_path  = APP_PATH.DS.'views'.DS.'assets';
     $base_file  = $base_path.DS.$type.DS."$from.$type";
 
     if (is_file($base_file)) {
-      $test = read($base_file);
+      if (APP_ENV === 'production') {
+        $path = static::resolve($base_file);
+        $path = ROOT.strtr("static/$path", '\\', '/');
 
-      if (APP_ENV <> 'production') {
-        $path = ROOT.'static/'.static::resolve($base_file);
         if ($type == 'css') {
           return tag('link', array('rel' => 'stylesheet', 'href' => $path));
         } else {
           return tag('script', array('src' => $path));
         }
       } else {
-        $set = array();
-
-        // css and js
-        $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
-          use($base_path, $type, &$set) {
-            $test_file = $base_path.DS.$type.DS.$match[1];
-
-            @list($path, $name) = array(dirname($test_file), basename($test_file));
-
-            $set []= $path.DS."$name.$type";
-        }, $test);
-
-
         $set = array_map(function ($val)
           use($base_path, $type) {
           $path = url_for(strtr('static'.str_replace($base_path, '', $val), '\\', '/'));
+
           if ($type == 'css') {
             return tag('link', array('rel' => 'stylesheet', 'href' => $path));
           } else {
             return tag('script', array('src' => $path));
           }
-        }, $set);
+        }, static::extract($base_file, $type));
 
         return join("\n", $set);
       }
@@ -102,7 +112,7 @@ class assets extends prototype
 
   /**
    * @param
-   * @return void
+   * @return string
    */
   final public static function read($path) {
     $file = APP_PATH.DS.'views'.DS.'assets'.DS.$path;
@@ -113,7 +123,9 @@ class assets extends prototype
         return read($file);
       }
 
-      $old_file = TMP.DS.str_replace(DS, '__DS__', $path);
+      $old_file = APP_PATH.DS.'static'.DS.$path;
+
+      ! is_dir($old = dirname($old_file)) && mkpath($old);
 
       if (is_file($old_file)) {
         if (filemtime($file) > filemtime($old_file)) {
@@ -126,6 +138,7 @@ class assets extends prototype
         $now  = date('Y-m-d H:i:s', filemtime($file));
         $out  = sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
 
+        write($old_file, $out);
         return $out;
       } else {
         return read($old_file);
@@ -137,8 +150,28 @@ class assets extends prototype
   /**
    * @param
    * @param
+   * @return array
+   */
+  final public static function extract($file, $type) {
+    $set  = array();
+    $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
+      use($type, &$set) {
+        $test_file = APP_PATH.DS.'views'.DS.'assets'.DS.$type.DS.$match[1];
+
+        @list($path, $name) = array(dirname($test_file), basename($test_file));
+
+        $set []= $path.DS."$name.$type";
+    }, read($file));
+
+    return $set;
+  }
+
+
+  /**
    * @param
-   * @return void
+   * @param
+   * @param
+   * @return string
    */
   final public static function url_for($path, $prefix = '', $host = FALSE) {
     return is_url($path) ? $path : path_to(($prefix ? $prefix : ext($path)).DS.$path, $host);
@@ -148,7 +181,7 @@ class assets extends prototype
   /**
    * @param
    * @param
-   * @return void
+   * @return mixed
    */
   final public static function tag_for($path, $type = '') {
     switch ($type ?: ext($path)) {
