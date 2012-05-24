@@ -85,6 +85,7 @@ call_user_func(function () {
   require __DIR__.DS.'utilities'.EXT;
   require __DIR__.DS.'filesystem'.EXT;
   require __DIR__.DS.'conditions'.EXT;
+  require __DIR__.DS.'collection'.EXT;
   /**#@-*/
 
 

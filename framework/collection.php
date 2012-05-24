@@ -291,4 +291,4 @@ function kfill($set) {
   return $out;
 }
 
-/* EOF: ./library/array.php */
+/* EOF: ./framework/collection.php */
