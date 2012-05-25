@@ -42,7 +42,7 @@
 
 @mixin inline_image($src: 'blank.gif') {
   @include size(image_size($src, 0), image_size($src, 1));
-  background: image_path($src) no-repeat;
+  background: url($src) no-repeat;
   text-indent: -99999px;
   white-space: nowrap;
 }
