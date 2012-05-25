@@ -86,13 +86,12 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
 
     $ignored_files = array(
+      'tetlphp',
       '.develop',
-      'access.log',
       'error.log',
-      'static/img/*',
-      'static/css/*',
-      'static/js/*',
+      'access.log',
       'database/db.sqlite',
+      'config/resources.php',
     );
 
   create_file($app_path.DS.'.gitignore', join("\n", $ignored_files) . "\n");
