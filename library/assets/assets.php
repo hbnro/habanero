@@ -138,7 +138,7 @@ class assets extends prototype
 
       ! is_dir($old = dirname($old_file)) && mkpath($old);
 
-      if (is_file($old_file)) {
+      if (is_file($old_file) && (APP_ENV === 'development')) {
         if (filemtime($file) > filemtime($old_file)) {
           unlink($old_file);
         }
