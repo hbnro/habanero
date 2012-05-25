@@ -95,8 +95,7 @@ class assets extends prototype
 
     if (is_file($base_file)) {
       if (APP_ENV === 'production') {
-        $path = static::resolve($base_file);
-        $path = ROOT.strtr("static/$path", '\\', '/');
+        $path = path_to(static::resolve($base_file));
 
         if ($type == 'css') {
           return tag('link', array('rel' => 'stylesheet', 'href' => $path));
@@ -130,7 +129,7 @@ class assets extends prototype
     $file = findfile(dirname($file), extn($file, TRUE), FALSE, 1);
 
     if (is_file($file)) {
-      if (preg_match('/\.(jpe?g|png|gif)$/i', $path)) {
+      if (preg_match('/\.(jpe?g|png|gif)$/i', $path) OR preg_match('/\.(css|js)$/', $file)) {
         return read($file);
       }
 
