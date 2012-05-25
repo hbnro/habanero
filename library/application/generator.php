@@ -115,17 +115,12 @@ app_generator::implement('app:prepare', function () {
         $out = array();
         $set = array_map(function ($val)
           use($base_path, $static_dir, &$out) {
-          static $regex = '/(\/\w+\.[^.]+)?\/static\/(.+?)(?=[\'"),])/';
+          static $regex = '/\bimg\/.+?\.(?:jpe?g|png|gif)\b/i';
 
           $val = str_replace($base_path.DS, '', $val);
           if (is_file($tmp = $static_dir.DS.$val)) {
             $out []= preg_replace_callback($regex, function ($match) {
-              $old = assets::resolve($match[2]);
-
-              $old = str_replace($match[2], $old, $match[0]);
-              $old = str_replace($match[1], '', $old);
-
-              return $old;
+              return assets::resolve($match[0]);
             }, read($tmp));
           }
         }, assets::extract($file, $type));
@@ -139,7 +134,7 @@ app_generator::implement('app:prepare', function () {
           $name     = str_replace($base_path.DS, '', $file);
           $min_file = $static_dir.DS.extn($name).$hash.ext($file, TRUE);
 
-          rename($tmp, $min_file);
+          rename($tmp, mkpath(dirname($min_file)).DS.basename($min_file));
 
           assets::assign($path = str_replace($base_path.DS, '', $file), $hash);
           success(ln('app.compiling_asset', array('name' => $path)));

@@ -53,6 +53,20 @@ class assets extends prototype
    * @return string
    */
   final public static function resolve($name) {
+    $name = str_replace(APP_PATH.DS.'views'.DS.'assets'.DS, '', $name);
+
+    if ($hash = static::fetch($name)) {
+      $name = dirname($name).DS.extn($name, TRUE).$hash.ext($name, TRUE);
+    }
+    return $name;
+  }
+
+
+  /**
+   * @param
+   * @return string
+   */
+  final public static function fetch($name) {
     static $load = FALSE;
 
 
@@ -64,12 +78,9 @@ class assets extends prototype
       $load = TRUE;
     }
 
-    $name = str_replace(APP_PATH.DS.'views'.DS.'assets'.DS, '', $name);
-
     if ((APP_ENV === 'production') && ! empty(static::$cache[$name])) {
-      $name = dirname($name).DS.extn($name, TRUE).static::$cache[$name].ext($name, TRUE);
+      return static::$cache[$name];
     }
-    return $name;
   }
 
 
