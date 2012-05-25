@@ -28,14 +28,16 @@ run(function () {
   }
 
 
-  array_map('app_generator::task', dir2arr(mkpath(APP_PATH.DS.'tasks'), '*'.EXT));
+  if (is_dir($path = APP_PATH.DS.'tasks')) {
+    array_map('app_generator::task', dir2arr($path, '*'.EXT));
 
-  if ($set = findfile(APP_PATH.DS.'tasks', 'initialize'.EXT, TRUE)) {
-    foreach ($set as $task_file) {
-      /**
-       * @ignore
-       */
-      require $task_file;
+    if ($set = findfile($path, 'initialize'.EXT, TRUE)) {
+      foreach ($set as $task_file) {
+        /**
+         * @ignore
+         */
+        require $task_file;
+      }
     }
   }
 
@@ -47,8 +49,8 @@ run(function () {
     }, $test, $mod_file);
   } else {
     foreach (array(dirname(LIB), APP_PATH) as $path) {
-      if ($test = findfile($path.DS.'library', 'generator'.EXT, TRUE)) {
-        foreach ($test as $gen_file) {
+      if ($set = findfile($path.DS.'library', 'generator'.EXT, TRUE)) {
+        foreach ($set as $gen_file) {
           /**
            * @ignore
            */
