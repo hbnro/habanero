@@ -27,11 +27,10 @@ class tamal extends prototype
                     '/\?>\s*<\//' => '?></',
                     '/\s*<\/pre>/s' => "\n</pre>",
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
-                    '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
                     '/<\?php\s+(?!echo\s+|\})/' => "<?php ",
                     '/\};?\s*else(?=if|\b)/' => '} else',
-                    '/\s*<!--#PRE#-->\s*/s' => "\n",
                     '/^\s*\|(.*?)$/m' => '\\1',
+                    '/>\|/' => '>',
                   );
 
   // open blocks
@@ -93,7 +92,7 @@ class tamal extends prototype
     $stack = array();
 
     // TODO: improve this?
-    $text  = preg_replace_callback('/\{[^{}]+?\}/s', function ($match) {
+    $text  = preg_replace_callback('/\{\s*[\w:-]+(?=\s*=>|\s*[}])[^{}]*?\}/s', function ($match) {
       return preg_replace("/[\r\n\t]+/", ' ', $match[0]);
     }, $text);
 
@@ -158,6 +157,11 @@ class tamal extends prototype
    * @ignore
    */
 
+  // apply filters
+  final private static function filtrate($filter, $value) {
+    return tamal_helper::apply($filter, array(static::unescape($value)));
+  }
+
   // render markup tags
   final private static function markup($tag, $args, $text = '') {
     $merge = FALSE;
@@ -167,7 +171,6 @@ class tamal extends prototype
         $code = var_export($one, TRUE);
         $code = str_replace(",\n", ',', $code);
         $code = str_replace('array ', 'array', $code);
-        $code = preg_replace("/\s*'([^']+)'\s*=>\s*/s", "'\\1'=>", $code);
 
         $args[$i] = $code;
 
@@ -181,6 +184,8 @@ class tamal extends prototype
     $hash = md5($tag . $args . ticks());
 
     $out  = $hash . tag($tag, '', $text);
+    $args = preg_replace("/\s*(['\"]?)(\S+)\\1\s*=>\s*/s", "'\\2'=>", $args);
+
     $merge && $args = "array_merge($args)";
 
     $repl = "<$tag<?php echo attrs($args); ?>";
@@ -227,13 +232,17 @@ class tamal extends prototype
         if (is_string($value)) {
           $out []= static::line($value, '', $indent - static::$defs['indent']);
           continue;
+        } elseif (substr(trim($key), 0, 1) === ':') {
+          $value = trim(join("\n", static::flatten($value)));
+          $out []= static::filtrate(trim(substr($key, 1)), $value);
+          continue;
         } elseif (substr(trim($key), 0, 1) === '/') {
           $value = join("\n|", static::flatten($value));
           $out []= sprintf("<!--%s\n$span$value\n-->", trim(substr($key, 1)));
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
           $value = join("\n", static::flatten($value));
-          $value = preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
+          $value = preg_replace("/^$span\s{{$indent}}/m", '<!--#PRE#-->', $value);
         }
 
         $value = is_array($value) ? static::compile($value) : $value;
@@ -317,7 +326,7 @@ class tamal extends prototype
 
         if ( ! empty($match[0])) {
           $key    = str_replace($match[0], '', $key);
-          $args []= $match[1];
+          $args []= preg_replace('/([(,])\s*([\w:-]+)\s*=>\s*/', "'\\1'=>", $match[1]);
         }
 
         // output
@@ -373,8 +382,10 @@ class tamal extends prototype
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
     $code = preg_replace('/#\{(.+?)\}/', '<?php echo \\1; ?>', $code);
+    $code = preg_replace('/ *?<!--#PRE#-->/', '', $code);
     $code = preg_replace('/<!--#HASH\d{7}#-->/', '', $code);
     $code = preg_replace('/\?>\s*<\?php\s*/', "\n", $code);
+    $code = preg_replace('/\s*,?\s+\)\s*/', ')', $code);
 
     return $code;
   }
