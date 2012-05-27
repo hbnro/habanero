@@ -39,32 +39,6 @@ class sql_base extends sql_raw
     return join(', ', $set);
   }
 
-  // recursive where lookup
-  final protected function mix_columns($test, $value) {
-    $set    = preg_split('/_(?:or|and)_/', $test);
-    $length = sizeof($set);
-    $output = array();
-
-    $output []= "\n" . $this->build_where(array(
-      $set[0] => $value,
-    ));
-
-    for ($i = 1; $i < $length; $i += 1) {
-      $one  = $set[$i];
-      $next = isset($set[$i + 1]) ? $set[$i + 1] : '';
-
-      if ( ! is_keyword($one)) {
-        continue;
-      }
-
-      $output []= strtoupper($one) . "\n";
-      $output []= $this->build_where(array(
-        $next => $value,
-      ));
-    }
-    return " (" . join('', $output) . " )\n";
-  }
-
   // recursive string escaping
   final protected function fixate_string($test, $alone = FALSE) {
     if (is_array($test)) {
@@ -147,78 +121,43 @@ class sql_base extends sql_raw
     return join('', $sql);
   }
 
-  // dynamic WHERE building
-  final protected function build_where($test, $operator = 'AND') {
-    if ( ! empty($test)) {
-      // TODO: fix and improve it!!
-      $operator = strtoupper($operator);
-      $test     = (array) $test;
-      $length   = sizeof($test);
+  // dynamic WHERE building v2
+  function build_where($test, $operator = 'AND') {
+    $sql      = array();
+    $operator = strtoupper($operator);
 
-      $inc   =
-      $sql   =
-      $count = '';
-      $ors   = array();
+    foreach ($test as $key => $val) {
+      if (is_numeric($key)) {
+        $sql []= is_array($val) ? $this->build_where($val, $operator) : $val;
+      } elseif (is_keyword($key)) {
+        $sql []= sprintf('(%s)', $this->build_where($val, strtoupper($key)));
+      } elseif (preg_match('/_(?:and|or)_/i', $key, $match)) {
+        $sub = array();
+        foreach (explode($match[0], $key) as $one) {
+          $sub[$one] = $val;
+        }
+        $sql []= sprintf('(%s)', $this->build_where($sub, strtoupper(trim($match[0], '_'))));
+      } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=?|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
+        $sub = '';
+        $key = $this->protect_names($match[1]);
 
-      foreach ($test as $key => $val) {
-        if (preg_match('/_(?:or|and)_/', $key)) {
-          $sql .= "$operator\n";
-          $sql .= $this->mix_columns($key, $val);
-
-          $count += 1;
-          continue;
-        } elseif (is_keyword($key)) {
-          $out = $this->build_where($val, $key);
-          ($key == 'AND') ? $sql .= "\n" . strtoupper($key) . "\n(\n$out )" : $ors []= $out;
-
-          $count += 1;
-          continue;
-        } elseif (($inc += 1) > 1) {
-          $sql .= "$operator\n";
+        if (is_null($val)) {
+          $sub = 'IS NULL';
+        } else {
+          $val = $this->fixate_string($val, FALSE);
+          $sub = ! empty($match[2]) ? ($match[2] == '!' ? '!=' : $match[2]) : '=';
         }
 
-        if (is_num($key)) {
-          if (is_string($val)) {
-            $sql .= "$val\n";
-          } else {
-            $sql .= $this->build_where($val, $operator);
-          }
-        } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=?|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
-          $oper = '';
-          $key  = $this->protect_names($match[1]);
-
-          if (is_null($val)) {
-            $oper = 'IS NULL';
-          } else {
-            $val = $this->fixate_string($val, FALSE);
-            $oper = ! empty($match[2]) ? ($match[2] == '!' ? '!=' : $match[2]) : '=';
-          }
-
-          if ( ! empty($sql)) {
-            $sql .= "$operator\n";
-          }
-
-          if (is_array($val) && (sizeof($val) > 1)) {
-            $key .= in_array($oper, array('!=', '<>')) ? ' NOT' : '';
-            $sql .= " $key IN(" . join(', ', $val) . ")\n";
-          } else {
-            $val = is_array($val) ? array_shift($val) : $val;
-            $sql .= " $key $oper $val\n";
-          }
+        if (is_array($val) && (sizeof($val) > 1)) {
+          $key  .= in_array($sub, array('!=', '<>')) ? ' NOT' : '';
+          $sql []= " $key IN(" . join(', ', $val) . ")";
+        } else {
+          $val   = is_array($val) ? array_shift($val) : $val;
+          $sql []= " $key $sub $val";
         }
       }
-
-      $sql = $count > 0 ? " (\n$sql )\n" : $sql;
-
-      foreach ($ors as $one) {
-        $sql .= "OR (\n$one )\n";
-      }
-
-      $sql = preg_replace('/(AND|OR)\s*(AND|OR)/s', '\\1', $sql);
-      $sql = preg_replace('/(?<=\()\s*AND|OR\s*(?=\))/s', '', $sql);
-
-      return $sql;
     }
+    return join("\n$operator\n", $sql);
   }
 
   // hardcore SQL fixes!

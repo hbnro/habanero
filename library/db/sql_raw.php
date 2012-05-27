@@ -22,7 +22,7 @@ class sql_raw
     if (is_true($begin)) {
       $start = ticks();
       $this->last_query []= $sql;
-      $query = str_replace("\n", ' ', preg_replace('/^ +/m', '', $sql));
+      $query = str_replace("\n", '\\n', $sql);
     } elseif (is_false($sql)) {
       debug(sprintf('(%s) %s', ticks($start), $query));
     } else {
