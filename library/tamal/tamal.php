@@ -111,7 +111,7 @@ class tamal extends prototype
       if ( ! trim($line)) {
         continue;
       } elseif ($tab && ($tab % static::$defs['indent'])) {
-        return static::error($i, $line, 'bad_space', $file);
+        return FALSE;
       }
 
 
@@ -389,15 +389,6 @@ class tamal extends prototype
     $text .= "\n$last";
 
     return $text;
-  }
-
-  // errors
-  final private static function error($i, $line, $desc = 'unknown', $file = '') {
-    $error   = is_file($file) ? 'tamal.error_file' : 'tamal.error_line';
-    $message = ln($error, array('line' => $i, 'text' => $line, 'name' => $file));
-    $desc    = ln("tamal.$desc");
-
-    raise("$message ($desc)");
   }
 
   // protect chars
