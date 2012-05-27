@@ -20,12 +20,29 @@ partial::register('tamal', function ($file, array $vars = array()) {
   return tamal::render($file, $vars);
 });
 
+
 // common helpers
-require __DIR__.DS.'helpers'.DS.'php'.EXT;
-require __DIR__.DS.'helpers'.DS.'style'.EXT;
-require __DIR__.DS.'helpers'.DS.'script'.EXT;
-require __DIR__.DS.'helpers'.DS.'escape'.EXT;
-require __DIR__.DS.'helpers'.DS.'plain'.EXT;
+
+tamal_helper::implement('script', function ($value) {
+  return tag('script', array('type' => 'text/javascript'), "\n$value\n");
+});
+
+tamal_helper::implement('style', function ($value) {
+  return tag('style', array('type' => 'text/css'), "\n$value\n");
+});
+
+tamal_helper::implement('escape', function ($value) {
+  return htmlspecialchars($value);
+});
+
+tamal_helper::implement('plain', function ($value) {
+  return $value;
+});
+
+tamal_helper::implement('php', function ($value) {
+  return '<' . "?php $value ?>";
+});
+
 /**#@-*/
 
 /* EOF: ./library/tamal/initialize.php */
