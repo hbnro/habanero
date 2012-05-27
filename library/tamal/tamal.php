@@ -23,15 +23,22 @@ class tamal extends prototype
 
   // code fixes
   private static $fix = array(
+                    '/>\|/' => '>',
                     '/>\s*<\?/' => '><?',
                     '/\?>\s*<\//' => '?></',
                     '/\s*<\/pre>/s' => "\n</pre>",
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/<\?php\s+(?!echo\s+|\})/' => "<?php ",
-                    '/\};?\s*else(?=if|\b)/' => '} else',
+                    '/<!--#HASH\d{7}#-->/' => '',
                     '/^\s*\|(.*?)$/m' => '\\1',
-                    '/>\|/' => '>',
+                    '/ *?<!--#PRE#-->/' => '',
+                    '/\s*,?\s+\)\s*/' => ')',
+                    '/\?>\s*<\?php\s*/' => "\n",
+                    '/#\{(.+?)\}/' => '<?php echo \\1; ?>',
+                    '/\}[\s;]*else(?=\s*if|\b)/s' =>'} else',
                   );
+
+
 
   // open blocks
   private static $open = '(?:if|else(?:\s*if)?|while|switch|for(?:each)?)\b';
@@ -326,7 +333,7 @@ class tamal extends prototype
 
         if ( ! empty($match[0])) {
           $key    = str_replace($match[0], '', $key);
-          $args []= preg_replace('/([(,])\s*([\w:-]+)\s*=>\s*/', "'\\1'=>", $match[1]);
+          $args []= preg_replace('/([a-z][\w:-]+)\s*=>\s*/', "'\\1'=>", $match[1]);
         }
 
         // output
@@ -381,11 +388,6 @@ class tamal extends prototype
   final private static function fixate($code) {
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
-    $code = preg_replace('/#\{(.+?)\}/', '<?php echo \\1; ?>', $code);
-    $code = preg_replace('/ *?<!--#PRE#-->/', '', $code);
-    $code = preg_replace('/<!--#HASH\d{7}#-->/', '', $code);
-    $code = preg_replace('/\?>\s*<\?php\s*/', "\n", $code);
-    $code = preg_replace('/\s*,?\s+\)\s*/', ')', $code);
 
     return $code;
   }
