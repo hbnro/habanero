@@ -22,7 +22,7 @@ if (empty($test)) {
 
     $text  = sprintf("\byellow($tbl)\b ($keys)\n  => $count");
 
-    cli::writeln($text);
+    cli::writeln(cli::format($text));
   }
 }
 
