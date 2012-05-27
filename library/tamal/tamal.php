@@ -36,6 +36,7 @@ class tamal extends prototype
                     '/\?>\s*<\?php\s*/' => "\n",
                     '/#\{(.+?)\}/' => '<?php echo \\1; ?>',
                     '/\}[\s;]*else(?=\s*if|\b)/s' =>'} else',
+                    '/([a-z][\w:-]+)\s*=>\s*/' => "'\\1'=>",
                   );
 
 
@@ -189,9 +190,7 @@ class tamal extends prototype
 
     $args = join(',', $args);
     $hash = md5($tag . $args . ticks());
-
     $out  = $hash . tag($tag, '', $text);
-    $args = preg_replace("/\s*(['\"]?)(\S+)\\1\s*=>\s*/s", "'\\2'=>", $args);
 
     $merge && $args = "array_merge($args)";
 
@@ -333,7 +332,7 @@ class tamal extends prototype
 
         if ( ! empty($match[0])) {
           $key    = str_replace($match[0], '', $key);
-          $args []= preg_replace('/([a-z][\w:-]+)\s*=>\s*/', "'\\1'=>", $match[1]);
+          $args []= $match[1];
         }
 
         // output
