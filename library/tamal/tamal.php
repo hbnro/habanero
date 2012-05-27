@@ -28,7 +28,7 @@ class tamal extends prototype
                     '/\s*<\/pre>/s' => "\n</pre>",
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/([(,])\s*([\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
-                    '/<\?php\s+(?!echo\s+|\})/' => "\n<?php ",
+                    '/<\?php\s+(?!echo\s+|\})/' => "<?php ",
                     '/\};?\s*else(?=if|\b)/' => '} else',
                     '/\s*<!--#PRE#-->\s*/s' => "\n",
                     '/^\s*\|(.*?)$/m' => '\\1',
@@ -120,7 +120,7 @@ class tamal extends prototype
       }
 
       foreach ($stack as $top) {
-        $key .= "['$top']";
+        $key .= "['<!--#HASH$top#-->']";
       }
 
       if ($indent < $tab) {
@@ -137,7 +137,7 @@ class tamal extends prototype
       $line  = static::escape(rtrim($line));
 
       $code .= $indent > $tab ? "=array(-1=>'$line')" : "[]='$line'";
-      $code .= ";\n";
+      $code .= ";";
     }
 
 
@@ -194,6 +194,7 @@ class tamal extends prototype
 
   // compile lines
   final private static function compile($tree) {
+    $span  = str_repeat(' ', static::$defs['indent']);
     $open  = sprintf('/^\s*-\s*%s/', static::$open);
     $block = sprintf('/[-=].+?%s/', static::$fn);
     $out   = array();
@@ -228,7 +229,7 @@ class tamal extends prototype
           continue;
         } elseif (substr(trim($key), 0, 1) === '/') {
           $value = join("\n|", static::flatten($value));
-          $out []= sprintf("<!--%s\n$value\n-->", trim(substr($key, 1)));
+          $out []= sprintf("<!--%s\n$span$value\n-->", trim(substr($key, 1)));
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
           $value = join("\n", static::flatten($value));
@@ -274,7 +275,7 @@ class tamal extends prototype
         $key = rtrim(substr($key, 1), ';');
         $key = preg_replace('/\belse\s*;/', 'else{', static::block($key));
 
-        return "<?php $key ?>\n$text";
+        return "<?php $key ?>$text";
       break;
       case '=';
           // print
@@ -325,11 +326,9 @@ class tamal extends prototype
         if ( ! empty($match[0])) {
           $key  = trim(substr(trim($key), 1));
           $text = "<?php echo $key; ?>$text";
-        } elseif ( ! is_numeric($key)) {
+        } else {
           $text = trim($key) . $text;
         }
-
-        $text && $text = "\n$text\n";
 
         $out  = ($tag OR $args) ? static::markup($tag ?: 'div', $args, $text) : $text;
         $out  = static::indent(trim($out));
@@ -374,6 +373,7 @@ class tamal extends prototype
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
     $code = preg_replace('/#\{(.+?)\}/', '<?php echo \\1; ?>', $code);
+    $code = preg_replace('/<!--#HASH\d{7}#-->/', '', $code);
     $code = preg_replace('/\?>\s*<\?php\s*/', "\n", $code);
 
     return $code;
@@ -385,7 +385,7 @@ class tamal extends prototype
     $test  = explode("\n", $text);
     $last  = array_pop($test);
 
-    $text  = join("\n$repl", $test);
+    $text  = join("\n$repl", array_filter($test));
     $text .= "\n$last";
 
     return $text;
