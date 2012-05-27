@@ -226,6 +226,10 @@ class tamal extends prototype
         if (is_string($value)) {
           $out []= static::line($value, '', $indent - static::$defs['indent']);
           continue;
+        } elseif (substr(trim($key), 0, 1) === '/') {
+          $value = join("\n|", static::flatten($value));
+          $out []= sprintf("<!--%s\n$value\n-->", trim(substr($key, 1)));
+          continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
           $value = join("\n", static::flatten($value));
           $value = preg_replace("/^\s{{$indent}}/m", '<!--#PRE#-->', $value);
