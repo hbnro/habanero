@@ -241,7 +241,6 @@ class tamal extends prototype
     }
 
     $out = join("\n", array_filter($out));
-    $out = preg_replace('/\?>\s*<\?php\s*/', "\n", $out);
 
     return $out;
   }
@@ -375,6 +374,7 @@ class tamal extends prototype
     $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
     $code = preg_replace('/#\{(.+?)\}/', '<?php echo \\1; ?>', $code);
+    $code = preg_replace('/\?>\s*<\?php\s*/', "\n", $code);
 
     return $code;
   }
