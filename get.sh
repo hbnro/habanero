@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TETL="$HOME/.php/tetlphp"
+TETL="$HOME/.local/share/php/tetlphp"
 BINPATH="/usr/local/bin"
 
 if [ ! -d "$BINPATH" ]; then
@@ -9,7 +9,7 @@ fi
 
 SYMLINK="$BINPATH/atl"
 
-if [ -f "$SYMLINK" ]; then
+if [ -f "$SYMLINK" ] || [ -d "$TETL " ]; then
   echo "Already installed"
   exit 0
 fi
@@ -36,5 +36,5 @@ ln -s "$TETL/stack/app_console.sh" $SYMLINK > /dev/null 2>&1
 chmod +x $SYMLINK
 
 echo "Installing..."
-$SYMLINK --install > /dev/null 2>&1
+cd $TETL && sh install.sh > /dev/null 2>&1
 echo "Done"
