@@ -414,7 +414,7 @@ class form extends prototype
 
 
     if (empty($args['name'])) {
-      raise(ln('function_param_missing', array('name' => 'form::group', 'input' => 'name')));
+      raise(ln('function_param_missing', array('name' => 'form::textarea', 'input' => 'name')));
     }
 
 
