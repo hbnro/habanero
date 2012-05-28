@@ -220,7 +220,7 @@ function findfile($path, $filter = '*', $recursive = FALSE, $index = 0) {
     $output    = dir2arr($path, '*', $recursive | DIR_MAP);
 
     foreach ($output as $key => $file) {
-      if ( ! match($filter, basename($file)) OR ! is_file($file)) {
+      if ( ! fnmatch($filter, basename($file)) OR ! is_file($file)) {
         unset($output[$key]);
       }
     }

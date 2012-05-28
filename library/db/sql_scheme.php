@@ -161,7 +161,7 @@ class sql_scheme extends sql_query
     }
 
     foreach ($test as $one) {
-      if (match($filter, $one)) {
+      if (fnmatch($filter, $one)) {
         $out []= $one;
       }
     }
