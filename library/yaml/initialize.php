@@ -39,7 +39,7 @@ if ( ! function_exists('yaml_parse')) {
 class yaml extends prototype
 {
   // blocks
-  function block(Closure $lambda) {
+  final public static function block(Closure $lambda) {
     ob_start() && $lambda();
 
     $indent = 0;
