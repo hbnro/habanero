@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TETL="$HOME/.local/share/php/tetlphp"
+TETL="$HOME/.local/lib/php/tetlphp"
 BINPATH="/usr/local/bin"
 
 if [ ! -d "$BINPATH" ]; then
