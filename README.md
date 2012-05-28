@@ -13,7 +13,7 @@ Features
     with support for different file formats.
   * Core utilities to work with  configuration files,
     conditions, filesystem and hypertext.
-  * [Heroku](http://heroku.com/) friendly, so it should work fine everywhere with a little effort.
+  * [Heroku](http://heroku.com/) friendly, so it should work fine.
 
 Installation
 ------------
@@ -67,20 +67,14 @@ Deploying to production
 Tetl is intensively tested on top of **Heroku**, the git-based cloud hosting platform. In my
 own opinion the first place where you should release your startup application.
 
-    # Make sure you are in a git repo
-    $ git init
-
-    # Compile the assets and grab the libraries
-    $ atl build
-    $ atl --stub
-
-    # Add and commit all the changes
-    $ git add .
-    $ git commit -m "First commit"
+    # NOTE: Make sure you are into git repository
 
     # Create the heroku app and get your default database settings
     $ heroku create --stack cedar
     $ heroku addons:add shared-database:5mb
+
+    # Configure the default build-pack url for deployment
+    $ heroku config:add BUILDPACK_URL=https://github.com/pateketrueke/heroku-buildpack-tetlphp
 
     # Push and go!
     $ git push heroku master
