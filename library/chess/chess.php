@@ -80,14 +80,14 @@ class chess extends prototype
     static::$mixins  =
     static::$imports = array();
 
-    static::parse_buffer($rules);
+    static::parse_buffer(static::quote($rules));
     static::build_properties(static::$sets);
 
     foreach (static::$sets as $key => $set) {
       static::$css []= static::build_rules($set, $key);
     }
 
-    $text = join("\n", static::$css);
+    $text = static::quote(join("\n", static::$css), TRUE);
 
     $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
@@ -125,6 +125,23 @@ class chess extends prototype
   /**#@+
    * @ignore
    */
+
+  // strings
+  final private static function quote($test, $rev = FALSE) {
+    return preg_replace_callback($rev ? '/__STRING([^_]+)__/' : '/([\'"]).+\\1/', 'static::escape', $test);
+  }
+
+  // save quotes
+  final private static function escape($test) {
+    static $old = array();
+
+    if ( ! is_md5($test[1])) {
+      $old[md5($test[0])] = $test[0];
+      return sprintf('__STRING%s__', md5($test[0]));
+    } else {
+      return ! empty($old[$test[1]]) ? $old[$test[1]] : '';
+    }
+  }
 
   // load file
   final private static function load_file($path, $parse = FALSE) {
