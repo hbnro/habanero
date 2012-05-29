@@ -115,7 +115,8 @@ class chess extends prototype
         $path = substr($path, 2);
         $root = dirname($root);
       }
-      return $root.DS.ltrim($path, DS);
+      $path = $root.DS.ltrim($path, DS);
+      $path = findfile(dirname($path), basename($path) . '*', FALSE, 1);
     }
     return $path;
   }
@@ -144,11 +145,11 @@ class chess extends prototype
   }
 
   // load file
-  final private static function load_file($path, $parse = FALSE) {
-    ! is_file($path) && $path = static::path($path);
+  final private static function load_file($test, $parse = FALSE) {
+    $path = ! is_file($test) ? static::path($test) : $test;
 
     if ( ! is_file($path)) {
-      raise(ln('file_not_exists', array('name' => $path)));
+      raise(ln('file_not_exists', array('name' => $test)));
     }
 
     $text = read($path);
@@ -172,13 +173,7 @@ class chess extends prototype
   final private static function fetch_externals($match) {
     switch ($match[1]) {
       case 'require';
-        $inc_file  = APP_PATH.DS.'views'.DS.'assets'.DS.'css'.DS.$match[3];
-
-        if ( ! is_file($inc_file)) {
-          raise(ln('file_not_exists', array('name' => $inc_file)));
-        }
-
-        static::add_file($inc_file, TRUE);
+        return static::load_file($match[3], TRUE);
       break;
       case 'use';
         if (in_array($match[3], static::$imports)) {
