@@ -31,7 +31,7 @@ $lang['controller_class_building'] = 'Generating default class for controller %{
 $lang['controller_route_building'] = 'Generating route for default controller %{name}';
 $lang['controller_view_building'] = 'Generating view for default controller %{name}';
 
-$lang['compiling_asset'] = 'Compiling file %{name}';
+$lang['compiling_asset'] = 'Compiling file %{name} (%{hash})';
 $lang['appending_asset'] = 'Appending file %{name}';
 
 $lang['generator_title'] = 'Application generator';
