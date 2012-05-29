@@ -115,7 +115,7 @@ class tamal extends prototype
       $next   = isset($test[$i + 1]) ? $test[$i + 1] : NULL;
       $indent = strlen($next) - strlen(ltrim($next));
 
-      if ( ! trim($line)) {
+      if ( ! strlen($line)) {
         continue;
       } elseif ($tab && ($tab % static::$defs['indent'])) {
         return FALSE;
