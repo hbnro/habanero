@@ -34,9 +34,8 @@ class chess extends prototype
     '/[\s\r\n\t]*,+[\s\r\n\t]*/s' => ',',
     '/;\s*(?=[#@\w\-]+\s*:?)/' => ";\n",
     '/;?[\s\r\n\t]*\}/s' => ";\n}",
-    '/[\s\r\n\t]+\{/s' => ' {',
+    '/\s*\{\s*/' => " {\n",
     '/:\s+\{/' => ':{',
-    '/\{/' => "{\n",
   );
 
   /**#@-*/
@@ -80,7 +79,7 @@ class chess extends prototype
     static::$mixins  =
     static::$imports = array();
 
-    static::parse_buffer(static::quote($rules));
+    static::parse_buffer($rules);
     static::build_properties(static::$sets);
 
     foreach (static::$sets as $key => $set) {
@@ -129,7 +128,7 @@ class chess extends prototype
 
   // strings
   final private static function quote($test, $rev = FALSE) {
-    return preg_replace_callback($rev ? '/__STRING([^_]+)__/' : '/([\'"]).+\\1/', 'static::escape', $test);
+    return preg_replace_callback($rev ? '/__STRING([^_]+)__/' : '/([\'"]).+?\\1/', 'static::escape', $test);
   }
 
   // save quotes
@@ -191,7 +190,7 @@ class chess extends prototype
         static::add_file($css_file, TRUE);
       break;
       default;
-        return static::load_file($match[3], FALSE);
+        static::$css []= static::load_file($match[3], FALSE);
       break;
     }
   }
@@ -250,9 +249,9 @@ class chess extends prototype
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
     $text = preg_replace('/&(#?\w+);/', '__ENTITY\\1__', $text);
-    $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, $text);
     $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', 'static::fetch_externals', $text);
     $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', 'static::fetch_properties', $text);
+    $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, static::quote($text));
 
     $depth  = 0;
     $buffer = '';
