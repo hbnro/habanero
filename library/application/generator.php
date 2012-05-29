@@ -118,14 +118,19 @@ app_generator::implement('app:prepare', function () {
           static $regex = '/\bimg\/.+?\.(?:jpe?g|png|gif)\b/i';
 
           $val = str_replace($base_path.DS, '', $val);
+
           if (is_file($tmp = $static_dir.DS.$val)) {
-            $out []= preg_replace_callback($regex, function ($match) {
+            $out[$val] = preg_replace_callback($regex, function ($match) {
               return assets::resolve($match[0]);
             }, read($tmp));
+          } else {
+            $old = $base_path.DS.$val;
+            is_file($old) && $out[$val] = read($old);
           }
         }, assets::extract($file, $type));
 
         if ( ! empty($out)) {
+          $set = array_keys($out);
           $out = join("\n", $out);
 
           write($tmp = TMP.DS.md5($file), $type === 'css' ? $css_min($out) : jsmin::minify($out));
@@ -138,6 +143,10 @@ app_generator::implement('app:prepare', function () {
 
           assets::assign($path = str_replace($base_path.DS, '', $file), $hash);
           success(ln('app.compiling_asset', array('name' => $path)));
+
+          foreach ($set as $one) {
+            notice(ln('app.appending_asset', array('name' => $one)));
+          }
         }
       }
     }

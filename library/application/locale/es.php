@@ -32,6 +32,7 @@ $lang['controller_route_building'] = 'Generando ruta por defecto del controlador
 $lang['controller_view_building'] = 'Generando vista por defecto del controlador %{name}';
 
 $lang['compiling_asset'] = 'Compilando %{name}';
+$lang['appending_asset'] = 'Agregando %{name}';
 
 $lang['generator_title'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP

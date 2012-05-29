@@ -32,6 +32,7 @@ $lang['controller_route_building'] = 'Generating route for default controller %{
 $lang['controller_view_building'] = 'Generating view for default controller %{name}';
 
 $lang['compiling_asset'] = 'Compiling file %{name}';
+$lang['appending_asset'] = 'Appending file %{name}';
 
 $lang['generator_title'] = 'Application generator';
 $lang['generator_usage'] = <<<HELP
