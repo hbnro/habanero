@@ -115,23 +115,20 @@ app_generator::implement('app:prepare', function () {
         $out = array();
         $set = array_map(function ($val)
           use($base_path, $static_dir, &$out) {
-          static $regex = '/\bimg\/.+?\.(?:jpe?g|png|gif)\b/i';
 
-          $val = str_replace($base_path.DS, '', $val);
+          $key = str_replace($base_path.DS, '', $val);
 
-          if (is_file($tmp = $static_dir.DS.$val)) {
-            $out[$val] = preg_replace_callback($regex, function ($match) {
-              return assets::resolve($match[0]);
-            }, read($tmp));
-          } else {
-            $old = $base_path.DS.$val;
-            is_file($old) && $out[$val] = read($old);
-          }
+          is_file($val) OR $val = $static_dir.DS.$key;
+          is_file($val) && $out[$key] = read($val);
         }, assets::extract($file, $type));
 
         if ( ! empty($out)) {
           $set = array_keys($out);
           $out = join("\n", $out);
+
+          $out = preg_replace_callback('/\bimg\/.+?\.(?:jpe?g|png|gif)\b/i', function ($match) {
+              return assets::resolve($match[0]);
+            }, $out);
 
           write($tmp = TMP.DS.md5($file), $type === 'css' ? $css_min($out) : jsmin::minify($out));
 
