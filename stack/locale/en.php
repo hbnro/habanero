@@ -23,7 +23,7 @@ $lang['generator_intro'] = <<<INTRO
     --vhost \bred([--remove])\b      \cyellow(*)\c Create or remove virtual hosts in the system
 
     --open                  \cdark_gray(*)\c Launch the default browser with virtual host domain
-    --stub                  \cdark_gray(*)\c Make a local copy from the system libraries
+    --stub \clight_gray([--no-compress])\c  \cdark_gray(*)\c Make a local copy from the system libraries
     --help                  \cdark_gray(*)\c Display the descriptions of all generators
 
     \cyellow(* needs sudo permissions)\c
