@@ -41,12 +41,14 @@ if ( !! `php -v`) {
   $test = dir2arr($tetl_path, '*'.EXT, DIR_RECURSIVE | DIR_MAP);
   $test = array_filter($test, 'is_file');
 
-  notice(ln('compressing_files'));
+  if ( ! cli::flag('no-compress')) {
+    notice(ln('compressing_files'));
 
-  foreach ($test as $one) {
-    $in_file = escapeshellarg($one);
-    $output  = `php -w $in_file`;
-    write($one, "$output\n");
+    foreach ($test as $one) {
+      $in_file = escapeshellarg($one);
+      $output  = `php -w $in_file`;
+      write($one, "$output\n");
+    }
   }
 }
 

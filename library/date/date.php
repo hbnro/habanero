@@ -8,6 +8,18 @@ class date extends prototype
 {
 
   /**
+   * Translations
+   *
+   * @param  string ...
+   * @return string
+   */
+  final public static function ln() {
+    $args = func_get_args();
+    return call_user_func_array('ln', $args);
+  }
+
+
+  /**
    * GMT datetime format
    *
    * @param  integer Timestamp
@@ -32,7 +44,7 @@ class date extends prototype
 
     $with = preg_replace_callback($expr, function ($match)
       use($of) {
-      $test = date($match[1], $of > 0 ? $of : time::now());
+      $test = date($match[1], $of ? (is_timestamp($of) ? strtotime($of) : (int) $of) : time::now());
       $test = is_num($test) ? $test : ln('date.' . strtolower($test));
 
       return $test;

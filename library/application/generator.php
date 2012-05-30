@@ -105,7 +105,7 @@ app_generator::implement('app:prepare', function () {
       ! is_file($static_img) && copy($file, $static_img);
 
       assets::assign($path = str_replace($base_path.DS, '', $file), $file_hash);
-      success(ln('app.compiling_asset', array('name' => $path)));
+      success(ln('app.compiling_asset', array('name' => $path, 'hash' => $file_hash)));
     }
   }
 
@@ -115,18 +115,20 @@ app_generator::implement('app:prepare', function () {
         $out = array();
         $set = array_map(function ($val)
           use($base_path, $static_dir, &$out) {
-          static $regex = '/\bimg\/.+?\.(?:jpe?g|png|gif)\b/i';
 
-          $val = str_replace($base_path.DS, '', $val);
-          if (is_file($tmp = $static_dir.DS.$val)) {
-            $out []= preg_replace_callback($regex, function ($match) {
-              return assets::resolve($match[0]);
-            }, read($tmp));
-          }
+          $key = str_replace($base_path.DS, '', $val);
+
+          is_file($val) OR $val = $static_dir.DS.$key;
+          is_file($val) && $out[$key] = read($val);
         }, assets::extract($file, $type));
 
         if ( ! empty($out)) {
+          $set = array_keys($out);
           $out = join("\n", $out);
+
+          $out = preg_replace_callback('/\bimg\/\S+\.(?:jpe?g|png|gif)\b/i', function ($match) {
+            return assets::resolve($match[0]);
+          }, $out);
 
           write($tmp = TMP.DS.md5($file), $type === 'css' ? $css_min($out) : jsmin::minify($out));
 
@@ -137,7 +139,11 @@ app_generator::implement('app:prepare', function () {
           rename($tmp, mkpath(dirname($min_file)).DS.basename($min_file));
 
           assets::assign($path = str_replace($base_path.DS, '', $file), $hash);
-          success(ln('app.compiling_asset', array('name' => $path)));
+          success(ln('app.compiling_asset', array('name' => $path, 'hash' => $hash)));
+
+          foreach ($set as $one) {
+            notice(ln('app.appending_asset', array('name' => $one, 'hash' => $hash)));
+          }
         }
       }
     }
