@@ -305,13 +305,13 @@ class chess extends prototype
             }
           break;
           case '@include';
+            $top = trim($parent, '%');
             $mix = static::do_mixin($val);
 
-            static::build_properties($mix, $parent);
+            static::build_properties($mix, $top);
 
-            $old = isset(static::$sets[$parent]) ? static::$sets[$parent] : array();
-
-            static::$sets[$parent] = array_merge($old, $mix);
+            $old = isset(static::$sets[$top]) ? static::$sets[$top] : array();
+            static::$sets[$top] = array_merge($old, $mix);
           break;
           default;
           break;
