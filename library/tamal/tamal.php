@@ -34,6 +34,7 @@ class tamal extends prototype
                     '/ *?<!--#PRE#-->/' => '',
                     '/\s*,?\s+\)\s*/' => ')',
                     '/\?>\s*<\?php\s*/' => "\n",
+                    '/<\/li>\s*<li/' => '</li><li',
                     '/#\{(.+?)\}/' => '<?php echo \\1; ?>',
                     '/\}[\s;]*else(?=\s*if|\b)/s' =>'} else',
                     '/([,([])\s*([a-z][\w:-]+)\s*=>\s*/' => "\\1'\\2'=>",
@@ -115,7 +116,7 @@ class tamal extends prototype
       $next   = isset($test[$i + 1]) ? $test[$i + 1] : NULL;
       $indent = strlen($next) - strlen(ltrim($next));
 
-      if ( ! strlen($line)) {
+      if ( ! strlen(trim($line))) {
         continue;
       } elseif ($tab && ($tab % static::$defs['indent'])) {
         return FALSE;
@@ -266,7 +267,7 @@ class tamal extends prototype
     static $tags = NULL;
 
     $key  = static::unescape($key);
-    $text = static::unescape($text);
+    $text = ents(static::unescape($text));
 
 
     if (is_null($tags)) {
@@ -343,6 +344,7 @@ class tamal extends prototype
           $text = "<?php echo $key; ?>$text";
         } else {
           $text = trim($key) . $text;
+          $text = "\n$text\n";
         }
 
         $out  = ($tag OR $args) ? static::markup($tag ?: 'div', $args, $text) : $text;
