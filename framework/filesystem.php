@@ -64,7 +64,7 @@ function dirsize($of, $recursive = FALSE) {
  * Retrieve a file collection from given path
  *
  * @param     string Directory
- * @param     string Simple filter
+ * @param     mixed  Simple filter|Function callback
  * @param     mixed  DIR_RECURSIVE|DIR_EMPTY|DIR_SORT|DIR_MAP
  * @staticvar mixed  Empty paths
  * @staticvar mixed  Function callback
@@ -115,8 +115,14 @@ function dir2arr($from, $filter = '*', $options = FALSE) {
       unset($items[$old]);
 
       ! $map && ksort($items);
-    } elseif (($filter <> '*') && ! match($filter, $value)) {
-      unset($items[$old]);
+    } elseif ($filter <> '*') {
+      if (is_closure($filter)) {
+        if ( ! $filter($value)) {
+          unset($items[$old]);
+        }
+      } elseif ( ! fnmatch($filter, $value)) {
+        unset($items[$old]);
+      }
     } else {
       $value = ! $map ? basename($value) : $value;
     }
