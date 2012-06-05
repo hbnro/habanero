@@ -475,11 +475,7 @@ function mime($of) {
 
   $ext = ext($of) ?: $of;
 
-  if ( ! array_key_exists($ext, $types)) {
-    return 'application/octet-stream';
-  }
-
-  return $types[$ext];
+  return ! empty($types[$ext]) ? $types[$ext] : 'application/octet-stream';
 }
 
 /* EOF: ./framework/core/filesystem.php */
