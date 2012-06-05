@@ -4,21 +4,12 @@
   RewriteBase /
 
   # - Canonic URLs
-  # RewriteCond %{HTTP_HOST} !^www\.domain\.tld$
-  # RewriteRule ^(.*)$ http://www.domain.tld/$1 [L,R=301]
-
-  # - 4Ever alone scripts
-  # RewriteCond %{REQUEST_FILENAME} !-d
-  # RewriteCond %{REQUEST_FILENAME}.php -f
-  # RewriteRule ^([^/]*)/$ $1.php [PT,L]
-
-  # - Blocked directories
-  RewriteCond $1 ^(config|database|(controller|helper|model|task|view)s|library|tetlphp) [OR]
-  RewriteCond $1 ^((config|routes).php|.develop|Stubfile) [OR]
+  # RewriteCond %{HTTP_HOST} ^www\.domain\.tld$
+  # RewriteRule ^(.*)$ http://domain.tld/$1 [L,R=301]
 
   # - Conventional rewrite
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} -d [OR]
+  RewriteCond $1 !^(static|index\.php) [NC]
   RewriteRule ^(.*)$ index.php/$1 [PT,L]
 
   # - Default error fallback
