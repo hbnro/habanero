@@ -41,7 +41,8 @@ class a_query
         return $this;
       break;
       default;
-        raise(ln('method_missing', array('class' => $this->model, 'name' => $method)));
+        array_unshift($arguments, $this->defs);
+        return call_user_func_array("$this->model::$method", $arguments);
       break;
     }
   }
