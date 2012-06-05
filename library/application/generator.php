@@ -94,7 +94,7 @@ app_generator::implement('app:prepare', function () {
     }
   }
 
-  if ($test = dir2arr($img_path, '*.(jpe?g|png|gif)$', DIR_RECURSIVE | DIR_MAP)) {
+  if ($test = dir2arr($img_path, '*', DIR_RECURSIVE | DIR_MAP)) {
     foreach (array_filter($test, 'is_file') as $file) {
       $file_hash  = md5(md5_file($file) . filesize($file));
       $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
@@ -110,7 +110,7 @@ app_generator::implement('app:prepare', function () {
   }
 
   foreach (array('css', 'js') as $type) {
-    if ($test = dir2arr($base_path.DS.$type, "*.$type$")) {
+    if ($test = dir2arr($base_path.DS.$type, "*.$type")) {
       foreach ($test as $file) {
         $out = array();
         $set = array_map(function ($val)
