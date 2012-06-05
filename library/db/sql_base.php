@@ -130,7 +130,7 @@ class sql_base extends sql_raw
       if (is_numeric($key)) {
         $sql []= is_array($val) ? $this->build_where($val, $operator) : $val;
       } elseif (is_keyword($key)) {
-        $sql []= sprintf('(%s)', $this->build_where($val, strtoupper($key)));
+        $sql []= sprintf('(%s)', trim($this->build_where($val, strtoupper($key))));
       } elseif (preg_match('/_(?:and|or)_/i', $key, $match)) {
         $sub = array();
         foreach (explode($match[0], $key) as $one) {
