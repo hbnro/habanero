@@ -35,7 +35,7 @@ function run(Closure $bootstrap) {
 function debug() {
   if (php_sapi_name() <> 'cli') {// TODO: really?
     $message = join(func_get_args(), '');
-    $message = str_replace(array("\r", "\n"), ' ', $message);
+    $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
 
     error_log($message);
   }
