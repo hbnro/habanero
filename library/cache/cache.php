@@ -148,7 +148,7 @@ class cache extends prototype
    */
   final public static function remove($key) {
     if (is_string($key) && ! is_false(strpos($key, ','))) {
-      $key = explode(',', $key);
+      $key = array_filter(explode(',', $key));
     }
 
 
