@@ -215,9 +215,13 @@ class a_record extends prototype
   /**
    * The record has changed?
    *
+   * @param  string  Column
    * @return boolean
    */
-  final public function has_changed() {
+  final public function has_changed($field = FALSE) {
+    if ($field) {
+      return in_array($field, $this->changed);
+    }
     return ! empty($this->changed);
   }
 
