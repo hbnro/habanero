@@ -108,11 +108,6 @@ app::implement('raise', function ($message, $debug = NULL) {
   $trace = array_slice(debug_backtrace(FALSE), 1);
 
 
-  // finalize opened buffers
-  while (ob_get_level()) {
-    ob_end_clean();
-  }
-
   if ( ! empty($GLOBALS['--raise-message'])) {// this could be used in fatal error scenarios
     $message = $GLOBALS['--raise-message'];
     unset($GLOBALS['--raise-message']);
