@@ -126,7 +126,7 @@ class assets extends prototype
    */
   final public static function read($path) {
     $file = APP_PATH.DS.'views'.DS.'assets'.DS.$path;
-    $file = findfile(dirname($file), extn($file, TRUE) . '*', FALSE, 1);
+    $file = findfile(dirname($file), basename($file) . '*', FALSE, 1);
 
     if (is_file($file)) {
       if (preg_match('/\.(jpe?g|png|gif)$/i', $path) OR preg_match('/\.(css|js)$/', $file)) {
