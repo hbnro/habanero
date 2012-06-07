@@ -137,7 +137,7 @@ class upload extends prototype
         return static::set_error(UPLOAD_ERR_EXT);
       }
 
-      $name = slug($set['name'][$i], '_');
+      $name = slug($set['name'][$i], '_', SLUG_STRICT);
       $file = static::$defs['path'].DS.$name;
 
       if ( ! is_true(static::$defs['unique'])) {

@@ -127,7 +127,7 @@ class cache extends prototype
 
       $old[$key] = $tags;
 
-      static::store_item('--cache-tags', $old, NEVER);
+      static::store_item('--cache-tags', $old, 1234567890);
     }
 
     if ($max > 0) {
@@ -148,7 +148,7 @@ class cache extends prototype
    */
   final public static function remove($key) {
     if (is_string($key) && ! is_false(strpos($key, ','))) {
-      $key = explode(',', $key);
+      $key = array_filter(explode(',', $key));
     }
 
 
@@ -166,7 +166,7 @@ class cache extends prototype
 
         unset($old[$i]);
       }
-      return static::store_item('--cache-tags', $old, NEVER);
+      return static::store_item('--cache-tags', $old, 1234567890);
     }
     return static::delete_item($key);
   }

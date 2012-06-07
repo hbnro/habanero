@@ -461,10 +461,12 @@ class chess extends prototype
 
   // solve css expressions
   final private static function do_solve($text) {
-    static $set = NULL;
+    static $mix = '',
+           $set = NULL;
 
 
     if (is_null($set)) {
+      $mix  = join('|', array_map('preg_quote', array_keys(chess_helper::methods())));
       $test = include __DIR__.DS.'assets'.DS.'scripts'.DS.'named_colors.php';
 
       foreach ($test as $key => $val) {
@@ -483,7 +485,7 @@ class chess extends prototype
       {
         $old  = strlen($text);
 
-        $text = preg_replace_callback('/(?<![\-._])(\w[\w-]+?|[%#]\w*?)\(([^\(\)]+)\)/', 'static::do_helper', $text);
+        $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
         $text = static::do_math(static::do_vars($text, static::$props));
         $text = preg_replace(array_keys($set), $set, $text);
 
@@ -495,17 +497,7 @@ class chess extends prototype
 
   // css helper callback
   final private static function do_helper($match) {
-    $args = static::do_solve($match[2]);
-    $args = array_map('trim', explode(',', $args));
-
-    if ( ! chess_helper::defined($match[1])) {
-      return "$match[1]!($match[2])" . ( ! empty($match[3]) ? $match[3] : '');
-    }
-
-    $out = chess_helper::apply($match[1], $args);
-    $out = ! empty($match[3]) ? value($out, substr($match[3], 1)) : $out;
-
-    return $out;
+    return chess_helper::apply($match[1], array_map('trim', explode(',', static::do_solve($match[2]))));
   }
 
   // solve math operations

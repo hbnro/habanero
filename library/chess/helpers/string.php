@@ -5,6 +5,18 @@
  */
 
 /**
+ * Force quoting
+ *
+ * @param  mixed  Text|...
+ * @return string
+ */
+chess_helper::implement('qt', function () {
+  $args = func_get_args();
+  return sprintf("'%s'", join('', $args));
+});
+
+
+/**
  * List quoting
  *
  * @param  mixed  Text|...

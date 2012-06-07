@@ -70,8 +70,8 @@
  background-image: -o-linear-gradient(left, $start, $end);
  background-image: linear-gradient(left, $start, $end);
 
- filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end', GradientType=1);
- -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end', GradientType=1);
+ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt($start), endColorstr=qt($end), GradientType=1);
+ -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt($start), endColorstr=qt($end), GradientType=1);
 }
 
 @mixin vertical_gradient($start: #555, $end: #333) {
@@ -87,8 +87,8 @@
 
  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(fval(#($start, 2, 0)), #($start, 1)), color-stop(fval(#($end, 2, 1)), #($end, 1)));
 
- filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#($start, 1)', endColorstr='#($end, 1)', GradientType=0);
- -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#($start, 1)', endColorstr='#($end, 1)', GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(#($start, 1)), endColorstr=qt(#($end, 1)), GradientType=0);
+ -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(#($start, 1)), endColorstr=qt(#($end, 1)), GradientType=0);
 }
 
 @mixin directional_gradient($start: #555, $end: #333, $deg: 45deg) {
