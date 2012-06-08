@@ -128,7 +128,16 @@ class sql_base extends sql_raw
 
     foreach ($test as $key => $val) {
       if (is_numeric($key)) {
-        $sql []= is_array($val) ? $this->build_where($val, $operator) : $val;
+        if ( ! is_assoc($val)) {
+          $raw = array_shift($val);
+          if ($val && strpos($raw, '?')) {
+            $sql []= $this->prepare($raw, $val);
+          } else {
+            array_unshift($val, $raw) && $sql []= join("\n", $val);
+          }
+        } else {
+          $sql []= is_array($val) ? $this->build_where($val, $operator) : $val;
+        }
       } elseif (is_keyword($key)) {
         $sql []= sprintf('(%s)', trim($this->build_where($val, strtoupper($key))));
       } elseif (preg_match('/_(?:and|or)_/i', $key, $match)) {
