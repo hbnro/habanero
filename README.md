@@ -11,12 +11,20 @@ Features
   * It has a bootstrap mechanism with a detailed error reporting behavior.
   * Integrated i18n for most basic language operations
     with support for different file formats.
-  * Core utilities to work with  configuration files,
-    conditions, filesystem and hypertext.
+  * Core utilities to work with  configuration files, arrays,
+    conditions, filesystem, hypertext and so on.
+  * Also comes with tasks, generators, migrations and vhost utilities.
   * [Heroku](http://heroku.com/) friendly, so it should work fine.
 
-Installation
-------------
+Automatic install
+-----------------
+
+    curl https://raw.github.com/pateketrueke/tetlphp/master/get.sh | sudo sh
+
+The code is not evil, so don't worry about it, it will do the job for you. ;-)
+
+Manual installation
+-------------------
 
 Just download the latest zip file from the [downloads section](http://tinyurl.com/gettetl)
 and unpack it or if you wish clone the entire repository.
