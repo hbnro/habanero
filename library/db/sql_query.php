@@ -71,7 +71,7 @@ class sql_query extends sql_base
     if (is_assoc($vars)) {
       $sql = strtr($sql, $this->fixate_string($vars, FALSE));
     } else {
-      $args = $this->fixate_string(array_slice($vars, 1), FALSE);
+      $args = $this->fixate_string($vars, FALSE);
       $sql  = preg_replace('/((?<!\\\)\?)/e', 'array_shift($args);', $sql);
     }
 
