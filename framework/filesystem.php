@@ -140,7 +140,8 @@ function dir2arr($from, $filter = '*', $options = FALSE) {
 
     foreach ($items as $value) {
       if (is_scalar($value)) {
-        $output []= $value;
+        is_file($value) && $output []= $value;
+        is_dir($value) && $empty && $output []= $value;
       } else {
         $output = array_merge($output, $value);
       }
