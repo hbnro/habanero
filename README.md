@@ -24,7 +24,7 @@ The code is not evil, so don't worry about it, it will do the job for you. ;-)
 Manual installation
 -------------------
 
-Just download the latest zip file from the [downloads section](http://tinyurl.com/gettetl)
+Just download the latest zip file from the [downloads section](https://github.com/pateketrueke/tetlphp/zipball/master)
 and unpack it or if you wish clone the entire repository.
 
     git clone git://github.com/pateketrueke/tetlphp.git
