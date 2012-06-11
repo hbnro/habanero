@@ -12,19 +12,19 @@ $lang['generator_intro'] = <<<INTRO
     atl \bgreen(<command>)\b [arguments] [...]
 
   Extras:
-    --run \bcyan(script[:param])\b    \cdark_gray(*)\c Execute tasks and scripts
-    --task \clight_gray([--php])\c \bcyan(name)\b     \cdark_gray(*)\c Generate scripts/tasks for the application
+    --run \bcyan(script[:param])\b      Execute tasks and scripts
+    --task \clight_gray([--php])\c \bcyan(name)\b       Generate scripts/tasks for the application
            \clight_gray([command] [...])\c
-    --config \bcyan([--item=value])\b \cdark_gray(*)\c Display and set the configuration options
+    --config \bcyan([--item=value])\b   Display and set the configuration options
              \clight_gray([...] [--global|app|dev|prod])\c
 
     --install               \cyellow(*)\c Configure the framework
     --uninstall             \cyellow(*)\c Remove the framework configuration
     --vhost \bred([--remove])\b      \cyellow(*)\c Create or remove virtual hosts in the system
 
-    --open                  \cdark_gray(*)\c Launch the default browser with virtual host domain
-    --stub \clight_gray([--no-compress])\c  \cdark_gray(*)\c Make a local copy from the system libraries
-    --help                  \cdark_gray(*)\c Display the descriptions of all generators
+    --open                    Launch the default browser with virtual host domain
+    --stub \clight_gray([--no-compress])\c    Make a local copy from the system libraries
+    --help                    Display the descriptions of all generators
 
     \cyellow(* needs sudo permissions)\c
 

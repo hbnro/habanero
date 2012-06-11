@@ -12,19 +12,19 @@ $lang['generator_intro'] = <<<INTRO
     atl \bgreen(<comando>)\b [argumentos] [...]
 
   Extras:
-    --run \bcyan(script[:param])\b    \cdark_gray(*)\c Ejecuta tareas programadas
-    --task \clight_gray([--php])\c \bcyan(name)\b     \cdark_gray(*)\c Genera scripts/tareas para la aplicación
+    --run \bcyan(script[:param])\b      Ejecuta tareas programadas
+    --task \clight_gray([--php])\c \bcyan(name)\b       Genera scripts/tareas para la aplicación
            \clight_gray([command] [...])\c
-    --config \bcyan([--item=value])\b \cdark_gray(*)\c Muestra y modifica las opciones de configuración
+    --config \bcyan([--item=value])\b   Muestra y modifica las opciones de configuración
              \clight_gray([...] [--global|app|dev|prod])\c
 
     --install               \cyellow(*)\c Configura el include_path de php
     --uninstall             \cyellow(*)\c Elimina la configuración del include_path
     --vhost \bred([--remove])\b      \cyellow(*)\c Crea o elimina un host virtual en el sistema
 
-    --open                  \cdark_gray(*)\c Abre el host virtual en el navegador por defecto
-    --stub \clight_gray([--no-compress])\c  \cdark_gray(*)\c Crea una copia local con las librerías del sistema
-    --help                  \cdark_gray(*)\c Muestra la descripción de uso de los generadores
+    --open                    Abre el host virtual en el navegador por defecto
+    --stub \clight_gray([--no-compress])\c    Crea una copia local con las librerías del sistema
+    --help                    Muestra la descripción de uso de los generadores
 
     \cyellow(* requiere permisos de sudo)\c
 
