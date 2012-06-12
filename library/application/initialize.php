@@ -31,7 +31,7 @@ app::bind(function ($bootstrap) {
       ));
     }, array(
       'constraints' => array(
-        '*path' => '(?:css|js)/.+',
+        '*path' => '(?:img|css|js)/.+',
       ),
     ));
   }
