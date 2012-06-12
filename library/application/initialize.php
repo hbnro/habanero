@@ -29,7 +29,11 @@ app::bind(function ($bootstrap) {
         'output' => assets::read(params('path')),
         'type' => mime(ext(params('path'))),
       ));
-    });
+    }, array(
+      'constraints' => array(
+        '*path' => '(?:css|js)/.+',
+      ),
+    ));
   }
 
   routing::load(APP_PATH.DS.'routes'.EXT, array('safe' => TRUE));
