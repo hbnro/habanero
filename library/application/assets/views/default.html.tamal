@@ -7,10 +7,10 @@
 head
   meta { charset => 'UTF-8' }
   title = $title
+  = $head
+  = before_body()
   = tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css')
   = tag_for('modernizr-2.0.6.min.js')
-  = before_body()
-  = $head
 body
   #wrapper
     header = $title
