@@ -9,6 +9,7 @@
 
   # - Conventional rewrite
   RewriteCond %{REQUEST_FILENAME} -d [OR]
+  RewriteCond %{REQUEST_FILENAME} !-f [OR]
   RewriteCond $1 !^(static|index\.php) [NC]
   RewriteRule ^(.*)$ index.php/$1 [PT,L]
 
