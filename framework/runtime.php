@@ -207,7 +207,7 @@ function match($expr, $subject = NULL, array $constraints = array()) {
       }
 
       $item  = preg_quote($item, '/');
-      $value = strtr($value, '/', '\\/');
+      $value = str_replace('/', '\\/', $value);
       $expr  = str_replace($item, "(?<$as>$value)", $expr);
     }
   }
