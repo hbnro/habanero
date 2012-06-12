@@ -16,7 +16,9 @@ chess_helper::implement('image_size', function ($path, $key = -1) {
 
 
   if (empty($cache[$path])) {
-    $img_file = chess::path($path);
+    if ( ! is_file($img_file = chess::path($path))) {
+      return;
+    }
     $cache[$path] = getimagesize($img_file);
   }
 
