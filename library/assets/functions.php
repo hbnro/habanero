@@ -46,4 +46,18 @@ function asset_url() {
   return assets::apply('url_for', $args);
 }
 
+// image embedding
+function image_tag($src, $alt = NULL, array $attrs = array()) {
+  if (is_array($alt)) {
+    $attrs = $alt;
+    $alt   = $src;
+  } else {
+    $attrs['alt'] = $alt ?: $src;
+  }
+
+  $attrs['src'] = assets::url_for($src, 'img');
+
+  return tag('img', $attrs);
+}
+
 /* EOF: ./library/assets/functions.php */
