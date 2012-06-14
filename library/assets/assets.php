@@ -159,21 +159,25 @@ class assets extends prototype
 
   /**
    * @param
-   * @param
    * @return array
    */
-  final public static function extract($file, $type) {
-    $set  = array();
-    $test = preg_replace_callback('/\s+\*=\s+(\S+)/m', function ($match)
-      use($type, &$set) {
-        $test_file = APP_PATH.DS.'views'.DS.'assets'.DS.$type.DS.$match[1];
+  final public static function extract($file) {
+    $type = ext($file);
+    $test = array(
+      'require' => array(),
+      'include' => array(),
+    );
 
+    // TODO: allow imports, sub-manifests, trees?
+    if (preg_match_all('/\s+\*=\s+(require|include)\s+(\S+)/m', read($file), $match)) {
+      foreach ($match[1] as $i => $key) {
+        $test_file = APP_PATH.DS.'views'.DS.'assets'.DS.$type.DS.$match[2][$i];
         @list($path, $name) = array(dirname($test_file), basename($test_file));
+        $test[$key] []= $path.DS."$name.$type";
+      }
+    }
 
-        $set []= $path.DS."$name.$type";
-    }, read($file));
-
-    return $set;
+    return $test;
   }
 
 

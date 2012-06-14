@@ -31,9 +31,6 @@ $lang['controller_class_building'] = 'Generando clase por defecto del controlado
 $lang['controller_route_building'] = 'Generando ruta por defecto del controlador %{name}';
 $lang['controller_view_building'] = 'Generando vista por defecto del controlador %{name}';
 
-$lang['compiling_asset'] = 'Compilando %{name} (%{hash})';
-$lang['appending_asset'] = 'Agregando %{name}';
-
 $lang['generator_title'] = 'Generador de la aplicación';
 $lang['generator_usage'] = <<<HELP
 
@@ -48,9 +45,6 @@ $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Generador de la acción por defecto)\c
     \bgreen(app:action)\b \bcyan(controller:name)\b [--view] [--method=get|put|post|delete]
-
-  \clight_gray(Genera los assets de la aplicación para producción)\c
-    \bgreen(app:prepare)\b
 
 
 HELP;

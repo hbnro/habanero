@@ -31,9 +31,6 @@ $lang['controller_class_building'] = 'Generating default class for controller %{
 $lang['controller_route_building'] = 'Generating route for default controller %{name}';
 $lang['controller_view_building'] = 'Generating view for default controller %{name}';
 
-$lang['compiling_asset'] = 'Compiling file %{name} (%{hash})';
-$lang['appending_asset'] = 'Appending file %{name}';
-
 $lang['generator_title'] = 'Application generator';
 $lang['generator_usage'] = <<<HELP
 
@@ -48,9 +45,6 @@ $lang['generator_usage'] = <<<HELP
 
   \clight_gray(Default action generator)\c
     \bgreen(app:action)\b \bcyan(controller:name)\b [--view] [--method=get|put|post|delete]
-
-  \clight_gray(Build application assets to production)\c
-    \bgreen(app:prepare)\b
 
 
 HELP;
