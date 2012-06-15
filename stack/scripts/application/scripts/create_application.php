@@ -50,8 +50,6 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path.DS.'static'.DS.'js');
         chmod($app_path.DS.'static'.DS.'js', 0777);
-    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'jquery.min.js');
-    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'modernizr.min.js');
 
      copy_dir($app_path, $skel_dir.DS.'tasks');
 
@@ -63,6 +61,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css.chess');
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js');
+    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'jquery.min.js');
+    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'modernizr.min.js');
   create_file($app_path.DS.'views'.DS.'assets'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
     ' *= require jquery.min',
     ' *= require modernizr.min',

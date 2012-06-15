@@ -10,7 +10,7 @@ head
   = $head
   = before_body()
   = tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css')
-  = tag_for('modernizr.js')
+  = tag_for('modernizr.min.js')
 body
   #wrapper
     header = $title
@@ -19,7 +19,7 @@ body
       &mdash;
       = ticks(BEGIN)
     script { src => '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' }
-    <script>window.jQuery || document.write("<script src='<?php echo asset_url('jquery.js'); ?>'>\x3C/script>")</script>
+    <script>window.jQuery || document.write("<script src='<?php echo asset_url('jquery.min.js'); ?>'>\x3C/script>")</script>
   = after_body()
   :script
     window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
