@@ -100,15 +100,16 @@ function template($to, $from, array $vars = array()) {
   write($to.DS.basename($from), $render($from, $vars));
 }
 
-function gsub_file($path, $regex, $replace) {
+function gsub_file($path, $regex, $replace, $position = 0) {
   if ( ! is_file($path)) {
     return FALSE;
   }
 
-  $callback = 'preg_replace';
-  is_closure($replace) && $callback .= '_callback';
-
-  return write($path, $callback($regex, $replace, read($path)));
+  return write($path, preg_replace_callback($regex, function ($match)
+    use($replace, $position) {
+    $tmp = is_closure($replace) ? $replace($match) : $replace;
+    return ! $position ? $tmp : ($position < 0 ? "$tmp$match[0]" : "$match[0]$tmp");
+  }, read($path)));
 }
 
 function append_file($path, $content) {
@@ -122,10 +123,16 @@ function prepend_file($path, $content) {
 function inject_into_file($path, $content, array $params = array()) {
   $regex = '/$/s';
 
+  if ( ! empty($params['unless'])) {
+    if (preg_match($params['unless'], read($path))) {
+      return FALSE;
+    }
+  }
+
   ! empty($params['after']) && $regex = $params['after'];
   ! empty($params['before']) && $regex = $params['before'];
 
-  return gsub_file($path, $regex, $content);
+  return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : 1);
 }
 
 function action($format, $text, $what) {
