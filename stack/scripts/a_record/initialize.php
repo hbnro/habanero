@@ -1,5 +1,6 @@
 <?php
 
+import('db');
 import('a_record');
 
 i18n::load_path(__DIR__.DS.'locale', 'ar');
@@ -24,13 +25,7 @@ app_generator::implement('ar:model', function ($name = '') {
       error(ln('ar.model_already_exists', array('name' => $name)));
     } else {
       success(ln('ar.model_class_building', array('name' => $name)));
-
-      $type   = cli::flag('parent') ?: 'db_model';
-      $parent = $table ? "\n  public static \$table = '$table';" : '';
-      $code   = "<?php\n\nclass $name extends $type"
-              . "\n{{$parent}\n}\n";
-
-      write($out_file, $code);
+      add_class($out_file, $name, cli::flag('parent') ?: 'db_model', '', $table ? compact('table') : array());
     }
   }
 });
@@ -39,7 +34,7 @@ app_generator::implement('ar:model', function ($name = '') {
 app_generator::implement('ar:backup', function ($model = '') {
   @list($model, $name) = explode(':', $model);
 
-  if ( ! $name) {
+  if ( ! $model) {
     error(ln('ar.missing_model_name'));
   } else {
     $model_file = APP_PATH.DS.'models'.DS.$model.EXT;
@@ -85,9 +80,10 @@ app_generator::implement('ar:backup', function ($model = '') {
 
             $data = array();
 
-            foreach ($model::all() as $one) {
+            $model::each(function ($one)
+              use(&$data) {
               $data []= $one->fields();
-            }
+            });
 
             write($php_file, sprintf('<' . "?php return %s;\n", var_export($data, TRUE)));
             done();
@@ -116,9 +112,25 @@ app_generator::implement('ar:console', function () {
   }
 
 
-  cli::main(function () {
+  $cache = array();
 
-    $_ = cli::readln('>>> ');
+  if ($readline = function_exists('readline')) {
+    readline_completion_function(function () {
+      return array();
+    });
+  }
+
+  $callback = $readline ? 'readline' : 'cli::readln';
+
+  cli::main(function ()
+    use($callback, $readline, &$cache) {
+
+    $_ = trim(call_user_func($callback, '>>> '));
+
+    if ($readline && $_ && ! in_array($_, $cache)) {
+      readline_add_history($_);
+      $cache []= $_;
+    }
 
     if (in_array($_, array('exit', 'quit'))) {
       cli::quit();
