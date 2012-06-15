@@ -4,9 +4,24 @@ i18n::load_path(__DIR__.DS.'locale', 'assets');
 
 app_generator::usage('assets', ln('assets.usage'));
 
-// TODO: clean, etc?
 app_generator::alias('assets:prepare', 'precompile compile build');
+app_generator::alias('assets:clean', 'clean clear');
 
+
+// cleanup
+app_generator::implement('assets:clean', function () {
+  $static_dir = APP_PATH.DS.'static';
+
+  info(ln('assets.clean_up_resources'));
+
+  if ($old = findfile($static_dir, '*.*', TRUE)) {
+    foreach ($old as $file) {
+      if (preg_match('/[a-f0-9]{32}\.(?:css|js)$/', basename($file))) {
+        unlink($file);
+      }
+    }
+  }
+});
 
 // assets handling
 app_generator::implement('assets:prepare', function () {
@@ -28,21 +43,12 @@ app_generator::implement('assets:prepare', function () {
   }
 
 
+  app_generator::apply('assets:clean');
+
   $base_path  = APP_PATH.DS.'views'.DS.'assets';
   $static_dir = APP_PATH.DS.'static';
   $img_path   = $base_path.DS.'img';
   $img_dir    = $static_dir.DS.'img';
-
-
-  foreach (array('css', 'img', 'js') as $one) {
-    if (is_dir($path = $static_dir.DS.$one)) {
-      foreach (dir2arr($path, '*', DIR_RECURSIVE | DIR_MAP) as $file) {
-        if (preg_match('/^.+?([a-f0-9]{32})\.\w+$/', basename($file), $match)) {
-          @unlink($file);
-        }
-      }
-    }
-  }
 
   if ($test = dir2arr($img_path, '*', DIR_RECURSIVE | DIR_MAP)) {
     foreach (array_filter($test, 'is_file') as $file) {
