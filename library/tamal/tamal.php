@@ -242,7 +242,7 @@ class tamal extends prototype
           continue;
         } elseif (substr(trim($key), 0, 1) === ':') {
           $value = trim(join("\n", static::flatten($value)));
-          $out []= static::filtrate(trim(substr($key, 1)), $value);
+          $out []= static::filtrate(substr(trim($key), 1), $value);
           continue;
         } elseif (substr(trim($key), 0, 1) === '/') {
           $value = join("\n|", static::flatten($value));
