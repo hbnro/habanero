@@ -135,7 +135,7 @@ function inject_into_file($path, $content, array $params = array()) {
   return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : 1);
 }
 
-function add_class($path, $name, $parent = '', $methods = '', $properties = '') {
+function add_class($path, $name, $parent = '', $methods = '', array $properties = array()) {
   $type   = $parent ? " extends $parent" : '';
   $props  =
   $method = '';
@@ -150,8 +150,8 @@ function add_class($path, $name, $parent = '', $methods = '', $properties = '') 
 
   if ( ! empty($properties)) {
     $test = array();
-    foreach ((array) $properties as $one) {
-      $test []= "  static $$one;\n";
+    foreach ($properties as $key => $val) {
+      $test []= "  static $$key = '$val';";
     }
     $props = join("\n", $test);
     $props = "$props\n";
