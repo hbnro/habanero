@@ -505,10 +505,12 @@ class form extends prototype
    * @param     string Method
    * @param     array  Arguments
    * @staticvar array  Input types
+   * @staticvar array  Allowed methods
    * @return    string
    */
   final public static function missing($method, $arguments) {
-    static $test = NULL;
+    static $test = NULL,
+           $allow = array('get', 'put', 'post', 'delete');
 
 
     if (is_null($test)) {
@@ -516,28 +518,26 @@ class form extends prototype
       $test = $test['types'];
     }
 
-    @list($method, $key) = explode('_', $method);
-
-    switch ($method) {
-      case 'get';
-      case 'put';
-      case 'post';
-      case 'delete';
-        $params = compact('method');
-        $key && $params[$key] = TRUE;
-
-        $arguments []= $params;
-
-        return static::apply('to', $arguments);
-      break;
-      default;
-      break;
-    }
-
 
     $type = strtr($method, '_', '-');
 
     if ( ! in_array($type, $test)) {
+      $params = array();
+      $lambda = array_pop($arguments);
+      $action = array_shift($arguments);
+
+      foreach (explode('_', $method) as $part) {
+        if (in_array($part, $allow)) {
+          $params['method'] = $part;
+        } else {
+          $params[$part] = array_shift($arguments) ?: TRUE;
+        }
+      }
+
+
+      if ( ! empty($params['method'])) {
+        return static::to($action, $lambda, $params);
+      }
       raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
     }
 
