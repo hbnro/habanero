@@ -26,8 +26,6 @@ require __DIR__.DS.'sql_raw'.EXT;
 require __DIR__.DS.'sql_base'.EXT;
 require __DIR__.DS.'sql_query'.EXT;
 require __DIR__.DS.'sql_scheme'.EXT;
-
-require __DIR__.DS.'migration'.EXT;
 /**#@-*/
 
 /* EOF: ./library/db/initialize.php */

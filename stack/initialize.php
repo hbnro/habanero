@@ -1,5 +1,9 @@
 <?php
 
+/**#@+
+ * @ignore
+ */
+
 require dirname(__DIR__).'/framework/initialize.php';
 
 i18n::load_path(__DIR__.DS.'locale');
@@ -31,13 +35,8 @@ run(function () {
   if (is_dir($path = APP_PATH.DS.'tasks')) {
     array_map('app_generator::task', dir2arr($path, '*'.EXT));
 
-    if ($set = findfile($path, 'initialize'.EXT, TRUE)) {
-      foreach ($set as $task_file) {
-        /**
-         * @ignore
-         */
-        require $task_file;
-      }
+    foreach (array_filter(dir2arr(APP_PATH.DS.'tasks', '*'), 'is_dir') as $path) {
+      require $path.DS.'initialize'.EXT;
     }
   }
 
@@ -48,17 +47,9 @@ run(function () {
       require func_get_arg(1);
     }, $test, $mod_file);
   } else {
-    foreach (array(dirname(LIB), APP_PATH) as $path) {
-      if ($set = findfile($path.DS.'library', 'generator'.EXT, TRUE)) {
-        foreach ($set as $gen_file) {
-          /**
-           * @ignore
-           */
-          require $gen_file;
-        }
-      }
+    foreach (array_filter(dir2arr(__DIR__.DS.'scripts', '*'), 'is_dir') as $path) {
+      require $path.DS.'initialize'.EXT;
     }
-
 
     if (cli::flag('help')) {
       cli::write(cli::format(app_generator::help($cmd)));
@@ -67,5 +58,7 @@ run(function () {
     }
   }
 });
+
+/**#@-*/
 
 /* EOF: ./stack/initialize.php */
