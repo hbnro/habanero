@@ -1,6 +1,6 @@
 <?php
 
-$name = cli::flag('name', $callback);
+$name = cli::flag('name') ?: $callback;
 $time = time();
 
 $migration_name = date('YmdHis_', $time).$args[0].'_'.$name;

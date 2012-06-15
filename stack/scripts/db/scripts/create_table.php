@@ -54,11 +54,7 @@ if ( ! $table) {
 
         if ( ! is_file($out_file)) {
           success(ln('db.model_class_building', array('name' => $table)));
-
-          $code   = "<?php\n\nclass $table extends db_model"
-                  . "\n{\n}\n";
-
-          write($out_file, $code);
+          add_class($out_file, $table, 'db_model');
         }
       }
     }
