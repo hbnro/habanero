@@ -39,4 +39,4 @@ if ( ! is_file($migration_file)) {
 
 eval($code);
 
-/* EOF: ./library/db/scripts/build_migration.php */
+/* EOF: ./stack/scripts/db/scripts/build_migration.php */

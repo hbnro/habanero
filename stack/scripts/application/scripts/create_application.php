@@ -104,4 +104,4 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path, $skel_dir.DS.'routes'.EXT);
     copy_file($app_path, $skel_dir.DS.'index'.EXT);
 
-/* EOF: ./library/application/scripts/create_application.php */
+/* EOF: ./stack/scripts/application/scripts/create_application.php */

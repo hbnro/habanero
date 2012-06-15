@@ -125,4 +125,4 @@ function remove_index($from, $name) {
   return (boolean) db::remove_index($name);
 }
 
-/* EOF: ./library/db/migration.php */
+/* EOF: ./stack/scripts/db/functions.php */

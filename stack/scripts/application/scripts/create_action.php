@@ -40,4 +40,4 @@ if ( ! $parent) {
   }
 }
 
-/* EOF: ./library/application/scripts/create_action.php */
+/* EOF: ./stack/scripts/application/scripts/create_action.php */

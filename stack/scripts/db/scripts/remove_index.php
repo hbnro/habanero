@@ -20,4 +20,4 @@ if (check_table($from)) {
   }
 }
 
-/* EOF: ./library/db/scripts/remove_index.php */
+/* EOF: ./stack/scripts/db/scripts/remove_index.php */

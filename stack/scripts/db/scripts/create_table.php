@@ -67,4 +67,4 @@ if ( ! $table) {
 
 done();
 
-/* EOF: ./library/db/scripts/create_table.php */
+/* EOF: ./stack/scripts/db/scripts/create_table.php */

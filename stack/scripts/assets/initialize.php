@@ -2,7 +2,7 @@
 
 i18n::load_path(__DIR__.DS.'locale', 'assets');
 
-app_generator::usage('assets', ln('assets.generator_title'), ln('assets.generator_usage'));
+app_generator::usage('assets', ln('assets.usage'));
 
 // TODO: clean, etc?
 app_generator::alias('assets:prepare', 'precompile compile build');
@@ -118,4 +118,4 @@ app_generator::implement('assets:prepare', function () {
   assets::save();
 });
 
-/* EOF: ./library/assets/generator.php */
+/* EOF: ./stack/scripts/assets/initialize.php */

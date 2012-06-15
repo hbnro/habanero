@@ -61,4 +61,4 @@ if (cli::flag('schema')) {
 
 done();
 
-/* EOF: ./library/db/scripts/make.php */
+/* EOF: ./stack/scripts/db/scripts/make.php */

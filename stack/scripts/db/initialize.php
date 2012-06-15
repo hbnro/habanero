@@ -1,6 +1,11 @@
 <?php
 
-require __DIR__.DS.'initialize'.EXT;
+/**#@+
+ * @ignore
+ */
+import('db');
+
+require __DIR__.DS.'functions'.EXT;
 
 db::implement('missing', function ($method, array $arguments) {
   return call_user_func_array(array(db()->conn, $method), $arguments);
@@ -8,7 +13,7 @@ db::implement('missing', function ($method, array $arguments) {
 
 i18n::load_path(__DIR__.DS.'locale', 'db');
 
-app_generator::usage('db', ln('db.generator_title'), ln('db.generator_usage'));
+app_generator::usage('db', ln('db.usage'));
 
 app_generator::alias('db:status', 'db');
 app_generator::alias('db:migrate', 'migrate');
@@ -175,4 +180,6 @@ function db() {
   return $res;
 }
 
-/* EOF: ./library/db/generator.php */
+/**#@-*/
+
+/* EOF: ./stack/scripts/db/initialize.php */

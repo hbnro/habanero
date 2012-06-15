@@ -28,4 +28,4 @@ if (empty($test)) {
 
 done();
 
-/* EOF: ./library/db/scripts/db_status.php */
+/* EOF: ./stack/scripts/db/scripts/db_status.php */

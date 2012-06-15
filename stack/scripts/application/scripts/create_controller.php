@@ -33,4 +33,4 @@ if (is_file($out_file)) {
   }
 }
 
-/* EOF: ./library/application/scripts/create_controller.php */
+/* EOF: ./stack/scripts/application/scripts/create_controller.php */

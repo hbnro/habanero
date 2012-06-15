@@ -26,4 +26,4 @@ if (check_table($from)) {
   }
 }
 
-/* EOF: ./library/db/scripts/rename_column.php */
+/* EOF: ./stack/scripts/db/scripts/rename_column.php */

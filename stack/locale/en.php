@@ -4,7 +4,7 @@
  * English generator strings
  */
 
-$lang['generator_intro'] = <<<INTRO
+$lang['welcome'] = <<<INTRO
 
   Welcome to the \blight_gray,black(atl)\b console utility!
 
@@ -32,6 +32,10 @@ $lang['generator_intro'] = <<<INTRO
     \bwhite(sudo)\b atl --vhost
     atl --run rsync:deploy
     atl --config --global --language=es
+    atl assets:prepare
+    atl app:create blog
+    atl db:create_table post title:string body:text --timestamps
+    atl ar:model post
 
 
 INTRO;

@@ -15,4 +15,4 @@ success(ln('app.sizing_files', array('size' => fmtsize($size))));
 
 done();
 
-/* EOF: ./library/application/scripts/app_status.php */
+/* EOF: ./stack/scripts/application/scripts/app_status.php */

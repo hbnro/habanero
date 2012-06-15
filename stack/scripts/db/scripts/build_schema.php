@@ -39,4 +39,4 @@ foreach (db::tables() as $one) {
 
 write($schema_file, sprintf("<?php\n/* %s */\n%s\n", date('Y-m-d H:i:s'), join("\n", $out)));
 
-/* EOF: ./library/db/scripts/schema.php */
+/* EOF: ./stack/scripts/db/scripts/schema.php */

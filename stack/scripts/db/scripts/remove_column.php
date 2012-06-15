@@ -19,4 +19,4 @@ if (check_table($from)) {
   }
 }
 
-/* EOF: ./library/db/scripts/remove_column.php */
+/* EOF: ./stack/scripts/db/scripts/remove_column.php */

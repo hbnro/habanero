@@ -27,4 +27,4 @@ if (check_table($to)) {
   }
 }
 
-/* EOF: ./library/db/scripts/add_column.php */
+/* EOF: ./stack/scripts/db/scripts/add_column.php */

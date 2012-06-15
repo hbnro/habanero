@@ -1,8 +1,10 @@
 <?php
 
-require __DIR__.DS.'initialize'.EXT;
+import('a_record');
 
-app_generator::usage('ar', ln('ar.generator_title'), ln('ar.generator_usage'));
+i18n::load_path(__DIR__.DS.'locale', 'ar');
+
+app_generator::usage('ar', ln('ar.usage'));
 
 app_generator::alias('ar:console', 'console c');
 app_generator::alias('ar:backup', 'backup');
@@ -134,4 +136,4 @@ app_generator::implement('ar:console', function () {
   });
 });
 
-/* EOF: ./library/a_record/generator.php */
+/* EOF: ./stack/scripts/a_record/initialize.php */

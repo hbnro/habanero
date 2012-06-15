@@ -38,4 +38,4 @@ if (check_table($from)) {
   }
 }
 
-/* EOF: ./library/db/scripts/change_column.php */
+/* EOF: ./stack/scripts/db/scripts/change_column.php */

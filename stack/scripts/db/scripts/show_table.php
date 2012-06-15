@@ -38,4 +38,4 @@ if (check_table($table)) {
 
 done();
 
-/* EOF: ./library/db/scripts/show_table.php */
+/* EOF: ./stack/scripts/db/scripts/show_table.php */
