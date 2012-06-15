@@ -135,6 +135,41 @@ function inject_into_file($path, $content, array $params = array()) {
   return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : 1);
 }
 
+function add_class($path, $name, $parent = '', $methods = '', $properties = '') {
+  $type   = $parent ? " extends $parent" : '';
+  $props  =
+  $method = '';
+
+  if ( ! empty($methods)) {
+    $test = array();
+    foreach ((array) $methods as $one) {
+      $test []= "  public static function $one() {\n  }\n";
+    }
+    $method = join("\n", $test);
+  }
+
+  if ( ! empty($properties)) {
+    $test = array();
+    foreach ((array) $properties as $one) {
+      $test []= "  static $$one;\n";
+    }
+    $props = join("\n", $test);
+    $props = "$props\n";
+  }
+
+  return write($path, "<?php\n\nclass $name$type\n{\n$props$method}\n");
+}
+
+function add_route($from, $to, $path = '', $method = 'get') {
+  $path OR $path = "{$from}_$to";
+  $text = ";\n$method('/$from', '$to', array('path' => '$path'));";
+  return inject_into_file(APP_PATH.DS.'routes'.EXT, $text, array('before' => '/;[^;]*?$/'));
+}
+
+function add_view($parent, $name, $text = '', $ext = EXT) {
+  return write(mkpath(APP_PATH.DS.'views'.DS.$parent).DS."$name.html$ext", $text);
+}
+
 function action($format, $text, $what) {
   $prefix = str_pad("\b$format($text)\b", 20 + strlen($format), ' ', STR_PAD_LEFT);
   $text   = str_replace(APP_PATH.DS, '', "\clight_gray($what)\c");
