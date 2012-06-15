@@ -273,7 +273,7 @@ function path_to($path = '.', $host = FALSE) {
       $path = str_replace($root, '', $path);
     }#
 
-    $path = url_for(strtr($path, '\\', '/'));
+    $path = url_for(str_replace('/./', '/', strtr($path, '\\', '/')));
     $path = is_true($host) ? server(TRUE, $path, TRUE) : $path;
   }
 
