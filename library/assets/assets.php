@@ -91,7 +91,7 @@ class assets extends prototype
    */
   final public static function build($from, $type) {
     $base_path  = APP_PATH.DS.'views'.DS.'assets';
-    $base_file  = $base_path.DS.$type.DS."$from.$type";
+    $base_file  = $base_path.DS."$from.$type";
 
     if (is_file($base_file)) {
       if (APP_ENV === 'production') {
@@ -103,6 +103,7 @@ class assets extends prototype
           return tag('script', array('src' => $path));
         }
       } else {
+        $tmp = static::extract($base_file);
         $set = array_map(function ($val)
           use($base_path, $type) {
           $path = url_for(strtr('static'.str_replace($base_path, '', $val), '\\', '/'));
@@ -112,7 +113,7 @@ class assets extends prototype
           } else {
             return tag('script', array('src' => $path));
           }
-        }, static::extract($base_file, $type));
+        }, $tmp['include']);
 
         return join("\n", $set);
       }
