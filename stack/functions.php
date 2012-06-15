@@ -5,13 +5,27 @@ function say($text) {
 }
 
 function yes($text) {
-  return cli::option($text, 'yn', 'n') === 'y';
+  return cli::choice($text, 'yn', 'n') === 'y';
+}
+
+function ask() {
+  $args = func_get_args();
+  return cli::apply('prompt', $args);
+}
+
+function choice() {
+  $args = func_get_args();
+  return cli::apply('choice', $args);
+}
+
+function menu() {
+  $args = func_get_args();
+  return cli::apply('menu', $args);
 }
 
 function done($text = 'done') {
   bold(ln($text));
 }
-// TODO; choice, prompt, cli-tools
 
 function help() {
   cli::write(cli::format(app_generator::help(cli::flag('help'))));
@@ -67,22 +81,51 @@ function create_dir($path) {
 }
 
 function copy_dir($to, $from) {
-  status('copy', rtrim($to, DS).DS.basename($from) . '/');
+  status('copy', rtrim($to, DS).DS.basename($from).DS);
   cpfiles($from, $to.DS.basename($from), '*', TRUE);
 }
 
 function template($to, $from, array $vars = array()) {
-  status('create', $to.DS.basename($from));
+  static $render = NULL;
 
-  $render = function()
-  {
+
+  is_null($render) && $render = function() {
     ob_start();
     extract(func_get_arg(1));
     require func_get_arg(0);
     return ob_get_clean();
   };
 
+  status('create', $to.DS.basename($from));
   write($to.DS.basename($from), $render($from, $vars));
+}
+
+function gsub_file($path, $regex, $replace) {
+  if ( ! is_file($path)) {
+    return FALSE;
+  }
+
+  $callback = 'preg_replace';
+  is_closure($replace) && $callback .= '_callback';
+
+  return write($path, $callback($regex, $replace, read($path)));
+}
+
+function append_file($path, $content) {
+  return inject_into_file($path, $content, array('after' => '/$/s'));
+}
+
+function prepend_file($path, $content) {
+  return inject_into_file($path, $content, array('before' => '/^/s'));
+}
+
+function inject_into_file($path, $content, array $params = array()) {
+  $regex = '/$/s';
+
+  ! empty($params['after']) && $regex = $params['after'];
+  ! empty($params['before']) && $regex = $params['before'];
+
+  return gsub_file($path, $regex, $content);
 }
 
 function action($format, $text, $what) {
