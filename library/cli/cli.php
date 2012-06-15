@@ -425,7 +425,7 @@ class cli extends prototype
     foreach ($old as $i => $val) {
       $test = array_search($val, $set) == $default ? ' [*]' : '';
 
-      static::writeln("\n", str_pad($i + 1, $pad, ' ', STR_PAD_LEFT), '. ', $val, $test);
+      static::write("\n", str_pad($i + 1, $pad, ' ', STR_PAD_LEFT), '. ', $val, $test);
     }
 
 
