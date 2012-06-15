@@ -1,7 +1,9 @@
+*~
 .git
 tasks
 Stubfile
 error.log
 access.log
 .gitignore
+.DS_Store
 .develop

@@ -50,8 +50,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path.DS.'static'.DS.'js');
         chmod($app_path.DS.'static'.DS.'js', 0777);
-    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'jquery-1.7.1.min.js');
-    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'modernizr-2.0.6.min.js');
+    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'jquery.min.js');
+    copy_file($app_path.DS.'static'.DS.'js', $skel_dir.DS.'modernizr.min.js');
 
      copy_dir($app_path, $skel_dir.DS.'tasks');
 
@@ -59,14 +59,16 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'views'.DS.'assets');
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'css');
-  create_file($app_path.DS.'views'.DS.'assets'.DS.'css'.DS.'app.css', "/**\n *= base\n */\n");
+  create_file($app_path.DS.'views'.DS.'assets'.DS.'app.css', "/**\n *= include base\n */\n");
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css.chess');
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js');
-  create_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
-    ' *= lib/console',
-    ' *= lib/jquery-ujs',
-    ' *= script',
+  create_file($app_path.DS.'views'.DS.'assets'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
+    ' *= require jquery.min',
+    ' *= require modernizr.min',
+    ' *= include lib/console',
+    ' *= include lib/jquery-ujs',
+    ' *= include script',
   ))));
 
    create_dir($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib');
@@ -75,8 +77,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'script.js.coffee');
 
    create_dir($app_path.DS.'views'.DS.'error');
-    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'not_found.html'.EXT);
-    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html'.EXT);
+    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'not_found.html.tamal');
+    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html.tamal');
 
    create_dir($app_path.DS.'views'.DS.'layouts');
     copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html.tamal');
@@ -86,8 +88,10 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
 
     $ignored_files = array(
+      '*~',
       'tetlphp',
       '.develop',
+      '.DS_Store',
       'error.log',
       'access.log',
       'database/db.sqlite',

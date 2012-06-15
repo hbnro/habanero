@@ -8,6 +8,7 @@ $lang['controller_already_exists'] = 'Controller %{name} already exists';
 $lang['controller_missing'] = 'Controller is missing';
 $lang['controller_not_exists'] = 'Controller %{name} does not exists';
 $lang['action_already_exists'] = 'Action %{controller}#%{name} already exists';
+$lang['action_missing'] = 'Action is missing';
 
 $lang['verifying_generator'] = 'Verifying generator';
 $lang['verifying_installation'] = 'Verifying installation';
@@ -34,10 +35,10 @@ $lang['usage'] = <<<HELP
     \bgreen(app:create)\b \bcyan(app)\b [--force]
 
   \clight_gray(Default controller generator)\c
-    \bgreen(app:controller)\b \bcyan(name)\b [--view] [--helper] [--parent=class]
+    \bgreen(app:controller)\b \bcyan(name)\b [--parent=class] [--no-view]
 
   \clight_gray(Default action generator)\c
-    \bgreen(app:action)\b \bcyan(controller:name)\b [--view] [--method=get|put|post|delete]
+    \bgreen(app:action)\b \bcyan(controller:name)\b [--method=get|put|post|delete] [--route=X] [--path=Y] [--no-view]
 
 HELP;
 

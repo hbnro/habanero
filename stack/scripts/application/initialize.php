@@ -38,7 +38,7 @@ app_generator::implement('app:status', function () {
 // controllers
 app_generator::implement('app:controller', function($name = '') {
   if ( ! $name) {
-    error(ln('app.missing_controller_name'));
+    error(ln('app.controller_missing'));
   } else {
     require __DIR__.DS.'scripts'.DS.'create_controller'.EXT;
   }
@@ -49,7 +49,7 @@ app_generator::implement('app:controller', function($name = '') {
 // actions
 app_generator::implement('app:action', function($name = '') {
   if ( ! $name) {
-    error(ln('app.missing_action_name'));
+    error(ln('app.controller_missing'));
   } else {
     require __DIR__.DS.'scripts'.DS.'create_action'.EXT;
   }

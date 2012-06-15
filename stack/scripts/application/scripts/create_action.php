@@ -9,34 +9,32 @@ if ( ! $parent) {
 } elseif ( ! is_file($out_file)) {
   error(ln('app.controller_not_exists', array('name' => $parent)));
 } elseif ( ! $name) {
-  error(ln("app.missing_{$what}_name"));
+  error(ln('app.action_missing'));
 } else {
-  $content = read($out_file);
-
-  if (preg_match("/\b(?:private|public)\s+static\s+function\s+$name\s*\(/s", $content)) {
-    error(ln('app.action_already_exists', array('name' => $name, 'controller' => $parent)));
-  } else {
-    success(ln('app.action_method_building', array('name' => $name, 'controller' => $parent)));
-
-    $code = "  public static function $name() {\n  }\n\n";
-
-    write($out_file, preg_replace('/\}[^{}]*?$/s', "$code\\0", $content));
-
-
+  if (inject_into_file($out_file, function ()
+    use($name, $parent) {
     success(ln('app.action_route_building', array('name' => $name, 'controller' => $parent)));
 
-    $route_file = APP_PATH.DS.'routes'.EXT;
     $method     = cli::flag('method') ?: 'get';
-    $route      = ";\n$method('/$parent/$name', '$parent#$name', array('path' => '{$parent}_$name'))\\0";
-    write($route_file, preg_replace('/;[^;]*?$/', $route, read($route_file)));
+    $route      = cli::flag('route') ?: "$parent/$name";
+    $path       = cli::flag('path') ?: "{$parent}_$name";
 
+    add_route($route, "$parent#$name", $path, $method);
 
-    if (cli::flag('view')) {
+    if ( ! cli::flag('no-view')) {
       success(ln('app.action_view_building', array('name' => $name, 'controller' => $parent)));
-
-      $text = "<section>\n  <header>$parent#$name.view</header>\n  <pre><?php echo getcwd().DS.'views'.DS.'$parent'.DS.'$name.html'.EXT; ?></pre>\n</section>\n";
-      write(mkpath(APP_PATH.DS.'views'.DS.$parent).DS."$name.html".EXT, $text);
+      $text = "section\n  header\n    h1 $parent#$name.view\n  pre = APP_PATH.DS.'views'.DS.'$parent'.DS.'$name.html.tamal'";
+      add_view($parent, $name, "$text\n", '.tamal');
     }
+
+    return "  public static function $name() {\n  }\n";
+  }, array(
+      'before' => '/\}[^{}]*?$/s',
+      'unless' => "/\b[\w\s]*function\s+$name\s*\(/s",
+    ))) {
+    success(ln('app.action_method_building', array('name' => $name, 'controller' => $parent)));
+  } else {
+    error(ln('app.action_already_exists', array('name' => $name, 'controller' => $parent)));
   }
 }
 
