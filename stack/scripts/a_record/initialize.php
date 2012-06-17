@@ -7,6 +7,7 @@ i18n::load_path(__DIR__.DS.'locale', 'ar');
 
 app_generator::usage('ar', ln('ar.usage'));
 
+app_generator::alias('ar:scaffold', 'scaffold scaff crud');
 app_generator::alias('ar:console', 'console c');
 app_generator::alias('ar:backup', 'backup');
 app_generator::alias('ar:model', 'model');
@@ -147,5 +148,94 @@ app_generator::implement('ar:console', function () {
     }
   });
 });
+
+
+// scaffolding
+app_generator::implement('ar:scaffold', function () {
+  info(ln('ar.verifying_structure'));
+
+  $args  = func_get_args();
+  $model = array_shift($args);
+
+  if ( ! $model) {
+    error(ln('ar.missing_model_name'));
+  } else {
+    $model_file = APP_PATH.DS.'models'.DS.$model.EXT;
+
+    if ( ! is_file($model_file)) {
+      error(ln('ar.missing_model_file', array('name' => $model)));
+    } else {
+      $fail = FALSE;
+      $out  = array();
+      $old  = $model::columns();
+
+      if ( ! empty($args)) {
+        foreach ($args as $one) {
+          @list($key, $type) = explode(':', $one);
+
+          if ( ! isset($old[$key])) {
+            $fail = TRUE;
+            notice(ln('ar.unknown_field', array('name' => $key)));
+          } elseif ( ! ($test = field_for($type ?: $old[$key]['type'], $key))) {
+            $fail = TRUE;
+            notice(ln('ar.unknown_field_type', array('name' => $key, 'type' => $type)));
+          } else {
+            $out[$key] = $test;
+          }
+        }
+      } else {
+        foreach ($old as $key => $val) {
+          $out[$key] = field_for($val['type'], $key);
+        }
+      }
+
+      foreach (array($model::pk(), 'created_at', 'modified_at') as $tmp) {
+        if (isset($out[$tmp])) {
+          unset($out[$tmp]);
+        }
+      }
+
+
+      if ($fail OR ! $out) {
+        error(ln('ar.missing_fields'));
+      } else {
+        build_scaffold($model::pk(), $model, $out);
+        done();
+      }
+    }
+  }
+});
+
+
+
+function build_scaffold($pk, $model, $fields) {
+  require __DIR__.DS.'scripts'.DS.'build_scaffold'.EXT;
+}
+
+function field_for($type, $key) {
+  static $set = array(
+            'primary_key' => array('type' => 'hidden'),
+            'text' => array('type' => 'textarea'),
+            'string' => array('type' => 'text'),
+            'integer' => array('type' => 'number'),
+            'numeric' => array('type' => 'number'),
+            'float' => array('type' => 'number'),
+            'boolean' => array('type' => 'checkbox'),
+            'binary' => array('type' => 'file'),
+            'timestamp' => array('type' => 'datetime'),
+            'datetime' => array('type' => 'datetime'),
+            'date' => array('type' => 'date'),
+            'time' => array('type' => 'time'),
+          );
+
+
+  if ( ! empty($set[$type])) {
+    $out = $set[$type];
+    $out['ln'] = ucwords(strtr($key, '_', ' '));
+    return $out;
+  }
+
+  return FALSE;
+}
 
 /* EOF: ./stack/scripts/a_record/initialize.php */
