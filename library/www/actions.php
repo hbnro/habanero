@@ -359,4 +359,40 @@ function button_to($name, $url = NULL, array $args = array()) {
   ), "<div>$extra$button</div>");
 }
 
+
+/**
+ * Handle flashable redirections
+ *
+ * @param     mixed  Path|Options hash
+ * @param     array  Options hash
+ * @staticvar array  Flash keys
+ * @return    string
+ */
+function redirect_to($path, array $params = array()) {
+  static $allow = array('success', 'notice', 'error', 'info');
+
+
+  if (is_assoc($path)) {
+    $params = $path;
+    $path   = '';
+  } else {// TODO: just works with this?
+    $params['to'] = url_for::apply($path);
+  }
+
+
+  if (empty($params['to'])) {
+    raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'to')));
+  }
+
+
+  foreach ($allow as $type) {
+    if (isset($params[$type])) {
+      flash($type, $params[$type]);
+      unset($params[$type]);
+    }
+  }
+
+  redirect($params);
+}
+
 /* EOF: ./library/www/actions.php */
