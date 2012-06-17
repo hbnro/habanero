@@ -141,7 +141,7 @@ class db_model extends a_record
    * @return void
    */
   final public static function delete_all(array $params = array()) {
-    static::conn()->delete(static::table(), $params);
+    return static::conn()->delete(static::table(), $params);
   }
 
 
@@ -153,7 +153,7 @@ class db_model extends a_record
    * @return void
    */
   final public static function update_all(array $data, array $params = array()) {
-    static::conn()->update(static::table(), $data, $params);
+    return static::conn()->update(static::table(), $data, $params);
   }
 
 

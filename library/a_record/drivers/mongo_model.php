@@ -124,8 +124,9 @@ class mongo_model extends a_record
    */
   final public static function delete_all(array $params = array()) {
     $start = ticks();
-    static::conn()->remove($params ? $params : array());
+    $out = static::conn()->remove($params ? $params : array());
     static::debug('delete', $start, compact('params'));
+    return $out;
   }
 
 
@@ -138,8 +139,9 @@ class mongo_model extends a_record
    */
   final public static function update_all(array $data, array $params = array()) {
     $start = ticks(); // TODO: use $set instead?
-    static::conn()->update($params, $data, array('multiple' => TRUE));
+    $out = static::conn()->update($params, $data, array('multiple' => TRUE));
     static::debug('update', $start, compact('params', 'data'));
+    return $out;
   }
 
 
