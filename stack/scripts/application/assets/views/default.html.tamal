@@ -15,6 +15,14 @@ head
 body
   #wrapper
     header = $title
+    - foreach flash() as $type => $val
+      div { class => "flash $type" }
+        - if is_array($val)
+          ul
+            - foreach $val as $one
+              li = $one
+        - else
+          = $val
     = $body
     footer
       &mdash;
