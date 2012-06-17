@@ -95,6 +95,7 @@ chess_helper::implement('fval', function ($num) {
   return (float) (strpos($num, '%') ? (int) $num / 100 : $num);
 });
 
+
 /**
  * Floatval to percentage
  *
@@ -103,6 +104,50 @@ chess_helper::implement('fval', function ($num) {
  */
 chess_helper::implement('perc', function ($num) {
   return sprintf('%d%%', (float) $num > 1 ? (int) $num : $num * 100);
+});
+
+
+/**
+ * Fake calc() helper
+ *
+ * @param     mixed  Expression
+ * @staticvar mixed  Function callback
+ * @staticvar string Allowed css-math units
+ * @return    mixed
+ */
+chess_helper::implement('calc', function ($expr) {
+  static $solve = NULL,
+         $regex = '/(-?(?:\d*\.)?\d+)(p[xtc]|e[xm]|[cm]m|g?rad|deg|in|s|%)/';;
+
+
+  if ( ! $solve) {
+    $solve = function ($input)
+      use($regex) {
+      if (strpos($input, '#') !== FALSE) {
+        $out = preg_replace('/[^#\dxa-fA-F\s*\/%+-]/', '', $input);
+        $out = str_replace('#', '0x', $out);
+        $out = "sprintf('#%06x', $out)";
+
+        @eval("\$out=$out;");
+      } else {// TODO: when css3 calc() arrives?
+        preg_match($regex, $input, $unit);
+
+        $ext = ! empty($unit[2]) ? $unit[2] : 'px';
+        $out = preg_replace($regex, '\\1', $input);
+
+        @eval("\$out=($out).'$ext';");
+      }
+      return $out;
+    };
+  }
+
+
+  while (preg_match_all('/\[([^[\]]+?)\]/', $expr, $matches)) {
+    foreach ($matches[0] as $i => $val) {
+      $expr = str_replace($val, $solve($matches[1][$i]), $expr);
+    }
+  }
+  return $solve($expr);
 });
 
 /* EOF: ./library/chess/helpers/number.php */

@@ -36,7 +36,7 @@
 }
 
 @mixin sprite_box($x, $y, $w: 16px, $h: 16px, $left: 0, $top: 0) {
-  background-position: -[[$x * $w] + $left] -[[$y * $h] + $top];
+  background-position: calc((($x * $w) + $left) * -1px) calc((($y * $h) + $top) * -1px);
   @include size($w, $h);
 }
 
@@ -66,7 +66,7 @@
 }
 
 @mixin opacity($num: 1) {
-	filter: %("alpha(opacity=%d)", [$num * 100]);
+	filter: %("alpha(opacity=%d)", calc($num * 100));
 	-khtml-opacity: $num;
 	-moz-opacity: $num;
 	opacity: $num;

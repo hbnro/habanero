@@ -10,14 +10,14 @@ $separation = 10px
 @mixin grid {
   @include container($width);
   &.show-grid {
-    background-image: url(?grid=ceil([$width / $columns]));
+    background-image: url(?grid=ceil(calc($width / $columns)));
   }
 }
 
 @mixin columns($span: 1) {
   display: inline;
   float: left;
-  width: [[[$width / $columns] * $span] - $separation];
+  width: calc((($width / $columns) * $span) - $separation);
   margin-left: $separation;
   &:first-child {
     margin-left: 0;

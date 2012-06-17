@@ -480,17 +480,16 @@ class chess extends prototype
       foreach ($text as $key => $val) {
         $text[$key] = static::do_solve($val);
       }
-    } else {//FIX
-      do
-      {
-        $old  = strlen($text);
-
-        $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
-        $text = static::do_math(static::do_vars($text, static::$props));
-        $text = preg_replace(array_keys($set), $set, $text);
-
-      } while($old != strlen($text));
     }
+
+    do {
+      $old  = strlen($text);
+
+      $text = preg_replace('/(?<!\w)\(([^()]+?)\)/', '[ \\1 ]', $text);
+      $text = preg_replace(array_keys($set), $set, static::do_vars($text, static::$props));
+      $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
+
+    } while($old <> strlen($text));
 
     return $text;
   }
@@ -498,41 +497,6 @@ class chess extends prototype
   // css helper callback
   final private static function do_helper($match) {
     return chess_helper::apply($match[1], array_map('trim', explode(',', static::do_solve($match[2]))));
-  }
-
-  // solve math operations
-  final private static function do_math($text) {
-    static $regex = '/(-?(?:\d*\.)?\d+)(p[xtc]|e[xm]|[cm]m|g?rad|deg|in|s|%)/';
-
-
-    if (is_false(strpos($text, '['))) {
-      return $text;
-    }
-
-    while (preg_match_all('/\[([^\[\]]+?)\]/', $text, $matches)) {
-      foreach ($matches[0] as $i => $val) {
-        preg_match($regex, $matches[1][$i], $unit);
-
-        $ext  = ! empty($unit[2]) ? $unit[2] : 'px';
-        $expr = preg_replace($regex, '\\1', $matches[1][$i]);
-
-
-        if (strpos($val, '#') !== FALSE) {
-          $out  = preg_replace('/#(\w+)(?=\b|$)/e', '"0x".static::hex("\\1");', $expr);
-          $out  = preg_replace('/[^\dxa-fA-F\s*\/.+-]/', '', $expr);
-          $expr = "sprintf('#%06x', $out)";
-          $ext  = '';
-        }
-
-        @eval("\$out = $expr;");
-
-        $out   = isset($out) ? $out : '';
-        $out  .= is_numeric($out) ? $ext : '';
-        $text  = str_replace($val, $out, $text);
-      }
-    }
-
-    return $text;
   }
 
   /**#@-*/
