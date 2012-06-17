@@ -1,7 +1,6 @@
 - javascript_for('app')
 - stylesheet_for('app')
 
-
 section
   = link_to('<?php echo ln('ar.new_record', array('name' => $model)); ?>', url_for::new_<?php echo $model; ?>())
   - $options = array(action => url_for::delete_all_<?php echo $model; ?>s(), confirm => '<?php echo ln('ar.confirm_delete_all'); ?>')
