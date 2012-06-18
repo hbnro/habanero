@@ -55,7 +55,6 @@ assets::compile('php', function ($file) {
   return partial::render($file);
 });
 
-#assets::initialize();
 /**#@-*/
 
 /* EOF: ./library/application/initialize.php */

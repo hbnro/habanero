@@ -53,7 +53,7 @@ class assets extends prototype
    * @return string
    */
   final public static function resolve($name) {
-    $name = str_replace(APP_PATH.DS.'views'.DS.'assets'.DS, '', $name);
+    $name = str_replace(APP_PATH.DS.'assets'.DS, '', $name);
 
     if ($hash = static::fetch($name)) {
       $name = dirname($name).DS.extn($name, TRUE).$hash.ext($name, TRUE);
@@ -90,7 +90,7 @@ class assets extends prototype
    * @return mixed
    */
   final public static function build($from, $type) {
-    $base_path  = APP_PATH.DS.'views'.DS.'assets';
+    $base_path  = APP_PATH.DS.'assets';
     $base_file  = $base_path.DS."$from.$type";
 
     if (is_file($base_file)) {
@@ -126,7 +126,7 @@ class assets extends prototype
    * @return string
    */
   final public static function read($path) {
-    $file = APP_PATH.DS.'views'.DS.'assets'.DS.$path;
+    $file = APP_PATH.DS.'assets'.DS.$path;
     $file = findfile(dirname($file), basename($file) . '*', FALSE, 1);
 
     if (is_file($file)) {
@@ -172,7 +172,7 @@ class assets extends prototype
     // TODO: allow imports, sub-manifests, trees?
     if (preg_match_all('/\s+\*=\s+(require|include)\s+(\S+)/m', read($file), $match)) {
       foreach ($match[1] as $i => $key) {
-        $test_file = APP_PATH.DS.'views'.DS.'assets'.DS.$type.DS.$match[2][$i];
+        $test_file = APP_PATH.DS.'assets'.DS.$type.DS.$match[2][$i];
         @list($path, $name) = array(dirname($test_file), basename($test_file));
         $test[$key] []= $path.DS."$name.$type";
       }

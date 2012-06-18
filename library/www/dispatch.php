@@ -168,7 +168,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
   $params = array_merge(array(
     'headers' => array(),
     'locals'  => array(),
-    'status'  => 200,
+    'status'  => 302,
     'to'      => ROOT,
   ), $params);
 

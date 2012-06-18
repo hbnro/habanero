@@ -11,9 +11,18 @@ head
   = before_body()
   = tag_for('http://fonts.googleapis.com/css?family=Bangers', 'css')
   = tag_for('modernizr.min.js')
+  - csrf_meta_tag()
 body
   #wrapper
     header = $title
+    - foreach flash() as $type => $val
+      div { class => "flash $type" }
+        - if is_array($val)
+          ul
+            - foreach $val as $one
+              li = $one
+        - else
+          = $val
     = $body
     footer
       &mdash;

@@ -100,6 +100,16 @@ function template($to, $from, array $vars = array()) {
   write($to.DS.basename($from), $render($from, $vars));
 }
 
+function append_file($path, $content) {
+  status('append', $path);
+  return is_file($path) && write($path, read($path).$content);
+}
+
+function prepend_file($path, $content) {
+  status('prepend', $path);
+  return is_file($path) && write($path, $content.read($path));
+}
+
 function gsub_file($path, $regex, $replace, $position = 0) {
   if ( ! is_file($path)) {
     return FALSE;
@@ -108,16 +118,8 @@ function gsub_file($path, $regex, $replace, $position = 0) {
   return write($path, preg_replace_callback($regex, function ($match)
     use($replace, $position) {
     $tmp = is_closure($replace) ? $replace($match) : $replace;
-    return ! $position ? $tmp : ($position < 0 ? "$tmp$match[0]" : "$match[0]$tmp");
+    return ! $position ? $tmp : ($position < 0 ? "$tmp$match[0]" : ($position > 0 ? "$match[0]$tmp" : $tmp));
   }, read($path)));
-}
-
-function append_file($path, $content) {
-  return inject_into_file($path, $content, array('after' => '/$/s'));
-}
-
-function prepend_file($path, $content) {
-  return inject_into_file($path, $content, array('before' => '/^/s'));
 }
 
 function inject_into_file($path, $content, array $params = array()) {
@@ -132,7 +134,9 @@ function inject_into_file($path, $content, array $params = array()) {
   ! empty($params['after']) && $regex = $params['after'];
   ! empty($params['before']) && $regex = $params['before'];
 
-  return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : 1);
+  $position = ! empty($params['before']) ? -1 : ( ! empty($params['after']) ? 1 : 0);
+
+  return gsub_file($path, $regex, $content, $position);
 }
 
 function add_class($path, $name, $parent = '', $methods = '', array $properties = array()) {
@@ -195,7 +199,7 @@ function status($type, $text = '') {
       action('yellow', $type, $text);
     break;
     default;
-      $text && $text = "  $text";
+      $text && $text = str_replace(APP_PATH.DS, '', "  $text");
       $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
 
       cli::write(cli::format("$prefix$text\n"));

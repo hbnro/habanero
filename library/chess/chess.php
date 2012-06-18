@@ -105,7 +105,7 @@ class chess extends prototype
    */
   final public static function path($path) {
     if ( ! is_url($path)) {
-      $root = APP_PATH.DS.'views'.DS.'assets'.DS.'css';
+      $root = APP_PATH.DS.'assets'.DS.'css';
 
       $path = str_replace(array('\\', '/'), DS, $path);
       $path = preg_replace(sprintf('/^\.%s/', preg_quote(DS, '/')), $root, $path);
@@ -289,15 +289,16 @@ class chess extends prototype
   }
 
   // build css properties
-  final private static function build_properties($set, $parent = '') {
-    foreach ($set as $key => $val) {
-      $key = preg_replace('/!\d*$/', '', $key);
+  final private static function build_properties(&$set, $parent = '') {
+    foreach ($set as $okey => &$val) {
+      $key = preg_replace('/!\d*$/', '', $okey);
 
       if (is_array($val)) {//FIX
         static::build_properties($val, trim("$parent %$key"));
       } else {
         switch($key) {
           case '@extend';
+            unset($set[$okey]);
             foreach (array_filter(explode(',', $val)) as $part) {
               if ( ! empty(static::$sets[$part])) {
                 static::$sets[$part]['@children'] = $parent;
@@ -305,13 +306,10 @@ class chess extends prototype
             }
           break;
           case '@include';
-            $top = trim($parent, '%');
-            $mix = static::do_mixin($val);
-
-            static::build_properties($mix, $top);
-
-            $old = isset(static::$sets[$top]) ? static::$sets[$top] : array();
-            static::$sets[$top] = array_merge($old, $mix);
+            unset($set[$okey]);
+            foreach (static::do_mixin($val) as $k => $v) {
+              $set[$k] = $v;
+            }
           break;
           default;
           break;
@@ -430,7 +428,6 @@ class chess extends prototype
   // compile mixin properties
   final private static function do_mixin($text) {
     $out  = array();
-    $text = static::do_solve($text);
 
     if (preg_match_all('/\s*([\w\-]+)!?(?:\((.+?)\))?\s*/', $text, $matches)) {
       foreach ($matches[1] as $i => $part) {
@@ -476,21 +473,14 @@ class chess extends prototype
     }
 
 
-    if (is_array($text)) {
-      foreach ($text as $key => $val) {
-        $text[$key] = static::do_solve($val);
-      }
-    } else {//FIX
-      do
-      {
-        $old  = strlen($text);
+    do {
+      $old  = strlen($text);
 
-        $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
-        $text = static::do_math(static::do_vars($text, static::$props));
-        $text = preg_replace(array_keys($set), $set, $text);
+      $text = preg_replace("/(?<!$mix)\(([^()]+?)\)/", '[ \\1 ]', $text);
+      $text = preg_replace(array_keys($set), $set, static::do_vars($text, static::$props));
+      $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
 
-      } while($old != strlen($text));
-    }
+    } while($old <> strlen($text));
 
     return $text;
   }
@@ -498,41 +488,6 @@ class chess extends prototype
   // css helper callback
   final private static function do_helper($match) {
     return chess_helper::apply($match[1], array_map('trim', explode(',', static::do_solve($match[2]))));
-  }
-
-  // solve math operations
-  final private static function do_math($text) {
-    static $regex = '/(-?(?:\d*\.)?\d+)(p[xtc]|e[xm]|[cm]m|g?rad|deg|in|s|%)/';
-
-
-    if (is_false(strpos($text, '['))) {
-      return $text;
-    }
-
-    while (preg_match_all('/\[([^\[\]]+?)\]/', $text, $matches)) {
-      foreach ($matches[0] as $i => $val) {
-        preg_match($regex, $matches[1][$i], $unit);
-
-        $ext  = ! empty($unit[2]) ? $unit[2] : 'px';
-        $expr = preg_replace($regex, '\\1', $matches[1][$i]);
-
-
-        if (strpos($val, '#') !== FALSE) {
-          $out  = preg_replace('/#(\w+)(?=\b|$)/e', '"0x".static::hex("\\1");', $expr);
-          $out  = preg_replace('/[^\dxa-fA-F\s*\/.+-]/', '', $expr);
-          $expr = "sprintf('#%06x', $out)";
-          $ext  = '';
-        }
-
-        @eval("\$out = $expr;");
-
-        $out   = isset($out) ? $out : '';
-        $out  .= is_numeric($out) ? $ext : '';
-        $text  = str_replace($val, $out, $text);
-      }
-    }
-
-    return $text;
   }
 
   /**#@-*/

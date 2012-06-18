@@ -124,8 +124,15 @@ class mongo_model extends a_record
    */
   final public static function delete_all(array $params = array()) {
     $start = ticks();
-    static::conn()->remove($params ? $params : array());
+
+    if (array_key_exists('_id', $params)) {
+      $params['_id'] = static::ids($params['_id']);
+    }
+
+    $out = static::conn()->remove($params);
     static::debug('delete', $start, compact('params'));
+
+    return $out;
   }
 
 
@@ -137,9 +144,18 @@ class mongo_model extends a_record
    * @return void
    */
   final public static function update_all(array $data, array $params = array()) {
-    $start = ticks(); // TODO: use $set instead?
-    static::conn()->update($params, $data, array('multiple' => TRUE));
+    $start = ticks();
+
+    $data = array('$set' => $data);
+
+    if (array_key_exists('_id', $params)) {
+      $params['_id'] = static::ids($params['_id']);
+    }
+
+    $out = static::conn()->update($params, $data, array('multiple' => TRUE));
     static::debug('update', $start, compact('params', 'data'));
+
+    return $out;
   }
 
 
@@ -148,6 +164,19 @@ class mongo_model extends a_record
    * @ignore
    */
 
+  // multi _id
+  final private static function ids($set) {
+    if (is_array($set)) {
+      $tmp = array();
+      foreach ($set as $k => $v) {
+        $tmp []= new MongoId($v);
+      }
+      return array('$in' => $tmp);
+    } else {
+      return new MongoId($set);
+    }
+  }
+
   // selection
   final private static function select($fields, $where, $options) {
     $start  = ticks();
@@ -155,7 +184,7 @@ class mongo_model extends a_record
     $method = ! empty($options['single']) ? 'findOne' : 'find';
 
     if (array_key_exists('_id', $where)) {
-      $where['_id'] = new MongoId($where['_id']);
+      $where['_id'] = static::ids($where['_id']);
       $method = 'findOne';
     }
 

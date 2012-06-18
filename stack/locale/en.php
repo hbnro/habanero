@@ -46,6 +46,7 @@ $lang['development_configuration'] = 'Development settings';
 $lang['production_configuration'] = 'Production settings';
 $lang['default_configuration'] = 'Default settings';
 
+$lang['setting_current_options'] = 'Applying current configuration';
 $lang['setting_application_options'] = 'Applying application configuration';
 $lang['setting_development_options'] = 'Applying development configuration';
 $lang['setting_production_options'] = 'Applying production configuration';

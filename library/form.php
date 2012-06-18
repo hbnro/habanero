@@ -152,7 +152,7 @@ class form extends prototype
         }
 
         $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
-        $label  = ! empty($one['label']) ? static::label($one['name'], "$one[label]\n$input") : $input;
+        $label  = ! empty($one['label']) ? static::label($one['name'], "<span>$one[label]</span>\n$input") : $input;
 
         $out  []= sprintf($format, "$one[before]\n$label\n$one[after]");
       } elseif (is_array($one)) {
