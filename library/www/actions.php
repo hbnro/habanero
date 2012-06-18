@@ -369,7 +369,7 @@ function button_to($name, $url = NULL, array $args = array()) {
  * @return    string
  */
 function redirect_to($path, array $params = array()) {
-  static $allow = array('success', 'notice', 'error', 'info');
+  static $allow = array('success', 'notice', 'alert', 'error', 'info');
 
 
   if (is_assoc($path)) {
