@@ -171,7 +171,7 @@ function kmap($set, Closure $callback) {
   $out = array();
 
   foreach ($set as $key => $val) {
-    $out[$key] = $callback($val, $key);
+    $out[$key] = $callback($val);
   }
 
   return $out;
