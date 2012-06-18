@@ -3,9 +3,9 @@
  */
 
 @mixin radius($size: 5px) {
- -moz-border-radius: %(%dpx, $size);
- -webkit-border-radius: %(%dpx, $size);
- border-radius: %(%dpx, $size);
+ -moz-border-radius: format(%dpx, $size);
+ -webkit-border-radius: format(%dpx, $size);
+ border-radius: format(%dpx, $size);
 
  -moz-background-clip: padding;
  -webkit-background-clip: padding-box;
@@ -13,9 +13,9 @@
 }
 
 @mixin radius_box($tl: 5px, $tr: 5px, $br: 5px, $bl: 5px) {
- -moz-border-radius: %(%dpx, $tl) %(%dpx, $tr) %(%dpx, $br) %(%dpx, $bl);
- -webkit-border-radius: %(%dpx, $tl) %(%dpx, $tr) %(%dpx, $br) %(%dpx, $bl);
- border-radius: %(%dpx, $tl) %(%dpx, $tr) %(%dpx, $br) %(%dpx, $bl);
+ -moz-border-radius: format(%dpx, $tl) format(%dpx, $tr) format(%dpx, $br) format(%dpx, $bl);
+ -webkit-border-radius: format(%dpx, $tl) format(%dpx, $tr) format(%dpx, $br) format(%dpx, $bl);
+ border-radius: format(%dpx, $tl) format(%dpx, $tr) format(%dpx, $br) format(%dpx, $bl);
 
  -moz-background-clip: padding;
  -webkit-background-clip: padding-box;
@@ -23,32 +23,32 @@
 }
 
 @mixin shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
- -moz-box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
- -webkit-box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
- box-shadow: %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -moz-box-shadow: format(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -webkit-box-shadow: format(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ box-shadow: format(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
 @mixin inner_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
- -moz-box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
- -webkit-box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
- box-shadow: inset %(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -moz-box-shadow: inset format(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -webkit-box-shadow: inset format(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ box-shadow: inset format(%dpx %dpx %dpx, $left, $top, $blur) $color;
 }
 
 @mixin text_columns($column_count, $column_gap: 20px) {
- -webkit-column-count: %(%dpx, $column_count);
- -webkit-column-gap: %(%dpx, $column_gap);
- -moz-column-count: %(%dpx, $column_count);
- -moz-column-gap: %(%dpx, $column_gap);
- column-count: %(%dpx, $column_count);
- column-gap: %(%dpx, $column_gap);
+ -webkit-column-count: format(%dpx, $column_count);
+ -webkit-column-gap: format(%dpx, $column_gap);
+ -moz-column-count: format(%dpx, $column_count);
+ -moz-column-gap: format(%dpx, $column_gap);
+ column-count: format(%dpx, $column_count);
+ column-gap: format(%dpx, $column_gap);
 }
 
 @mixin rotate($angle: 7.5deg) {
- -moz-transform: rotate(%(%ddeg, $angle));
- -o-transform: rotate(%(%ddeg, $angle));
- -webkit-transform: rotate(%(%ddeg, $angle));
- -ms-transform: rotate(%(%ddeg, $angle));
- transform: rotate(%(%ddeg, $angle));
+ -moz-transform: rotate(format(%ddeg, $angle));
+ -o-transform: rotate(format(%ddeg, $angle));
+ -webkit-transform: rotate(format(%ddeg, $angle));
+ -ms-transform: rotate(format(%ddeg, $angle));
+ transform: rotate(format(%ddeg, $angle));
  zoom: 1;
 }
 
@@ -75,35 +75,35 @@
 }
 
 @mixin vertical_gradient($start: #555, $end: #333) {
- background-color: #($end, 1);
+ background-color: argv($end, 1);
  background-repeat: repeat-x;
 
- background-image: -khtml-gradient(linear, left top, left bottom, from(#($start, 1)), to(#($end, 1)));
+ background-image: -khtml-gradient(linear, left top, left bottom, from(argv($start, 1)), to(argv($end, 1)));
  background-image: -moz-linear-gradient($start, $end);
  background-image: -ms-linear-gradient($start, $end);
  background-image: -webkit-linear-gradient($start, $end);
  background-image: -o-linear-gradient($start, $end);
  background-image: linear-gradient($start, $end);
 
- background-image: -webkit-gradient(linear, left top, left bottom, color-stop(fval(#($start, 2, 0)), #($start, 1)), color-stop(fval(#($end, 2, 1)), #($end, 1)));
+ background-image: -webkit-gradient(linear, left top, left bottom, color-stop(fval(argv($start, 2, 0)), argv($start, 1)), color-stop(fval(argv($end, 2, 1)), argv($end, 1)));
 
- filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(#($start, 1)), endColorstr=qt(#($end, 1)), GradientType=0);
- -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(#($start, 1)), endColorstr=qt(#($end, 1)), GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(argv($start, 1)), endColorstr=qt(argv($end, 1)), GradientType=0);
+ -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(argv($start, 1)), endColorstr=qt(argv($end, 1)), GradientType=0);
 }
 
 @mixin directional_gradient($start: #555, $end: #333, $deg: 45deg) {
  background-color: $end;
  background-repeat: repeat-x;
 
- background-image: -moz-linear-gradient(%(%ddeg, $deg), $start, $end);
- background-image: -ms-linear-gradient(%(%ddeg, $deg), $start, $end);
- background-image: -webkit-linear-gradient(%(%ddeg, $deg), $start, $end);
- background-image: -o-linear-gradient(%(%ddeg, $deg), $start, $end);
- background-image: linear-gradient(%(%ddeg, $deg), $start, $end);
+ background-image: -moz-linear-gradient(format(%ddeg, $deg), $start, $end);
+ background-image: -ms-linear-gradient(format(%ddeg, $deg), $start, $end);
+ background-image: -webkit-linear-gradient(format(%ddeg, $deg), $start, $end);
+ background-image: -o-linear-gradient(format(%ddeg, $deg), $start, $end);
+ background-image: linear-gradient(format(%ddeg, $deg), $start, $end);
 }
 
 @mixin three_gradient($bottom: #555 0%, $middle: #444 50%, $top: #333 100%) {
- background-color: #($middle, 1);
+ background-color: argv($middle, 1);
  background-repeat: no-repeat;
 
  background-image: linear-gradient(bottom, $bottom, $middle, $top);
@@ -112,7 +112,7 @@
  background-image: -webkit-linear-gradient(bottom, $bottom, $middle, $top);
  background-image: -ms-linear-gradient(bottom, $bottom, $middle, $top);
 
- background-image: -webkit-gradient(linear, left bottom, left top, color-stop(fval(#($bottom, 2, 0)), #($bottom, 1)), color-stop(fval(#($middle, 2, .5)), #($middle, 1)), color-stop(fval(#($top, 2, 1)), #($top, 1)));
+ background-image: -webkit-gradient(linear, left bottom, left top, color-stop(fval(argv($bottom, 2, 0)), argv($bottom, 1)), color-stop(fval(argv($middle, 2, .5)), argv($middle, 1)), color-stop(fval(argv($top, 2, 1)), argv($top, 1)));
 }
 
 /* EOF: ./library/chess/assets/styles/css3.chess */
