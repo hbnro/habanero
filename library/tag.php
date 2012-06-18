@@ -38,7 +38,7 @@ class tag extends prototype
       $this->node []= $tag;
     }
 
-    $this->_fill_props(array_merge($test, $args));
+    $this->fill_props(array_merge($test, $args));
   }
 
   /**#@-*/
@@ -85,10 +85,6 @@ class tag extends prototype
       $plain = (string) $first;
     } else {
       array_unshift($arguments, $first);
-    }
-
-    foreach ($arguments as $i => $val) {
-      is_string($arguments[$i]) && $arguments[$i] = args(attrs($arguments[$i]));
     }
 
     $el = static::create("<$method/>", call_user_func_array('array_merge', $arguments));
@@ -175,7 +171,7 @@ class tag extends prototype
     $this->node []= $new;
 
     $this->tag    = $old->tag;
-    $this->_fill_props($old->attrs);
+    $this->fill_props($old->attrs);
 
     return $new;
   }
@@ -283,8 +279,6 @@ class tag extends prototype
 
       if (func_num_args() !== 1) {
         $this->attrs[$key] = $value;
-      } elseif (preg_match('/^[@#.]/', $key)) {
-        return $this->attr(args(attrs($key)));
       }
       return ! empty($this->attrs[$key]) ? $this->attrs[$key] : FALSE;
     } elseif (is_array($key)) {
@@ -327,7 +321,7 @@ class tag extends prototype
    */
   final public function text($value = '') {
     if (func_num_args() === 0) {
-      return strip_tags($this->_build_text($this->node, FALSE));
+      return strip_tags($this->build_text($this->node, FALSE));
     }
 
     $this->node   = array();
@@ -345,7 +339,7 @@ class tag extends prototype
    */
   final public function html($value = '') {
     if (func_num_args() === 0) {
-      return $this->_build_text($this->node, TRUE);
+      return $this->build_text($this->node, TRUE);
     }
 
     $this->node   = array();
@@ -399,8 +393,8 @@ class tag extends prototype
   final public function add_class($name) {
     $args = func_get_args();
 
-    $set  = $this->_fetch_classes();
-    $test = $this->_fetch_classes($args);
+    $set  = $this->fetch_classes();
+    $test = $this->fetch_classes($args);
 
     $set  = array_unique(array_merge($set, $test));
     $this->attr('class', join(' ', $set));
@@ -417,9 +411,9 @@ class tag extends prototype
    */
   final public function remove_class($name) {
     $args = func_get_args();
-    $set  = $this->_fetch_classes();
+    $set  = $this->fetch_classes();
 
-    foreach ($this->_fetch_classes($args) as $one) {
+    foreach ($this->fetch_classes($args) as $one) {
       $key = array_search($one, $set);
 
       if ($key !== FALSE) {
@@ -441,7 +435,7 @@ class tag extends prototype
    * @return object
    */
   final public function toggle_class($name) {
-    if (in_array($name, $this->_fetch_classes())) {
+    if (in_array($name, $this->fetch_classes())) {
       $this->remove_class($name);
     } else {
       $this->add_class($name);
@@ -482,7 +476,7 @@ class tag extends prototype
     }
 
 
-    $str = $this->_build_text($this->node, !! $single);
+    $str = $this->build_text($this->node, !! $single);
 
     if ($this->tag === 'TEXT') {
       return $str;
@@ -506,7 +500,7 @@ class tag extends prototype
   }
 
   // retrieve node classes
-  final protected function _fetch_classes($test = '') {
+  final protected function fetch_classes($test = '') {
     if ( ! empty($test)) {
       $test = preg_split('/[\s\.,]/', join(',', $test));
     } else {
@@ -520,7 +514,7 @@ class tag extends prototype
   }
 
   // retrieve the current node text
-  final protected function _build_text($set, $re) {
+  final protected function build_text($set, $re) {
     $out = '';
 
     ksort($set);
@@ -540,7 +534,7 @@ class tag extends prototype
   }
 
   // assign the node attributes
-  final protected function _fill_props($set) {
+  final protected function fill_props($set) {
     foreach ($set as $key => $val) {
       if (preg_match('/^[a-z][a-z0-9:-]+$/', $key)) {
         $this->attrs[$key] = $val;
