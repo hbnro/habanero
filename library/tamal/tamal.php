@@ -173,28 +173,25 @@ class tamal extends prototype
   }
 
   // render markup tags
-  final private static function markup($tag, $args, $text = '') {
+  final private static function markup($tag, array $args, $text = '') {
+    $tmp   = array();
     $merge = FALSE;
 
-    foreach ($args as $i => $one) {
-      if (is_array($one)) {
-        $code = var_export($one, TRUE);
-        $code = str_replace(",\n", ',', $code);
-        $code = str_replace('array ', 'array', $code);
-
-        $args[$i] = $code;
-
-        $merge = TRUE;
-      } else {
-        $args[$i] = "array({$args[$i]})";
+    foreach ($args as $key => $val) {
+      if (is_num($key)) {
+        $tmp []= "array($val)";
+        unset($args[$key]);
       }
     }
 
-    $args = join(',', $args);
-    $hash = md5($tag . $args . ticks());
-    $out  = $hash . tag($tag, '', $text);
 
-    $merge && $args = "array_merge($args)";
+    if ( ! empty($args)) {
+      $tmp []= str_replace("\n", '', var_export($args, TRUE));
+    }
+
+    $args = join(',', $tmp);
+    $hash = md5($tag . $args . ticks());
+    $out  = $hash . tag($tag, array(), $text);
 
     $repl = "<$tag<?php echo attrs($args); ?>";
 
@@ -265,7 +262,8 @@ class tamal extends prototype
 
   // parse single line
   final private static function line($key, $text = '', $indent = 0) {
-    static $tags = NULL;
+    static $tags = NULL,
+           $regex = '/^(?:#([a-z_][\da-z_-]*))?(?:.?([\d.a-z_-]+))?/i';
 
     $key  = static::unescape($key);
     $text = ents(static::unescape($text));
@@ -320,13 +318,15 @@ class tamal extends prototype
         }
 
         // attributes (raw)
-        preg_match('/^[@#.][.\w@;:=-]+/', $key, $match);
+        preg_match('/^[#.][.\w-]+/', $key, $match);
 
         if ( ! empty($match[0])) {
-          $key  = substr($key, strlen($match[0]));
-          $test = array();
+          $key = substr($key, strlen($match[0]));
 
-          $args []= args(attrs($match[0]));
+          preg_match($regex, $match[0], $match);
+
+          ! empty($match[1]) && $args['id'] = $match[1];
+          ! empty($match[2]) && $args['class'] = strtr($match[2], '.', ' ');
         }
 
         // attributes { hash => val }
