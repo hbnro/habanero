@@ -53,17 +53,15 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
      copy_dir($app_path, $skel_dir.DS.'tasks');
 
-   create_dir($app_path.DS.'views');
-   create_dir($app_path.DS.'views'.DS.'assets');
+   create_dir($app_path.DS.'assets');
+   create_dir($app_path.DS.'assets'.DS.'css');
+  create_file($app_path.DS.'assets'.DS.'app.css', "/**\n *= include base\n */\n");
+    copy_file($app_path.DS.'assets'.DS.'css', $skel_dir.DS.'base.css.chess');
 
-   create_dir($app_path.DS.'views'.DS.'assets'.DS.'css');
-  create_file($app_path.DS.'views'.DS.'assets'.DS.'app.css', "/**\n *= include base\n */\n");
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'css', $skel_dir.DS.'base.css.chess');
-
-   create_dir($app_path.DS.'views'.DS.'assets'.DS.'js');
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'jquery.min.js');
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'modernizr.min.js');
-  create_file($app_path.DS.'views'.DS.'assets'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
+   create_dir($app_path.DS.'assets'.DS.'js');
+    copy_file($app_path.DS.'assets'.DS.'js', $skel_dir.DS.'jquery.min.js');
+    copy_file($app_path.DS.'assets'.DS.'js', $skel_dir.DS.'modernizr.min.js');
+  create_file($app_path.DS.'assets'.DS.'app.js', sprintf("/**\n%s\n */\n", join("\n", array(
     ' *= require jquery.min',
     ' *= require modernizr.min',
     ' *= include lib/console',
@@ -71,11 +69,12 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     ' *= include script',
   ))));
 
-   create_dir($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib');
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'console.js');
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'jquery-ujs.js');
-    copy_file($app_path.DS.'views'.DS.'assets'.DS.'js', $skel_dir.DS.'script.js.coffee');
+   create_dir($app_path.DS.'assets'.DS.'js'.DS.'lib');
+    copy_file($app_path.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'console.js');
+    copy_file($app_path.DS.'assets'.DS.'js'.DS.'lib', $skel_dir.DS.'jquery-ujs.js');
+    copy_file($app_path.DS.'assets'.DS.'js', $skel_dir.DS.'script.js.coffee');
 
+   create_dir($app_path.DS.'views');
    create_dir($app_path.DS.'views'.DS.'error');
     copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'not_found.html.tamal');
     copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html.tamal');

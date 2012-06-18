@@ -105,7 +105,7 @@ class chess extends prototype
    */
   final public static function path($path) {
     if ( ! is_url($path)) {
-      $root = APP_PATH.DS.'views'.DS.'assets'.DS.'css';
+      $root = APP_PATH.DS.'assets'.DS.'css';
 
       $path = str_replace(array('\\', '/'), DS, $path);
       $path = preg_replace(sprintf('/^\.%s/', preg_quote(DS, '/')), $root, $path);
