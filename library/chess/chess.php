@@ -476,12 +476,6 @@ class chess extends prototype
     }
 
 
-    if (is_array($text)) {
-      foreach ($text as $key => $val) {
-        $text[$key] = static::do_solve($val);
-      }
-    }
-
     do {
       $old  = strlen($text);
 
