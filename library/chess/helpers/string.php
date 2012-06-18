@@ -22,7 +22,7 @@ chess_helper::implement('qt', function () {
  * @param  mixed  Text|...
  * @return string
  */
-chess_helper::implement('%q', function() {
+chess_helper::implement('list', function() {
   $args = array();
   foreach (func_get_args() as $one) {
     $args []= strrpos($one, ' ') ? "'$one'" : $one;
@@ -38,7 +38,7 @@ chess_helper::implement('%q', function() {
  * @param  mixed  Arguments|...
  * @return string
  */
-chess_helper::implement('%', function($text) {
+chess_helper::implement('format', function($text) {
   $args = array_slice(func_get_args(), 1);
   return vsprintf($text, $args);
 });
@@ -51,7 +51,7 @@ chess_helper::implement('%', function($text) {
  * @param  mixed  Arguments|...
  * @return string
  */
-chess_helper::implement('#', function($text, $index = 1, $default = FALSE) {
+chess_helper::implement('argv', function($text, $index = 1, $default = FALSE) {
   $args = preg_split('/\s+/', $text);
   return isset($args[$index - 1]) ? $args[$index - 1] : $default;
 });
