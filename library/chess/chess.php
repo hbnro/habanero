@@ -289,16 +289,15 @@ class chess extends prototype
   }
 
   // build css properties
-  final private static function build_properties(&$set, $parent = '') {
-    foreach ($set as $okey => &$val) {
-      $key = preg_replace('/!\d*$/', '', $okey);
+  final private static function build_properties($set, $parent = '') {
+    foreach ($set as $key => $val) {
+      $key = preg_replace('/!\d*$/', '', $key);
 
       if (is_array($val)) {//FIX
         static::build_properties($val, trim("$parent %$key"));
       } else {
         switch($key) {
           case '@extend';
-            unset($set[$okey]);
             foreach (array_filter(explode(',', $val)) as $part) {
               if ( ! empty(static::$sets[$part])) {
                 static::$sets[$part]['@children'] = $parent;
@@ -306,10 +305,13 @@ class chess extends prototype
             }
           break;
           case '@include';
-            unset($set[$okey]);
-            foreach (static::do_mixin($val) as $k => $v) {
-              $set[$k] = $v;
-            }
+            $top = trim($parent, '%');
+            $mix = static::do_mixin($val);
+
+            static::build_properties($mix, $top);
+
+            $old = isset(static::$sets[$top]) ? static::$sets[$top] : array();
+            static::$sets[$top] = array_merge($old, $mix);
           break;
           default;
           break;
@@ -428,6 +430,7 @@ class chess extends prototype
   // compile mixin properties
   final private static function do_mixin($text) {
     $out  = array();
+    $text = static::do_solve($text);
 
     if (preg_match_all('/\s*([\w\-]+)!?(?:\((.+?)\))?\s*/', $text, $matches)) {
       foreach ($matches[1] as $i => $part) {
@@ -443,13 +446,15 @@ class chess extends prototype
             }
           }
 
+
+          $tmp = array();
+
           foreach ($old as $key => $val) {
-            $old[substr($key, 1)] = trim(preg_match('/^\s*([\'"])(.+?)\\1\s*$/', $val, $match) ? $match[2] : $val);
+            $tmp[ltrim($key, '$')] = trim(preg_match('/^\s*([\'"])(.+?)\\1\s*$/', $val, $match) ? $match[2] : $val);
           }
 
-
-          $old = array_merge(static::$props, $old);
-          $out = static::do_vars(static::$mixins[$part]['props'], $old);
+          $tmp = array_merge(static::$props, $tmp);
+          $out = static::do_vars(static::$mixins[$part]['props'], $tmp);
         }
       }
     }
@@ -472,11 +477,10 @@ class chess extends prototype
       }
     }
 
-
     do {
       $old  = strlen($text);
 
-      $text = preg_replace("/(?<!$mix)\(([^()]+?)\)/", '[ \\1 ]', $text);
+      $text = preg_replace("/(?<!\w)\(([^()]+?)\)/", '[ \\1 ]', $text);
       $text = preg_replace(array_keys($set), $set, static::do_vars($text, static::$props));
       $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
 
