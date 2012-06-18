@@ -1,4 +1,5 @@
 @use reset
+@use css3
 
 #wrapper {
   margin: 33px auto 0 auto;
@@ -8,29 +9,82 @@
     font-family: Bangers,sans-serif;
     font-size: 1.9em;
   }
-  > section {
+  section {
     padding: .8em;
     background: #f4f4f4;
     border: 1px solid #ededed;
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;
-    border-radius: 7px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
+    @include radius;
     > header {
       font-weight: bold;
       margin-bottom: .5em;
       padding-bottom: .5em;
       border-bottom: 1px solid #ededed;
     }
-    > pre {
+    pre {
       color: #6f6f6f;
     }
   }
-  > footer {
+  footer {
     text-align: right;
     font-size: .9em;
     color: #bfbfbf;
   }
+}
+
+label {
+  span {
+    display: block;
+    margin-top: 1em;
+  }
+}
+
+.error,
+.alert,
+.notice,
+.success,
+.info {
+  padding: 0.8em;
+  margin-bottom: 1em;
+  border-top: 1px solid #ddd;
+  @include radius_box(0,0,5,5);
+  li {
+    list-style-position: inside;
+  }
+}
+
+.error,
+.alert {
+  border-color: #fbc2c4;
+  background: #fbe3e4;
+  color: #8a1f11;
+}
+
+.notice {
+  border-color: #ffd324;
+  background: #fff6bf;
+  color: #514721;
+}
+.success {
+  border-color: #c6d880;
+  background: #e6efc2;
+  color: #264409;
+}
+.info {
+  border-color: #92cae4;
+  background: #d5edf8;
+  color: #205791;
+}
+
+.error a,
+.alert a {
+  color: #8a1f11;
+}
+.notice a {
+  color: #514721;
+}
+.success a {
+  color: #264409;
+}
+.info a {
+  color: #205791;
 }
