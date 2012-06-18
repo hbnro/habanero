@@ -289,15 +289,16 @@ class chess extends prototype
   }
 
   // build css properties
-  final private static function build_properties($set, $parent = '') {
-    foreach ($set as $key => $val) {
-      $key = preg_replace('/!\d*$/', '', $key);
+  final private static function build_properties(&$set, $parent = '') {
+    foreach ($set as $okey => &$val) {
+      $key = preg_replace('/!\d*$/', '', $okey);
 
       if (is_array($val)) {//FIX
         static::build_properties($val, trim("$parent %$key"));
       } else {
         switch($key) {
           case '@extend';
+            unset($set[$okey]);
             foreach (array_filter(explode(',', $val)) as $part) {
               if ( ! empty(static::$sets[$part])) {
                 static::$sets[$part]['@children'] = $parent;
@@ -305,13 +306,10 @@ class chess extends prototype
             }
           break;
           case '@include';
-            $top = trim($parent, '%');
-            $mix = static::do_mixin($val);
-
-            static::build_properties($mix, $top);
-
-            $old = isset(static::$sets[$top]) ? static::$sets[$top] : array();
-            static::$sets[$top] = array_merge($old, $mix);
+            unset($set[$okey]);
+            foreach (static::do_mixin($val) as $k => $v) {
+              $set[$k] = $v;
+            }
           break;
           default;
           break;
