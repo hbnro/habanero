@@ -279,7 +279,7 @@ function unents($text) {
  * @param   mixed   Inner text value|Function callback
  * @return  string
  */
-function tag($name, $args = array(), $text = '') {
+function tag($name, array $args = array(), $text = '') {
   static $set = NULL;
 
 
@@ -308,63 +308,22 @@ function tag($name, $args = array(), $text = '') {
 /**
  * Make a string of HTML attributes
  *
- * @param     mixed   Array|Object|Expression
- * @param     boolean Strictly HTML attributes?
- * @staticvar array   Global attributes set
- * @staticvar string  Selector regex
- * @return    string
+ * @param  mixed  Array|...
+ * @return string
  */
-function attrs($args, $html = FALSE) {
-  static $global = NULL,
-         $regex = '/(?:#([a-z_][\da-z_-]*))?(?:[.,]?([\s\d.,a-z_-]+))?(?:@([^"]+))?/i';
-
-  if (is_null($global)) {
-    $test   = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
-    $global = array_merge($test['global'], $test['events']);
-
-    unset($global['data-*']);
-    unset($global['aria-*']);
+function attrs(array $args) {
+  // TODO: allow classes mixup?
+  if (func_num_args() > 1) {
+    $set = array_slice(func_get_args(), 1);
+    foreach ($set as $one) {
+      is_array($one) && $args = array_merge($args, $one);
+    }
   }
 
 
-  if (is_string($args)) {
-    preg_match_all($regex, $args, $match);
+  $out = array('');
 
-
-    $args = array();
-
-    if ( ! empty($match[1][0])) {
-      $args['id'] = $match[1][0];
-    }
-
-    if ( ! empty($match[2][0])) {
-      $args['class'] = strtr($match[2][0], ',.', '  ');
-    }
-
-    if ( ! empty($match[3][0])) {
-      foreach (explode('@', $match[3][0]) as $one) {
-        $test = explode('=', $one);
-
-        $key  = ! empty($test[0]) ? $test[0] : $one;
-        $val  = ! empty($test[1]) ? $test[1] : $key;
-
-        $args[$key] = $val;
-      }
-    }
-
-  }
-
-
-  $out  = array('');
-
-  foreach ((array) $args as $key => $value) {
-    $key = preg_replace('/\W/', '-', trim($key));
-
-    if (is_true($html) && ! in_array($key, $global)) {
-      continue;
-    }
-
-
+  foreach ($args as $key => $value) {
     if (is_bool($value)) {
       if (is_true($value)) {
         $out []= $key;
@@ -380,10 +339,10 @@ function attrs($args, $html = FALSE) {
         $out []= sprintf('style="%s"', join(';', $props));
       } else {
         foreach ($value as $index => $test) {
-          $out []= sprintf('%s-%s="%s"', $key, $index, trim($test));
+          $out []= sprintf('%s-%s="%s"', $key, $index, (string) $test);
         }
       }
-    } elseif ( ! is_num($key) && $value) {
+    } elseif ( ! is_num($key)) {
       $out []= sprintf('%s="%s"', $key, ents((string) $value, TRUE));
     }
   }

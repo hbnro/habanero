@@ -155,11 +155,11 @@ return array(
   ),
   'global' => array(
     'accesskey',
-    'aria-*',
+    'aria',
     'class',
     'contenteditable',
     'contextmenu',
-    'data-*',
+    'data',
     'dir',
     'draggable',
     'id',
