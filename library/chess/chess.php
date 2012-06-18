@@ -430,7 +430,6 @@ class chess extends prototype
   // compile mixin properties
   final private static function do_mixin($text) {
     $out  = array();
-    $text = static::do_solve($text);
 
     if (preg_match_all('/\s*([\w\-]+)!?(?:\((.+?)\))?\s*/', $text, $matches)) {
       foreach ($matches[1] as $i => $part) {
@@ -479,7 +478,7 @@ class chess extends prototype
     do {
       $old  = strlen($text);
 
-      $text = preg_replace('/(?<!\w)\(([^()]+?)\)/', '[ \\1 ]', $text);
+      $text = preg_replace("/(?<!$mix)\(([^()]+?)\)/", '[ \\1 ]', $text);
       $text = preg_replace(array_keys($set), $set, static::do_vars($text, static::$props));
       $text = preg_replace_callback("/(?<![\-._])($mix)\(([^()]+)\)/", 'static::do_helper', $text);
 
