@@ -99,11 +99,12 @@ class routing
    * @return void
    */
   final public static function execute() {
-    $start = ticks();
+    $start  = ticks();
+    $method = request::method();
 
     foreach (static::$routes as $params) {
       $expr = "^$params[match]$";
-      $test = request::method() . ' ' . URI;
+      $test = "$method " . URI;
 
       $params['matches'] = match($expr, $test, (array) $params['constraints']);
 
@@ -112,19 +113,24 @@ class routing
           $params['to'] = ROOT;
         }
 
-        // TODO: still using the same token against XHR?
-        config('csrf_token', request::is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : sprintf('%d %s', time(), sha1(salt(13))));
-        config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
-
-        $params['protect'] && $_SESSION['--csrf-token'] = option('csrf_token');
 
         debug("On: ({$params['matches'][0]}) ", ticks($start));
+
+        if ($params['protect']) {
+          $old_token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
+          $new_token = sprintf('%d %s', time(), sha1(salt(13)));
+
+          config('csrf_token', request::is_ajax() ? $the_token : $new_token);// TODO: huh?
+          config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
+
+          $_SESSION['--csrf-token'] = option('csrf_token');
+        }
 
         request::dispatch($params);
       }
     }
 
-    raise(request::method() . ' ' . URI);
+    raise("$method " . URI);
   }
 
 }
