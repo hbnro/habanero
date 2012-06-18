@@ -19,6 +19,11 @@ if ( ! is_file($controller_file)) {
       li { data => compact('field') } = $text
 TPL;
 
+  inject_into_file(APP_PATH.DS.'index'.EXT, "\n  import('a_record');", array(
+    'unless' => '/\ba_record\b/',
+    'after' => '/run\s*\(\s*function\s*\(.*?\)\s*\{/',
+  ));
+
     create_file($controller_file, $controller);
 
      create_dir(APP_PATH.DS.'views'.DS."{$model}s");
