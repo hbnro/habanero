@@ -369,22 +369,22 @@ function attrs($args, $html = FALSE) {
       if (is_true($value)) {
         $out []= $key;
       }
-    } elseif (is_iterable($value)) {
-      if ($key === 'style') {//FIX
+    } elseif (is_array($value)) {
+      if ($key === 'style') {
         $props = array();
 
-        foreach ($value as $key => $val) {//TODO: deep chained props?
+        foreach ($value as $key => $val) {
           $props []= $key . ':' . trim($val);
         }
 
         $out []= sprintf('style="%s"', join(';', $props));
       } else {
-        foreach ((array) $value as $index => $test) {
+        foreach ($value as $index => $test) {
           $out []= sprintf('%s-%s="%s"', $key, $index, trim($test));
         }
       }
-    } elseif ( ! is_num($key) && is_scalar($value)) {
-      $out []= sprintf('%s="%s"', $key, ents($value, TRUE));
+    } elseif ( ! is_num($key) && $value) {
+      $out []= sprintf('%s="%s"', $key, ents((string) $value, TRUE));
     }
   }
 
