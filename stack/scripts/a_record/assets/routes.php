@@ -8,4 +8,5 @@ routing::mount(function () {
   delete('/', '<?php echo $model; ?>s#delete_all', array('path' => 'delete_all_<?php echo $model; ?>s'));
 }, array(
   'root' => '/<?php echo $model; ?>s',
+  'safe' => TRUE,
 ));
