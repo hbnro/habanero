@@ -14,7 +14,7 @@ if ( ! is_file($controller_file)) {
 
   $errors_tpl = <<<'TPL'
 - if $error
-  ul { data => array(errors => 'true') }
+  ul.error { data => array(errors => 'true') }
     - foreach $error as $field => $text
       li { data => compact('field') } = $text
 TPL;
