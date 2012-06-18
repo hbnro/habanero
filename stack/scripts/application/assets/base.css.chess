@@ -38,6 +38,11 @@ label {
   }
 }
 
+form > input {
+  margin-top: 1em;
+}
+
+
 .error,
 .alert,
 .notice,
