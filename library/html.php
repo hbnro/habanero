@@ -131,17 +131,13 @@ class html extends prototype
    * Threaded block tags
    *
    * @param  string Inner text value
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @param  string Inner wrapper
    * @param  string Tag name
    * @return string
    */
-  final public static function block($text, $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote') {
-    if (is_string($args)) {
-      $args = args(attrs($args));
-    }
-
-      if (is_scalar($text)) {
+  final public static function block($text, array $args = array(), $wrap = '<p>%s</p>', $tag = 'blockquote') {
+    if (is_scalar($text)) {
       return tag($tag, $args, sprintf($wrap, $text));
     } elseif (is_array($text)) {
       $test   = array_values($text);
@@ -182,17 +178,13 @@ class html extends prototype
    *
    * @param  string Inner text value
    * @param  mixed  Fieldset legend|Attributes
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @return string
    */
-  final public static function fieldset($text, $title = '', $args = array()) {
-    if (is_string($args)) {
-      $args = args(attrs($args));
-    }
-
+  final public static function fieldset($text, $title = '', array $args = array()) {
     if (is_assoc($title)) {
-      $args  += $title;
-      $title  = '';
+      $args  = array_merge($title, $args);
+      $title = '';
     }
 
     return tag('fieldset', $args, ($title ? tag('legend', '', $title) : '') . $text);
@@ -205,12 +197,12 @@ class html extends prototype
    * @param  mixed  Headers|Hash
    * @param  array  Vector data
    * @param  mixed  Footer|Hash
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @param  mixed  Function callback
    * @return string
    *
    */
-  final public static function table($head, array $body, $foot = array(), $args = array(), Closure $filter = NULL) {
+  final public static function table($head, array $body, $foot = array(), array $args = array(), Closure $filter = NULL) {
     $thead =
     $tbody =
     $tfoot = '';
@@ -219,9 +211,9 @@ class html extends prototype
       $head = ! is_string($head) ? (array) $head : explode('|', $head);
 
       foreach ($head as $col) {
-        $thead .= tag('th', '', $col);
+        $thead .= tag('th', array(), $col);
       }
-      $thead = tag('thead', '', tag('tr', '', $thead));
+      $thead = tag('thead', array(), tag('tr', array(), $thead));
     }
 
     if ( ! empty($foot)) {
@@ -233,13 +225,13 @@ class html extends prototype
       foreach ($foot as $col) {
         $tfoot .= tag('th', $attrs, $col);
       }
-      $tfoot = tag('tfoot', '', tag('tr', '', $tfoot));
+      $tfoot = tag('tfoot', array(), tag('tr', array(), $tfoot));
     }
 
 
     foreach ((array) $body as $cols => $rows) {
       if ( ! is_array($rows)) {
-        $tbody .= tag('tr', '', tag('td', array('colspan' => 99), $rows));
+        $tbody .= tag('tr', array(), tag('td', array('colspan' => 99), $rows));
         continue;
       }
 
@@ -254,9 +246,9 @@ class html extends prototype
         if (is_array($cell)) {
           $cell = static::table('', $cell);
         }
-        $row .= tag('td', '', $cell);
+        $row .= tag('td', array(), $cell);
       }
-      $tbody .= tag('tr', '', $row);
+      $tbody .= tag('tr', array(), $row);
     }
 
     return tag('table', $args, $thead . $tbody . $tfoot);
@@ -268,14 +260,14 @@ class html extends prototype
    *
    * @link   http://snipplr.com/view/2225/php-tag-cloud-based-on-word-frequency/
    * @param  array   Words set
-   * @param  mixed   Attributes
+   * @param  array   Attributes
    * @param  string  Default link
    * @param  integer Minimum font-size
    * @param  integer Maximum font-size
    * @param  string  Default size unit
    * @return string
    */
-  final public static function cloud(array $from = array(), $args = array(), $href = '?q=%s', $min = 12, $max = 30, $unit = 'px') {
+  final public static function cloud(array $from = array(), array $args = array(), $href = '?q=%s', $min = 12, $max = 30, $unit = 'px') {
     $min_count = min(array_values($set));
     $max_count = max(array_values($set));
 
@@ -300,17 +292,12 @@ class html extends prototype
    * Navigation list
    *
    * @param  array  Links
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @param  string Default value
    * @param  string CSS marker class
    * @return string
    */
-  final public static function navlist(array $set, $args = array(), $default = URI, $class = 'here') {
-    if (is_string($args)) {
-      $args = args(attrs($args));
-    }
-
-
+  final public static function navlist(array $set, array $args = array(), $default = URI, $class = 'here') {
     $out = array();
 
     foreach ($set as $key => $val) {
@@ -322,7 +309,6 @@ class html extends prototype
 
       $out []= static::a($key, $val, $attrs);
     }
-
     return static::ul($out, $args);
   }
 
@@ -331,11 +317,11 @@ class html extends prototype
    * Definition list
    *
    * @param  array  Values
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @param  mixed  Function callback
    * @return string
    */
-  final public static function dl(array $set, $args = array(), $filter = FALSE) {
+  final public static function dl(array $set, array $args = array(), $filter = FALSE) {
     return static::ul($set, $args, $filter, 0, 0);
   }
 
@@ -344,11 +330,11 @@ class html extends prototype
    * Ordered list
    *
    * @param  array  Values
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @param  mixed  Function callback
    * @return string
    */
-  final public static function ol(array $set, $args = array(), $filter = FALSE) {
+  final public static function ol(array $set, array $args = array(), $filter = FALSE) {
     return static::ul($set, $args, $filter, 0);
   }
 
@@ -357,11 +343,11 @@ class html extends prototype
    * Unordered list
    *
    * @param  array  Values
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @param  mixed  Function callback
    * @return string
    */
-  final public static function ul(array $set, $args = array(), Closure $filter = NULL) {
+  final public static function ul(array $set, array $args = array(), Closure $filter = NULL) {
     $ol = func_num_args() == 4;
     $dl = func_num_args() == 5;
 
@@ -379,13 +365,13 @@ class html extends prototype
 
 
 
-    foreach ((array) $set as $item => $value) {
+    foreach ($set as $item => $value) {
       $test = is_callable($filter) ? $filter($item, $value) : array($item, $value);
 
       if ( ! isset($test[1])) {
         continue;
       } elseif (is_true($dl)) {
-        $out .= tag('dt', '', $test[0]);
+        $out .= tag('dt', array(), $test[0]);
       }
 
       if (is_array($test[1])) {
@@ -401,13 +387,13 @@ class html extends prototype
           $tmp []= '';
         }
 
-        $tmp[1] = NULL;
+        $tmp[1] = array();
 
         $inner = call_user_func_array('html::ul', $tmp);
-        $out  .= tag($el, '', $item . $inner);
+        $out  .= tag($el, array(), $item . $inner);
         continue;
       }
-      $out .= tag($el, '', $test[1]);
+      $out .= tag($el, array(), $test[1]);
     }
     return tag($tag, $args, $out);
   }
@@ -452,15 +438,15 @@ class html extends prototype
    *
    * @param  string Identifier key name
    * @param  string Inner text value
-   * @param  mixed  Attributes
+   * @param  array  Attributes
    * @return string
    */
-  final public static function anchor($name, $text = '', $args = array()) {
+  final public static function anchor($name, $text = '', array $args = array()) {
     $attrs = array();
 
     $attrs['id'] = preg_replace('/[^\w-]/', '', $name);
 
-    return tag('a', $attrs = array_merge((array) $args, $attrs), $text);
+    return tag('a', array_merge($args, $attrs), $text);
   }
 
 

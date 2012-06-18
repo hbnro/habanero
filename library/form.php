@@ -107,7 +107,7 @@ class form extends prototype
   * @param  mixed  Attributes
   * @return string
   */
-  final public static function file($name, $args = array()) {
+  final public static function file($name, array $args = array()) {
     return static::input('file', $name, '', $args);
   }
 
@@ -151,7 +151,7 @@ class form extends prototype
           break;
         }
 
-        $format = ! empty($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
+        $format = is_array($one['div']) ? sprintf('<div%s>%%s</div>', attrs($one['div'])) : '%s';
         $label  = ! empty($one['label']) ? static::label($one['name'], "<span>$one[label]</span>\n$input") : $input;
 
         $out  []= sprintf($format, "$one[before]\n$label\n$one[after]");
@@ -392,14 +392,10 @@ class form extends prototype
   *
   * @param  string Textfield name
   * @param  string Inner text
-  * @param  mixed  Attributes
+  * @param  array  Attributes
   * @return string
   */
-  final public static function textarea($name, $value = '', $args = array()) {
-    if (is_string($args)) {
-      $args = args(attrs($args));
-    }
-
+  final public static function textarea($name, $value = '', array $args = array()) {
     if (is_assoc($name)) {
       $args = array_merge($name, $args);
     } elseif ( ! isset($args['name'])) {
@@ -448,14 +444,10 @@ class form extends prototype
   *
   * @param  string Input name|Function callback|Attributes
   * @param  mixed  Label text|Attributes
-  * @param  mixed  Attributes
+  * @param  array  Attributes
   * @return void
   */
   final public static function label($for, $text = '', $args = array()) {
-    if (is_string($args)) {
-      $args = args(attrs($args));
-    }
-
     if (is_assoc($for)) {
       $args = array_merge($for, $args);
     } elseif ( ! isset($args['for'])) {
