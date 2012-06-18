@@ -116,12 +116,11 @@ class routing
 
         debug("On: ({$params['matches'][0]}) ", ticks($start));
 
-        if ($params['protect']) {
-          $old_token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
-          $new_token = sprintf('%d %s', time(), sha1(salt(13)));
-
-          config('csrf_token', request::is_ajax() ? $the_token : $new_token);// TODO: huh?
+        if ($params['protect']) { // TODO: is this it?
+          config('csrf_token', sprintf('%d %s', time(), sha1(salt(13))));
           config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
+
+          ($method <> 'GET') && ! request::is_safe() && raise(ln('invalid_authenticity_token'));
 
           $_SESSION['--csrf-token'] = option('csrf_token');
         }

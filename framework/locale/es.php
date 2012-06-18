@@ -8,6 +8,7 @@ $lang['method_missing'] = 'El método %{class}::%{name}() no está disponible';
 $lang['property_missing'] = 'La propiedad %{class}.%{name} no está disponible';
 $lang['extension_missing'] = 'La extensión %{name} no existe y es necesaria';
 $lang['function_param_missing'] = 'El parámetro %{input} para %{name}() hace falta';
+$lang['invalid_authenticity_token'] = 'La solicitud no es segura para procesar';
 
 $lang['file_not_exists'] = 'El archivo %{name} no existe y es necesario';
 $lang['class_not_exists'] = 'La clase %{name} no existe y es necesaria';
