@@ -57,7 +57,7 @@ class remote extends prototype
         }
 
         $data = read($set[0]);
-        $name = preg_replace('/[^\w.]/', '', is_num($name) ? $set[0] : $name);
+        $name = preg_replace('/[^\w.]/', '', is_numeric($name) ? $set[0] : $name);
 
         $output .= "\r\nContent-Disposition: form-data; name=\"" . $name . '"; filename="' . $set[0] . '"';
         $output .= "\r\nContent-Type: " . $set[1];

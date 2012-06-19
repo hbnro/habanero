@@ -47,7 +47,7 @@ cli::writeln(pretty(function () {
       $key = "['" . join("']['", $sub) . "']";
 
       $value = trim(var_export($value, TRUE));
-      $value = is_num($value) ? substr($value, 1, -1) : $value;
+      $value = is_numeric($value) ? substr($value, 1, -1) : $value;
 
       $code .= "\$config{$key} = $value;\n";
     }

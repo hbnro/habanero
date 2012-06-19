@@ -128,7 +128,7 @@ function route($match, $to = NULL, array $params = array()) {
 
   $params['match'] = trim($params['match']);
 
-  if (is_false(strpos($params['match'], ' '))) {
+  if (strpos($params['match'], ' ') === FALSE) {
     $params['match'] = 'GET ' . $params['match'];
   }
 
@@ -223,10 +223,10 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
     }
 
     return join('.', $test);
-  } elseif (is_true($key)) {
+  } elseif ($key === TRUE) {
     $host = '';
 
-    if (is_true($complete)) {
+    if ($complete) {
       $pre   = explode('/', $_SERVER['SERVER_PROTOCOL']);
 
       $host .= strtolower(array_shift($pre));
@@ -236,7 +236,7 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
 
     $host .= '//' . strtolower($_SERVER['HTTP_HOST']);
     $host .= (int) $_SERVER['SERVER_PORT'] !== 80 ? ":$_SERVER[SERVER_PORT]" : '';
-    $host .= ! is_false($default) ? $default : '';
+    $host .= $default !== FALSE ? $default : '';
 
     return $host;
   } elseif ( ! empty($_SERVER[$key])) {
@@ -362,7 +362,7 @@ function flash($key = -1, $value = FALSE) {
   }
 
 
-  if (is_num($key)) {
+  if (is_numeric($key)) {
     return FALSE;
   }
 
@@ -397,7 +397,7 @@ function session($key, $value = '', array $option = array()) {
       return $test['value'];
     }
     return FALSE;
-  } elseif (is_string($hash) && ! is_num($hash)) {
+  } elseif (is_string($hash) && ! is_numeric($hash)) {
     if (is_null($value) && isset($_SESSION[$hash])) {
       unset($_SESSION[$hash]);
     } else {

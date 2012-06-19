@@ -109,7 +109,7 @@ class cli extends prototype
       }
 
       foreach (array_reverse(array_slice($test, 1)) as $i => $val) {
-        if ( ! is_num($i) OR (substr($val, 0, 1) === '-')) {
+        if ( ! is_numeric($i) OR (substr($val, 0, 1) === '-')) {
           continue;
         }
 
@@ -189,7 +189,7 @@ class cli extends prototype
    * @return void
    */
   final public static function wait($text = 'press_any_key') {
-    if (is_num($text)) {
+    if (is_numeric($text)) {
       while (1) {
         if (($text -= 1) < 0) {
           break;
@@ -273,7 +273,7 @@ class cli extends prototype
    */
   final public static function error($text, $plain = FALSE) {
     $error = static::ln('error');
-    $text  = is_true($plain) ? $text : "\n\bred($error)\b $text\n";
+    $text  = $plain ? $text : "\n\bred($error)\b $text\n";
 
     fwrite(STDERR, static::format($text));
 
@@ -349,7 +349,7 @@ class cli extends prototype
         }
 
         $color = "\033[" . ( $out ? join(';', $out) : 0) . 'm';
-        $color = is_false(IS_WIN) ? "{$color}{$match[3][$i]}\033[0m" : $match[3][$i];
+        $color = ! IS_WIN ? "{$color}{$match[3][$i]}\033[0m" : $match[3][$i];
         $text  = str_replace($val, $color, $text);
       }
     }
@@ -701,7 +701,7 @@ class cli extends prototype
 
   // translations
   final private static function ln($str) {
-    return ln( ! is_false(strpos($str, '.')) ? $str : "cli.$str");
+    return ln(strpos($str, '.') !== FALSE ? $str : "cli.$str");
   }
 
   /**#@-*/

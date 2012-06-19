@@ -42,11 +42,11 @@ class sql_base extends sql_raw
   // recursive string escaping
   final protected function fixate_string($test, $alone = FALSE) {
     if (is_array($test)) {
-      if (is_true($alone) && sizeof($test) == 1) {
+      if ($alone && sizeof($test) == 1) {
         $col = key($test);
         $val = $test[$col];
 
-        if ( ! is_num($col)) {
+        if ( ! is_numeric($col)) {
           return $this->protect_names("$val.$col");
         } else {
           return $this->fixate_string($val, TRUE);
@@ -67,7 +67,7 @@ class sql_base extends sql_raw
     foreach ((array) $values as $key => $val) {
       if (strlen(trim($val)) == 0) {
         continue;
-      } elseif (is_num($key)) {
+      } elseif (is_numeric($key)) {
         $sql []= ' ' . $this->protect_names($val);
         continue;
       }
@@ -81,7 +81,7 @@ class sql_base extends sql_raw
     $sql    = array();
     $fields = (array) $fields;
 
-    if (is_true($insert)) {
+    if ($insert) {
       $cols = array();
 
       foreach (array_keys($fields) as $one) {
@@ -98,13 +98,13 @@ class sql_base extends sql_raw
     $total = sizeof($fields);
 
     foreach ($fields as $key => $val) {
-      if (is_num($key)) {
+      if (is_numeric($key)) {
         $out []= $val;
       } else {
         $val = $this->fixate_string($val, TRUE);
-        $val = is_num($val) ? $val : $val;
+        $val = is_numeric($val) ? $val : $val;
 
-        if (is_true($insert)) {
+        if ($insert) {
           $out []= $val;
         } else {
           $out []= sprintf('%s = %s', $this->quote_string($key), $val);
@@ -114,7 +114,7 @@ class sql_base extends sql_raw
 
     $sql []= join(",\n", $out);
 
-    if (is_true($insert)) {
+    if ($insert) {
       $sql []= ')';
     }
 
@@ -215,7 +215,7 @@ class sql_base extends sql_raw
 
       switch ($char) {
         case $separator;
-          if ( ! is_false($str)) {
+          if ($str !== FALSE) {
             $query .= $char;
           } else {
             if (strlen(trim($query)) == 0) {

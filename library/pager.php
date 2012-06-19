@@ -114,7 +114,7 @@ class pager extends prototype
   final public static function offset($count, $current = FALSE) {
     static::$count = (int) $count;
 
-    if ( ! is_false($current)) {
+    if ($current !== FALSE) {
       static::$current = (int) $current;
     }
 

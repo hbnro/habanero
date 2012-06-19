@@ -26,7 +26,7 @@ if ( ! $table) {
 
         $fields[$name] = (array) $type;
 
-        $length && is_num($length) && $fields[$name] []= $length;
+        $length && is_numeric($length) && $fields[$name] []= $length;
 
         $type === 'primary_key' && $pk = TRUE;
       }

@@ -76,7 +76,7 @@ class cache extends prototype
    * @return mixed
    */
   final public static function block($key, Closure $lambda, $max = 0) {
-    if (is_false($old = static::get($key))) {
+    if (($old = static::get($key)) === FALSE) {
       ob_start() && $lambda();
 
       $old = ob_get_clean();
@@ -96,7 +96,7 @@ class cache extends prototype
    * @return mixed
    */
   final public static function get($key, $default = FALSE) {
-    if (is_num($key) OR is_false($old = static::fetch_item($key))) {
+    if (is_numeric($key) OR (($old = static::fetch_item($key)) === FALSE)) {
       return $default;
     }
     return $old;
@@ -113,7 +113,7 @@ class cache extends prototype
    * @return boolean
    */
   final public static function set($key, $value, $max = 0, $tags = array()) {
-    if (is_num($key)) {
+    if (is_numeric($key)) {
       return FALSE;
     }
 
@@ -147,7 +147,7 @@ class cache extends prototype
    * @return boolean
    */
   final public static function remove($key) {
-    if (is_string($key) && ! is_false(strpos($key, ','))) {
+    if (is_string($key) && (strpos($key, ',') !== FALSE)) {
       $key = array_filter(explode(',', $key));
     }
 
@@ -189,7 +189,7 @@ class cache extends prototype
    * @return boolean
    */
   final public static function exists($key) {
-    return ! is_num($key) && static::check_item($key);
+    return ! is_numeric($key) && static::check_item($key);
   }
 
 }

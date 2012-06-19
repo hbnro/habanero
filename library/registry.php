@@ -82,7 +82,7 @@ class registry
 
   // retrieve single bag
   final private static function get($bag = '') {
-    $bag = ($bag && ! is_num($bag)) ? $bag : '--registry-default';
+    $bag = ($bag && ! is_numeric($bag)) ? $bag : '--registry-default';
 
     if ( ! isset(static::$stack[$bag])) {
       static::$stack[$bag] = new stdClass;

@@ -39,7 +39,7 @@ class a_eager
     $this->props['data'] = static::fetch($params);
     $params['set'] = $this->props;
 
-    if (is_false($key)) {
+    if ($key === FALSE) {
       $method == 'each' ? array_unshift($arguments, $params) : $arguments []= $params;
     } else {
       $arguments[$key] = $params;

@@ -20,7 +20,7 @@ define('SLUG_TRIM', 4);
  * @return string
  */
 function char($text) {
-  return ! is_num($text) ? substr((string) $text, 0, 1) : chr((int) $text);
+  return ! is_numeric($text) ? substr((string) $text, 0, 1) : chr((int) $text);
 }
 
 
@@ -42,7 +42,7 @@ function underscore($text, $ucwords = FALSE, $strict = FALSE) {
 
   $text = plain(unents($text));
 
-  if (is_true($ucwords)) {
+  if ($ucwords) {
     $text = ucwords($text);
   }
 
@@ -71,7 +71,7 @@ function camelcase($text, $ucfirst = FALSE, $glue = '') {
 
   $text = preg_replace(array_keys($repl), $repl, underscore($text));
 
-  if (is_true($ucfirst)) {
+  if ($ucfirst) {
     $text = ucfirst($text);
   }
 
@@ -180,7 +180,7 @@ function plain($text, $special = FALSE) {
 
 
   $text = strtr($text, $set);
-  $text = is_true($special) ? strtr($text, $rev) : $text;
+  $text = $special ? strtr($text, $rev) : $text;
 
   return $text;
 }
@@ -195,7 +195,7 @@ function plain($text, $special = FALSE) {
  */
 function strips($text, $comments = FALSE) {
   $out = preg_replace('/[<\{\[]\/*[^<\{\[!\]\}>]*[\]\}>]/Us', '', $text);
-  $out = is_false($comments) ? strip_tags($out) : $out;
+  $out = ! $comments ? strip_tags($out) : $out;
 
   return $out;
 }
@@ -225,7 +225,7 @@ function ents($text, $escape = FALSE) {
   $text = preg_replace('/&(#?[a-z0-9]+);/i', "{$hash}\\1;", $text);
   $text = str_replace(array('&', '\\', $hash), array('&amp;', '&#92;', '&'), $text);
 
-  if (is_true($escape)) {
+  if ($escape) {
     $text = strtr($text, array(
         '<' => '&lt;',
         '>' => '&gt;',
@@ -325,7 +325,7 @@ function attrs(array $args) {
 
   foreach ($args as $key => $value) {
     if (is_bool($value)) {
-      if (is_true($value)) {
+      if ($value) {
         $out []= $key;
       }
     } elseif (is_array($value)) {
@@ -342,7 +342,7 @@ function attrs(array $args) {
           $out []= sprintf('%s-%s="%s"', $key, $index, (string) $test);
         }
       }
-    } elseif ( ! is_num($key)) {
+    } elseif ( ! is_numeric($key)) {
       $out []= sprintf('%s="%s"', $key, ents((string) $value, TRUE));
     }
   }

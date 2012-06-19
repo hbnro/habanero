@@ -23,7 +23,7 @@ function ranges($low, $high = '', $step = 1) {
 
 
   foreach ($test as $one) {
-    if (is_num($one) OR (strlen($one) === 1)) {
+    if (is_numeric($one) OR (strlen($one) === 1)) {
       $out []= $one;
     } elseif (is_string($one)) {
       $old = array_map('trim', explode('-', $one));
@@ -138,7 +138,7 @@ function grid($set, $cols = 5, $rows = 0, $callback = '') {
 function wrap($set, $test = '%s', $recursive = FALSE) {
   foreach ($set as $key => $val) {
     if (is_array($val)) {
-      $val = is_true($recursive) ? wrap($val, $test, $recursive) : $val;
+      $val = $recursive ? wrap($val, $test, $recursive) : $val;
     } else {
       $val = is_callable($test) ? $test($val) : sprintf($test, (string) $val);
     }
@@ -283,7 +283,7 @@ function kfill($set) {
   $out = array();
 
   foreach ($set as $key => $val) {
-    if ( ! is_num($val) && is_string($val)) {
+    if ( ! is_numeric($val) && is_string($val)) {
       $out[$val] = $val;
     }
   }

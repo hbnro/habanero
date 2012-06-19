@@ -45,7 +45,7 @@ class date extends prototype
     $with = preg_replace_callback($expr, function ($match)
       use($of) {
       $test = date($match[1], $of ? (is_timestamp($of) ? strtotime($of) : (int) $of) : time::now());
-      $test = is_num($test) ? $test : ln('date.' . strtolower($test));
+      $test = is_numeric($test) ? $test : ln('date.' . strtolower($test));
 
       return $test;
     }, $with);
@@ -219,13 +219,13 @@ class date extends prototype
     $secs  = (float) $secs;
 
     foreach ($period as $key => $value) {
-      if ( ! empty($used) && is_false(strpos($used, substr($key, 0, 1)))) {
+      if ( ! empty($used) && (strpos($used, substr($key, 0, 1)) === FALSE)) {
         continue;
       }
 
       $count = $secs / $value;
 
-      if (floor($count) == 0 && is_false($zero)) {
+      if (floor($count) == 0 && ! $zero) {
         continue;
       }
 

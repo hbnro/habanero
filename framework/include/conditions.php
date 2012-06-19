@@ -45,15 +45,10 @@ function is_mime($test) {
  * @param  integer Max value
  * @return boolean
  */
-function is_num($test, $min = NULL, $max = NULL) {
-  if ( ! is_scalar($test)) {
-    return FALSE;
-  } elseif (func_num_args() == 1) {
-    return is_numeric($test);
-  } elseif (func_num_args() == 2) {
-    return ! is_false(strpos($min, $test));
+function is_num($test, $min, $max = NULL) {
+  if (func_num_args() == 2) {
+    return strpos($min, $test) !== FALSE;
   }
-
   return ($test >= $min) && ($test <= $max);
 }
 
@@ -135,7 +130,7 @@ function is_assoc($set) {
   }
 
   foreach (array_keys($set) as $key) {
-    if (is_num($key)) {
+    if (is_numeric($key)) {
       return FALSE;
     }
   }
@@ -242,7 +237,7 @@ function is_money($test, $left = FALSE) {
             '/^(?!0,?\d)(?:\d{1,3}(?:([\s,.])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u',
           );
 
-  $expr = $regex[(int) is_true($left)];
+  $expr = $regex[(int) $left];
 
   if ( ! IS_UNICODE) {
     $expr = str_replace('\p{Sc}', '(?:£|¥|€|¢|\$)', $expr);
@@ -335,7 +330,7 @@ if ( ! function_exists('is_email')) {
     foreach ($test as $value) {
       if ( ! preg_match($regex, $value)) {
         return FALSE;
-      } elseif (is_true($check) && ! checkdnsrr(substr($value, strpos($value, '@') + 1), 'MX')) {
+      } elseif ($check && ! checkdnsrr(substr($value, strpos($value, '@') + 1), 'MX')) {
         return FALSE;
       }
     }
@@ -438,7 +433,7 @@ function is_range($test, array $ranges = array()) {
           if (is_num($par[$i], $match[1], $match[2])) {
             $check += 1;
           }
-        } elseif (is_num($seg)) { // exactly
+        } elseif (is_numeric($seg)) { // exactly
           if ($par[$i] == $seg) {
             $check += 1;
           }
@@ -568,7 +563,7 @@ function is_today($test) {
  * @return boolean
  */
 function is_timestamp($test) {
-  return $test && ( ! is_num($test) && strtotime($test)) ?: FALSE;
+  return $test && ( ! is_numeric($test) && strtotime($test)) ?: FALSE;
 }
 
 
@@ -667,53 +662,7 @@ function is_notnull($test) {
  */
 function is_empty($test) {
   foreach (func_get_args() as $one) {
-    if ( ! is_num($one) && empty($one)) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
-
-/**
- * Is boolean true valid?
- *
- * @param  mixed   Expression
- * @return boolean
- */
-function is_true($test) {
-  if (func_num_args() == 1) {
-    return $test === TRUE;
-  }
-
-  $args = func_get_args();
-
-  foreach ($args as $one) {
-    if (TRUE === $one) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
-
-/**
- * Is boolean false true?
- *
- * @param  mixed   Expression
- * @return boolean
- */
-function is_false($test) {
-  if (func_num_args() == 1) {
-    return $test === FALSE;
-  }
-
-  $args = func_get_args();
-
-  foreach ($args as $one) {
-    if (FALSE === $one) {
+    if ( ! is_numeric($one) && empty($one)) {
       return TRUE;
     }
   }

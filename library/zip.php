@@ -141,7 +141,7 @@ class zip extends prototype
    */
   final public static function export($file = '', $return = FALSE) {
     if (empty($file)) {
-      if (is_true($return)) {
+      if ($return) {
         return static::zip_read();
       }
       echo static::zip_read();

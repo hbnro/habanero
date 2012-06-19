@@ -142,7 +142,7 @@ app_generator::implement('ar:console', function () {
         use($out) {
         foreach ($out as $key => $one) {
           $one = dump($one);
-          echo is_num($key) ? "\bcyan(>>>)\b $one\n" : "\bgreen($key)\b $one\n";
+          echo is_numeric($key) ? "\bcyan(>>>)\b $one\n" : "\bgreen($key)\b $one\n";
         }
       });
     }

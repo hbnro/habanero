@@ -74,7 +74,7 @@ class sql_scheme extends sql_query
 
 
     if ( ! is_array($old)) {
-      if (is_true($raw)) {
+      if ($raw) {
         return array_map(array($this, 'execute'), $this->query_parse($test));
       }
       return FALSE;
@@ -115,13 +115,13 @@ class sql_scheme extends sql_query
         );
       }
 
-      if (is_true($data)) {
+      if ($data) {
         $result = $this->select($one, ALL);
         $out[$one]['data'] = $this->fetch_all($result, AS_ARRAY);
       }
     }
 
-    if (is_true($raw)) {
+    if ($raw) {
       $old = array();
 
       foreach ($out as $key => $val) {

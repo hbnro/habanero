@@ -57,7 +57,7 @@ class token extends prototype
     $test = explode(char($ord), $text);
 
     if ( ! $index) {
-      return is_true($join) ? join(char($ord), $test) : $test;
+      return $join ? join(char($ord), $test) : $test;
     } elseif (preg_match('/(\d+)-(\d*)/', $index, $match)) {
       if ( ! empty($match[2])) {
         $test = array_slice($test, $match[1] - 1, $match[2] - ($match[1] - 1));
@@ -347,7 +347,7 @@ class token extends prototype
 
   // join all items
   final private static function glue($join, $ord, $out) {
-    return is_true($join) ? join(char($ord), $out) : $out;
+    return $join ? join(char($ord), $out) : $out;
   }
 
   /**#@-*/

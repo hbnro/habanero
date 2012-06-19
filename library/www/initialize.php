@@ -27,7 +27,7 @@ core::bind(function ($bootstrap) {
       continue;
     }
 
-    if (strpos($_SERVER[$key], INDEX) && is_false($val)) {
+    if (strpos($_SERVER[$key], INDEX) && ($val === FALSE)) {
       continue;
     }
 
@@ -48,7 +48,7 @@ core::bind(function ($bootstrap) {
       continue;
     }
 
-    if (strpos($_SERVER[$key], INDEX) && is_false($val)) {
+    if (strpos($_SERVER[$key], INDEX) && ($val === FALSE)) {
       continue;
     }
 

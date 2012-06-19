@@ -28,7 +28,7 @@ class html extends prototype
    * @return string
    */
   final public static function cdata($text, $comment = FALSE) {
-    if (is_true($comment)) {
+    if ($comment) {
       return "/*<![CDATA[*/\n$text\n/*]]]>*/";
     }
     return "<![CDATA[$text]]]>";
@@ -46,7 +46,7 @@ class html extends prototype
   final public static function data($text, $mime = 'text/plain', $chunk = FALSE) {
     $text = base64_encode($text);
 
-    if (is_true($chunk)) {
+    if ($chunk) {
       $text = chunk_split($text);
     }
 
@@ -73,7 +73,7 @@ class html extends prototype
       $attrs['src'] = $url;
     }
 
-    return tag('script', $attrs, is_true($force) ? static::cdata($text, TRUE) : $text);
+    return tag('script', $attrs, $force ? static::cdata($text, TRUE) : $text);
   }
 
 
@@ -92,7 +92,7 @@ class html extends prototype
       $text = '';
     }
 
-    return tag('style', $attrs, is_true($force) ? static::cdata($text, TRUE) : $text);
+    return tag('style', $attrs, $force ? static::cdata($text, TRUE) : $text);
   }
 
 
@@ -110,7 +110,7 @@ class html extends prototype
     if (is_assoc($name)) {
       $attrs = array_merge($attrs, $name);
     } else {
-      $attrs[is_true($http) ? 'http-equiv' : 'name'] = $name;
+      $attrs[$http ? 'http-equiv' : 'name'] = $name;
     }
     return tag('meta', $attrs);
   }
@@ -162,7 +162,7 @@ class html extends prototype
         if (is_string($test[$i])) {
           $out []= tag($tag, $args, sprintf($wrap, $test[$i]));
 
-          if (is_true($cite)) {
+          if ($cite) {
             $cite = FALSE;
           }
         }
@@ -356,10 +356,10 @@ class html extends prototype
     $el    = 'li';
     $out   = '';
 
-    if (is_true($dl)) {
+    if ($dl) {
       $tag = 'dl';
       $el  = 'dd';
-    } elseif (is_true($ol)) {
+    } elseif ($ol) {
       $tag = 'ol';
     }
 
@@ -370,12 +370,12 @@ class html extends prototype
 
       if ( ! isset($test[1])) {
         continue;
-      } elseif (is_true($dl)) {
+      } elseif ($dl) {
         $out .= tag('dt', array(), $test[0]);
       }
 
       if (is_array($test[1])) {
-        $item = ! is_num($test[0]) ? $test[0] : '';
+        $item = ! is_numeric($test[0]) ? $test[0] : '';
         $tmp  = array($test[1], $args, $filter);
 
         if (is_callable($filter)) {
@@ -383,7 +383,7 @@ class html extends prototype
           $item = array_pop($item);
         }
 
-        if (is_true($ol)) {
+        if ($ol) {
           $tmp []= '';
         }
 

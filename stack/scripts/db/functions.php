@@ -102,7 +102,7 @@ function rename_column($from, $name, $to) {
  */
 function add_index($to, $column, array $options = array()) {// TODO: support for length?
   $column = (array) $column;
-  $unique = isset($options['unique']) && is_true($options['unique']);
+  $unique = ! empty($options['unique']);
   $name   = ! empty($options['name']) ? $options['name'] : $to . '_' . join('_', $column);
 
   return (boolean) db::add_index($to, $name, $column, $unique);

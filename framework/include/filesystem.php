@@ -49,7 +49,7 @@ function unfile($path, $filter = '*', $options = FALSE) {
 function dirsize($of, $recursive = FALSE) {
   if (is_dir($of)) {
     $length    = 0;
-    $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
+    $recursive = $recursive ? DIR_RECURSIVE : 0;
 
     foreach (dir2arr($of, '*', DIR_MAP | $recursive) as $old) {
       $length += is_file($old) ? filesize($old) : 0;
@@ -169,7 +169,7 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE) {
   if (is_dir($from)) {
     ! is_dir($to) && mkpath($to);
 
-    $options = (is_true($recursive) ? DIR_RECURSIVE : 0) | DIR_EMPTY;
+    $options = ($recursive ? DIR_RECURSIVE : 0) | DIR_EMPTY;
     $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
 
     foreach ($test as $file) {
@@ -223,7 +223,7 @@ function mkpath($dir, $perms = 0755) {
  */
 function findfile($path, $filter = '*', $recursive = FALSE, $index = 0) {
   if (is_dir($path)) {
-    $recursive = is_true($recursive) ? DIR_RECURSIVE : 0;
+    $recursive = $recursive ? DIR_RECURSIVE : 0;
     $output    = dir2arr($path, '*', $recursive | DIR_MAP);
 
     foreach ($output as $key => $file) {
@@ -305,7 +305,7 @@ function read($path) {
             $end = TRUE;
           }
 
-          if (is_true($end)) {
+          if ($end) {
             $output .= $tmp;
           }
         }
@@ -372,7 +372,7 @@ function ext($from, $dot = FALSE) {
   if (substr_count($from, '.') > 0) {
     $from = substr($from, strrpos($from, '.'));
 
-    if (is_false($dot)) {
+    if ( ! $dot) {
       $from = substr($from, 1);
     }
 
@@ -393,11 +393,9 @@ function ext($from, $dot = FALSE) {
  * @return string
  */
 function extn($from, $base = FALSE) {
-  $offset = strrpos($from, '.');
-
-  if ( ! is_false($offset)) {
+  if (($offset = strrpos($from, '.')) !== FALSE) {
     $from = substr($from, 0, $offset);
-    $from = is_true($base) ? basename($from) : $from;
+    $from = $base ? basename($from) : $from;
   }
 
   return $from;
@@ -425,7 +423,7 @@ function fmtsize($of = 0, $text = '%d %s', $lower = FALSE) {
   }
 
   $unit  = preg_replace('/^iB/', 'Bi', "$test[$key]iB");//FIX
-  $unit  = is_true($lower) ? strtolower($unit) : $unit;
+  $unit  = $lower ? strtolower($unit) : $unit;
 
   $output = strtr($text, array(
     '%d' => floor($of),

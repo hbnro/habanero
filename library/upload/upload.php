@@ -88,14 +88,14 @@ class upload extends prototype
 
     if (empty($set)) {
       return static::set_error(UPLOAD_ERR_NO_FILE);
-    } elseif (is_false(static::$defs['multiple']) && (sizeof($set['name']) > 1)) {
+    } elseif ( ! static::$defs['multiple'] && (sizeof($set['name']) > 1)) {
       return static::set_error(UPLOAD_ERR_MULTI);
     }
 
 
     foreach ($set['error'] as $i => $val) {
       if ($val > 0) {
-        if (is_false(static::$defs['skip_error'], $skip)) {
+        if ( ! static::$defs['skip_error'] OR ! $skip) {
           return static::set_error($val);
         }
         continue;
@@ -118,7 +118,7 @@ class upload extends prototype
         }
       }
 
-      if (is_false($type)) {
+      if ( ! $type) {
         return static::set_error(UPLOAD_ERR_TYPE);
       }
 
@@ -133,14 +133,14 @@ class upload extends prototype
         }
       }
 
-      if (is_false($ext)) {
+      if ( ! $ext) {
         return static::set_error(UPLOAD_ERR_EXT);
       }
 
       $name = slug($set['name'][$i], '_', SLUG_STRICT);
       $file = static::$defs['path'].DS.$name;
 
-      if ( ! is_true(static::$defs['unique'])) {
+      if ( ! static::$defs['unique']) {
         $new = ext($name, TRUE);
         $old = basename($name, $new);
 

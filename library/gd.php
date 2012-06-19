@@ -123,7 +123,7 @@ class gd
   final public function convert($type, $force = FALSE) {
     $type = in_array($type, $this->allow) ? $type : JPEG;
 
-    if (is_true($force) OR ($this->type <> $type)) {
+    if ($force OR ($this->type <> $type)) {
       ob_start();
 
       $this->type = $type;
@@ -236,7 +236,7 @@ class gd
    * @return string
    */
   final public function type($mime = FALSE) {
-    return is_true($mime) ? $this->mime : $this->type;
+    return $mime ? $this->mime : $this->type;
   }
 
 
@@ -479,7 +479,7 @@ class gd
    * @return image
    */
   final public function colorize($mnt = 33, $mask = '#aa0') {
-    $mnt = is_num($mnt) ? $mnt : 25;
+    $mnt = is_numeric($mnt) ? $mnt : 25;
     $per = $mnt / 100;
 
     if ($mask <> 'gray') {
@@ -529,7 +529,7 @@ class gd
     $vertical = ! is_string($vertical) ? (boolean) $vertical : (strtolower(substr($vertical, 0, 1)) != 'v' ? FALSE : TRUE);
     $old      = $this->fix_alpha(imagecreatetruecolor($width, $height));
 
-    if ( ! is_true($vertical)) {
+    if ( ! $vertical) {
       for ($x = 0, $w = $width; $x < $width; $x += 1) {
         imagecopy($old, $this->resource, $w -= 1, 0, $x, 0, 1, $height);
       }
@@ -662,16 +662,16 @@ class gd
     $step = max(1, $step);
     $vertical = (boolean) $vertical;
 
-    $max = is_true($vertical) ? $height : $width;
-    $w   = is_true($vertical) ? $width : $step;
-    $h   = is_true($vertical) ? $step : $height;
+    $max = $vertical ? $height : $width;
+    $w   = $vertical ? $width : $step;
+    $h   = $vertical ? $step : $height;
 
     foreach (array('r', 'g', 'b') as $m => $n) {
       ${$n . 'mod'} = ($end[$m] - $base[$m]) / ($max + 2);
     }
 
-    for ($i = 0; $i < $max; $i += $step, is_true($vertical) ? $y += $step : $x += $step) {
-      if (is_true($vertical) && ($diff = (($y + $h) - ($top + $height))) > 0) {
+    for ($i = 0; $i < $max; $i += $step, $vertical ? $y += $step : $x += $step) {
+      if ($vertical && ($diff = (($y + $h) - ($top + $height))) > 0) {
         $h -= $diff;
       } elseif (($diff = (($x + $w) -($left + $width))) > 0) {
         $w -= $diff;

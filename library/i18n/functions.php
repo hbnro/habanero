@@ -19,7 +19,7 @@ function ln($input) {
       $input[$key] = call_user_func_array(__FUNCTION__, $args);
     }
   } else {
-    $callback = is_num($input) ? 'pluralize' : 'translate';
+    $callback = is_numeric($input) ? 'pluralize' : 'translate';
     $input    = call_user_func_array("i18n::$callback", $args);
   }
 

@@ -47,7 +47,7 @@ cache::implement('delete_item', function ($key) {
 });
 
 cache::implement('check_item', function ($key) {
-  return ! is_false(cache::fetch_item($key));
+  return cache::fetch_item($key) !== FALSE;
 });
 
 /* EOF: ./library/cache/drivers/php.php */

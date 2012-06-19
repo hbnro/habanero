@@ -70,7 +70,7 @@ class time extends prototype
 
     if (($month < 1) OR ($month > 12)) {
       return FALSE;
-    } elseif ( ! is_num($year) OR (strlen($year) <> 4)) {
+    } elseif ( ! is_numeric($year) OR (strlen($year) <> 4)) {
       $year = date('Y');
     }
 

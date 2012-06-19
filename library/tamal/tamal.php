@@ -178,7 +178,7 @@ class tamal extends prototype
     $merge = FALSE;
 
     foreach ($args as $key => $val) {
-      if (is_num($key)) {
+      if (is_numeric($key)) {
         $tmp []= "array($val)";
         unset($args[$key]);
       }

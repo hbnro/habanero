@@ -32,7 +32,7 @@ class ua
 
       // platform
       foreach ($set['platforms'] as $key => $val) {
-        if ( ! is_false(strpos(strtolower($ua), $key))) {
+        if (strpos(strtolower($ua), $key) !== FALSE) {
           $out['platform'] = $val;
           break;
         }
@@ -65,7 +65,7 @@ class ua
 
       // mobile
       foreach ($set['mobiles'] as $key => $val) {
-        if ( ! is_false(strpos(strtolower($ua), $key))) {
+        if (strpos(strtolower($ua), $key) !== FALSE) {
           $out['is_mobile'] = TRUE;
           $out['is_robot'] = FALSE;
           $out['mobile'] = $val;
@@ -76,7 +76,7 @@ class ua
 
       // robot
       foreach ($set['robots'] as $key => $val) {
-        if ( ! is_false(strpos(strtolower($ua), $key))) {
+        if (strpos(strtolower($ua), $key) !== FALSE) {
           $out['is_browser'] = FALSE;
           $out['is_mobile'] = FALSE;
           $out['is_robot'] = TRUE;

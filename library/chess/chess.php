@@ -153,7 +153,7 @@ class chess extends prototype
 
     $text = read($path);
 
-    if (is_true($parse)) {
+    if ($parse) {
       static::parse_buffer($text);
     }
     return $text;
@@ -163,7 +163,7 @@ class chess extends prototype
   final private static function add_file($path, $parse = FALSE) {
     $text = static::load_file($path, $parse);
 
-    if (is_false($parse)) {
+    if ( ! $parse) {
       static::$css []= $text;
     }
   }

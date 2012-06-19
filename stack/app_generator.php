@@ -50,7 +50,7 @@ class app_generator extends prototype
     } else {
       $str = '';
 
-      if (is_true($all)) {
+      if ($all) {
         foreach (array_keys(static::$help) as $one) {
           $str .= rtrim(static::help($one));
           $str .= "\n";

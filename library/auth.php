@@ -134,7 +134,7 @@ class auth extends prototype
   // password hashing
   final private static function hash($user, $pass) {
     if ($salt = static::$defs['salt']) {
-      if ( ! is_true($user) && static::$defs['model']) {
+      if (is_string($user) && static::$defs['model']) {
         $params = array(
           'where' => array(static::$defs['user'] => $user),
           'select' => $salt,

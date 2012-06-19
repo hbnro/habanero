@@ -18,7 +18,7 @@ class captcha
     static $chars = 'jklmn-JKLMN#rstuvwx@RSTUVWX+56789=ABCDEFG';
 
 
-    if ( ! is_num($test)) {
+    if ( ! is_numeric($test)) {
       if ( ! is_file($test)) {
         return FALSE;
       }
@@ -37,7 +37,7 @@ class captcha
       while(strlen($hash) < $test) {
         $old = substr($chars, mt_rand(0, $max), 1);
 
-        if ( ! is_false(strpos($hash, $old))) {
+        if (strpos($hash, $old) !== FALSE) {
           continue;
         }
 
@@ -84,7 +84,7 @@ class captcha
     $dark  = array(mt_rand(0, 96), mt_rand(0, 96), mt_rand(0, 96));
     $light = array(mt_rand(127, 240), mt_rand(127, 240), mt_rand(127, 240));
 
-    if (is_true($invert)) {
+    if ($invert) {
       $bgcolor = imagecolorallocatealpha($resource, 0, 0, 0, 0);
       $light   = array_map($negative, $light);
       $dark    = array_map($negative, $dark);
@@ -158,7 +158,7 @@ class captcha
     if ( ! empty($test)) {
       $old = session("--captcha-id$$key");
 
-      if (is_true($strict)) {
+      if ($strict) {
         return ! strcmp($old, $test);
       }
       return strtolower($old) === strtolower($test);

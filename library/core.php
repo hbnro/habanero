@@ -127,7 +127,7 @@ core::implement('raise', function ($message, $debug = NULL) {
     // ~ unknown source
 
     $format_str = ($true = ! empty($on['file'])) ? '%s %s#%d %s()' : '~ %4$s';
-    $format_val = sprintf($format_str, is_true($system) ? '+' : '-', $true ? $on['file'] : '', $true ? $on['line'] : '', $call);
+    $format_val = sprintf($format_str, $system ? '+' : '-', $true ? $on['file'] : '', $true ? $on['line'] : '', $call);
 
     $trace[$i]  = $format_val;
   }

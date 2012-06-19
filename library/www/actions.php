@@ -34,8 +34,8 @@ function url_for($action, array $params = array()) {
     'complete' => FALSE,
   ), $params);
 
-  $abs     = is_true($params['complete']);
-  $link    = is_true($params['host']) ? server(TRUE, ROOT, $abs) : ROOT;
+  $abs     = $params['complete'];
+  $link    = $params['host'] ? server(TRUE, ROOT, $abs) : ROOT;
   $rewrite = (boolean) option('rewrite');
 
 
@@ -164,7 +164,7 @@ function link_to($text, $url = NULL, $args = array()) {
     'rel' => $params['method'] <> GET ? 'nofollow' : FALSE,
     'href' => $params['action'],
     'data-method' => $params['method'] <> GET ? strtolower($params['method']) : FALSE,
-    'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
+    'data-remote' => $params['remote'] ? 'true' : FALSE,
     'data-params' => $params['params'] ? json_encode($params['params']) : FALSE,
     'data-confirm' => $params['confirm'] ?: FALSE,
     'data-type' => $params['type'] ?: FALSE,
@@ -274,7 +274,7 @@ function path_to($path = '.', $host = FALSE) {
     }#
 
     $path = url_for(str_replace('/./', '/', strtr($path, '\\', '/')));
-    $path = is_true($host) ? server(TRUE, $path, TRUE) : $path;
+    $path = $host ? server(TRUE, $path, TRUE) : $path;
   }
 
   return $path;
@@ -326,7 +326,7 @@ function button_to($name, $url = NULL, array $args = array()) {
   $button = tag('input', array_merge(array(
     'type' => 'submit',
     'value' => $params['text'],
-    'disabled' => is_true($params['disabled']),
+    'disabled' => $params['disabled'],
     'data-disable-with' => $params['disable_with'] ?: FALSE,
   ), $args));
 
@@ -354,7 +354,7 @@ function button_to($name, $url = NULL, array $args = array()) {
     'method' => 'post',
     'data-type' => $params['type'] ?: FALSE,
     'data-confirm' => $params['confirm'] ?: FALSE,
-    'data-remote' => is_true($params['remote']) ? 'true' : FALSE,
+    'data-remote' => $params['remote'] ? 'true' : FALSE,
     'data-params' => $params['params'] ? http_build_query($params['params']) : FALSE,
   ), "<div>$extra$button</div>");
 }

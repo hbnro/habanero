@@ -202,7 +202,7 @@ function match($expr, $subject = NULL, array $constraints = array()) {
     $test = array();
 
     foreach ($constraints as $item => $value) {
-      if (is_num($as = preg_replace('/[^a-z\d_]/', '', $item))) {
+      if (is_numeric($as = preg_replace('/[^a-z\d_]/', '', $item))) {
         continue;
       }
 
@@ -277,7 +277,7 @@ function reflection($lambda) {
     return new ReflectionMethod($class, $method);
   }
 
-  if (is_string($lambda) && ! is_false(strpos($lambda, '::'))) {
+  if (is_string($lambda) && (strpos($lambda, '::') !== FALSE)) {
     list($class, $method) = explode('::', $lambda);
     return new ReflectionMethod($class, $method);
   }
@@ -324,7 +324,7 @@ function dump($var, $show = FALSE, $depth = 99) {
   if (is_null($var)) {
     $out []= 'NULL';
   } elseif (is_bool($var)) {
-    $out []= is_true($var) ? 'TRUE' : 'FALSE';
+    $out []= $var ? 'TRUE' : 'FALSE';
   } elseif (is_scalar($var)) {
     $out []= strtr($var, $repl);
   } elseif (is_closure($var)) {
@@ -357,7 +357,7 @@ function dump($var, $show = FALSE, $depth = 99) {
       //$key = preg_replace('/^[^\w]*?(?=\w)/', '', $key);
 
       $old = dump($val, FALSE, $depth - 1, $limit + 1);
-      $pre = ! is_num($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
+      $pre = ! is_numeric($key) ? $key : str_pad($key, strlen($max), ' ', STR_PAD_LEFT);
 
       $out []= sprintf("$tab%-{$width}s$arrow", $pre) . $old;
     }
@@ -416,7 +416,7 @@ function params($key = NULL, $default = FALSE) {
     return $set;
   } elseif (is_array($key)) {
     foreach ($key as $a => $value) {
-      if (is_num($a)) {
+      if (is_numeric($a)) {
         continue;
       }
 
@@ -424,7 +424,7 @@ function params($key = NULL, $default = FALSE) {
     }
 
     return TRUE;
-  } elseif ( ! is_num($key)) {
+  } elseif ( ! is_numeric($key)) {
     return ! empty($set[$key]) ? $set[$key] : $default;
   }
 

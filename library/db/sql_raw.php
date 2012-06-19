@@ -19,11 +19,11 @@ class sql_raw
            $start = NULL;
 
 
-    if (is_true($begin)) {
+    if ($begin) {
       $query = $sql;
       $start = ticks();
       $this->last_query []= $sql;
-    } elseif (is_false($sql)) {
+    } elseif ( ! $sql) {
       debug(sprintf('(%s) %s', ticks($start), $query));
     } else {
       debug($sql);
@@ -67,7 +67,7 @@ class sql_raw
           $sql .= ', ';
         }
 
-        if (is_num($one)) {//FIX
+        if (is_numeric($one)) {//FIX
           $sql .= $set === RANDOM ? "\n$this->random" : "\n" . $this->protect_names($set[0]) . " $set[1]";
           continue;
         }

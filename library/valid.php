@@ -49,12 +49,12 @@ class valid
         if (is_string($one)) {
           foreach (array_filter(explode(' ', $one)) as $one) {
             $name = slug(strtr($one, $fix), '_', SLUG_STRICT | SLUG_TRIM);
-            $name = ! is_num($key) ? $key : $name;
+            $name = ! is_numeric($key) ? $key : $name;
 
             static::$rules[$field][$name] = $one;
           }
         } else {
-          if (is_string($key) && ! is_num($key)) {
+          if (is_string($key) && ! is_numeric($key)) {
             static::$rules[$field][$key] = $one;
           } else {
             static::$rules[$field] []= $one;
@@ -132,7 +132,7 @@ class valid
       unset($set[$key]);
 
       if ( ! trim($test)) {//FIX
-        $error = ! is_num($key) ? $key : 'required';
+        $error = ! is_numeric($key) ? $key : 'required';
         $fail  = TRUE;
       }
     }
@@ -145,7 +145,7 @@ class valid
             $fail = TRUE;
             break;
           }
-        } elseif ( ! is_false(strpos($rule, '|'))) {
+        } elseif (strpos($rule, '|') !== FALSE) {
           $fail = TRUE;
 
           foreach (array_filter(explode('|', $rule)) as $callback) {
@@ -162,8 +162,8 @@ class valid
           $vars = static::vars($match[2]);
           $expr = array_shift($vars);
 
-          $test = ! is_num($test) ? "'$test'" : addslashes($test);
-          $expr = ! is_num($expr) ? "'$expr'" : addslashes($expr);
+          $test = ! is_numeric($test) ? "'$test'" : addslashes($test);
+          $expr = ! is_numeric($expr) ? "'$expr'" : addslashes($expr);
 
           $operator = $match[1];
 
@@ -224,7 +224,7 @@ class valid
     foreach ($test as $key => $val) {
       if (preg_match('/^([\'"]).*\\1$/', $val)) {
         $test[$key] = substr(trim($val), 1, -1);
-      } elseif (is_num($val)) {
+      } elseif (is_numeric($val)) {
         $test[$key] = $val;
       } else {
         $test[$key] = value(static::$data, $val);

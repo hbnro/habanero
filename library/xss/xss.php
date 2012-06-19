@@ -46,7 +46,7 @@ class xss extends prototype
 
     $text = self::fix_white(urldecode($text));
 
-    if (is_true($strip)) {
+    if ($strip) {
       $text = strip_tags($text, sprintf('<%s>', join('><', static::$defs['allow']['tags'])));
       $text = preg_replace(static::$regex['clear_tags'], '', $text);
       $text = preg_replace(static::$regex['clean_tags'], '', $text);

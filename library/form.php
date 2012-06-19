@@ -48,7 +48,7 @@ class form extends prototype
 
 
     if ( ! empty($params['method']) && ($params['method'] <> 'GET')) {
-      if (is_true($params['multipart'])) {
+      if ($params['multipart']) {
         $params['enctype'] = 'multipart/form-data';
       }
     }
@@ -297,7 +297,7 @@ class form extends prototype
 
 
     if ( ! empty($params['multiple']) && (substr($params['name'], -2) <> '[]')) {
-      $params['name'] .= is_true($params['multiple']) ? '[]' : '';
+      $params['name'] .= $params['multiple'] ? '[]' : '';
     }
 
     if (empty($params['id'])) {
@@ -352,7 +352,7 @@ class form extends prototype
 
     unset($old['name']);
 
-    if (is_true($params['multiple']) && (substr($params['name'], -2) <> '[]')) {
+    if ($params['multiple'] && (substr($params['name'], -2) <> '[]')) {
       $params['name'] .= '[]';
     }
 
@@ -553,7 +553,7 @@ class form extends prototype
       $name = preg_replace('/\[([^\[\]]+)\]/', '.\\1', $name);
       $name = preg_replace_callback('/\[\]/', function ($match)
         use($inc, &$num) {
-        return sprintf('.%d', is_true($inc) ? $num++ : $num);
+        return sprintf('.%d', $inc ? $num++ : $num);
       }, $name);
     }
 
@@ -578,11 +578,11 @@ class form extends prototype
     $params['params'] && $params['data']['params'] = http_build_query($params['params']);
     $params['disable_with'] && $params['data']['disable-with'] = $params['disable_with'];
 
-    is_true($params['remote']) && $params['data']['remote'] = 'true';
+    $params['remote'] && $params['data']['remote'] = 'true';
 
     unset($params['disable_with'], $params['confirm'], $params['remote'], $params['url']);
 
-    if (is_false($form)) {
+    if ( ! $form) {
       $params['method'] && $params['data']['method'] = $params['method'];
       unset($params['method']);
     }

@@ -87,7 +87,7 @@ class application extends prototype
     } else {
       $view = partial("$controller/$action.html", (array) $class_name::$view);
 
-      if ( ! is_false($class_name::$layout)) {
+      if ($class_name::$layout !== FALSE) {
         $layout_file = "layouts/{$class_name::$layout}";
 
         $view = partial($layout_file, array(

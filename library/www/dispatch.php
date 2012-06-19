@@ -40,7 +40,7 @@ function dispatch($to = NULL, array $params = array()) {
   if (is_callable($params['to'])) {
     $output = call_user_func_array($params['to'], (array) $params);
 
-    if (is_true($output)) {
+    if ($output) {
       return TRUE;
     }
   } elseif (is_url($params['to'])) {
@@ -116,7 +116,7 @@ function response($content, array $params = array()) {
     $params['headers']['content-length'] = strlen((string) $params['output']);
   }
 
-  if (is_true($params['nocache'])) {
+  if ($params['nocache']) {
     $params['headers']['pragma']        = 'no-cache';
     $params['headers']['expires']       =
     $params['headers']['last-modified'] = date('D, m Y H:i:s \G\M\T', time());
@@ -178,7 +178,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
       return FALSE;
     }
   } elseif ($params['locals']) {
-    $params['to'] .= ! is_false(strrpos($params['to'], '?')) ? '&' : '?';
+    $params['to'] .= strrpos($params['to'], '?') !== FALSE ? '&' : '?';
     $params['to'] .= http_build_query($params['locals'], NULL, '&');
   }
 
