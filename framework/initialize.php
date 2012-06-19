@@ -60,11 +60,6 @@ call_user_func(function () {
 
   // lazy loading
   spl_autoload_register(function ($class) {
-    if (is_file($core_path = __DIR__.DS.'klass'.DS.$class.EXT)) {
-      require $core_path;
-      return TRUE;
-    }
-
     foreach (array(dirname(LIB), APP_PATH) as $path) {
       $lib_path  = $path.DS.'library'.DS.$class;
       $lib_path .= is_dir($lib_path) ? DS.'initialize'.EXT : EXT;
@@ -81,11 +76,11 @@ call_user_func(function () {
   /**#@+
    * @ignore
    */
-  require __DIR__.DS.'runtime'.EXT;
-  require __DIR__.DS.'utilities'.EXT;
-  require __DIR__.DS.'filesystem'.EXT;
-  require __DIR__.DS.'conditions'.EXT;
-  require __DIR__.DS.'collection'.EXT;
+  require __DIR__.DS.'include'.DS.'runtime'.EXT;
+  require __DIR__.DS.'include'.DS.'utilities'.EXT;
+  require __DIR__.DS.'include'.DS.'filesystem'.EXT;
+  require __DIR__.DS.'include'.DS.'conditions'.EXT;
+  require __DIR__.DS.'include'.DS.'collection'.EXT;
   /**#@-*/
 
 
@@ -127,8 +122,6 @@ call_user_func(function () {
 
 
   // initialize language settings
-  require __DIR__.DS.'i18n'.DS.'initialize'.EXT;
-
   i18n::load_path(__DIR__.DS.'locale');
 
 
