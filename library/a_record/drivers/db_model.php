@@ -153,7 +153,13 @@ class db_model extends a_record
    * @return void
    */
   final public static function update_all(array $data, array $params = array()) {
-    return static::conn()->update(static::table(), $data, $params);
+    $tmp = (object) $data;
+
+    static::callback($tmp, 'before_save');
+
+    return static::conn()->update(static::table(), (array) $tmp, $params);
+
+    static::callback($tmp, 'after_save');
   }
 
 
