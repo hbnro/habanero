@@ -8,7 +8,7 @@ class <?php echo $model; ?>s_controller extends base_controller
     pager::config('count_page', $to);
     pager::config('link_root', url_for::<?php echo $model; ?>s());
 
-    $set  = post::get('<?php echo join("', '", array_keys($fields)); ?>');
+    $set  = <?php echo $model; ?>::get('<?php echo join("', '", array_keys($fields)); ?>');
     $from = pager::offset(<?php echo $model; ?>::count(), request::get('p'));
 
     static::$view['<?php echo $model; ?>s'] = $set->offset($from)->limit($to);
