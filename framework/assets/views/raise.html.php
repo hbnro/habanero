@@ -31,7 +31,7 @@
       'user' => "$user@$host",
       'route' => $route,
       'method' => value($_SERVER, 'REQUEST_METHOD'),
-      'params' => function_exists('params') ? params() : array(),
+      'params' => params(),
       'bootstrap' => APP_LOADER,
     ), TRUE); ?>
     <?php if (isset($vars)) { ?><h3><?php echo ln('request_vars'); ?></h3>

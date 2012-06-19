@@ -26,7 +26,7 @@ printf("\n\n%s\n--\n", ln('application'));
 dump(array(
   'user' => "$user@$host",
   'route' => $route,
-  'params' => function_exists('params') ? params() : array(),
+  'params' => params(),
   'bootstrap' => APP_LOADER,
 ), TRUE);
 

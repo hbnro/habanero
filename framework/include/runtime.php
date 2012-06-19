@@ -401,4 +401,34 @@ function ticks($start = NULL, $end = FALSE, $round = 4) {
   return round(max($end, $start) - min($end, $start), $round);
 }
 
+
+/**
+ * Function handler for global hash params
+ *
+ * @param  mixed Identifier|Hash
+ * @param  mixed Default value
+ * @return mixed
+ */
+function params($key = NULL, $default = FALSE) {
+  static $set = array();
+
+  if ( ! func_num_args()) {
+    return $set;
+  } elseif (is_array($key)) {
+    foreach ($key as $a => $value) {
+      if (is_num($a)) {
+        continue;
+      }
+
+      $set[trim($a)] = $value;
+    }
+
+    return TRUE;
+  } elseif ( ! is_num($key)) {
+    return ! empty($set[$key]) ? $set[$key] : $default;
+  }
+
+  return FALSE;
+}
+
 /* EOF: ./framework/include/runtime.php */
