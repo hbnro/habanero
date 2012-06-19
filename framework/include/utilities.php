@@ -126,7 +126,7 @@ function slug($text, $glue = '-', $options = NULL) {
   $trim = ((int) $options & SLUG_TRIM) == 0 ? FALSE : TRUE;
 
 
-  $expr = $strict ? '\W+' : sprintf('[^%s\/]', substr(match('%l'), 1, -1));
+  $expr = $strict ? '\W+' : '[^' . substr(match('%l'), 1, -1) . '\/]';
   $text = preg_replace("/$expr/", $glue, plain(unents($text)));
   $text = $lower ? strtolower($text) : $text;
 
@@ -336,14 +336,14 @@ function attrs(array $args) {
           $props []= $key . ':' . trim($val);
         }
 
-        $out []= sprintf('style="%s"', join(';', $props));
+        $out []= 'style="' . join(';', $props) . '"';
       } else {
         foreach ($value as $index => $test) {
-          $out []= sprintf('%s-%s="%s"', $key, $index, (string) $test);
+          $out []= $key . '-' . $index . '="' . (string) $test . '"';
         }
       }
     } elseif ( ! is_numeric($key)) {
-      $out []= sprintf('%s="%s"', $key, ents((string) $value, TRUE));
+      $out []= $key . '="' . ents((string) $value, TRUE) . '"';
     }
   }
 

@@ -154,7 +154,7 @@ function oauth_exec($request, $url, $vars = array(), $method = 'GET') {
 function oauth_sign($request, $url, $vars = array(), $method = 'GET', $callback = SHA1) {
   $key  = oauth_encode($request->consumer_secret) . '&' . oauth_encode($request->token_secret);
   $old  = oauth_encode(str_replace('+', '%20', http_build_query($vars, NULL, '&')));
-  $test = sprintf('%s&%s&%s', $method, oauth_encode($url), $old);
+  $test = "$method&" . oauth_encode($url) . "&$old";
 
   if (function_exists('hash_hmac')) {
     $test = hash_hmac($callback, $test, $key, TRUE);

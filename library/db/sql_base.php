@@ -107,7 +107,7 @@ class sql_base extends sql_raw
         if ($insert) {
           $out []= $val;
         } else {
-          $out []= sprintf('%s = %s', $this->quote_string($key), $val);
+          $out []= $this->quote_string($key) . " = $val";
         }
       }
     }
@@ -139,13 +139,13 @@ class sql_base extends sql_raw
           $sql []= is_array($val) ? $this->build_where($val, $operator) : $val;
         }
       } elseif (is_keyword($key)) {
-        $sql []= sprintf('(%s)', trim($this->build_where($val, strtoupper($key))));
+        $sql []= '(' . trim($this->build_where($val, strtoupper($key))) . ')';
       } elseif (preg_match('/_(?:and|or)_/i', $key, $match)) {
         $sub = array();
         foreach (explode($match[0], $key) as $one) {
           $sub[$one] = $val;
         }
-        $sql []= sprintf('(%s)', $this->build_where($sub, strtoupper(trim($match[0], '_'))));
+        $sql []= '(' . trim($this->build_where($sub, strtoupper(trim($match[0], '_')))) . ')';
       } elseif (preg_match('/^(.+?)(?:\s+(!=?|[<>]=?|<>|NOT|R?LIKE)\s*)?$/', $key, $match)) {
         $sub = '';
         $key = $this->protect_names($match[1]);

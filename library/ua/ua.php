@@ -41,7 +41,7 @@ class ua
 
       // browser
       foreach ($set['browsers'] as $key => $val) {
-        if (preg_match(sprintf('/%s.*?([0-9\.]+)/i', preg_quote($key, '/')), strtolower($ua), $match)) {
+        if (preg_match('/' . preg_quote($key, '/') . '.*?([0-9\.]+)/i', strtolower($ua), $match)) {
           $out['is_browser'] = TRUE;
           $out['is_robot'] = FALSE;
           $out['version'] = $match[1];
@@ -55,7 +55,7 @@ class ua
       }
 
       if (empty($out['version'])) {//FIX
-        $regex = sprintf('/%s.*?([0-9\.]+)/i', preg_quote($out['browser'], '/'));
+        $regex = '/' . preg_quote($out['browser'], '/') . '.*?([0-9\.]+)/i';
 
         if (preg_match($regex, $test, $match)) {
           $out['version'] = $match[1];

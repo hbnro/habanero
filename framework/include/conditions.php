@@ -182,7 +182,7 @@ if ( ! function_exists('is_date')) {
       $tmp []= '(?:' . $set[$one] . ')';
     }
 
-    $expr = sprintf('/^%s$/', join('\D*?', $tmp));
+    $expr = '/^' . join('\D*?', $tmp) . '$/';
 
     return preg_match($expr, $test) > 0;
   }

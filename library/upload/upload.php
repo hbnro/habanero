@@ -192,7 +192,7 @@ class upload extends prototype
     $out = array();
 
     foreach (static::$error as $one) {
-      $out []= ln(sprintf('upload.%s', static::$status[$one]));
+      $out []= ln('upload.' . static::$status[$one]);
     }
 
     return $out;

@@ -79,7 +79,7 @@ class pgsql_driver extends pgsql_scheme
       #$sql = ($table && $column) ? "SELECT MAX($column) FROM $table" :
       $sql = 'SELECT LASTVAL()';
     } elseif ( ! empty($table) &&  ! empty($column) && ($v >= 8.0)) {// http://www.php.net/pg_last_oid
-      $sql = sprintf("SELECT CURRVAL(pg_get_serial_sequence('%s','%s'))", $table, $column);
+      $sql = "SELECT CURRVAL(pg_get_serial_sequence('$table','$column'))";
     } else {
       return pg_last_oid($this->res);
     }

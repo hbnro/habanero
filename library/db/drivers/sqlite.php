@@ -79,7 +79,7 @@ class sqlite_driver extends sqlite_scheme
   }
 
   final protected function count_rows($res) {//FIX
-    $sql = sprintf('SELECT COUNT(*) FROM (%s)', end($this->last_query));
+    $sql = 'SELECT COUNT(*) FROM (' . end($this->last_query) . ')';
     return $this->last_query ? $this->fetch_result($this->execute($sql)) : FALSE;
   }
 

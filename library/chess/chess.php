@@ -108,7 +108,7 @@ class chess extends prototype
       $root = APP_PATH.DS.'assets'.DS.'css';
 
       $path = str_replace(array('\\', '/'), DS, $path);
-      $path = preg_replace(sprintf('/^\.%s/', preg_quote(DS, '/')), $root, $path);
+      $path = preg_replace('/^\.' . preg_quote(DS, '/') . '/', $root, $path);
 
       while (substr($path, 0, 3) === '..'.DS) {
         $path = substr($path, 2);
@@ -136,8 +136,8 @@ class chess extends prototype
     static $old = array();
 
     if ( ! is_md5($test[1])) {
-      $old[md5($test[0])] = $test[0];
-      return sprintf('__STRING%s__', md5($test[0]));
+      $old[$key = md5($test[0])] = $test[0];
+      return "__STRING{$key}__";
     } else {
       return ! empty($old[$test[1]]) ? $old[$test[1]] : '';
     }
@@ -472,7 +472,7 @@ class chess extends prototype
       $test = include __DIR__.DS.'assets'.DS.'scripts'.DS.'named_colors.php';
 
       foreach ($test as $key => $val) {
-        $key = sprintf('/#%s\b/', preg_quote($key, '/'));
+        $key = '/#' . preg_quote($key, '/') . '\b/';
         $set[$key] = $val;
       }
     }

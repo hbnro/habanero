@@ -24,7 +24,7 @@ class sql_raw
       $start = ticks();
       $this->last_query []= $sql;
     } elseif ( ! $sql) {
-      debug(sprintf('(%s) %s', ticks($start), $query));
+      debug('(' . ticks($start) . ") $query");
     } else {
       debug($sql);
     }

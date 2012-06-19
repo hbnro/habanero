@@ -272,9 +272,9 @@ function download($path, $name = '', $mime = '', $kbps = 24) {
   $length = filesize($path);
 
 
-  header(sprintf('Content-Disposition: attachment; filename="%s"', $name));
-  header(sprintf('Content-Length: %d', $length));
-  header(sprintf('Content-Type: %s', $mime));
+  header('Content-Disposition: attachment; filename="' . $name . '"');
+  header("Content-Length: $length");
+  header("Content-Type: $mime");
 
   header('Content-Transfer-Encoding: binary');
   header('Pragma: no-cache');

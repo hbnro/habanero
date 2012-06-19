@@ -238,10 +238,10 @@ class mongo_model extends a_record
             $test[$match[1]] = array('$gt' . (substr($match[2], -1) === '=' ? 'e' : '') => $val);
           break;
           case 'RLIKE';
-            $test[$match[1]] = sprintf('/%s/gis', preg_quote($match[2], '/'));
+            $test[$match[1]] = '/' . preg_quote($match[2], '/') . '/gis';
           break;
           case 'LIKE';
-            $test[$match[1]] = sprintf('/%s/gis', str_replace('\\\\\*', '.*?', preg_quote($match[2], '/')));
+            $test[$match[1]] = '/' . str_replace('\\\\\*', '.*?', preg_quote($match[2], '/')) . '/gis';
           break;
           default;
             $test[$match[1]] = is_array($val) ? array('$in' => $val) : $val;

@@ -38,7 +38,7 @@ cache::implement('fetch_item', function ($key) {
 
 cache::implement('store_item', function ($key, $val, $max) {
   $cache_file = TMP.DS.'--cache-file'.md5($key);
-  $binary     = sprintf('%d|%s', time() + $max, serialize($val));
+  $binary     = (time() + $max) . '|' . serialize($val);
 
   return write($cache_file, @gzcompress($binary));
 });

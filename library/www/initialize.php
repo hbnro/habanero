@@ -61,7 +61,7 @@ core::bind(function ($bootstrap) {
   // ----------------------------------------------------------------------------
 
   // site root
-  $base = preg_replace(sprintf('/%s.*$/', preg_quote(INDEX)), '', $base);
+  $base = preg_replace('/' . preg_quote(INDEX) . '.*$/', '', $base);
 
   if (($root = server('DOCUMENT_ROOT')) <> '/') {
     $base = str_replace($root, '.', $base);

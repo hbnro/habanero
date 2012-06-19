@@ -176,7 +176,7 @@ class valid
             break;
           }
         } elseif (($rule[0] === '%') && (substr($rule, -1) === '%')) {
-          $expr = sprintf('/%s/us', str_replace('/', '\/', substr($rule, 1, -1)));
+          $expr = '/' . str_replace('/', '\/', substr($rule, 1, -1)) . '/us';
 
           if ( ! @preg_match($expr, $test)) {
             $fail = TRUE;

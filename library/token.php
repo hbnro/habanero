@@ -248,7 +248,7 @@ class token extends prototype
    * @return integer
    */
   final public static function grep($text, $regex, $ord = 32) {
-    $regex = sprintf('/%s/', str_replace('/', '\\/', $regex));
+    $regex = '/' . str_replace('/', '\\/', $regex) . '/';
 
     foreach (static::get($text, 0, $ord, FALSE) as $key => $val) {
       if (@preg_match($regex, $val)) {

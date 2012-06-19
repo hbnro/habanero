@@ -47,7 +47,7 @@ class xss extends prototype
     $text = self::fix_white(urldecode($text));
 
     if ($strip) {
-      $text = strip_tags($text, sprintf('<%s>', join('><', static::$defs['allow']['tags'])));
+      $text = strip_tags($text, '<' . join('><', static::$defs['allow']['tags']) . '>');
       $text = preg_replace(static::$regex['clear_tags'], '', $text);
       $text = preg_replace(static::$regex['clean_tags'], '', $text);
     }
@@ -144,6 +144,8 @@ class xss extends prototype
     $out  = array();
     $test = args($text);
 
+    $regex_for_expression = '/;?(?:[a-z]*:?)?' . static::fix_space('expression') . '(?::?\(?[^;]*\)?)?;?/i';
+
     foreach ($test as $key => $val) {
       if (in_array($key, static::$defs['allow']['attributes'])) {
         $val = static::fix_white(stripslashes($val));
@@ -157,7 +159,7 @@ class xss extends prototype
           } while ($old <> $val);
 
           $val = preg_replace(static::$regex['clean_css'], '', $val);
-          $val = preg_replace(sprintf('/;?(?:[a-z]*:?)?%s(?::?\(?[^;]*\)?)?;?/i', static::fix_space('expression')), '', $val);
+          $val = preg_replace($regex_for_expression, '', $val);
         } elseif (($key == 'href' OR $key == 'src') && preg_match('/^([^:]*):/', $val, $test)) {
           if ( ! in_array($test[1], static::$defs['allow']['protocols'])) {
             continue;

@@ -147,7 +147,7 @@ class assets extends prototype
       if ( ! is_file($old_file)) {
         $text = static::process($file);
         $now  = date('Y-m-d H:i:s', filemtime($file));
-        $out  = sprintf("/* %s ./%s */\n%s", $now, strtr($path, '\\', '/'), $text);
+        $out  = "/* $now ./" . strtr($path, '\\', '/') . " */\n$text";
 
         write($old_file, $out);
         return $out;

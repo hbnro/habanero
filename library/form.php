@@ -553,7 +553,7 @@ class form extends prototype
       $name = preg_replace('/\[([^\[\]]+)\]/', '.\\1', $name);
       $name = preg_replace_callback('/\[\]/', function ($match)
         use($inc, &$num) {
-        return sprintf('.%d', $inc ? $num++ : $num);
+        return '.' . ($inc ? $num++ : $num);
       }, $name);
     }
 

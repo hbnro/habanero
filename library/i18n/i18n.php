@@ -20,7 +20,7 @@ class i18n
     $separator = '.';
     $thousands = ' ';
 
-    $string  = sprintf('%s.%s', $string, $number <> 1 ? 'other' : 'one');
+    $string  = "$string." . ($number <> 1 ? 'other' : 'one');
     $string  = str_replace('%d', number_format($number, $decimal, $separator, $thousands), static::translate($string, $params));
 
     return $string;

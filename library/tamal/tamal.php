@@ -205,8 +205,8 @@ class tamal extends prototype
   // compile lines
   final private static function compile($tree) {
     $span  = str_repeat(' ', static::$defs['indent']);
-    $open  = sprintf('/^\s*-\s*%s/', static::$open);
-    $block = sprintf('/[-=].+?%s/', static::$fn);
+    $open  = '/^\s*-\s*' . static::$open . '/';
+    $block = '/[-=].+?' . static::$fn . '/';
     $out   = array();
 
     if ( ! empty($tree[-1])) {
@@ -243,7 +243,7 @@ class tamal extends prototype
           continue;
         } elseif (substr(trim($key), 0, 1) === '/') {
           $value = join("\n|", static::flatten($value));
-          $out []= sprintf("<!--%s\n$span$value\n-->", trim(substr($key, 1)));
+          $out []= '<!--' . trim(substr($key, 1)) . "\n$span$value\n-->";
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
           $value = join("\n", static::flatten($value));
@@ -272,14 +272,14 @@ class tamal extends prototype
     if (is_null($tags)) {
       $test = include LIB.DS.'assets'.DS.'scripts'.DS.'html_vars'.EXT;
       $test = array_merge($test['empty'], $test['complete']);
-      $tags = sprintf('(%s)', join('|', $test));
+      $tags = '(' . join('|', $test) . ')';
     }
 
 
     switch (substr($key, 0, 1)) {
       case '/';
         // <!-- ... -->
-        return sprintf("<!--%s-->$text", trim(substr($key, 1)));
+        return '<!--' . trim(substr($key, 1)) . "-->$text";
       break;
       case '<';
         // html
@@ -310,7 +310,7 @@ class tamal extends prototype
         $args = array();
 
         // tag name
-        preg_match(sprintf('/^%s(?=\b)/', $tags), $key, $match);
+        preg_match("/^$tags(?=\b)/", $key, $match);
 
         if ( ! empty($match[0])) {
           $key = substr($key, strlen($match[0]));
@@ -361,7 +361,7 @@ class tamal extends prototype
     $suffix = ';';
     $prefix = $echo ? 'echo ' : '';
 
-    if (preg_match(sprintf('/%s/', static::$fn), $line, $match)) {
+    if (preg_match('/' . static::$fn . '/', $line, $match)) {
       $suffix = '';
       $prefix = "\$__=get_defined_vars();$prefix";
 
@@ -370,7 +370,7 @@ class tamal extends prototype
       $args   = ! empty($match[1]) ? $match[1] : '';
       $line   = str_replace($match[0], "{$open}function($args)", $line);
       $line  .= 'use($__){extract($__,EXTR_SKIP|EXTR_REFS);unset($__);';
-    } elseif (preg_match(sprintf('/^\s*(%s)(.+?)$/', static::$open), $line, $match)) {
+    } elseif (preg_match('/^\s*(' . static::$open . ')(.+?)$/', $line, $match)) {
       $line   = "$match[1]($match[2])";
       $suffix = '{';
     }
@@ -388,7 +388,7 @@ class tamal extends prototype
 
   // apply fixes
   final private static function fixate($code) {
-    $code = preg_replace(sprintf('/^\s{%d}/m', static::$defs['indent']), '', $code);
+    $code = preg_replace('/^\s{' . static::$defs['indent'] . '}/m', '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
 
     return $code;

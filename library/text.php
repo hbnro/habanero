@@ -47,7 +47,7 @@ class text
         $args['rel'] .= 'external';
       }
 
-      $output = sprintf('<a%s>%s</a>', attrs($args), $matches[0]);
+      $output = '<a' . attrs($args) . ">$matches[0]</a>";
 
       return $output;
     }, $text);
@@ -363,7 +363,7 @@ class text
     $good = array_filter($good);
 
     if (sizeof($good) > 0) {
-      $regex  = sprintf('(?<!&|#|\w)\w*(?:%s)(?=', plain(join('|', $good), TRUE));
+      $regex  = '(?<!&|#|\w)\w*(?:' . plain(join('|', $good), TRUE) . ')(?=';
       $regex .= $bad ? '(?!' . plain(join('|', $bad), TRUE) . ')' : '';
       $regex .= '.*?(?=\b))';
 

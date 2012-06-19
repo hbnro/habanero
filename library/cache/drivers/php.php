@@ -35,7 +35,7 @@ cache::implement('store_item', function ($key, $set = array(), $ttl = 0) {
   $cache_file = TMP.DS.'--cache-php'.md5($key);
 
   $vars = var_export($set, TRUE);
-  $code = sprintf('<' . '?php return array(%s, %s);', time() + $ttl, $vars);
+  $code = '<' . '?php return array(' . (time() + $ttl) . ", $vars);";
 
   return write($cache_file, $code);
 });

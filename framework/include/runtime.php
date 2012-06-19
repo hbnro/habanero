@@ -364,11 +364,11 @@ function dump($var, $show = FALSE, $depth = 99) {
   }
 
   $class = is_object($var) ? get_class($var) : '';
-  $type  = sprintf('#<%s%s!empty>', gettype($var), $class ? ":$class" : '');
+  $type  = '#<' . gettype($var) . ($class ? ":$class" : '') . '!empty>';
   $out   = sizeof($out) ? (($str = join($separator, $out)) === '' ? $type : $str) : ($show ? $type : '');
 
   if (is_object($var) && ! $show) {
-    $out = sprintf("{{$newline}%s$newline}(%s)", $out, get_class($var));
+    $out = "{{$newline}$out$newline}(" . get_class($var) . ')';
   } elseif (is_array($var) && ! $show) {
     $out = "[$newline$out$newline]";
   }
