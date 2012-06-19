@@ -17,6 +17,7 @@ section
         tr
           td { colspan => 99 }
             = form::submit('delete_all', '<?php echo ln('ar.delete_selected', array('name' => $model)); ?>')
+            = html::ul($pages)
       tbody
         - $<?php echo $model; ?>s->each(($row) ~>
           tr
