@@ -33,10 +33,18 @@ class a_query
         }
         return sizeof($out) > 1 ? $out : end($out);
       break;
-      case 'count'; case 'first'; case 'last'; case 'all';
+      case 'count';
+      case 'first';
+      case 'last';
+      case 'all';
         return call_user_func("$this->model::$method", $this->defs);
       break;
-      case 'where'; case 'select'; case 'order'; case 'group'; case 'limit';
+      case 'where';
+      case 'select';
+      case 'order';
+      case 'group';
+      case 'limit';
+      case 'offset';
         $this->defs[$method] = sizeof($arguments) > 1 ? $arguments : array_shift($arguments);
         return $this;
       break;

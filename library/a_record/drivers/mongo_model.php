@@ -146,7 +146,11 @@ class mongo_model extends a_record
   final public static function update_all(array $data, array $params = array()) {
     $start = ticks();
 
-    $data = array('$set' => $data);
+    $tmp = (object) $data;
+
+    static::callback($tmp, 'before_save');
+
+    $data = array('$set' => (array) $tmp);
 
     if (array_key_exists('_id', $params)) {
       $params['_id'] = static::ids($params['_id']);
@@ -154,6 +158,8 @@ class mongo_model extends a_record
 
     $out = static::conn()->update($params, $data, array('multiple' => TRUE));
     static::debug('update', $start, compact('params', 'data'));
+
+    static::callback($tmp, 'after_save');
 
     return $out;
   }

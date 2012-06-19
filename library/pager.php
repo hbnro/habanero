@@ -90,7 +90,7 @@ class pager extends prototype
    * @return integer
    */
   final public static function current() {
-    return static::$current ?  (int) static::$current : 1;
+    return static::$current ? (int) static::$current : 1;
   }
 
 
@@ -159,7 +159,7 @@ class pager extends prototype
   final public static function page_link($num, $text = '', array $args = array()) {
     $text = $text ? sprintf(static::$defs['link_text'], number_format($num)) : number_format($num);
 
-    $args['href'] = sprintf($num <= 1 ? static::$defs['link_root'] : str_replace('%25d', '%d', static::$defs['link_href']), $num);//FIX
+    $args['href'] = sprintf($num <= 1 ? static::$defs['link_root'] : static::$defs['link_href'], $num);
 
     return tag('a', $args, $text);
   }
