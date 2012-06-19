@@ -751,4 +751,4 @@ function is_closure($test) {
   return is_object($test) && (get_class($test) === 'Closure');
 }
 
-/* EOF: ./framework/core/conditions.php */
+/* EOF: ./framework/include/conditions.php */

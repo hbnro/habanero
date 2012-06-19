@@ -195,4 +195,4 @@ app::implement('raise', function ($message, $debug = NULL) {
   die($output);
 });
 
-/* EOF: ./framework/klass/app.php */
+/* EOF: ./library/app.php */

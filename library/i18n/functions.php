@@ -26,4 +26,4 @@ function ln($input) {
   return $input;
 }
 
-/* EOF: ./lib/i18n/functions.php */
+/* EOF: ./library/i18n/functions.php */

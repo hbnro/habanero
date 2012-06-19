@@ -479,4 +479,4 @@ function mime($of) {
   return ! empty($types[$ext]) ? $types[$ext] : 'application/octet-stream';
 }
 
-/* EOF: ./framework/core/filesystem.php */
+/* EOF: ./framework/include/filesystem.php */

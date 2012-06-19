@@ -33,4 +33,4 @@ define('LANG', $lang);
 require __DIR__.DS.'functions'.EXT;
 require __DIR__.DS.'i18n'.EXT;
 
-/* EOF: ./framework/i18n/initialize.php */
+/* EOF: ./library/i18n/initialize.php */

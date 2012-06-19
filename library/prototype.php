@@ -119,4 +119,4 @@ class prototype
 
 }
 
-/* EOF: ./framework/klass/prototype.php */
+/* EOF: ./library/prototype.php */
