@@ -11,7 +11,7 @@
  * @return void
  */
 function import() {
-  call_user_func_array('app::load', func_get_args());
+  call_user_func_array('core::load', func_get_args());
 }
 
 
@@ -22,7 +22,7 @@ function import() {
  * @return void
  */
 function run(Closure $bootstrap) {
-  app::exec($bootstrap);
+  core::exec($bootstrap);
 }
 
 
@@ -111,11 +111,11 @@ function render($content, $partial = FALSE, array $params = array()) {
  */
 function raise($message, $debug = NULL) {
   if (is_closure($message)) {// TODO: there is another way?
-    return app::implement('raise', $message);
+    return core::implement('raise', $message);
   }
 
   // invoke custom handler
-  app::raise($message, $debug);
+  core::raise($message, $debug);
 }
 
 

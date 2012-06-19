@@ -7,7 +7,7 @@
 /**
  * @ignore
  */
-final class app extends prototype
+final class core extends prototype
 {
 
   /**#@+
@@ -102,7 +102,7 @@ final class app extends prototype
 
 
 // basic output
-app::implement('raise', function ($message, $debug = NULL) {
+core::implement('raise', function ($message, $debug = NULL) {
   $var   = array();
   $args  = func_get_args();
   $trace = array_slice(debug_backtrace(FALSE), 1);
@@ -195,4 +195,4 @@ app::implement('raise', function ($message, $debug = NULL) {
   die($output);
 });
 
-/* EOF: ./library/app.php */
+/* EOF: ./library/core.php */

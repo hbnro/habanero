@@ -10,17 +10,17 @@
 import('www');
 import('partial');
 
-$bootstrap = app::methods();
+$bootstrap = core::methods();
 
 // errors
-app::implement('raise', function ($message)
+core::implement('raise', function ($message)
   use($bootstrap) {
   require __DIR__.DS.'scripts'.DS.'raising'.EXT;
 });
 
 
 // actions
-app::bind(function ($bootstrap) {
+core::bind(function ($bootstrap) {
   i18n::load_path(APP_PATH.DS.'locale');
 
   if (APP_ENV === 'development') {

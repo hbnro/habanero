@@ -12,7 +12,7 @@ require __DIR__.DS.'dispatch'.EXT;
 require __DIR__.DS.'functions'.EXT;
 /**#@-*/
 
-app::bind(function ($bootstrap) {
+core::bind(function ($bootstrap) {
   // root
   $url = array();
 
