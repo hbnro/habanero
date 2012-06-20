@@ -27,22 +27,6 @@ function run(Closure $bootstrap) {
 
 
 /**
- * Common debugging
- *
- * @param  mixed Arguments
- * @return void
- */
-function debug() {
-  if (php_sapi_name() <> 'cli') {// TODO: really?
-    $message = join(func_get_args(), '');
-    $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
-
-    error_log($message);
-  }
-}
-
-
-/**
  * Load partial content
  *
  * @param  mixed Content file|Options hash

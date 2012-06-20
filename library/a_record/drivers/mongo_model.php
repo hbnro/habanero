@@ -265,7 +265,7 @@ class mongo_model extends a_record
 
       static::$cache[static::$database] = $mongo->$database;
 
-      debug("Connect: mongodb:$database@$mongo");
+      logger::debug("Connect: mongodb:$database@$mongo");
     }
     return static::$cache[static::$database]->{static::table()};
   }
@@ -311,7 +311,7 @@ class mongo_model extends a_record
 
   // debug
   final protected static function debug($type, $start, $params) {
-    debug(sprintf("(%s) $type#%s %s", ticks($start), static::table(), dump($params)));
+    logger::debug(sprintf("(%s) $type#%s %s", ticks($start), static::table(), dump($params)));
   }
 
   /**#@-*/

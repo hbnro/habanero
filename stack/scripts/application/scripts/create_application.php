@@ -7,6 +7,9 @@
 $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path);
+   create_dir($app_path.DS.'logs');
+        chmod($app_path.DS.'logs', 0777);
+
    create_dir($app_path.DS.'config');
   create_file($app_path.DS.'config'.DS.'application'.EXT, "<?php\n");
   create_file($app_path.DS.'config'.DS.'resources'.EXT, "<?php return array();\n");
@@ -88,11 +91,10 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
     $ignored_files = array(
       '*~',
+      'logs/*',
       'tetlphp',
       '.develop',
       '.DS_Store',
-      'error.log',
-      'access.log',
       'database/db.sqlite',
       'config/resources.php',
     );

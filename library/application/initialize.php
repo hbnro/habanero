@@ -55,6 +55,14 @@ assets::compile('php', function ($file) {
   return partial::render($file);
 });
 
+
+// logger
+logger::implement('send', function ($type, $message) {
+  $date    = date('Y-m-d H:i:s');
+  $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
+  write(APP_PATH.DS.'logs'.DS.APP_ENV.'.log', "[$date] [$type] $message\n", 1);
+});
+
 /**#@-*/
 
 /* EOF: ./library/application/initialize.php */

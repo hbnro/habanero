@@ -132,8 +132,8 @@ function response($content, array $params = array()) {
   unset($params['output']);
   extract($params);
 
-  debug("Status: ($status) ", dump($headers));
-  debug("Output: ($type#$charset) ", ticks(BEGIN));
+  logger::debug("Status: ($status) ", dump($headers));
+  logger::debug("Output: ($type#$charset) ", ticks(BEGIN));
 
   exit;
 }
@@ -187,7 +187,7 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
   status($params['status'], $params['headers']);
   header("Location: $url", TRUE);
 
-  debug("Redirect: $url");
+  logger::debug("Redirect: $url");
 
   exit;
 }

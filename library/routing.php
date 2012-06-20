@@ -114,7 +114,7 @@ class routing
         }
 
 
-        debug("On: ({$params['matches'][0]}) ", ticks($start));
+        logger::debug("On: ({$params['matches'][0]}) ", ticks($start));
 
         if ($params['protect']) { // TODO: is this it?
           config('csrf_token', time() . ' ' . sha1(salt(13)));

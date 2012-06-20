@@ -87,8 +87,8 @@ function vhost_template() {
     Order allow,deny
     allow from all
   </Directory>
-  ErrorLog  "$base_path/error.log"
-  CustomLog "$base_path/access.log" combined
+  ErrorLog  "$base_path/logs/error.log"
+  CustomLog "$base_path/logs/access.log" combined
 </VirtualHost>
 XML;
 }

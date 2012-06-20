@@ -24,9 +24,9 @@ class sql_raw
       $start = ticks();
       $this->last_query []= $sql;
     } elseif ( ! $sql) {
-      debug('(' . ticks($start) . ") $query");
+      logger::debug('(' . ticks($start) . ") $query");
     } else {
-      debug($sql);
+      logger::debug($sql);
     }
   }
 
