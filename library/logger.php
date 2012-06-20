@@ -14,7 +14,7 @@ class logger extends prototype
 
 // default logging
 logger::implement('send', function ($type, $message) {
-  ! IS_CLI && error_log(preg_replace('/[\r\n]+\s*/', ' ', $message));
+  ! IS_CLI && error_log(str_replace("\n", '\\n', $message));
 });
 
 /* EOF: ./library/logger.php */
