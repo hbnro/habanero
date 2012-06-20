@@ -57,7 +57,7 @@ $lang['usage'] = <<<HELP
     \bgreen(ar:console)\b
 
   \clight_gray(Create a conventional scaffolding structure)\c
-    \bgreen(ar:scaffold)\b \bcyan(model)\b \byellow(field[:type])\b [...]
+    \bgreen(ar:scaffold)\b \bcyan(model)\b \byellow(field[:type])\b [...] [--force]
 
 HELP;
 

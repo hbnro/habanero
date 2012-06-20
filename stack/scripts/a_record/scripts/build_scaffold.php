@@ -4,7 +4,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 $params = array('locals' => compact('pk', 'model', 'fields'));
 $controller_file = APP_PATH.DS.'controllers'.DS."{$model}s".EXT;
 
-if ( ! is_file($controller_file)) {
+if ( ! is_file($controller_file) OR cli::flag('force')) {
   $routes = render($skel_dir.DS.'routes'.EXT, TRUE, $params);
   $controller = render($skel_dir.DS.'controller'.EXT, TRUE, $params);
 
