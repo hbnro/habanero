@@ -8,6 +8,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path);
    create_dir($app_path.DS.'logs');
+        chmod($app_path.DS.'logs', 0777);
 
    create_dir($app_path.DS.'config');
   create_file($app_path.DS.'config'.DS.'application'.EXT, "<?php\n");
