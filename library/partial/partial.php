@@ -14,7 +14,83 @@ class partial extends prototype
   // render adapters
   private static $render = array();
 
+  // partial sections
+  private static $sections = array();
+
   /**#@-*/
+
+
+  /**
+   * Clear section
+   *
+   * @param  string Name
+   * @return void
+   */
+  final public static function clear($name) {
+    if (isset(static::$sections[$name])) {
+      unset(static::$sections[$name]);
+    }
+  }
+
+
+  /**
+   * Create section
+   *
+   * @param  string Name
+   * @param  mixed  Content|Function callback
+   * @return void
+   */
+  final public static function section($name, $content) {
+    static::$sections[$name] = array($content);
+  }
+
+
+  /**
+   * Prepend content to section
+   *
+   * @param  string Name
+   * @param  mixed  Content|Function callback
+   * @return void
+   */
+  final public static function prepend($section, $content) {
+    isset(static::$sections[$name]) && array_unshift(static::$sections[$name], $content);
+  }
+
+
+  /**
+   * Append content to section
+   *
+   * @param  string Name
+   * @param  mixed  Content|Function callback
+   * @return void
+   */
+  final public static function append($section, $content) {
+    isset(static::$sections[$name]) && static::$sections[$name] []= $content;
+  }
+
+
+  /**
+   * Retrieve section
+   *
+   * @param  string Name
+   * @param  array  Params
+   * @return string
+   */
+  final public static function yield($section, array $params = array()) {
+    $out = '';
+
+    if ( ! empty(static::$sections[$section])) {
+      foreach (static::$sections[$section] as $one) {
+        if (is_closure($one)) {
+          ob_start() && $one($params);
+          $one = ob_get_clean();
+        }
+        $out .= $one;
+      }
+    }
+
+    return $out;
+  }
 
 
   /**
