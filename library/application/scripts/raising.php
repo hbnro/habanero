@@ -1,7 +1,5 @@
 <?php
 
-error_log($message);
-
 $error_status = 500;
 
 switch (APP_ENV) {
@@ -21,5 +19,7 @@ $methods[404] = 'not_found';
 $output = application::execute('error', $methods[$error_status]);
 
 response($output);
+// TODO: right?
+exit;
 
 /* EOF: ./library/application/scripts/raising.php */
