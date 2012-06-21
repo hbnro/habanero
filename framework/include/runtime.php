@@ -99,6 +99,7 @@ function raise($message, $debug = NULL) {
   }
 
   // invoke custom handler
+  logger::raise("$message ---> " . dump($debug));
   core::raise($message, $debug);
 }
 
