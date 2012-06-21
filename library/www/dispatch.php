@@ -183,6 +183,8 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
   header("Location: $url", TRUE);
 
   logger::debug("Redirect: $url");
+  // TODO: ok?
+  exit;
 }
 
 
