@@ -17,8 +17,8 @@ class routing
   // routing stack
   private static $routes = array();
 
-  // CSRF protection
-  private static $protect = FALSE;
+  // params per group
+  private static $grouped = array();
 
   /**#@-*/
 
@@ -34,10 +34,12 @@ class routing
     $params = array_merge(array(
       'constraints' => array(),
       'defaults'    => array(),
-      'protect'     => static::$protect,
+      'protect'     => FALSE,
+      'before'      => array(),
+      'after'       => array(),
       'match'       => 'GET /',
       'to'          => 'raise',
-    ), $params);
+    ), $params, static::$grouped);
 
 
     $test            = preg_split('/\s+/', $params['match']);
@@ -78,18 +80,24 @@ class routing
    * @return void
    */
   final public static function mount(Closure $group, array $params = array()) {
-    $params = array_merge(array(
-      'root' => '/',
-      'safe' => FALSE,
-    ), $params);
+    $test = $params;
 
-    static::$root    = $params['root'];
-    static::$protect = $params['safe'];
+    if (isset($params['root'])) {
+      unset($params['root']);
+    }
+
+    if (isset($params['safe'])) {
+      $params['protect'] = (boolean) $params['safe'];
+      unset($params['safe']);
+    }
+
+    static::$root    = ! empty($test['root']) ? $test['root'] : '/';
+    static::$grouped = $params;
 
     $group();
 
+    static::$grouped = array();
     static::$root    = '/';
-    static::$protect = FALSE;
   }
 
 
@@ -113,11 +121,17 @@ class routing
           $params['to'] = ROOT;
         }
 
+        if ( ! empty($params['before'])) {
+          foreach ((array) $params['before'] as $filter) {
+            call_user_func($filter);
+          }
+        }
+
 
         logger::debug("On: ({$params['matches'][0]}) ", ticks($start));
 
         if ($params['protect']) { // TODO: is this it?
-          config('csrf_token', time() . ' ' . sha1(salt(13)));
+          config('csrf_token', request::is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : time() . ' ' . sha1(salt(13)));
           config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
 
           ($method <> 'GET') && ! request::is_safe() && raise(ln('invalid_authenticity_token'));
@@ -126,6 +140,14 @@ class routing
         }
 
         request::dispatch($params);
+
+        if ( ! empty($params['after'])) {
+          foreach ((array) $params['after'] as $filter) {
+            call_user_func($filter);
+          }
+        }
+
+        return;
       }
     }
 
