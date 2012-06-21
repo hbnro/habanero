@@ -81,8 +81,8 @@ class partial extends prototype
 
     if ( ! empty(static::$sections[$section])) {
       foreach (static::$sections[$section] as $one) {
-        if (is_closure($one)) {
-          ob_start() && $one($params);
+        if (is_callable($one)) {
+          ob_start() && call_user_func($one, $params);
           $one = ob_get_clean();
         }
         $out .= $one;
