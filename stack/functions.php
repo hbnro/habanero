@@ -100,14 +100,16 @@ function template($to, $from, array $vars = array()) {
   write($to.DS.basename($from), $render($from, $vars));
 }
 
-function append_file($path, $content) {
+function append_file($path, $content, array $params = array()) {
   status('append', $path);
-  return is_file($path) && write($path, read($path).$content);
+  empty($params['after']) && $params['after'] = '/.*$/s';
+  return inject_into_file($path, $content, $params);
 }
 
-function prepend_file($path, $content) {
+function prepend_file($path, $content, array $params = array()) {
   status('prepend', $path);
-  return is_file($path) && write($path, $content.read($path));
+  empty($params['before']) && $params['before'] = '/^.*/s';
+  return inject_into_file($path, $content, $params);
 }
 
 function gsub_file($path, $regex, $replace, $position = 0) {
@@ -115,11 +117,16 @@ function gsub_file($path, $regex, $replace, $position = 0) {
     return FALSE;
   }
 
-  return write($path, preg_replace_callback($regex, function ($match)
-    use($replace, $position) {
-    $tmp = is_closure($replace) ? $replace($match) : $replace;
-    return ! $position ? $tmp : ($position < 0 ? "$tmp$match[0]" : ($position > 0 ? "$match[0]$tmp" : $tmp));
-  }, read($path)));
+
+  $content = read($path);
+
+  if (preg_match($regex, $content, $match)) {
+    $replace = is_closure($replace) ? $replace($match) : $replace;
+    $replace = $position < 0 ? "$replace$match[0]" : ($position > 0 ? "$match[0]$replace" : $replace);
+    $content = str_replace($match[0], $replace, $content);
+
+    return write($path, $content);
+  }
 }
 
 function inject_into_file($path, $content, array $params = array()) {
@@ -134,9 +141,7 @@ function inject_into_file($path, $content, array $params = array()) {
   ! empty($params['after']) && $regex = $params['after'];
   ! empty($params['before']) && $regex = $params['before'];
 
-  $position = ! empty($params['before']) ? -1 : ( ! empty($params['after']) ? 1 : 0);
-
-  return gsub_file($path, $regex, $content, $position);
+  return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : ( ! empty($params['after']) ? 1 : 0));
 }
 
 function add_class($path, $name, $parent = '', $methods = '', array $properties = array()) {
