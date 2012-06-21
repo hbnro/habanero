@@ -18,28 +18,27 @@ if ( ! $name) {
     success(ln('executing_script', array('path' => str_replace(APP_PATH.DS, '', $script_file))));
     require $script_file;
     done();
-    exit;
-  }
-
-  $task_file = APP_PATH.DS.'tasks'.DS.$name.DS.'initialize'.EXT;
-  $path      = str_replace(APP_PATH.DS, '', $task_file);
-
-  if ( ! is_file($task_file)) {
-    error(ln('missing_script_file', array('name' => $path)));
   } else {
-    /**#@+
-     * @ignore
-     */
-    require $task_file;
-    /**#@-*/
+    $task_file = APP_PATH.DS.'tasks'.DS.$name.DS.'initialize'.EXT;
+    $path      = str_replace(APP_PATH.DS, '', $task_file);
+
+    if ( ! is_file($task_file)) {
+      error(ln('missing_script_file', array('name' => $path)));
+    } else {
+      /**#@+
+       * @ignore
+       */
+      require $task_file;
+      /**#@-*/
 
 
-    $args = array($name);
-    $key && $args []= $key;
+      $args = array($name);
+      $key && $args []= $key;
 
-    success(ln('executing_task', array('command' => sprintf('%s%s', $name, $key ? "#$key" : ''))));
-    app_generator::apply('run', $args);
-    done();
+      success(ln('executing_task', array('command' => sprintf('%s%s', $name, $key ? "#$key" : ''))));
+      app_generator::apply('run', $args);
+      done();
+    }
   }
 }
 

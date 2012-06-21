@@ -22,6 +22,4 @@ $output = application::execute('error', $methods[$error_status]);
 
 response($output);
 
-exit;
-
 /* EOF: ./library/application/scripts/raising.php */

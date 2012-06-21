@@ -50,4 +50,3 @@
     <p>&mdash; <?php echo ticks(defined('BEGIN') ? BEGIN : 0); ?>s</p>
   </body>
 </html>
-<?php exit;

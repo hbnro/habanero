@@ -134,8 +134,6 @@ function response($content, array $params = array()) {
 
   logger::debug("Status: ($status) ", dump($headers));
   logger::debug("Output: ($type#$charset) ", ticks(BEGIN));
-
-  exit;
 }
 
 
@@ -188,8 +186,6 @@ function redirect($to = ROOT, $status = NULL, array $params = array()) {
   header("Location: $url", TRUE);
 
   logger::debug("Redirect: $url");
-
-  exit;
 }
 
 

@@ -155,7 +155,6 @@ class gd
     header("Content-Length: $this->size");
     header("Content-Type: $this->mime");
     $this->export(NULL, $this->type);
-    exit;
   }
 
 

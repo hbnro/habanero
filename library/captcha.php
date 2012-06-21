@@ -141,8 +141,6 @@ class captcha
 
     imagepng($resource);
     imagedestroy($resource);
-
-    exit;
   }
 
 

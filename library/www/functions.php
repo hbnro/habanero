@@ -282,7 +282,7 @@ function download($path, $name = '', $mime = '', $kbps = 24) {
 
   if (func_num_args() <= 3) {
     readfile($path);
-    exit;
+    return;
   }
 
 
@@ -330,7 +330,6 @@ function download($path, $name = '', $mime = '', $kbps = 24) {
   }
 
   fclose($tmp);
-  exit;
 }
 
 
