@@ -10,11 +10,10 @@ $request = request::methods();
 request::implement('dispatch', function (array $params = array())
   use($request) {
   if (is_callable($params['to'])) {
-    $request['dispatch']($params);
+    return $request['dispatch']($params);
   } else {
     params($params['matches']);
-    $output = application::apply('execute', explode('#', (string) $params['to']));
-    response($output);
+    return application::apply('execute', explode('#', (string) $params['to']));
   }
 });
 

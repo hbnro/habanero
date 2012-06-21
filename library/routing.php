@@ -139,15 +139,15 @@ class routing
           $_SESSION['--csrf-token'] = option('csrf_token');
         }
 
-        request::dispatch($params);
+        $output = request::dispatch($params);
 
         if ( ! empty($params['after'])) {
           foreach ((array) $params['after'] as $filter) {
-            call_user_func($filter);
+            $output = call_user_func($filter, $output);
           }
         }
 
-        return;
+        return response($output);
       }
     }
 

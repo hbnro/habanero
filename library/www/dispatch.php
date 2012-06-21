@@ -5,14 +5,14 @@
  */
 
 /**
- * Dispatch a specified route
+ * Prepare output params to dispatch
  *
  * @param  mixed  Expression|Function callback
  * @param  mixed  Function callback
  * @param  array  Options hash
  * @return void
  */
-function dispatch($to = NULL, array $params = array()) {
+function prepare($to = NULL, array $params = array()) {
   if (is_assoc($to)) {
     $params = array_merge($to, $params);
   } elseif ( ! isset($params['to'])) {
@@ -38,10 +38,10 @@ function dispatch($to = NULL, array $params = array()) {
   ob_start();
 
   if (is_callable($params['to'])) {
-    $output = call_user_func_array($params['to'], (array) $params);
+    $test = call_user_func_array($params['to'], (array) $params);
 
-    if ($output) {
-      return TRUE;
+    if (is_array($test)) {
+      return $test;
     }
   } elseif (is_url($params['to'])) {
     redirect($params);
@@ -75,7 +75,7 @@ function dispatch($to = NULL, array $params = array()) {
     }
   }
 
-  response($content);
+  return $content;
 }
 
 
@@ -129,11 +129,8 @@ function response($content, array $params = array()) {
   status($params['status'], $params['headers']);
   echo $params['output'];
 
-  unset($params['output']);
-  extract($params);
-
-  logger::debug("Status: ($status) ", dump($headers));
-  logger::debug("Output: ($type#$charset) ", ticks(BEGIN));
+  logger::debug("Status: ($params[status]) ", dump($params['headers']));
+  logger::debug("Output: ($params[type]#$params[charset]) ", ticks(BEGIN));
 }
 
 

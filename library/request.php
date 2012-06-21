@@ -339,7 +339,7 @@ request::implement('dispatch', function (array $params = array()) {
 
   @params(array_merge($params['defaults'], $params['matches']));
 
-  dispatch($params);
+  return prepare($params);
 });
 
 

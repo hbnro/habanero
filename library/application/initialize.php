@@ -25,10 +25,10 @@ core::bind(function ($bootstrap) {
 
   if (APP_ENV === 'development') {
     get('/static/*path', function () {
-      response(array(
+      return array(
         'output' => assets::read(params('path')),
         'type' => mime(ext(params('path'))),
-      ));
+      );
     }, array(
       'constraints' => array(
         '*path' => '(?:img|css|js)/.+',
