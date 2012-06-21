@@ -55,6 +55,7 @@ class application extends prototype
    * @return void
    */
   public static function execute($controller, $action = 'index') {
+    $view_file       = findfile(APP_PATH.DS.'views'.DS.$controller, "$action.html*", FALSE, 1);
     $controller_file = APP_PATH.DS.'controllers'.DS.$controller.EXT;
 
     if ( ! is_file($controller_file)) {
@@ -67,12 +68,12 @@ class application extends prototype
      */
     require $controller_file;
     // TODO: basename or underscore?
-    $class_name  = basename($controller) . '_controller';
+    $class_name = basename($controller) . '_controller';
 
 
     if ( ! class_exists($class_name)) {
       raise(ln('class_not_exists', array('name' => $class_name)));
-    } elseif ( ! $class_name::defined($action)) {
+    } elseif ( ! $view_file && ! $class_name::defined($action)) {
       raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
     }
 
@@ -81,11 +82,11 @@ class application extends prototype
     $start = ticks();
     $class_name::defined('init') && $class_name::init();
 
-    if ($test = $class_name::$action()) {
+    if ($class_name::defined($action) && ($test = $class_name::$action())) {
       @list($status, $view, $headers) = $test;
       $class_name::$response = compact('status', 'headers');
     } else {
-      $view = partial("$controller/$action.html", (array) $class_name::$view);
+      $view = partial::render($view_file, (array) $class_name::$view);
 
       if ($class_name::$layout !== FALSE) {
         $layout_file = "layouts/{$class_name::$layout}";
