@@ -19,11 +19,6 @@ if ( ! is_file($controller_file) OR cli::flag('force')) {
       li { data => compact('field') } = $text
 TPL;
 
-  inject_into_file(APP_PATH.DS.'index'.EXT, "\n  import('a_record');", array(
-    'unless' => '/\ba_record\b/',
-    'after' => '/run\s*\(\s*function\s*\(.*?\)\s*\{/',
-  ));
-
     create_file($controller_file, $controller);
 
      create_dir(APP_PATH.DS.'views'.DS."{$model}s");
@@ -33,7 +28,11 @@ TPL;
 
     create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'errors.html.tamal', "$errors_tpl\n");
 
-    append_file(APP_PATH.DS.'routes'.EXT, "$routes\n");
+    append_file(APP_PATH.DS.'routes'.EXT, "\n$routes", array('unless' => "/'root'\s*=>\s*'\/{$model}s'/"));
+    append_file(APP_PATH.DS.'index'.EXT, "\n  import('a_record');", array(
+      'unless' => '/\ba_record\b/',
+      'after' => '/run\s*\(\s*function\s*\(.*?\)\s*\{/',
+    ));
 } else {
   error(ln('ar.crud_already_exists', array('name' => $model)));
 }
