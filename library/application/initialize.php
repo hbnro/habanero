@@ -36,7 +36,7 @@ core::bind(function ($bootstrap) {
     ));
   }
 
-  routing::load(APP_PATH.DS.'routes'.EXT, array('safe' => TRUE));
+  routing::load(APP_PATH.DS.'config'.DS.'routes'.EXT, array('safe' => TRUE));
 
   // initializers
   if (is_dir($init_path = APP_PATH.DS.'config'.DS.'initializers')) {

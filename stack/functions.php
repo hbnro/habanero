@@ -172,7 +172,7 @@ function add_class($path, $name, $parent = '', $methods = '', array $properties 
 function add_route($from, $to, $path = '', $method = 'get') {
   $path OR $path = "{$from}_$to";
   $text = ";\n$method('/$from', '$to', array('path' => '$path'));";
-  return inject_into_file(APP_PATH.DS.'routes'.EXT, $text, array('before' => '/;[^;]*?$/'));
+  return inject_into_file(APP_PATH.DS.'config'.DS.'routes'.EXT, $text, array('before' => '/;[^;]*?$/'));
 }
 
 function add_view($parent, $name, $text = '', $ext = EXT) {

@@ -20,6 +20,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'production'.EXT);
 
    create_dir($app_path.DS.'config'.DS.'initializers');
+    copy_file($app_path.DS.'config', $skel_dir.DS.'routes'.EXT);
 
    create_dir($app_path.DS.'controllers');
     copy_file($app_path.DS.'controllers', $skel_dir.DS.'home'.EXT);
@@ -106,7 +107,6 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path, $skel_dir.DS.'Stubfile');
     copy_file($app_path, $skel_dir.DS.'favicon.ico');
     copy_file($app_path, $skel_dir.DS.'config'.EXT);
-    copy_file($app_path, $skel_dir.DS.'routes'.EXT);
     copy_file($app_path, $skel_dir.DS.'index'.EXT);
 
 /* EOF: ./stack/scripts/application/scripts/create_application.php */

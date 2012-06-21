@@ -28,7 +28,7 @@ TPL;
 
     create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'errors.html.tamal', "$errors_tpl\n");
 
-    append_file(APP_PATH.DS.'routes'.EXT, "\n$routes", array('unless' => "/'root'\s*=>\s*'\/{$model}s'/"));
+    append_file(APP_PATH.DS.'config'.DS.'routes'.EXT, "\n$routes", array('unless' => "/'root'\s*=>\s*'\/{$model}s'/"));
     append_file(APP_PATH.DS.'index'.EXT, "\n  import('a_record');", array(
       'unless' => '/\ba_record\b/',
       'after' => '/run\s*\(\s*function\s*\(.*?\)\s*\{/',
