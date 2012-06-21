@@ -1,5 +1,10 @@
 # dependencies
 
+- core
+- i18n
+- config
+- prototype
+- logger
 - a_record
 - application
 - assets
