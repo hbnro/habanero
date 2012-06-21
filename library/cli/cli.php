@@ -656,7 +656,7 @@ class cli extends prototype
 
       foreach ($test as $one) {
         $one   = substr($one, 0, strlen($one) > $max ? $max - 3 : $max) . (strlen($one) > $max ? '...' : '');
-        $one   = str_pad($one, $col[$key], ' ', is_num($one) ? STR_PAD_LEFT : STR_PAD_RIGHT);
+        $one   = str_pad($one, $col[$key], ' ', is_numeric($one) ? STR_PAD_LEFT : STR_PAD_RIGHT);
         $row []= preg_replace('/[\r\n\t]/', ' ', $one);
         $key  += 1;
       }
