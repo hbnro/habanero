@@ -4,7 +4,7 @@
  * Magic config wrapper
  */
 
-class config
+class configure
 {
 
   /**#@+
@@ -27,22 +27,27 @@ class config
    * @return array
    */
   final public static function all() {
-    return static::$bag;
+    return self::$bag;
   }
 
 
   /**
    * Option setup
    *
-   * @param  string Item
-   * @param  mixed  Value
+   * @param  mixed Item|Function callback
+   * @param  mixed Value
    * @return void
    */
   final public static function set($key, $value = TRUE) {
-    if ( ! empty(static::$proc[$key])) {
-      $value = call_user_func(static::$proc[$key], $value);
+    if (is_closure($key)) {
+      $test = new stdClass;
+      $key($test);
+
+      return self::add((array) $test);
+    } elseif ( ! empty(self::$proc[$key])) {
+      $value = call_user_func(self::$proc[$key], $value);
     }
-    static::$bag[$key] = $value;
+    self::$bag[$key] = $value;
   }
 
 
@@ -54,7 +59,7 @@ class config
    * @return mixed
    */
   final public static function get($key, $or = FALSE) {
-    return value(static::$bag, $key, $or);
+    return value(self::$bag, $key, $or);
   }
 
 
@@ -67,10 +72,10 @@ class config
   final public static function add($set) {
     if (is_assoc($set)) {
       foreach ($set as $key => $value) {
-        static::set($key, $value);
+        self::set($key, $value);
       }
     } elseif (is_file($set)) {
-      static::import($set);
+      self::import($set);
     }
   }
 
@@ -82,8 +87,8 @@ class config
    * @return void
    */
   final public static function rem($key) {
-    if (isset(static::$bag[$key])) {
-      unset(static::$bag[$key]);
+    if (isset(self::$bag[$key])) {
+      unset(self::$bag[$key]);
     }
   }
 
@@ -102,7 +107,7 @@ class config
       if (is_array($test)) {
         $config = array_merge($config, $test);
       }
-      static::add(array_merge(static::$bag, $config));
+      self::add(array_merge(self::$bag, $config));
     }
   }
 
@@ -115,9 +120,9 @@ class config
    * @return void
    */
   final public static function filter($key, Closure $lambda) {
-    static::$proc[$key] = $lambda;
+    self::$proc[$key] = $lambda;
   }
 
 }
 
-/* EOF: ./library/config.php */
+/* EOF: ./library/configure.php */

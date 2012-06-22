@@ -112,7 +112,7 @@ function raise($message, $debug = NULL) {
  * @return mixed
  */
 function option($get, $or = FALSE) {
-  return config::get($get, $or);
+  return configure::get($get, $or);
 }
 
 
@@ -126,14 +126,14 @@ function option($get, $or = FALSE) {
  */
 function config($set = NULL, $value = NULL) {
   if (func_num_args() === 0) {
-    return config::all();
+    return configure::all();
   } elseif ( ! is_null($value)) {
-    config::set($set, $value);
+    configure::set($set, $value);
   } else {
     if ( ! is_assoc($set) && ! is_file($set)) {
-      return config::get($set);
+      return configure::get($set);
     }
-    config::add($set);
+    configure::add($set);
   }
 }
 
