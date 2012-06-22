@@ -65,7 +65,7 @@
           method,
           options;
 
-      if ($ujs.fire(el, 'ajax:before')) {
+      if ($ujs.fire(el, 'ajax:prepare')) {
         method = el.attr('method') || el.data('method');
         url = el.attr('action') || el.attr('href') || el.data('url');
 
