@@ -86,9 +86,9 @@ chess_helper::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 
   if ((sizeof($args) < 3) OR ($alpha === 0)) {
     return 'transparent';
   } elseif ($alpha < 1) {
-    return "rgba!($args[0], $args[1], $args[2], $alpha)";
+    return "rgba($args[0], $args[1], $args[2], $alpha)";
   }
-  return "rgb!($args[0], $args[1], $args[2])";
+  return "rgb($args[0], $args[1], $args[2])";
 });
 
 
