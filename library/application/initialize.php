@@ -57,7 +57,7 @@ assets::compile('php', function ($file) {
 
 
 // logger
-logger::implement('send', function ($type, $message) {
+logger::implement('write', function ($type, $message) {
   $date    = date('Y-m-d H:i:s');
   $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
   write(APP_PATH.DS.'logs'.DS.APP_ENV.'.log', "[$date] [$type] $message\n", 1);
