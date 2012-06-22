@@ -120,7 +120,7 @@ class partial extends prototype
    */
   final public static function render($file, array $vars = array()) {
     if ( ! is_file($file)) {
-      return ln('partial.view_missing', array('path' => dirname($file), 'action' => $action));
+      return ln('partial.view_missing', array('path' => dirname($file), 'action' => basename($file)));
     }
 
     $start  = ticks();
