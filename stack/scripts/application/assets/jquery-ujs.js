@@ -149,9 +149,7 @@
             value = input.val();
 
         if (blank ? ! value : value) {
-          out.push(input.addClass('error'));
-        } else {
-          input.removeClass('error');
+          out.push(input);
         }
       });
 
