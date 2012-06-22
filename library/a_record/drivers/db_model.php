@@ -25,7 +25,7 @@ class db_model extends a_record
     }
 
 
-    $fields = static::stamp($this->changed, $this->props, $this->is_new());
+    $fields = static::stamp($this);
 
     unset($fields[static::pk()]);
 

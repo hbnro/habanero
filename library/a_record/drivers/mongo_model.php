@@ -28,7 +28,7 @@ class mongo_model extends a_record
     }
 
     $start  = ticks();
-    $fields = static::stamp($this->changed, $this->props, $this->is_new());
+    $fields = static::stamp($this);
 
     unset($fields['_id']);
 

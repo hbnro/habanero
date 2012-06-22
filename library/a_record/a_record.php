@@ -491,22 +491,25 @@ class a_record extends prototype
   }
 
   // make timestamps
-  final protected static function stamp($changed, $fields, $new) {
+  final protected static function stamp($row) {
     $props   = static::columns();
     $current = date('Y-m-d H:i:s');
+    $fields  = $row->props;
 
-    if ( ! $new) {
+    if ( ! $row->is_new()) {
       foreach ($fields as $key => $val) {
-        if ( ! in_array($key, $changed)) {
+        if ( ! in_array($key, $row->changed)) {
           unset($fields[$key]);
         }
       }
     } elseif (array_key_exists('created_at', $props)) {
       $fields['created_at'] = $current;
+      $row->created_at = $current;
     }
 
     if (array_key_exists('modified_at', $props)) {
       $fields['modified_at'] = $current;
+      $row->modified_at = $current;
     }
 
     return $fields;
