@@ -144,11 +144,14 @@
     all_fields: function(el, blank) {
       var out = [];
 
-      el.find('input:not([type=submit]),textarea').each(function() {
-        var input = $(this);
+      el.find('input:not([type=submit][type=hidden]),textarea').each(function() {
+        var input = $(this),
+            value = input.val();
 
-        if (blank ? ! input.val() : input.val()) {
-          out.push(input);
+        if (blank ? ! value : value) {
+          out.push(input.addClass('error'));
+        } else {
+          input.removeClass('error');
         }
       });
 
