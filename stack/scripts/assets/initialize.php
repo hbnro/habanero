@@ -45,7 +45,7 @@ app_generator::implement('assets:prepare', function () {
 
   app_generator::apply('assets:clean');
 
-  $base_path  = APP_PATH.DS.'views'.DS.'assets';
+  $base_path  = APP_PATH.DS.'assets';
   $static_dir = APP_PATH.DS.'static';
   $img_path   = $base_path.DS.'img';
   $img_dir    = $static_dir.DS.'img';
