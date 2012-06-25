@@ -90,12 +90,12 @@ class assets extends prototype
    * @return mixed
    */
   final public static function build($from, $type) {
-    $base_path  = APP_PATH.DS.'assets';
-    $base_file  = $base_path.DS."$from.$type";
+    $base_path = APP_PATH.DS.'assets';
+    $base_file = $base_path.DS."$from.$type";
 
     if (is_file($base_file)) {
       if (APP_ENV === 'production') {
-        $path = path_to(static::resolve($base_file));
+        $path = path_to("$type/" . static::resolve($base_file));
 
         if ($type == 'css') {
           return tag('link', array('rel' => 'stylesheet', 'href' => $path));
