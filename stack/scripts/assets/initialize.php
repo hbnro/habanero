@@ -111,7 +111,7 @@ app_generator::implement('assets:prepare', function () {
 
         $hash     = md5(md5_file($tmp) . filesize($tmp));
         $name     = str_replace($base_path.DS, '', $file);
-        $min_file = $static_dir.DS.extn($name).$hash.ext($file, TRUE);
+        $min_file = $static_dir.DS.ext($file).DS.extn($name).$hash.ext($file, TRUE);
 
         rename($tmp, mkpath(dirname($min_file)).DS.basename($min_file));
 
