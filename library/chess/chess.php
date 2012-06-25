@@ -88,7 +88,7 @@ class chess extends prototype
 
     $text = static::quote(join("\n", static::$css), TRUE);
 
-    $text = preg_replace('/\b(\w+)\!\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
+    $text = preg_replace('/\b(\w+)_\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
     $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
     $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
     $text = preg_replace('/\b0+(?=\.)/', '', $text);
