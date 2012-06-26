@@ -4,10 +4,6 @@
  * RSS class
  */
 
-if ( ! function_exists('curl_init')) {
-  raise(ln('extension_missing', array('name' => 'cURL')));
-}
-
 class rss extends prototype
 {
   /**#@+
