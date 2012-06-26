@@ -1,12 +1,7 @@
 <?php
 
-$name = cli::flag('name') ?: $callback;
+$name = cli::flag('name') ?: "{$callback}_";
 $time = time();
-
-$migration_name = date('YmdHis_', $time).$args[0].'_'.$name;
-$migration_path = mkpath(APP_PATH.DS.'database'.DS.'migrate');
-$migration_file = $migration_path.DS.$migration_name.EXT;
-
 
 foreach ($args as $i => $one) {
   if (is_array($one)) {
@@ -21,11 +16,18 @@ foreach ($args as $i => $one) {
     $text = str_replace(',)', ')', $text);
 
     $args[$i] = $text;
+
+    $name .= join('_', is_assoc($one) ? array_keys($one) : $one);
   } else {
     $args[$i] = "'$one'";
+    $name .= "{$one}_";
   }
 }
 
+
+$migration_name = date('YmdHis_', $time) . trim($name, '_');
+$migration_path = mkpath(APP_PATH.DS.'database'.DS.'migrate');
+$migration_file = $migration_path.DS.$migration_name.EXT;
 
 $code = sprintf("$callback(%s);\n", join(', ', $args));
 
@@ -38,7 +40,7 @@ if ( ! is_file($migration_file)) {
 }
 
 
-add_migration(extn($migration_file, TRUE));
+add_migration($migration_name);
 
 eval($code);
 
