@@ -16,11 +16,7 @@ if (cli::flag('schema')) {
 } else {
   info(ln('db.verifying_databases'));
 
-  $cache = array();
-  $state_file = APP_PATH.DS.'database'.DS.'state'.EXT;
-
-  is_file($state_file) && $cache += include $state_file;
-
+  $cache  = all_migrations();
   $latest = sizeof($cache);
   $name   = db()->name;
   $dsn    = db()->dsn;
@@ -28,9 +24,15 @@ if (cli::flag('schema')) {
   bold("$name - $dsn");
 
   if (cli::flag('drop-all')) {
+    $cache = array();
+
+    db::delete('migration_history');
+
     foreach (db::tables() as $one) {
-      notice(ln('db.table_dropping', array('name' => $one)));
-      drop_table($one);
+      if ($one <> 'migration_history') {
+        notice(ln('db.table_dropping', array('name' => $one)));
+        drop_table($one);
+      }
     }
   }
 
@@ -47,8 +49,7 @@ if (cli::flag('schema')) {
       if ( ! in_array($name, $cache)) {
         notice(ln('db.run_migration', array('path' => $path)));
         require $migration_file;
-
-        $cache []= $name;
+        add_migration($name);
         $latest += 1;
       }
     }
@@ -56,7 +57,6 @@ if (cli::flag('schema')) {
     if (sizeof($cache) == $latest) {
       notice(ln('db.without_changes'));
     } else {
-      write($state_file, '<' . '?php return ' . var_export($cache, TRUE) . ";\n");
       build_schema();
     }
   } else {

@@ -39,8 +39,6 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
   create_file($app_path.DS.'database'.DS.'schema'.EXT, "<?php\n");
   create_file($app_path.DS.'database'.DS.'seeds'.EXT, "<?php\n");
-  create_file($app_path.DS.'database'.DS.'state'.EXT, "<?php return array();\n");
-        chmod($app_path.DS.'database'.DS.'state'.EXT, 0777);
 
    create_dir($app_path.DS.'library');
   create_file($app_path.DS.'library'.DS.'helpers'.EXT, "<?php\n");

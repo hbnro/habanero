@@ -38,14 +38,7 @@ if ( ! is_file($migration_file)) {
 }
 
 
-$cache = array();
-$state_file = APP_PATH.DS.'database'.DS.'state'.EXT;
-
-is_file($state_file) && $cache += include $state_file;
-
-$cache []= extn($migration_file, TRUE);
-
-write($state_file, '<' . '?php return ' . var_export($cache, TRUE) . ";\n");
+add_migration(extn($migration_file, TRUE));
 
 eval($code);
 

@@ -124,6 +124,33 @@ app_generator::implement('db:migrate', function () {
 
 
 
+// pre-create migration table
+if ( ! in_array('migration_history', db::tables())) {
+  create_table('migration_history', array(
+    'name' => array('type' => 'string'),
+  ));
+}
+
+function all_migrations() {
+  static $cache = NULL;
+
+
+  if (is_null($cache)) {
+    $cache = array();
+    $test  = db::select('migration_history');
+
+    while ($row = db::fetch($test, AS_OBJECT)) {
+      $cache []= $row->name;
+    }
+  }
+
+  return $cache;
+}
+
+function add_migration($name) {
+  db::insert('migration_history', compact('name'));
+}
+
 function check_table($name) {
   info(ln('db.verifying_structure'));
 
