@@ -54,6 +54,7 @@ $lang['column_renaming'] = 'Renombrando columna de %{from} a %{to}';
 
 $lang['index_dropping'] = 'Borrando índice %{name}';
 $lang['run_migration'] = 'Ejecutando migración %{path}';
+$lang['without_changes'] = 'Sin cambios';
 
 $lang['table_column_indexing'] = 'Creando indices en %{name}';
 $lang['table_building'] = 'Creando tabla %{name}';
