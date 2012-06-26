@@ -23,7 +23,7 @@ foreach (db::tables() as $one) {
     $out []= sprintf("$pad  '$key' => array(%s),", join(', ', $def));
   }
 
-  $out []= "$pad));";
+  $out []= "$pad), array('force' => TRUE));";
   $out []= '';
 
   foreach (db::indexes($one) as $key => $val) {
