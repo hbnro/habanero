@@ -37,6 +37,16 @@ if ( ! is_file($migration_file)) {
   write($migration_file, $code, 1);
 }
 
+
+$cache = array();
+$state_file = APP_PATH.DS.'database'.DS.'state'.EXT;
+
+is_file($state_file) && $cache += include $state_file;
+
+$cache []= extn($migration_file, TRUE);
+
+write($state_file, '<' . '?php return ' . var_export($cache, TRUE) . ";\n");
+
 eval($code);
 
 /* EOF: ./stack/scripts/db/scripts/build_migration.php */
