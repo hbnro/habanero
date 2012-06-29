@@ -146,9 +146,10 @@
 
       el.find('input:not([type=submit][type=hidden]),textarea').each(function() {
         var input = $(this),
-            value = input.val();
+            value = input.val(),
+            required = input.attr('required');
 
-        if (blank ? ! value : value) {
+        if (required && (blank ? ! value : value)) {
           out.push(input);
         }
       });
