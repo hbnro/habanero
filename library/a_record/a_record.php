@@ -134,14 +134,9 @@ class a_record extends prototype
     $what  = '';
     $class = get_called_class();
 
-    if ((substr($method, 0, 4) === 'all_') OR (substr($method, 0, 6) === 'count_')) {
-      @list($what, $method) = explode('_', $method, 2);
-
-      $test   = explode('_by_', $method);
-      $method = array_shift($test);
-
-      $test && $what .= '_by_' . array_shift($test);
-    } elseif (preg_match('/^(first|last|create|build)_o[fn]_(.+?)$/', $method, $match)) {
+    if (preg_match('/^(?:first|last|count|all)_by_/', $method)) { // TODO: testing...
+      return $class::apply($method, $arguments);
+    } elseif (preg_match('/^(first|last|create|build|count|all)_o[fn]_(.+?)$/', $method, $match)) {
       $test   = explode('_by_', $match[2]);
       $method = array_shift($test);
       $what   = $match[1];
