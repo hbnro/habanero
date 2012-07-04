@@ -390,6 +390,7 @@ class tamal extends prototype
   final private static function fixate($code) {
     $code = preg_replace('/^\s{' . static::$defs['indent'] . '}/m', '', $code);
     $code = preg_replace(array_keys(static::$fix), static::$fix, $code);
+    $code = str_replace('@@', 'get_defined_vars()', $code);
 
     return $code;
   }
