@@ -56,4 +56,21 @@ chess_helper::implement('argv', function($text, $index = 1, $default = FALSE) {
   return isset($args[$index - 1]) ? $args[$index - 1] : $default;
 });
 
+
+/**
+ * Numeric values
+ *
+ * @param  string Number
+ * @return string
+ */
+chess_helper::implement('num', function ($text) {
+  static $regex = '/(?:p[xtc]|e[xm]|[cm]m|g?rad|deg|in|s|%)/';
+
+
+  $type = preg_match($regex, $text, $match) ? $match[0] : 'px';
+  $out  = round((float) str_replace($type, '', $text), 9);
+
+  return "$out$type";
+});
+
 /* EOF: ./library/chess/helpers/string.php */
