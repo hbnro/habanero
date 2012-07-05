@@ -2,6 +2,13 @@
  * CSS3 basic ruleset
  */
 
+@mixin clip($width: 100%, $type: ellipsis) {
+  text-overflow: $type;
+  white-space: nowrap;
+  overflow: hidden;
+  width: num($width);
+}
+
 @mixin radius($size: 5px) {
  -moz-border-radius: num($size);
  -webkit-border-radius: num($size);
