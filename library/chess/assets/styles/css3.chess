@@ -3,9 +3,9 @@
  */
 
 @mixin radius($size: 5px) {
- -moz-border-radius: format(%dpx, $size);
- -webkit-border-radius: format(%dpx, $size);
- border-radius: format(%dpx, $size);
+ -moz-border-radius: num($size);
+ -webkit-border-radius: num($size);
+ border-radius: num($size);
 
  -moz-background-clip: padding;
  -webkit-background-clip: padding-box;
@@ -13,9 +13,9 @@
 }
 
 @mixin radius_box($tl: 5px, $tr: 5px, $br: 5px, $bl: 5px) {
- -moz-border-radius: format(%dpx, $tl) format(%dpx, $tr) format(%dpx, $br) format(%dpx, $bl);
- -webkit-border-radius: format(%dpx, $tl) format(%dpx, $tr) format(%dpx, $br) format(%dpx, $bl);
- border-radius: format(%dpx, $tl) format(%dpx, $tr) format(%dpx, $br) format(%dpx, $bl);
+ -moz-border-radius: num($tl) num($tr) num($br) num($bl);
+ -webkit-border-radius: num($tl) num($tr) num($br) num($bl);
+ border-radius: num($tl) num($tr) num($br) num($bl);
 
  -moz-background-clip: padding;
  -webkit-background-clip: padding-box;
@@ -23,27 +23,27 @@
 }
 
 @mixin shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
- -moz-box-shadow: format(%dpx %dpx %dpx, $left, $top, $blur) $color;
- -webkit-box-shadow: format(%dpx %dpx %dpx, $left, $top, $blur) $color;
- box-shadow: format(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -moz-box-shadow: num($left) num($top) num($blur) $color;
+ -webkit-box-shadow: num($left) num($top) num($blur) $color;
+ box-shadow: num($left) num($top) num($blur) $color;
 }
 
 @mixin inner_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
- -moz-box-shadow: inset format(%dpx %dpx %dpx, $left, $top, $blur) $color;
- -webkit-box-shadow: inset format(%dpx %dpx %dpx, $left, $top, $blur) $color;
- box-shadow: inset format(%dpx %dpx %dpx, $left, $top, $blur) $color;
+ -moz-box-shadow: inset num($left) num($top) num($blur) $color;
+ -webkit-box-shadow: inset num($left) num($top) num($blur) $color;
+ box-shadow: inset num($left) num($top) num($blur) $color;
 }
 
 @mixin text_columns($column_count, $column_gap: 20px) {
- -webkit-column-count: format(%dpx, $column_count);
- -webkit-column-gap: format(%dpx, $column_gap);
- -moz-column-count: format(%dpx, $column_count);
- -moz-column-gap: format(%dpx, $column_gap);
- column-count: format(%dpx, $column_count);
- column-gap: format(%dpx, $column_gap);
+ -webkit-column-count: num($column_count);
+ -webkit-column-gap: num($column_gap);
+ -moz-column-count: num($column_count);
+ -moz-column-gap: num($column_gap);
+ column-count: num($column_count);
+ column-gap: num($column_gap);
 }
 
-@mixin rotate($angle: 7.5deg) {
+@mixin rotate($angle: 75deg) {
  -moz-transform: rotate(format(%ddeg, $angle));
  -o-transform: rotate(format(%ddeg, $angle));
  -webkit-transform: rotate(format(%ddeg, $angle));
