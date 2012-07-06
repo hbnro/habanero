@@ -390,7 +390,11 @@ function session($key, $value = '', array $option = array()) {
   $hash =  "--a-session$$key";
 
   if (func_num_args() === 1) {
-    if ( ! is_array($test = value($_SESSION, $hash))) {
+    if (is_null($key)) {
+      session_destroy();//FIX
+      $test = session_get_cookie_params();
+      setcookie(session_name(), 0, 1, $test['path']);
+    } elseif ( ! is_array($test = value($_SESSION, $hash))) {
       return FALSE;
     } elseif (array_key_exists('value', $test)) {
       return $test['value'];
