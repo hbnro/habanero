@@ -105,7 +105,7 @@ final class core extends prototype
 core::implement('raise', function ($message, $debug = NULL) {
   $var   = array();
   $args  = func_get_args();
-  $trace = array_slice(debug_backtrace(FALSE), 1);
+  $trace = array_slice(debug_backtrace(defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? DEBUG_BACKTRACE_IGNORE_ARGS : FALSE), 1);
 
 
   if ( ! empty($GLOBALS['--raise-message'])) {// this could be used in fatal error scenarios
