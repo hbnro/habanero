@@ -15,6 +15,15 @@ class mongo_model extends a_record
 
 
   /**
+   * Retrieve SHA1
+   *
+   * @return array
+   */
+  public function id() {
+    return (string) $this->props[$this->pk()];
+  }
+
+  /**
    * Save row
    *
    * @param  boolean Skip validation?
