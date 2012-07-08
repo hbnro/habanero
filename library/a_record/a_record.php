@@ -466,6 +466,10 @@ class a_record extends prototype
       ));
     }
 
+    if ( ! empty(static::$$method) && is_array(static::$$method)) {
+      return static::find()->$method;
+    }
+
     raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
   }
 
