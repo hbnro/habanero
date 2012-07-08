@@ -14,7 +14,14 @@ class logger extends prototype
 
 // default logging
 logger::implement('write', function ($type, $message) {
-  ! IS_CLI && error_log(str_replace("\n", '\\n', $message));
+  if (IS_CLI) {
+    $date    = date('Y-m-d H:i:s');
+    $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
+
+    write(mkpath(APP_PATH.DS.'logs').DS."$type.log", "[$date] $message\n", 1);
+  } else {
+    error_log(str_replace("\n", '\\n', $message));
+  }
 });
 
 /* EOF: ./library/logger.php */
