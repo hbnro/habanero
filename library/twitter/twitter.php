@@ -36,7 +36,7 @@ class twitter extends prototype
   protected static $defs = array(
                     'consumer_key' => '',
                     'consumer_secret' => '',
-                    'token' => '',
+                    'token_key' => '',
                     'token_secret' => '',
                   );
 
@@ -86,27 +86,31 @@ class twitter extends prototype
     if (is_null(static::$connected)) {
       extract(static::$defs);
 
-      static::$req = oauth_init($consumer_key, $consumer_secret, $token, $token_secret);
+      static::$req = oauth_init($consumer_key, $consumer_secret, $token_key, $token_secret);
 
-      if ($token = request::get('oauth_token')) {
-        oauth_set(static::$req, $token);
-        parse_str(oauth_exec(static::$req, static::$access_token_url), $test);
-        session('twitter_auth', $test);
-
-        oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
+      if ($token_key && $token_secret) {
+        static::$connected = TRUE;
       } else {
-        $test = session('twitter_auth');
+        if ($token = request::get('oauth_token')) {
+          oauth_set(static::$req, $token);
+          parse_str(oauth_exec(static::$req, static::$access_token_url), $test);
+          session('twitter_auth', $test);
+
+          oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
+        } else {
+          $test = session('twitter_auth');
+        }
+
+
+        if ( ! empty($test['oauth_token']) && ! empty($test['oauth_token'])) {
+          oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
+        }
+
+        ! empty($test['screen_name']) && static::$screen_name = $test['screen_name'];
+        ! empty($test['user_id']) && static::$user_id = (string) $test['user_id'];
+
+        static::$connected = static::$user_id > 0;
       }
-
-
-      if ( ! empty($test['oauth_token']) && ! empty($test['oauth_token'])) {
-        oauth_set(static::$req, $test['oauth_token'], $test['oauth_token_secret']);
-      }
-
-      ! empty($test['screen_name']) && static::$screen_name = $test['screen_name'];
-      ! empty($test['user_id']) && static::$user_id = (string) $test['user_id'];
-
-      static::$connected = static::$user_id > 0;
     }
     return static::$connected;
   }
@@ -146,15 +150,16 @@ class twitter extends prototype
    * @param  string Method
    * @return mixed
    */
-  final public static function api_call($url, array $vars = array(), $method = GET) {
+  final public static function api_call($url, array $vars = array(), $method = 'GET') {
     if (static::is_logged()) {
       $url  = ! is_url($url) ? rtrim(static::$api_url, '/') . "/$url.json" : $url;
       $test = oauth_exec(static::$req, $url, $vars, $method, TRUE);
 
       if (strpos($test, '"error"') === FALSE) {
         $test = preg_replace('/(\w+)":(\d+)/', '\\1":"\\2"', $test);
-        return json_decode($test);
       }
+
+      return json_decode($test);
     }
   }
 
@@ -214,7 +219,7 @@ class twitter extends prototype
    * @return mixed
    */
   final public static function missing($method, $arguments) {
-    $type   = GET;
+    $type   = 'GET';
     $data   = array();
     $test   = array_pop($arguments);
     $params = array_pop($arguments);
@@ -223,7 +228,7 @@ class twitter extends prototype
 
     if (is_assoc($test)) {
       $data = $test;
-    } elseif ($test === POST) {
+    } elseif ($test === 'POST') {
       $type = $test;
     } else {
       $test && $arguments []= $test;
