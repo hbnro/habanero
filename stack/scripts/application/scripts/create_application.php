@@ -24,6 +24,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path.DS.'controllers');
     copy_file($app_path.DS.'controllers', $skel_dir.DS.'home'.EXT);
+    copy_file($app_path.DS.'controllers', $skel_dir.DS.'error'.EXT);
      template($app_path.DS.'controllers', $skel_dir.DS.'base'.EXT, array(
         'app_name' => basename($app_path),
       ));
