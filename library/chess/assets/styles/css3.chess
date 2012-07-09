@@ -50,13 +50,13 @@
  column-gap: num($column_gap);
 }
 
-@mixin rotate($angle: 75deg) {
- -moz-transform: rotate(format(%ddeg, $angle));
- -o-transform: rotate(format(%ddeg, $angle));
- -webkit-transform: rotate(format(%ddeg, $angle));
- -ms-transform: rotate(format(%ddeg, $angle));
- transform: rotate(format(%ddeg, $angle));
- zoom: 1;
+@mixin transform($transform) {
+ -moz-transform: $transform;
+ -o-transform: $transform;
+ -webkit-transform: $transform;
+ -ms-transform: $transform;
+ transform: $transform;
+  zoom: 1;
 }
 
 @mixin transition($transition) {
