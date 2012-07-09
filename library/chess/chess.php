@@ -432,30 +432,28 @@ class chess extends prototype
     $out  = array();
     $text = static::do_solve($text);
 
-    if (preg_match_all('/\s*([\w\-]+)!?(?:\((.+?)\))?\s*/', $text, $matches)) {
-      foreach ($matches[1] as $i => $part) {
-        if (array_key_exists($part, static::$mixins)) {
-          $old = static::$mixins[$part]['args'];
+    if (preg_match('/^([\w\-]+)(?:\((.+?)\))?$/', $text, $match)) {
+      if (array_key_exists($match[1], static::$mixins)) {
+        $old = static::$mixins[$match[1]]['args'];
 
-          if ( ! empty($matches[2][$i])) {
-            $new = array_filter(explode(',', $matches[2][$i]), 'strlen');
-            $new = array_values($new) + array_values($old);
+        if ( ! empty($match[2])) {
+          $new = array_filter(explode(',', $match[2]));
+          $new = array_values($new) + array_values($old);
 
-            if (sizeof($old) === sizeof($new)) {//FIX
-              $old = array_combine(array_keys($old), $new);
-            }
+          if (sizeof($old) === sizeof($new)) {//FIX
+            $old = array_combine(array_keys($old), $new);
           }
-
-
-          $tmp = array();
-
-          foreach ($old as $key => $val) {
-            $tmp[ltrim($key, '$')] = trim(preg_match('/^\s*([\'"])(.+?)\\1\s*$/', $val, $match) ? $match[2] : $val);
-          }
-
-          $tmp = array_merge(static::$props, $tmp);
-          $out = static::do_vars(static::$mixins[$part]['props'], $tmp);
         }
+
+
+        $tmp = array();
+
+        foreach ($old as $key => $val) {
+          $tmp[ltrim($key, '$')] = trim(preg_match('/^\s*([\'"])(.+?)\\1\s*$/', $val, $test) ? $test[2] : $val);
+        }
+
+        $tmp = array_merge(static::$props, $tmp);
+        $out = static::do_vars(static::$mixins[$match[1]]['props'], $tmp);
       }
     }
     return $out;
