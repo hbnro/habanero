@@ -437,7 +437,7 @@ class chess extends prototype
         $old = static::$mixins[$match[1]]['args'];
 
         if ( ! empty($match[2])) {
-          $new = array_filter(explode(',', $match[2]));
+          $new = array_filter(explode(',', $match[2]), 'strlen');
           $new = array_values($new) + array_values($old);
 
           if (sizeof($old) === sizeof($new)) {//FIX
