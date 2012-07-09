@@ -35,7 +35,7 @@
  box-shadow: num($left) num($top) num($blur) $color;
 }
 
-@mixin inner_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
+@mixin inset_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
  -moz-box-shadow: inset num($left) num($top) num($blur) $color;
  -webkit-box-shadow: inset num($left) num($top) num($blur) $color;
  box-shadow: inset num($left) num($top) num($blur) $color;
