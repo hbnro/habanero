@@ -132,7 +132,28 @@ class chess extends prototype
 
   // fixes
   final private static function fix($test) {
+    $out  = array();
     $test = preg_replace(array_keys(static::$fixate_output), static::$fixate_output, $test);
+
+    // TODO: try to achieve this using logic, not fixing?
+
+    preg_match_all('/([^{}]+)\{([^{}]+)\}/', $test, $matches);
+
+    foreach (array_keys($matches[0]) as $i) {
+      $key = trim($matches[1][$i]);
+      $set = rtrim($matches[2][$i]);
+
+      isset($out[$key]) OR $out[$key] = array();
+
+      $out[$key] []= $set;
+    }
+
+    $test = '';
+
+    foreach ($out as $key => $val) {
+      $test .= "$key {" . join('', $val) . "\n}\n";
+    }
+
     return $test;
   }
 
