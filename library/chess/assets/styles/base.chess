@@ -10,10 +10,18 @@
   }
 }
 
-@mixin clearfix {
-  zoom: 1;
-  &:before,
+@mixin btcf {
   &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin clearfix {
+  *zoom: 1;
+  &:after,
+  &:before {
     content: '';
     display: table;
   }
