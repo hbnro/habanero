@@ -25,13 +25,6 @@ if ( ! $name) {
     if ( ! is_file($task_file)) {
       error(ln('missing_script_file', array('name' => $path)));
     } else {
-      /**#@+
-       * @ignore
-       */
-      require $task_file;
-      /**#@-*/
-
-
       $args = array($name);
       $key && $args []= $key;
 
