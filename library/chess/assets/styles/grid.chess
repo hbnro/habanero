@@ -6,12 +6,9 @@ $width = 740px
 $columns = 5
 $separation = 10px
 
-
 @mixin grid {
-  @include container($width);
-  &.show-grid {
-    background-image: url(?grid=ceil(calc($width / $columns)));
-  }
+  width: num($width);
+  @include clearfix;
 }
 
 @mixin columns($span: 1) {

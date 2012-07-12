@@ -2,16 +2,19 @@
  * Basic mixins
  */
 
-@mixin container($width: 100%) {
-  width: $width;
-  @include clearfix;
+@mixin nobox {
+  * {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
 }
 
 @mixin clearfix {
   zoom: 1;
   &:before,
   &:after {
-    content: "";
+    content: '';
     display: table;
   }
   &:after {

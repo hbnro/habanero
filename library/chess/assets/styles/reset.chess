@@ -2,12 +2,6 @@
  * Use normalize, not reset!
  */
 
-* {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
 article, aside, details, figcaption,
 figure, footer, header, hgroup,
 nav, section {
