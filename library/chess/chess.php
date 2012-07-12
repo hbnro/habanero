@@ -38,6 +38,14 @@ class chess extends prototype
     '/:\s+\{/' => ':{',
   );
 
+  // fixes
+  private static $fixate_output = array(
+    '/\b(\w+)_\(([^\(\)]+)\)/is' => '\\1(\\2)',
+    '/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/' => '0',
+    '/__ENTITY(\w+)__/' => '&\\1;',
+    '/\b0+(?=\.)/' => '',
+  );
+
   /**#@-*/
 
 
@@ -87,11 +95,7 @@ class chess extends prototype
     }
 
     $text = static::quote(join("\n", static::$css), TRUE);
-
-    $text = preg_replace('/\b(\w+)_\(([^\(\)]+)\)/is', '\\1(\\2)', $text);
-    $text = preg_replace('/\b0(?:p[xtc]|e[xm]|[cm]m|in|%)/', 0, $text);
-    $text = preg_replace('/__ENTITY(\w+)__/', '&\\1;', $text);
-    $text = preg_replace('/\b0+(?=\.)/', '', $text);
+    $text = static::fix($text);
 
     return $text;
   }
@@ -125,6 +129,12 @@ class chess extends prototype
   /**#@+
    * @ignore
    */
+
+  // fixes
+  final private static function fix($test) {
+    $test = preg_replace(array_keys(static::$fixate_output), static::$fixate_output, $test);
+    return $test;
+  }
 
   // strings
   final private static function quote($test, $rev = FALSE) {
