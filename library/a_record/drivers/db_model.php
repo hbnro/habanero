@@ -73,9 +73,8 @@ class db_model extends a_record
    */
   final public static function missing($method, $arguments) {
     if (strpos($method, 'find_by_') === 0) {
-      $row = static::conn()->fetch(static::conn()->select(static::table(), ALL, array(
-        substr($method, 8) => $arguments,
-      )), AS_ARRAY);
+      $test = static::merge(substr($method, 8), $arguments);
+      $row  = static::conn()->fetch(static::conn()->select(static::table(), ALL, $test), AS_ARRAY);
 
       return $row ? new static($row, 'after_find') : FALSE;
     } elseif (strpos($method, 'count_by_') === 0) {
