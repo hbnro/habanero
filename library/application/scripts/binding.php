@@ -17,4 +17,11 @@ request::implement('dispatch', function (array $params = array())
   }
 });
 
+
+application::output('json', function ($obj, $status = 200, $raw = FALSE) {
+  return array($status, $raw ? $obj : json_encode($obj), array(
+    'content-type' => 'application/json',
+  ));
+});
+
 /* EOF: ./library/application/scripts/binding.php */

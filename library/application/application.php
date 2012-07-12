@@ -11,6 +11,9 @@ class application extends prototype
    * @ignore
    */
 
+  // controller type
+  public static $type = '';
+
   // view instance vars
   public static $view = array();
 
@@ -29,21 +32,38 @@ class application extends prototype
                   'status' => 200,
                 );
 
+  // output types
+  protected static $respond_to = array();
+
   /**#@-*/
 
 
 
   /**
-   * JSON output
+   * Output filters
    *
-   * @param  mixed   Object|Array
-   * @param  integer Response status
+   * @param  string Output type
+   * @param  mixed  Function callback
    * @return void
    */
-  public static function to_json($obj, $status = 200, $raw = FALSE) {
-    return array($status, $raw ? $obj : json_encode($obj), array(
-      'content-type' => 'application/json',
-    ));
+  final public static function output($type, Closure $lambda) {
+    static::$respond_to[$type] = $lambda;
+  }
+
+
+  /**
+   * Response
+   *
+   * @param  ...
+   * @return array
+   */
+  final public static function prepare() {
+    $out = func_get_args();
+
+    if ( ! empty(static::$respond_to[static::$type])) {
+      return call_user_func_array(static::$respond_to[static::$type], $out);
+    }
+    return $out;
   }
 
 }
@@ -79,7 +99,7 @@ application::implement('execute', function ($controller, $action = 'index') {
   $class_name::defined('init') && $class_name::init();
 
   if ($class_name::defined($action) && ($test = $class_name::$action())) {
-    @list($status, $view, $headers) = $test;
+    @list($status, $view, $headers) = $class_name::apply('prepare', $test);
     $class_name::$response = compact('status', 'headers');
   } else {
     $view = partial::render($view_file, (array) $class_name::$view);
