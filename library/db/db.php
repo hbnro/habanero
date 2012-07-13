@@ -9,8 +9,6 @@ class db extends prototype
 
   private static $multi = array();
 
-  private static $cached = array();
-
   final public static function connect($dsn_string) {
     if ( ! @array_key_exists($dsn_string, static::$multi)) {
       $dsn_default  = 'sqlite::memory:';
@@ -78,6 +76,10 @@ class db extends prototype
       /**#@-*/
 
       static::$multi[$dsn_string] = $driver_class::factory($parts);
+
+      if (is_file($tables_file = APP_PATH.DS.'config'.DS.'tables'.EXT)) {
+        static::$multi[$dsn_string]->set = include $tables_file;
+      }
 
       logger::debug("Connect: $dsn_string");
     }
