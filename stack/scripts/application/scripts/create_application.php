@@ -14,6 +14,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
   create_file($app_path.DS.'config'.DS.'application'.EXT, "<?php\n");
   create_file($app_path.DS.'config'.DS.'resources'.EXT, "<?php return array();\n");
         chmod($app_path.DS.'config'.DS.'resources'.EXT, 0777);
+  create_file($app_path.DS.'config'.DS.'tables'.EXT, "<?php return array();\n");
+        chmod($app_path.DS.'config'.DS.'tables'.EXT, 0777);
 
    create_dir($app_path.DS.'config'.DS.'environments');
     copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'development'.EXT);
