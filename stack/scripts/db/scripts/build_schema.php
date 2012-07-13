@@ -2,18 +2,28 @@
 
 info(ln('db.verifying_schema'));
 
-$out = array();
+$out =
+$set = array();
+
+$test = db::tables();
+
+if (($key = array_search('migration_history', $test)) !== FALSE) {
+  unset($test[$key]);
+}
+
+$tables_file = mkpath(APP_PATH.DS.'config').DS.'tables'.EXT;
 $schema_file = mkpath(APP_PATH.DS.'database').DS.'schema'.EXT;
 
 $path = str_replace(APP_PATH.DS, '', $schema_file);
 success(ln('db.updating_schema', array('path' => $path)));
 
-foreach (db::tables() as $one) {
+foreach ($test as $one) {
+  $set[$one] = db::columns($one);
   $pad = str_repeat(' ', strlen($one) + 17);
 
   $out []= sprintf("create_table('$one', array(");
 
-  foreach (db::columns($one) as $key => $val) {
+  foreach ($set[$one] as $key => $val) {
     $val['type'] = str_replace('datetime', 'timestamp', $val['type']);
 
     $def = array("'{$val['type']}'");
@@ -37,6 +47,7 @@ foreach (db::tables() as $one) {
   $out []= '';
 }
 
+write($tables_file, sprintf("<?php return %s;\n", var_export($set, TRUE)));
 write($schema_file, sprintf("<?php\n/* %s */\n%s\n", date('Y-m-d H:i:s'), join("\n", $out)));
 
 /* EOF: ./stack/scripts/db/scripts/schema.php */
