@@ -124,7 +124,7 @@ class partial extends prototype
     }
 
     $start  = ticks();
-    $test   = TMP.DS.strtr($file, array(DS => '__DS__'));
+    $test   = TMP.DS.md5($file);
     $parts  = explode('.', basename($file));
     $output = read($file);
 
@@ -145,8 +145,7 @@ class partial extends prototype
 
     @unlink($test);
 
-    $path = str_replace('__DS__', DS, basename($test));
-    logger::debug("Render: ($path) ", ticks($start));
+    logger::debug("Render: ($file) ", ticks($start));
 
     return $output;
   }
