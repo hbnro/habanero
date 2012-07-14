@@ -15,7 +15,27 @@ $bootstrap = core::methods();
 // errors
 core::implement('raise', function ($message)
   use($bootstrap) {
-  require __DIR__.DS.'scripts'.DS.'raising'.EXT;
+  $error_status = 500;
+
+  switch (APP_ENV) {
+    case 'production';
+      if (preg_match('/^(?:GET|PUT|POST|DELETE)\s+\/.+?$/', $message)) {
+        $error_status = 404;
+      }
+    break;
+    default;
+      $bootstrap['raise']($message);
+    break;
+  }
+
+  $methods[500] = 'unknown';
+  $methods[404] = 'not_found';
+
+  $output = application::execute('error', $methods[$error_status]);
+
+  response($output);
+  // TODO: right?
+  exit;
 });
 
 
@@ -45,7 +65,30 @@ core::bind(function ($bootstrap) {
     }
   }
 
-  require __DIR__.DS.'scripts'.DS.'binding'.EXT;
+  require __DIR__.DS.'application'.EXT;
+  require APP_PATH.DS.'controllers'.DS.'base'.EXT;
+
+  i18n::load_path(dirname(__DIR__).DS.'locale', 'app');
+
+  $request = request::methods();
+
+  request::implement('dispatch', function (array $params = array())
+    use($request) {
+    if (is_callable($params['to'])) {
+      return $request['dispatch']($params);
+    } else {
+      params($params['matches']);
+      return application::apply('execute', explode('#', (string) $params['to']));
+    }
+  });
+
+
+  application::output('json', function ($obj, $status = 200, $raw = FALSE) {
+    return array($status, $raw ? $obj : json_encode($obj), array(
+      'content-type' => 'application/json',
+    ));
+  });
+
   return $bootstrap;
 });
 
