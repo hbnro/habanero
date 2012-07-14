@@ -4,7 +4,19 @@
  * Coffee wrapper initialization
  */
 
-! `coffee -v` && require __DIR__.DS.'vendor'.DS.'coffeescript'.EXT;
+if ( ! `coffee -v`) {
+  $old = error_reporting();
+  error_reporting(0);
+
+  /**
+   * @ignore
+   */
+  require __DIR__.DS.'vendor'.DS.'coffeescript'.EXT;
+
+  error_reporting($old);
+}
+
+
 
 // TODO: there is another solution?
 partial::register('coffee', function ($file, array $vars = array()) {
