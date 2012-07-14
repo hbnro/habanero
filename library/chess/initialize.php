@@ -18,11 +18,6 @@ partial::register('chess', function ($file, array $vars = array()) {
   return chess::render($file);
 });
 
-// asset compiler
-assets::compile('chess', function ($file) {
-  return partial::render($file);
-});
-
 // utility goodies
 require __DIR__.DS.'helpers'.DS.'color'.EXT;
 require __DIR__.DS.'helpers'.DS.'image'.EXT;

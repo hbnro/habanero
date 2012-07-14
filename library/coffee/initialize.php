@@ -4,24 +4,12 @@
  * Coffee wrapper initialization
  */
 
-if (class_exists('partial', FALSE)) {
-  /**
-   * @ignore
-   */
-  ! `coffee -v` && require __DIR__.DS.'vendor'.DS.'coffeescript'.EXT;
+! `coffee -v` && require __DIR__.DS.'vendor'.DS.'coffeescript'.EXT;
 
-  // TODO: there is another solution?
-  partial::register('coffee', function ($file, array $vars = array()) {
-    return coffee::compile($file);
-  });
-}
-
-if (class_exists('assets', FALSE)) {
-  // assets compiler
-  assets::compile('coffee', function ($file) {
-    return partial::render($file);
-  });
-}
+// TODO: there is another solution?
+partial::register('coffee', function ($file, array $vars = array()) {
+  return coffee::compile($file);
+});
 
 
 /**

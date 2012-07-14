@@ -50,12 +50,6 @@ core::bind(function ($bootstrap) {
 });
 
 
-// filters
-assets::compile('php', function ($file) {
-  return partial::render($file);
-});
-
-
 // logger
 logger::implement('write', function ($type, $message) {
   $date    = date('Y-m-d H:i:s');
