@@ -18,7 +18,7 @@ logger::implement('write', function ($type, $message) {
     $date    = date('Y-m-d H:i:s');
     $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
 
-    write(mkpath(APP_PATH.DS.'logs').DS.'environment.log', "[$date] [$type] $message\n", 1);
+    write(APP_PATH.DS.'logs'.DS.'environment.log', "[$date] [$type] $message\n", 1);
   } else {
     error_log(str_replace("\n", '\\n', $message));
   }
