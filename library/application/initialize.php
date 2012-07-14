@@ -8,6 +8,7 @@
  * @ignore
  */
 import('www');
+import('assets');
 import('partial');
 
 $bootstrap = core::methods();
