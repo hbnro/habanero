@@ -130,7 +130,7 @@ class assets extends prototype
     $file = findfile(dirname($file), basename($file) . '*', FALSE, 1);
 
     if (is_file($file)) {
-      if (preg_match('/\.(jpe?g|png|gif)$/i', $path) OR preg_match('/\.(css|js)$/', $file)) {
+      if (preg_match('/\.(jpe?g|png|gif|css|js)$/', $file)) {
         return read($file);
       }
 
