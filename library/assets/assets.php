@@ -145,7 +145,7 @@ class assets extends prototype
       }
 
       if ( ! is_file($old_file)) {
-        $text = static::process($file);
+        $text = partial::render($file);
         $now  = date('Y-m-d H:i:s', filemtime($file));
         $out  = "/* $now ./" . strtr($path, '\\', '/') . " */\n$text";
 
@@ -292,27 +292,10 @@ class assets extends prototype
   }
 
 
-  /**
-   * @param
-   * @return void
-   */
-  final public static function compile($type, Closure $lambda) {
-    static::$filter[$type] = $lambda;
-  }
-
 
   /**#@+
    * @ignore
    */
-
-  // type compiler
-  final private static function process($file) {
-    $type = ext($file);
-    if ( ! empty(static::$filter[$type])) {
-      return call_user_func(static::$filter[$type], $file);
-    }
-    return read($file);
-  }
 
   // generic aggregator
   final private static function push($on, $test, $prepend = FALSE) {
