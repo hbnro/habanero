@@ -4,7 +4,7 @@
  * Model-based auth
  */
 
-class auth extends prototype
+class auth
 {
 
   /**#@+

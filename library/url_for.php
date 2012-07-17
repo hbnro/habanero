@@ -32,6 +32,8 @@ class url_for extends prototype
   /**
    * Create path with some hocus-pocus
    *
+   * @param  string Method
+   * @param  array  Arguments
    * @return string
    */
   public static function missing($method, $arguments) {

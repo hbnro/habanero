@@ -5,8 +5,16 @@
  */
 
 // hocus pocus...
-class ua
+class ua extends prototype
 {
+
+  /**
+   * UA methods
+   *
+   * @param  string Method
+   * @param  array  Arguments
+   * @return string
+   */
   final public static function missing($method, $arguments) {
     static $set = NULL,
            $tmp = array();
@@ -93,6 +101,7 @@ class ua
     }
     return $tmp[$ua][$method];
   }
+
 }
 
 /* EOF: ./library/client/ua/ua.php */

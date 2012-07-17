@@ -4,7 +4,7 @@
  * Template markup library
  */
 
-class tamal extends prototype
+class tamal
 {
 
   /**#@+

@@ -4,7 +4,7 @@
  * Date functions
  */
 
-class date extends prototype
+class date
 {
 
   /**

@@ -4,7 +4,7 @@
  * Zip class
  */
 
-class zip extends prototype
+class zip
 {
 
   /**#@+

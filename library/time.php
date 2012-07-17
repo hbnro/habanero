@@ -4,7 +4,7 @@
  * Time functions
  */
 
-class time extends prototype
+class time
 {
 
   /**

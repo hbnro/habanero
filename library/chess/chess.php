@@ -4,7 +4,7 @@
  * CSS manipulation library
  */
 
-class chess extends prototype
+class chess
 {
 
   /**#@+

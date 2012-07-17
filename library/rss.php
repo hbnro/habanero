@@ -4,7 +4,7 @@
  * RSS class
  */
 
-class rss extends prototype
+class rss
 {
   /**#@+
    * @ignore

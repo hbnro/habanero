@@ -4,7 +4,7 @@
  * Token related functions
  */
 
-class token extends prototype
+class token
 {
 
   /**

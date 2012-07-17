@@ -4,7 +4,7 @@
  * Basic XSS security filter
  */
 
-class xss extends prototype
+class xss
 {
 
   /**#@+
