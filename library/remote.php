@@ -4,6 +4,10 @@
  * Remote utilities
  */
 
+if ( ! is_callable('fsockopen')) {
+  raise(ln('extension_missing', array('name' => 'Sockets')));
+}
+
 class remote extends prototype
 {
 
@@ -17,14 +21,11 @@ class remote extends prototype
    * @param  mixed  GET|PUT|POST|DELETE
    * @return mixed
    */
-  function post($url, array $args = array(), array $files = array(), $method = 'POST')
+  function to($url, array $args = array(), array $files = array(), $method = 'POST')
   {
-    if ( ! is_callable('fsockopen')) {
-      raise(ln('extension_missing', array('name' => 'Sockets')));
-    } elseif ( ! is_url($url)) {
+    if ( ! is_url($url)) {
       return FALSE;
     }
-
 
 
     $test  = @parse_url($url);
@@ -81,6 +82,26 @@ class remote extends prototype
       $output .= fgets($resource, 4096);
     }
     return $output;
+  }
+
+
+  /**
+   * Dynamic calls
+   *
+   * @param  string Method
+   * @param  array  Arguments
+   * @return string
+   */
+  final public static function missing($method, $arguments) {
+    static $allow = array('get', 'put', 'post', 'delete');
+
+
+    if (in_array($method, $allow)) {
+      @list($url, $args, $files) = $arguments;
+      return static::to($url, $args ?: array(), $files ?: array(), strtoupper($method));
+    }
+
+    raise(ln('method_missing', array('class' => get_called_class(), 'name' => $method)));
   }
 
 }
