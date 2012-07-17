@@ -94,19 +94,12 @@ class tamal extends prototype
   /**
    * Parse markup
    *
-   * @param  string Taml template
+   * @param  string Template
    * @return mixed
    */
   final public static function parse($text) {
     $code  = '';
     $stack = array();
-
-    // TODO: improve this?
-    $text  = preg_replace_callback('/\{\s*[\w:-]+(?=\s*=>|\s*[}])[^{}]*?\}/s', function ($match) {
-      return preg_replace("/[\r\n\t]+/", ' ', $match[0]);
-    }, $text);
-
-
     $test  = array_filter(explode("\n", $text));
     $file  = func_num_args() > 1 ? func_get_arg(1) : '';
 

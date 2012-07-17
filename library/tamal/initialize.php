@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Taml initialization
+ * Tamal initialization
  */
 
 /**#
