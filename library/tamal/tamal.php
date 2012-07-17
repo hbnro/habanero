@@ -61,33 +61,33 @@ class tamal extends prototype
   /**
    * Render file
    *
-   * @param  string Filepath
-   * @param  array  Local vars
-   * @return string
+   * @param     string Filepath
+   * @param     array  Local vars
+   * @staticvar mixed  Function callback
+   * @return    string
    */
   final public static function render($file, array $vars = array()) {
+    static $view = NULL;
+
+
+    if (is_null($view)) {
+      $view = function () {
+        ob_start();
+        extract(func_get_arg(1));
+        eval('?>' . func_get_arg(0));
+        return ob_get_clean();
+      };
+    }
+
     if ( ! is_file($file)) {
       return FALSE;
     }
 
 
-    $php_file = TMP.DS.md5($file);
+    $tpl = static::parse(read($file));
+    $out = $view($tpl, $vars);
 
-    if (is_file($php_file)) {
-      if (filemtime($file) > filemtime($php_file)) {
-        unlink($php_file);
-      }
-    }
-
-
-    if ( ! is_file($php_file)) {
-      $out = static::parse(read($file), $file);
-      write($php_file, $out);
-    }
-
-    return render($php_file, TRUE, array(
-      'locals' => $vars,
-    ));
+    return $out;
   }
 
 
