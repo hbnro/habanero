@@ -44,18 +44,10 @@ core::implement('raise', function ($message)
 core::bind(function ($bootstrap) {
   i18n::load_path(APP_PATH.DS.'locale');
 
-  if (APP_ENV === 'development') {
-    get('/static/*path', function () {
-      return array(
-        'output' => assets::read(params('path')),
-        'type' => mime(ext(params('path'))),
-      );
-    }, array(
-      'constraints' => array(
-        '*path' => '(?:img|css|js)/.+',
-      ),
-    ));
-  }
+  get('/static/*path', function () {
+    return assets::read(params('path'));
+  });
+
 
   routing::load(APP_PATH.DS.'config'.DS.'routes'.EXT, array('safe' => TRUE));
 

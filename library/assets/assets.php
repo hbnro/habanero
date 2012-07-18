@@ -123,43 +123,6 @@ class assets extends prototype
 
   /**
    * @param
-   * @return string
-   */
-  final public static function read($path) {
-    $file = APP_PATH.DS.'assets'.DS.$path;
-    $file = findfile(dirname($file), basename($file) . '*', FALSE, 1);
-
-    if (is_file($file)) {
-      if (preg_match('/\.(jpe?g|png|gif|css|js)$/', $file)) {
-        return read($file);
-      }
-
-      $old_file = APP_PATH.DS.'static'.DS.$path;
-
-      ! is_dir($old = dirname($old_file)) && mkpath($old);
-
-      if (is_file($old_file)) {
-        if (filemtime($file) > filemtime($old_file)) {
-          unlink($old_file);
-        }
-      }
-
-      if ( ! is_file($old_file)) {
-        $text = partial::render($file);
-        $now  = date('Y-m-d H:i:s', filemtime($file));
-        $out  = "/* $now ./" . strtr($path, '\\', '/') . " */\n$text";
-
-        write($old_file, $out);
-        return $out;
-      } else {
-        return read($old_file);
-      }
-    }
-  }
-
-
-  /**
-   * @param
    * @return array
    */
   final public static function extract($file) {
