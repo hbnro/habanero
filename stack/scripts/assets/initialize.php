@@ -11,6 +11,10 @@ app_generator::alias('assets:clean', 'clean clear');
 // cleanup
 app_generator::implement('assets:clean', function () {
   info(ln('assets.clean_up_resources'));
+
+  notice(ln('assets.clean_up_files', array('path' => 'assets/_')));
+  unfile(APP_PATH.DS.'assets'.DS.'_', '*', DIR_RECURSIVE | DIR_EMPTY);
+
   foreach (array('img', 'css', 'js') as $type) {
     notice(ln('assets.clean_up_files', array('path' => "static/$type")));
     unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
@@ -36,8 +40,6 @@ app_generator::implement('assets:prepare', function () {
     };
   }
 
-
-  app_generator::apply('assets:clean');
 
   $base_path  = APP_PATH.DS.'assets';
   $static_dir = APP_PATH.DS.'static';
@@ -124,8 +126,6 @@ app_generator::implement('assets:prepare', function () {
   }
 
 
-
-  unfile($base_path.DS.'_', '*', DIR_RECURSIVE | DIR_EMPTY);
 
   if ($test = dir2arr($views_dir, '*', DIR_RECURSIVE | DIR_MAP)) {
     foreach ($test as $partial_file) {
