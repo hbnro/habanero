@@ -11,7 +11,11 @@ i18n::load_path(__DIR__.DS.'locale');
 require __DIR__.DS.'app_generator'.EXT;
 require __DIR__.DS.'functions'.EXT;
 
-import(config('cli_imports'));
+
+$set = (array) config('cli_imports');
+$set = array_filter($set);
+$set && import($set);
+
 
 run(function () {
   cli::clear();
