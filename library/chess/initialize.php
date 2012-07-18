@@ -14,8 +14,8 @@ class chess_helper extends prototype
 }
 
 // render callback
-partial::register('chess', function ($file, array $vars = array()) {
-  return chess::parse(read($file));
+partial::register('chess', function ($context) {
+  return chess::parse($context);
 });
 
 // utility goodies

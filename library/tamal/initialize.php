@@ -16,8 +16,8 @@ class tamal_helper extends prototype
 i18n::load_path(__DIR__.DS.'locale', 'tamal');
 
 // allow for tamal files
-partial::register('tamal', function ($file, array $vars = array()) {
-  return tamal::parse(read($file));
+partial::register('tamal', function ($context) {
+  return tamal::parse($context);
 });
 
 

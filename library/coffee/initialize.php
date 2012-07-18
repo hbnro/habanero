@@ -19,8 +19,8 @@ if ( ! `coffee -v`) {
 
 
 // TODO: there is another solution?
-partial::register('coffee', function ($file, array $vars = array()) {
-  return coffee::parse(read($file));
+partial::register('coffee', function ($context) {
+  return coffee::parse($context);
 });
 
 

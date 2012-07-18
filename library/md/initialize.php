@@ -10,8 +10,8 @@
 require __DIR__.DS.'vendor'.DS.'markdown'.EXT;
 
 // allow for Markdown files
-partial::register(array('md', 'markdown'), function ($file, array $vars = array()) {
-	return md::parse(read($file));
+partial::register(array('md', 'markdown'), function ($context) {
+	return md::parse($context);
 });
 
 
