@@ -19,6 +19,8 @@ app_generator::implement('assets:clean', function () {
     notice(ln('assets.clean_up_files', array('path' => "static/$type")));
     unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
   }
+
+  done();
 });
 
 // assets handling
@@ -140,6 +142,8 @@ app_generator::implement('assets:prepare', function () {
   }
 
   assets::save();
+
+  done();
 });
 
 /* EOF: ./stack/scripts/assets/initialize.php */
