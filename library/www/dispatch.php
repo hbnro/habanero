@@ -104,7 +104,7 @@ function response($content, array $params = array()) {
 
   $params = array_merge(array(
     'type'    => ini_get('default_mimetype'),
-    'charset' => 'UTF-8',
+    'charset' => FALSE,
     'headers' => array(),
     'status'  => 200,
     'output'  => '',
