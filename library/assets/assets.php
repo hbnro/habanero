@@ -23,7 +23,7 @@ class assets extends prototype
   private static $filter = array();
 
   // assets hashing
-  private static $cache  = array();
+  private static $cache = NULL;
 
   /**#@-*/
 
@@ -67,15 +67,8 @@ class assets extends prototype
    * @return string
    */
   final public static function fetch($name) {
-    static $load = FALSE;
-
-
-    if ( ! $load) {
-      $cache_file = APP_PATH.DS.'config'.DS.'resources'.EXT;
-      if (is_file($cache_file)) {
-        static::$cache = (array) include $cache_file;
-      }
-      $load = TRUE;
+    if (is_null(static::$cache)) {
+      static::$cache = is_file($cache_file = APP_PATH.DS.'config'.DS.'resources'.EXT) ? include $cache_file : array();
     }
 
     if ((APP_ENV === 'production') && ! empty(static::$cache[$name])) {
