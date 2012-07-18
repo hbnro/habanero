@@ -93,7 +93,7 @@ app_generator::implement('assets:prepare', function () {
           if ( ! empty($cache[$key])) {
             $out[$key] = $cache[$key];
           } else {
-            $out[$key] = partial::render(findfile(dirname($test), basename($test).'*', FALSE, 1));
+            $out[$key] = partial::parse(findfile(dirname($test), basename($test).'*', FALSE, 1));
           }
         }
 
@@ -127,17 +127,13 @@ app_generator::implement('assets:prepare', function () {
 
   unfile($base_path.DS.'_', '*', DIR_RECURSIVE | DIR_EMPTY);
 
-  partial::register('php', function ($file, array $vars = array()) {
-    return read($file);
-  });
-
   if ($test = dir2arr($views_dir, '*', DIR_RECURSIVE | DIR_MAP)) {
     foreach ($test as $partial_file) {
       if (ext($partial_file, TRUE) <> EXT) {
         $key = str_replace(APP_PATH.DS, '', $partial_file);
         $new = $base_path.DS.'_'.DS.$key;
 
-        write(mkpath(dirname($new)).DS.basename($new), partial::render($partial_file));
+        write(mkpath(dirname($new)).DS.basename($new), partial::parse($partial_file));
         notice(ln('assets.compiling_view', array('name' => $key)));
       }
     }
