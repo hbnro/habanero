@@ -123,29 +123,65 @@ class partial extends prototype
       return ln('partial.view_missing', array('path' => dirname($file), 'action' => basename($file)));
     }
 
-    $start  = ticks();
-    $test   = TMP.DS.md5($file);
-    $parts  = explode('.', basename($file));
-    $output = read($file);
 
-    write($test, $output);
+    $start = ticks();
+
+    if (ext($file, TRUE) <> EXT) {
+      if (APP_ENV === 'production') {
+        $cache_dir  = APP_PATH.DS.'assets'.DS.'_';
+        $cache_file = $cache_dir.DS.str_replace(APP_PATH.DS, '', $file);
+      } else {
+        $cache_file = TMP.DS.md5($file);;
+
+        if (is_file($cache_file)) {
+          if (filemtime($file) > filemtime($cache_file)) {
+            @unlink($cache_file);
+          }
+        }
+
+
+        if ( ! is_file($cache_file)) {
+          $output = static::parse($file);
+          write($cache_file, $output);
+        }
+      }
+
+      if (strpos($file, EXT) !== FALSE) {
+        $output = render($cache_file, TRUE, array(
+          'locals' => $vars,
+        ));
+      }
+    } else {
+      $output = render($file, TRUE, array(
+        'locals' => $vars,
+      ));
+    }
+
+    logger::debug("Render: ($file) ", ticks($start));
+
+    return $output;
+  }
+
+
+  /**
+   * Parse views
+   *
+   * @param  string Filepath
+   * @return string
+   */
+  final public static function parse($file) {
+    $output = read($file);
+    $parts  = explode('.', basename($file));
 
     while ($parts) {
       $type = array_pop($parts);
 
       if ((sizeof($parts) > 1) && array_key_exists($type, static::$render)) {
-        $output = call_user_func(static::$render[$type], $test, $vars);
-
-        write($test, $output);
-
+        $output = call_user_func(static::$render[$type], $output);
         continue;
       }
       break;
     }
-
-    @unlink($test);
-
-    logger::debug("Render: ($file) ", ticks($start));
 
     return $output;
   }

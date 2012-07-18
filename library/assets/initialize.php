@@ -26,9 +26,7 @@ assets::implement('read', function ($path) {
       if (preg_match('/\.(jpe?g|png|gif|css|js)$/', $asset_file)) {
         $out = read($asset_file);
       } else {
-        $old_file = APP_PATH.DS.'assets'.DS.'_'.DS.$path;
-
-        mkpath(dirname($old_file));
+        $old_file = TMP.DS.md5($path);
 
         if (is_file($old_file)) {
           if (filemtime($asset_file) > filemtime($old_file)) {
@@ -37,7 +35,7 @@ assets::implement('read', function ($path) {
         }
 
         if ( ! is_file($old_file)) {
-          $text = partial::render($asset_file);
+          $text = partial($asset_file);
           $now  = date('Y-m-d H:i:s', filemtime($asset_file));
           $out  = "/* $now ./" . strtr($path, '\\', '/') . " */\n$text";
 
