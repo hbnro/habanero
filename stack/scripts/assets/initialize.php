@@ -10,13 +10,11 @@ app_generator::alias('assets:clean', 'clean clear');
 
 // cleanup
 app_generator::implement('assets:clean', function () {
-  $static_dir = APP_PATH.DS.'static';
-
   info(ln('assets.clean_up_resources'));
 
-  if ($old = findfile($static_dir, '*.*', TRUE)) {
+  if ($old = findfile(APP_PATH.DS.'static', '*.*', TRUE)) {
     foreach ($old as $file) {
-      if (preg_match('/[a-f0-9]{32}\.(?:css|js)$/', basename($file))) {
+      if (preg_match('/[a-f0-9]{32}\.(?:jpe?g|png|gif|css|js)$/', basename($file))) {
         unlink($file);
       }
     }
