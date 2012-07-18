@@ -4,6 +4,7 @@
  * Assets english strings
  */
 
+$lang['compiling_view'] = 'Compiling view %{name}';
 $lang['compiling_asset'] = 'Compiling file %{name} (%{hash})';
 $lang['appending_asset'] = 'Appending file %{name}';
 $lang['copying_asset'] = 'Copying file %{name}';

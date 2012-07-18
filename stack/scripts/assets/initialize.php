@@ -12,7 +12,7 @@ app_generator::alias('assets:clean', 'clean clear');
 app_generator::implement('assets:clean', function () {
   info(ln('assets.clean_up_resources'));
   foreach (array('img', 'css', 'js') as $type) {
-    notice(ln('assets.clean_up_files', array('path' => "./static/$type")));
+    notice(ln('assets.clean_up_files', array('path' => "static/$type")));
     unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
   }
 });
@@ -41,6 +41,8 @@ app_generator::implement('assets:prepare', function () {
 
   $base_path  = APP_PATH.DS.'assets';
   $static_dir = APP_PATH.DS.'static';
+  $views_dir  = APP_PATH.DS.'views';
+
   $img_path   = $base_path.DS.'img';
   $img_dir    = $static_dir.DS.'img';
 
@@ -117,6 +119,26 @@ app_generator::implement('assets:prepare', function () {
 
         assets::assign($path = str_replace($base_path.DS, '', $file), $hash);
         success(ln('assets.compiling_asset', array('name' => $path, 'hash' => $hash)));
+      }
+    }
+  }
+
+
+
+  unfile($base_path.DS.'_', '*', DIR_RECURSIVE | DIR_EMPTY);
+
+  partial::register('php', function ($file, array $vars = array()) {
+    return read($file);
+  });
+
+  if ($test = dir2arr($views_dir, '*', DIR_RECURSIVE | DIR_MAP)) {
+    foreach ($test as $partial_file) {
+      if (ext($partial_file, TRUE) <> EXT) {
+        $key = str_replace(APP_PATH.DS, '', $partial_file);
+        $new = $base_path.DS.'_'.DS.$key;
+
+        write(mkpath(dirname($new)).DS.basename($new), partial::render($partial_file));
+        notice(ln('assets.compiling_view', array('name' => $key)));
       }
     }
   }
