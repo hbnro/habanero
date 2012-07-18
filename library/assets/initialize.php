@@ -26,19 +26,19 @@ assets::implement('read', function ($path) {
       if (preg_match('/\.(jpe?g|png|gif|css|js)$/', $asset_file)) {
         $out = read($asset_file);
       } else {
-        $old_file = APP_PATH.DS.'static'.DS.$path;
+        $old_file = APP_PATH.DS.'assets'.DS.'_'.DS.$path;
 
-        ! is_dir($old = dirname($old_file)) && mkpath($old);
+        mkpath(dirname($old_file));
 
         if (is_file($old_file)) {
-          if (filemtime($file) > filemtime($old_file)) {
+          if (filemtime($asset_file) > filemtime($old_file)) {
             unlink($old_file);
           }
         }
 
         if ( ! is_file($old_file)) {
-          $text = partial::render($file);
-          $now  = date('Y-m-d H:i:s', filemtime($file));
+          $text = partial::render($asset_file);
+          $now  = date('Y-m-d H:i:s', filemtime($asset_file));
           $out  = "/* $now ./" . strtr($path, '\\', '/') . " */\n$text";
 
           write($old_file, $out);
