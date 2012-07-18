@@ -20,7 +20,7 @@ if ( ! `coffee -v`) {
 
 // TODO: there is another solution?
 partial::register('coffee', function ($file, array $vars = array()) {
-  return coffee::compile($file);
+  return coffee::parse(read($file));
 });
 
 
@@ -29,10 +29,6 @@ partial::register('coffee', function ($file, array $vars = array()) {
  */
 class coffee
 {
-  // file render
-  final public static function compile($file) {
-    return static::parse(read($file));
-  }
   // text parse
   final public static function parse($text) {
     if ( !! `coffee -v`) {

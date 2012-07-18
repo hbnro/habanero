@@ -63,17 +63,6 @@ class chess
 
 
   /**
-   * Render file
-   *
-   * @param  string  Path
-   * @return void
-   */
-  final public static function render($path) {
-    return static::parse(static::load_file($path));
-  }
-
-
-  /**
    * Parse expression
    *
    * @param  string  CSS rules

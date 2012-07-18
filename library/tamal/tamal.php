@@ -59,39 +59,6 @@ class tamal
 
 
   /**
-   * Render file
-   *
-   * @param     string Filepath
-   * @param     array  Local vars
-   * @staticvar mixed  Function callback
-   * @return    string
-   */
-  final public static function render($file, array $vars = array()) {
-    static $view = NULL;
-
-
-    if (is_null($view)) {
-      $view = function () {
-        ob_start();
-        extract(func_get_arg(1));
-        eval('?>' . func_get_arg(0));
-        return ob_get_clean();
-      };
-    }
-
-    if ( ! is_file($file)) {
-      return FALSE;
-    }
-
-
-    $tpl = static::parse(read($file));
-    $out = $view($tpl, $vars);
-
-    return $out;
-  }
-
-
-  /**
    * Parse markup
    *
    * @param  string Template

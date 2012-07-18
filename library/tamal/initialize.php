@@ -17,7 +17,7 @@ i18n::load_path(__DIR__.DS.'locale', 'tamal');
 
 // allow for tamal files
 partial::register('tamal', function ($file, array $vars = array()) {
-  return tamal::render($file, $vars);
+  return tamal::parse(read($file));
 });
 
 
