@@ -11,13 +11,9 @@ app_generator::alias('assets:clean', 'clean clear');
 // cleanup
 app_generator::implement('assets:clean', function () {
   info(ln('assets.clean_up_resources'));
-
-  if ($old = findfile(APP_PATH.DS.'static', '*.*', TRUE)) {
-    foreach ($old as $file) {
-      if (preg_match('/[a-f0-9]{32}\.(?:jpe?g|png|gif|css|js)$/', basename($file))) {
-        unlink($file);
-      }
-    }
+  foreach (array('img', 'css', 'js') as $type) {
+    notice(ln('assets.clean_up_files', array('path' => "./static/$type")));
+    unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
   }
 });
 
@@ -85,16 +81,22 @@ app_generator::implement('assets:prepare', function () {
       }
 
 
-      $set = array_map(function ($val)
-        use($base_path, $static_dir, &$cache, &$out) {
 
-        $key = str_replace($base_path.DS, '', $val);
+      foreach ($tmp['include'] as $test) {
+        $key = str_replace(APP_PATH.DS, '', $test);
 
-        is_file($val) OR $val = $static_dir.DS.$key;
-        is_file($val) && $out[$key] = ! empty($cache[$key]) ? $cache[$key] : $cache[$key] = read($val);
+        if (is_file($test)) {
+          $out[$key] = ! empty($cache[$key]) ? $cache[$key] : $cache[$key] = read($test);
+        } else {
+          if ( ! empty($cache[$key])) {
+            $out[$key] = $cache[$key];
+          } else {
+            $out[$key] = partial::render(findfile(dirname($test), basename($test).'*', FALSE, 1));
+          }
+        }
 
         notice(ln('assets.appending_asset', array('name' => $key)));
-      }, $tmp['include']);
+      }
 
 
       if ( ! empty($out)) {

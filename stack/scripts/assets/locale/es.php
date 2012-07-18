@@ -9,6 +9,7 @@ $lang['appending_asset'] = 'Agregando %{name}';
 $lang['copying_asset'] = 'Copiando %{name}';
 
 $lang['clean_up_resources'] = 'Liberando recursos';
+$lang['clean_up_files'] = 'Borrando archivos de %{path}';
 
 $lang['usage'] = <<<HELP
 

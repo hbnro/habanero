@@ -11,6 +11,8 @@ i18n::load_path(__DIR__.DS.'locale');
 require __DIR__.DS.'app_generator'.EXT;
 require __DIR__.DS.'functions'.EXT;
 
+import(config('cli_imports'));
+
 run(function () {
   cli::clear();
 
