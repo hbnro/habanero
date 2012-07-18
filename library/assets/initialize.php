@@ -35,7 +35,7 @@ assets::implement('read', function ($path) {
         }
 
         if ( ! is_file($old_file)) {
-          $text = partial($asset_file);
+          $text = partial::parse($asset_file);
           $now  = date('Y-m-d H:i:s', filemtime($asset_file));
           $out  = "/* $now ./" . strtr($path, '\\', '/') . " */\n$text";
 
