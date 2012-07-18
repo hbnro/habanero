@@ -11,6 +11,7 @@ $lang['copying_asset'] = 'Copiando %{name}';
 
 $lang['clean_up_resources'] = 'Liberando recursos';
 $lang['clean_up_files'] = 'Borrando archivos de %{path}';
+$lang['removing_file'] = 'Borrando %{path}';
 
 $lang['usage'] = <<<HELP
 

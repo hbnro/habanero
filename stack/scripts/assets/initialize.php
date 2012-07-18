@@ -20,6 +20,12 @@ app_generator::implement('assets:clean', function () {
     unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
   }
 
+
+  foreach (array('resources', 'tables') as $one) {
+    notice(ln('assets.removing_file', array('path' => "config/$one".EXT)));
+    is_file($res_file = APP_PATH.DS.'config'.DS.$one.EXT) && unlink($res_file);
+  }
+
   done();
 });
 
