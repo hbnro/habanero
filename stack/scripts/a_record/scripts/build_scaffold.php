@@ -22,11 +22,11 @@ TPL;
     create_file($controller_file, $controller);
 
      create_dir(APP_PATH.DS.'views'.DS."{$model}s");
-    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'index.html.tamal', $index_view);
-    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'create.html.tamal', $create_view);
-    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'modify.html.tamal', $modify_view);
+    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'index.html.php.tamal', $index_view);
+    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'create.html.php.tamal', $create_view);
+    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'modify.html.php.tamal', $modify_view);
 
-    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'errors.html.tamal', "$errors_tpl\n");
+    create_file(APP_PATH.DS.'views'.DS."{$model}s".DS.'errors.html.php.tamal', "$errors_tpl\n");
 
     append_file(APP_PATH.DS.'config'.DS.'routes'.EXT, "\n$routes", array('unless' => "/'root'\s*=>\s*'\/{$model}s'/"));
     append_file(APP_PATH.DS.'index'.EXT, "\n  import('a_record');", array(
