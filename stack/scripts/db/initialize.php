@@ -14,7 +14,6 @@ db::implement('missing', function ($method, array $arguments) {
 i18n::load_path(__DIR__.DS.'locale', 'db');
 
 app_generator::usage('db', ln('db.usage'));
-
 app_generator::alias('db:status', 'db');
 app_generator::alias('db:migrate', 'migrate');
 app_generator::alias('db:show_table', 'db:show show');
@@ -27,7 +26,7 @@ app_generator::alias('db:rename_column', 'rename_column');
 app_generator::alias('db:change_column', 'change_column');
 app_generator::alias('db:add_index', 'add_index');
 app_generator::alias('db:remove_index', 'remove_index');
-
+app_generator::alias('db:freeze', 'freeze lock');
 
 
 // database status
@@ -120,6 +119,30 @@ app_generator::implement('db:remove_index', function ($from = '', $name = '') {
 // execute migrations
 app_generator::implement('db:migrate', function () {
   require __DIR__.DS.'scripts'.DS.'load_migrations'.EXT;
+});
+
+
+// freeze columns
+app_generator::implement('db:freeze', function () {
+  info(ln('db.locking_tables'));
+
+  $set  = array();
+  $test = db::tables();
+
+  if (($key = array_search('migration_history', $test)) !== FALSE) {
+    unset($test[$key]);
+  }
+
+
+  foreach ($test as $one) {
+    $set[$one] = db::columns($one);
+    success(ln('db.freeze_columns', array('table' => $one)));
+  }
+
+  $tables_file = mkpath(APP_PATH.DS.'config').DS.'tables'.EXT;
+  write($tables_file, sprintf("<?php return %s;\n", var_export($set, TRUE)));
+
+  done();
 });
 
 
