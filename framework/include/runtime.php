@@ -29,12 +29,28 @@ function run(Closure $bootstrap) {
 /**
  * Load partial content
  *
- * @param  mixed Content file|Options hash
- * @param  mixed Partial?|Options hash
- * @param  array Options hash
- * @return mixed
+ * @param     mixed Content file|Options hash
+ * @param     mixed Partial?|Options hash
+ * @param     array Options hash
+ * @staticvar mixed Function callback
+ * @return    mixed
  */
 function render($content, $partial = FALSE, array $params = array()) {
+  static $view = NULL;
+
+
+  if (is_null($view)) {
+    $view = function () {
+      ob_start();
+
+      extract(func_get_arg(1));
+      require func_get_arg(0);
+
+      return ob_get_clean();
+    };
+  }
+
+
   if (is_assoc($content)) {
     $params = array_merge($content, $params);
   } elseif ( ! isset($params['content'])) {
@@ -67,17 +83,7 @@ function render($content, $partial = FALSE, array $params = array()) {
     raise(ln('file_not_exists', array('name' => $params['content'])));
   }
 
-  // TODO: try to find out another "solution" ?
-  $output = function () {
-    ob_start();
-
-    extract(func_get_arg(1));
-    require func_get_arg(0);
-
-    return ob_get_clean();
-  };
-
-  $output = $output($params['content'], $params['locals']);
+  $output = $view($params['content'], $params['locals']);
 
   if ($params['partial']) {
     return $output;
