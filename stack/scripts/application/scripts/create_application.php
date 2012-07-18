@@ -83,14 +83,14 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path.DS.'views');
    create_dir($app_path.DS.'views'.DS.'error');
-    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'not_found.html.tamal');
-    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html.tamal');
+    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'not_found.html.php.tamal');
+    copy_file($app_path.DS.'views'.DS.'error', $skel_dir.DS.'views'.DS.'unknown.html.php.tamal');
 
    create_dir($app_path.DS.'views'.DS.'layouts');
-    copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html.tamal');
+    copy_file($app_path.DS.'views'.DS.'layouts', $skel_dir.DS.'views'.DS.'default.html.php.tamal');
 
    create_dir($app_path.DS.'views'.DS.'home');
-    copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html.tamal');
+    copy_file($app_path.DS.'views'.DS.'home', $skel_dir.DS.'views'.DS.'index.html.php.tamal');
 
 
     $ignored_files = array(
@@ -101,6 +101,11 @@ $skel_dir = dirname(__DIR__).DS.'assets';
       '.DS_Store',
       'database/db.sqlite',
       'config/resources.php',
+      'config/tables.php',
+      'static/img',
+      'static/css',
+      'static/js',
+      'assets/_',
     );
 
   create_file($app_path.DS.'.gitignore', join("\n", $ignored_files) . "\n");

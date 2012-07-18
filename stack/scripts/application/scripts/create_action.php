@@ -23,8 +23,8 @@ if ( ! $parent) {
 
     if ( ! cli::flag('no-view')) {
       success(ln('app.action_view_building', array('name' => $name, 'controller' => $parent)));
-      $text = "section\n  header\n    h1 $parent#$name.view\n  pre = APP_PATH.DS.'views'.DS.'$parent'.DS.'$name.html.tamal'";
-      add_view($parent, $name, "$text\n", '.tamal');
+      $text = "section\n  header\n    h1 $parent#$name.view\n  pre = APP_PATH.DS.'views'.DS.'$parent'.DS.'$name.html.php.tamal'";
+      add_view($parent, $name, "$text\n", '.php.tamal');
     }
 
     return "  public static function $name() {\n  }\n";

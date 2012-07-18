@@ -13,8 +13,8 @@ if (is_file($out_file)) {
 
   if ( ! cli::flag('no-view')) {
     success(ln('app.controller_view_building', array('name' => $name)));
-    $text = "section\n  header\n    h1 $name#index.view\n  pre = APP_PATH.DS.'views'.DS.'$name'.DS.'index.html.tamal'";
-    add_view($name, 'index', "$text\n", '.tamal');
+    $text = "section\n  header\n    h1 $name#index.view\n  pre = APP_PATH.DS.'views'.DS.'$name'.DS.'index.html.php.tamal'";
+    add_view($name, 'index', "$text\n", '.php.tamal');
   }
 }
 
