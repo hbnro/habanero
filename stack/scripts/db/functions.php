@@ -151,6 +151,10 @@ function add_migration($name) {
   db::insert('migration_history', compact('name'));
 }
 
+function has_schema() {
+  return in_array('migration_history', db::tables());
+}
+
 function check_table($name) {
   info(ln('db.verifying_structure'));
 

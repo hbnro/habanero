@@ -30,10 +30,8 @@ app_generator::alias('db:freeze', 'freeze lock');
 
 
 
-if ( ! in_array('migration_history', db::tables())) {
-  info(ln('db.missing_schema'));
-  notice('atl migrate --schema');
-  return;
+if ( ! has_schema()) {
+  notice(ln('db.missing_schema'));
 }
 
 
