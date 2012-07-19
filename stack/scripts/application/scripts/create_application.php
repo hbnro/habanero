@@ -40,7 +40,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
   create_file($app_path.DS.'database'.DS.'db.sqlite');
         chmod($app_path.DS.'database'.DS.'db.sqlite', 0777);
 
-  create_file($app_path.DS.'database'.DS.'schema'.EXT, "<?php\n");
+    copy_file($app_path.DS.'database', $skel_dir.DS.'schema'.EXT);
   create_file($app_path.DS.'database'.DS.'seeds'.EXT, "<?php\n");
 
    create_dir($app_path.DS.'library');
