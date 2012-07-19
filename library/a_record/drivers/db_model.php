@@ -103,7 +103,7 @@ class db_model extends a_record
 
     if (empty(static::$cache[$idx])) {
       if ( ! empty(static::conn()->set[static::table()])) {
-        static::$cache[$idx] = static::conn()->set[static::table()];
+        static::$cache[$idx] = static::conn()->set[static::table()]['columns'];
       } else {
         static::$cache[$idx] = static::conn()->columns(static::table());
       }
