@@ -46,7 +46,11 @@ core::bind(function ($bootstrap) {
 
   get('/static/*path', function () {
     return assets::read(params('path'));
-  });
+  }, array(
+    'constraints' => array(
+      '*path' => '(?:img|css|js)/.+',
+    ),
+  ));
 
 
   routing::load(APP_PATH.DS.'config'.DS.'routes'.EXT, array('safe' => TRUE));
