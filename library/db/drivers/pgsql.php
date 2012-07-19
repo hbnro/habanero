@@ -26,7 +26,12 @@ class pgsql_driver extends pgsql_scheme
   }
 
   final protected function version() {
-    return pg_fetch_result(pg_exec($this->res, 'SELECT version()'), 0);
+    static $v = NULL;
+
+    if (is_null($v)) {
+      $v = pg_fetch_row(pg_query($this->res, 'SELECT version()'), 0);
+    }
+    return $v;
   }
 
   final protected function execute($sql) {
@@ -56,7 +61,7 @@ class pgsql_driver extends pgsql_scheme
   }
 
   final protected function fetch_object($res) {
-    return (object) $this->fixate_bools(pg_fetch_assoc($res));
+    return ($tmp = $this->fixate_bools(pg_fetch_assoc($res))) ? (object) $tmp : FALSE;
   }
 
   final protected function count_rows($res) {
@@ -68,7 +73,7 @@ class pgsql_driver extends pgsql_scheme
   }
 
   final protected function last_inserted_id($res, $table, $column) {
-    $tmp = pg_fetch_row(pg_query($this->res, 'SELECT version()'), 0);
+    $tmp = $this->version();
 
     $v = preg_replace('/^\w+\s+([0-9\.]+)\s.*$/i', '\\1', $tmp[0]);
     $v = (double) $v;
@@ -80,12 +85,10 @@ class pgsql_driver extends pgsql_scheme
     } elseif ( ! empty($table) &&  ! empty($column) && ($v >= 8.0)) {// http://www.php.net/pg_last_oid
       $sql = "SELECT CURRVAL(pg_get_serial_sequence('$table','$column'))";
     } else {
-      return pg_last_oid($this->res);
+      return @pg_last_oid($this->res);
     }
 
-    $tmp = pg_fetch_row(pg_query($this->res, $sql), 0);
-
-    return $tmp[0];
+    return ($tmp = @pg_fetch_row(@pg_query($this->res, $sql), 0)) ? $tmp[0] : FALSE;
   }
 
   final protected function fixate_bools($set) {
