@@ -8,8 +8,18 @@ if (cli::flag('schema')) {
   $path = str_replace(APP_PATH.DS, '', $schema_file);
   success(ln('db.loading_schema', array('path' => $path)));
 
-  if (is_file($schema_file)) {
-    require $schema_file;
+  if (is_file($schema_file) && ($set = include $schema_file)) {
+    foreach ($set as $table => $data) {
+      create_table($table, $data['columns'], array('force' => TRUE));
+      if ( ! empty($data['index'])) {
+        foreach ($data['index'] as $one => $on) {
+          add_index($table, $on['column'], array(
+            'unique' => !! $on['unique'],
+            'name' => $one,
+          ));
+        }
+      }
+    }
   } else {
     error(ln('db.without_schema', array('path' => $path)));
   }

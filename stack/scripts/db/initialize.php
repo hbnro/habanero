@@ -127,30 +127,6 @@ app_generator::implement('db:migrate', function () {
   require __DIR__.DS.'scripts'.DS.'load_migrations'.EXT;
 });
 
-
-// freeze columns
-app_generator::implement('db:freeze', function () {
-  info(ln('db.locking_tables'));
-
-  $set  = array();
-  $test = db::tables();
-
-  if (($key = array_search('migration_history', $test)) !== FALSE) {
-    unset($test[$key]);
-  }
-
-
-  foreach ($test as $one) {
-    $set[$one] = db::columns($one);
-    success(ln('db.freeze_columns', array('table' => $one)));
-  }
-
-  $tables_file = mkpath(APP_PATH.DS.'config').DS.'tables'.EXT;
-  write($tables_file, sprintf("<?php return %s;\n", var_export($set, TRUE)));
-
-  done();
-});
-
 /**#@-*/
 
 /* EOF: ./stack/scripts/db/initialize.php */

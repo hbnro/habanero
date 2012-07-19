@@ -6,7 +6,7 @@ if (check_table($to)) {
   } else {
     $args   = array_slice($args, 2);
     $unique = cli::flag('unique');
-    $idx    = db::indexes($table);
+    $idx    = db::indexes($to);
 
     if ( ! $args) {
       error(ln('db.index_columns_missing'));
