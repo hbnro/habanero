@@ -77,7 +77,6 @@ own opinion the first place where you should release your startup application.
 
     # Create the heroku app and get your default database settings
     $ heroku create
-    $ heroku addons:add shared-database:5mb
 
     # Configure the default build-pack url for deployment
     $ heroku config:add BUILDPACK_URL=https://github.com/pateketrueke/heroku-buildpack-tetlphp
@@ -85,6 +84,11 @@ own opinion the first place where you should release your startup application.
     # Push and go!
     $ git push heroku master
     $ heroku open
+
+
+    # Set up your database at first
+    $ heroku addons:add shared-database:5mb
+    $ heroku run "bin/atl migrate --schema --seed"
 
 Frequently Asked Questions
 -------------------------
