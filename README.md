@@ -76,7 +76,7 @@ own opinion the first place where you should release your startup application.
     # NOTE: Make sure you are into git repository
 
     # Create the heroku app and get your default database settings
-    $ heroku create --stack cedar
+    $ heroku create
     $ heroku addons:add shared-database:5mb
 
     # Configure the default build-pack url for deployment
