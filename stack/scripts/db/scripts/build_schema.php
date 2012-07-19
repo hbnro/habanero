@@ -5,12 +5,12 @@ info(ln('db.verifying_schema'));
 $out = array();
 
 $clean = function ($text) {
-  $text = preg_replace('/\s*/', '', $text);
+  $text = preg_replace('/[\r\n]\s*/', '', $text);
   $text = preg_replace('/\d+\s*=>\s*/', '', $text);
   $text = strtr($text, array(
+    'array ' => 'array',
     'false' => 'FALSE',
     'true' => 'TRUE',
-    '=>' => ' => ',
     ',)' => ')',
     ',' => ', ',
   ));
