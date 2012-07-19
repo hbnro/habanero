@@ -4,8 +4,7 @@
  * Spanish db strings
  */
 
-$lang['locking_tables'] = 'Asegurando tablas';
-$lang['freeze_columns'] = 'Congelando columnas de %{table}';
+$lang['missing_schema'] = 'Falta esquema';
 $lang['migrating_database'] = 'Migrando base de datos';
 
 $lang['verifying_seed'] = 'Comprobando registros';
@@ -102,9 +101,6 @@ $lang['usage'] = <<<HELP
 
   \clight_gray(Ejecuta las migraciones)\c
     \bgreen(db:migrate)\b [--drop-all] [--schema] [--seed]
-
-  \clight_gray(Asegura base de datos)\c
-    \bgreen(db:freeze)\b
 
 HELP;
 

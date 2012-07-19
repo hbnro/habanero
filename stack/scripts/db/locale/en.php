@@ -4,8 +4,7 @@
  * English db strings
  */
 
-$lang['locking_tables'] = 'Locking tables';
-$lang['freeze_columns'] = 'Freeze columns from %{table}';
+$lang['missing_schema'] = 'Missing schema';
 $lang['migrating_database'] = 'Migrating database';
 
 $lang['verifying_seed'] = 'Verifying records';
@@ -102,9 +101,6 @@ $lang['usage'] = <<<HELP
 
   \clight_gray(Run migrations)\c
     \bgreen(db:migrate)\b [--drop-all] [--schema] [--seed]
-
-  \clight_gray(Lock database)\c
-    \bgreen(db:freeze)\b
 
 HELP;
 

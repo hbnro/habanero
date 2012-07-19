@@ -29,6 +29,14 @@ app_generator::alias('db:remove_index', 'remove_index');
 app_generator::alias('db:freeze', 'freeze lock');
 
 
+
+if ( ! in_array('migration_history', db::tables())) {
+  info(ln('db.missing_schema'));
+  notice('atl migrate --schema');
+  return;
+}
+
+
 // database status
 app_generator::implement('db:status', function () {
   require __DIR__.DS.'scripts'.DS.'db_status'.EXT;
@@ -144,91 +152,6 @@ app_generator::implement('db:freeze', function () {
 
   done();
 });
-
-
-
-// pre-create migration table
-if ( ! in_array('migration_history', db::tables())) {
-  create_table('migration_history', array(
-    'name' => array('type' => 'string'),
-  ));
-}
-
-function all_migrations() {
-  static $cache = NULL;
-
-
-  if (is_null($cache)) {
-    $cache = array();
-    $test  = db::select('migration_history');
-
-    while ($row = db::fetch($test, AS_OBJECT)) {
-      $cache []= $row->name;
-    }
-  }
-
-  return $cache;
-}
-
-function add_migration($name) {
-  db::insert('migration_history', compact('name'));
-}
-
-function check_table($name) {
-  info(ln('db.verifying_structure'));
-
-  if ( ! $name) {
-    error(ln('db.table_name_missing'));
-  } elseif ( ! in_array($name, db::tables())) {
-    error(ln('db.table_not_exists', array('name' => $name)));
-  } else {
-    return TRUE;
-  }
-}
-
-function check_column($type) {
-  static $set = array(
-            'primary_key',
-            'text',
-            'string',
-            'integer',
-            'numeric',
-            'float',
-            'boolean',
-            'binary',
-            'timestamp',
-            'datetime',
-            'date',
-            'time',
-          );
-
-  return in_array($type, $set);
-}
-
-function build_migration($callback) {
-  $args = array_slice(func_get_args(), 1);
-  require __DIR__.DS.'scripts'.DS.__FUNCTION__.EXT;
-  build_schema();
-}
-
-function build_schema() {
-  require __DIR__.DS.'scripts'.DS.__FUNCTION__.EXT;
-}
-
-function db() {
-  static $res = NULL;
-
-  if (is_null($res)) {
-    $name = cli::flag('database') ?: 'default';
-    $dsn  = option("database.$name");
-    $res  = new stdClass;
-
-    $res->conn = db::connect($dsn);
-    $res->name = $name;
-    $res->dsn = $dsn;
-  }
-  return $res;
-}
 
 /**#@-*/
 

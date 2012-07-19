@@ -125,4 +125,88 @@ function remove_index($from, $name) {
   return (boolean) db::remove_index($name);
 }
 
+
+
+/**#@+
+ * @ignore
+ */
+
+function all_migrations() {
+  static $cache = NULL;
+
+
+  if (is_null($cache)) {
+    $cache = array();
+    $test  = db::select('migration_history');
+
+    while ($row = db::fetch($test, AS_OBJECT)) {
+      $cache []= $row->name;
+    }
+  }
+
+  return $cache;
+}
+
+function add_migration($name) {
+  db::insert('migration_history', compact('name'));
+}
+
+function check_table($name) {
+  info(ln('db.verifying_structure'));
+
+  if ( ! $name) {
+    error(ln('db.table_name_missing'));
+  } elseif ( ! in_array($name, db::tables())) {
+    error(ln('db.table_not_exists', array('name' => $name)));
+  } else {
+    return TRUE;
+  }
+}
+
+function check_column($type) {
+  static $set = array(
+            'primary_key',
+            'text',
+            'string',
+            'integer',
+            'numeric',
+            'float',
+            'boolean',
+            'binary',
+            'timestamp',
+            'datetime',
+            'date',
+            'time',
+          );
+
+  return in_array($type, $set);
+}
+
+function build_migration($callback) {
+  $args = array_slice(func_get_args(), 1);
+  require __DIR__.DS.'scripts'.DS.__FUNCTION__.EXT;
+  build_schema();
+}
+
+function build_schema() {
+  require __DIR__.DS.'scripts'.DS.__FUNCTION__.EXT;
+}
+
+function db() {
+  static $res = NULL;
+
+  if (is_null($res)) {
+    $name = cli::flag('database') ?: 'default';
+    $dsn  = option("database.$name");
+    $res  = new stdClass;
+
+    $res->conn = db::connect($dsn);
+    $res->name = $name;
+    $res->dsn = $dsn;
+  }
+  return $res;
+}
+
+/**#@-*/
+
 /* EOF: ./stack/scripts/db/functions.php */
