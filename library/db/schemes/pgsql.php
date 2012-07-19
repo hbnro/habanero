@@ -31,6 +31,7 @@ class pgsql_scheme extends sql_scheme
   public $raw = array(
               'primary_key' => 'SERIAL PRIMARY KEY',
               'string' => array('type' => 'CHARACTER varying', 'length' => 255),
+              'datetime'=> 'TIMESTAMP',
             );
 
   final public function rename_table($from, $to) {
