@@ -7,6 +7,8 @@
 class sql_raw
 {
 
+  protected $last_query = array();
+
   /**
    * Internal SQL debug
    *

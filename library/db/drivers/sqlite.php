@@ -10,7 +10,6 @@ if ( ! class_exists('SQLite3')) {
 
 class sqlite_driver extends sqlite_scheme
 {
-  protected $last_query = array();
 
   final public static function factory(array $params) {
     $db_file = $params['host'] . $params['path'];

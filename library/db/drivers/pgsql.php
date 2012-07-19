@@ -10,7 +10,6 @@ if ( ! function_exists('pg_connect')) {
 
 class pgsql_driver extends pgsql_scheme
 {
-  protected $last_query = array();
 
   final public static function factory(array $params) {
     $obj = new static;

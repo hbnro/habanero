@@ -10,7 +10,6 @@ if ( ! function_exists('mysqli_connect')) {
 
 class mysqli_driver extends mysql_scheme
 {
-  protected $last_query = array();
 
   final public static function factory(array $params) {
     $host  = $params['host'];
