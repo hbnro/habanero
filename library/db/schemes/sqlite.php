@@ -10,9 +10,9 @@
 
 class sqlite_scheme extends sql_scheme
 {
-  protected $random = 'RANDOM()';
+  public $random = 'RANDOM()';
 
-  protected $types = array(
+  public $types = array(
               'CHARACTER' => 'string',
               'NVARCHAR' => 'string',
               'VARCHAR' => 'string',
@@ -31,11 +31,11 @@ class sqlite_scheme extends sql_scheme
               'BLOB' => 'binary',
             );
 
-  protected $raw = array(
+  public $raw = array(
               'primary_key' => 'INTEGER NOT NULL PRIMARY KEY',
               'string' => array('type' => 'VARCHAR', 'length' => 255),
-              'timestamp' => array('type' => 'DATETIME'),
-              'binary' => array('type' => 'BLOB'),
+              'timestamp' => 'DATETIME',
+              'binary' => 'BLOB',
             );
 
   final public function rename_table($from, $to) {
@@ -101,19 +101,19 @@ class sqlite_scheme extends sql_scheme
     return $this->execute(sprintf('DROP INDEX IF EXISTS "%s"', $name));
   }
 
-  final protected function begin_transaction() {
+  final public function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
   }
 
-  final protected function commit_transaction() {
+  final public function commit_transaction() {
     return $this->execute('COMMIT TRANSACTION');
   }
 
-  final protected function rollback_transaction() {
+  final public function rollback_transaction() {
     return $this->execute('ROLLBACK TRANSACTION');
   }
 
-  final protected function fetch_tables() {
+  final public function fetch_tables() {
     $out = array();
     $sql = "SELECT name FROM sqlite_master WHERE type = 'table'";
     $old = $this->execute($sql);
@@ -125,7 +125,7 @@ class sqlite_scheme extends sql_scheme
     return $out;
   }
 
-  final protected function fetch_columns($test) {
+  final public function fetch_columns($test) {
     $out = array();
     $sql = "PRAGMA table_info('$test')";
     $old = $this->execute($sql);
@@ -144,7 +144,7 @@ class sqlite_scheme extends sql_scheme
     return $out;
   }
 
-  final protected function fetch_indexes($test) {
+  final public function fetch_indexes($test) {
     $res = $this->execute("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='$test'");
 
     $out = array();
@@ -162,15 +162,15 @@ class sqlite_scheme extends sql_scheme
     return $out;
   }
 
-  final protected function ensure_limit($from, $to) {
+  final public function ensure_limit($from, $to) {
     return "\nLIMIT $from" . ($to ? ",$to\n" : "\n");
   }
 
-  final protected function quote_string($test) {
+  final public function quote_string($test) {
     return '"' . $test . '"';
   }
 
-  final protected function ensure_type($test) {
+  final public function ensure_type($test) {
     if (is_bool($test)) {
       $test = $test ? 1 : 0;
     } elseif (is_null($test)) {

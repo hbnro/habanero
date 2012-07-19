@@ -34,7 +34,7 @@ class pdo_driver
 
     $scheme_class = $params['scheme'] . '_scheme';
     $fake_class   = "pdo_{$params['scheme']}_driver";
-    $php_class    = "class $fake_class {public function __call(\$m,\$a){return call_user_func_array(array(\$this->scheme,\$m),\$a);}}";
+    $php_class    = "class $fake_class extends $scheme_class{public function __call(\$m,\$a){return call_user_func_array(array(\$this->scheme,\$m),\$a);}}";
 
     ! class_exists($fake_class) && eval($php_class);
 
@@ -43,18 +43,17 @@ class pdo_driver
     $bridge  = new $fake_class;
 
     $wrapper->scheme = $bridge;
-    $bridge->scheme = new $scheme_class;
+    $bridge->scheme = $wrapper;
 
-    $bridge->scheme->driver = $wrapper;
-    $bridge->scheme->driver->pdo  = new PDO($dsn_string, $params['user'], $params['pass'], $query);
+    $wrapper->pdo = new PDO($dsn_string, $params['user'], $params['pass'], $query);
 
     in_array($params['scheme'], static::$defs) && $wrapper->set_encoding();
 
     return $wrapper;
   }
 
-  public function __get($k){
-    return $this->scheme->scheme->$k;
+  public function __get($key) {// TODO: seriously?
+    return $this->scheme->$key;
   }
 
   public function __call($method, $arguments) {
@@ -113,7 +112,7 @@ class pdo_driver
   }
 
   final public function affected_rows($res) {
-    return $res ? (int) $res : FALSE;
+    return $res ? $res->rowCount() : FALSE;
   }
 
   final public function last_inserted_id() {

@@ -34,47 +34,47 @@ class pgsql_scheme extends sql_scheme
             );
 
   final public function rename_table($from, $to) {
-    return $this->driver->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME TO "%s"', $from, $to));
   }
 
   final public function add_column($to, $name, $type) {
-    return $this->driver->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->driver->a_field($type)));
+    return $this->execute(sprintf('ALTER TABLE "%s" ADD COLUMN "%s" %s', $to, $name, $this->a_field($type)));
   }
 
   final public function remove_column($from, $name) {
-    return $this->driver->execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
+    return $this->execute(sprintf('ALTER TABLE "%s" DROP COLUMN "%s" RESTRICT', $from, $name));
   }
 
   final public function rename_column($from, $name, $to) {
-    return $this->driver->execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
+    return $this->execute(sprintf('ALTER TABLE "%s" RENAME COLUMN "%s" TO "%s"', $from, $name, $to));
   }
 
   final public function change_column($from, $name, $to) {
-    return $this->driver->execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, $this->driver->a_field($to)));
+    return $this->execute(sprintf('ALTER TABLE "%s" ALTER COLUMN "%s" TYPE %s', $from, $name, $this->a_field($to)));
   }
 
   final public function add_index($to, $name, $column, $unique = FALSE) {
-    return $this->driver->execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
+    return $this->execute(sprintf('CREATE%sINDEX "%s" ON "%s" ("%s")', $unique ? ' UNIQUE ' : ' ', $name, $to, join('", "', $column)));
   }
 
   final public function remove_index($name) {
-    return $this->driver->execute(sprintf('DROP INDEX "%s"', $name));
+    return $this->execute(sprintf('DROP INDEX "%s"', $name));
   }
 
   final public function begin_transaction() {
-    return $this->driver->execute('BEGIN');
+    return $this->execute('BEGIN');
   }
 
   final public function commit_transaction() {
-    return $this->driver->execute('COMMIT');
+    return $this->execute('COMMIT');
   }
 
   final public function rollback_transaction() {
-    return $this->driver->execute('ROLLBACK');
+    return $this->execute('ROLLBACK');
   }
 
   final public function set_encoding() {
-    return $this->driver->execute("SET NAMES 'UTF-8'");
+    return $this->execute("SET NAMES 'UTF-8'");
   }
 
   final public function fetch_tables() {
@@ -83,9 +83,9 @@ class pgsql_scheme extends sql_scheme
     $sql = "SELECT tablename FROM pg_tables WHERE tablename "
          . "!~ '^pg_+' AND schemaname = 'public'";
 
-    $old = $this->driver->execute($sql);
+    $old = $this->execute($sql);
 
-    while ($row = $this->driver->fetch_assoc($old)) {
+    while ($row = $this->fetch_assoc($old)) {
       $out []= $row['tablename'];
     }
 
@@ -99,9 +99,9 @@ class pgsql_scheme extends sql_scheme
          . "column_name, data_type AS t, character_maximum_length, column_default AS d,"
          . "is_nullable FROM information_schema.columns WHERE table_name='$test'";
 
-    $old = $this->driver->execute($sql);
+    $old = $this->execute($sql);
 
-    while ($row = $this->driver->fetch_assoc($old)) {
+    while ($row = $this->fetch_assoc($old)) {
       if (preg_match('/^nextval\(.+$/', $row['d'], $id)) {
         $row['d'] = NULL;
       } else {
@@ -130,7 +130,7 @@ class pgsql_scheme extends sql_scheme
 
     $sql = "select pg_get_indexdef(indexrelid) AS sql from pg_index where indrelid = '$test'::regclass";
 
-    if (is_object($res = $this->driver->execute($sql))) {
+    if (is_object($res = $this->execute($sql))) {
       while ($one = $res->fetchObject()) {
         if (preg_match('/CREATE(\s+UNIQUE|)\s+INDEX\s+(\w+)\s+ON.+?\((.+?)\)/', $one->sql, $match)) {
           $out[$match[2]] = array(

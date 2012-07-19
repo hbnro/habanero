@@ -10,9 +10,9 @@
 
 class mysql_scheme extends sql_scheme
 {
-  protected $random = 'RAND()';
+  public $random = 'RAND()';
 
-  protected $types = array(
+  public $types = array(
               'VARCHAR' => 'string',
               'LONGTEXT' => 'string',
               'TINYTEXT' => 'string',
@@ -34,14 +34,14 @@ class mysql_scheme extends sql_scheme
               'BLOB' => 'binary',
             );
 
-  protected $raw = array(
+  public $raw = array(
               'primary_key' => 'INT(11) DEFAULT NULL auto_increment PRIMARY KEY',
               'string' => array('type' => 'VARCHAR', 'length' => 255),
               'integer' => array('type' => 'INT', 'length' => 11),
-              'timestamp' => array('type' => 'DATETIME'),
+              'timestamp' => 'DATETIME',
               'numeric' => array('type' => 'VARCHAR', 'length' => 16),
               'boolean' => array('type' => 'TINYINT', 'length' => 1),
-              'binary' => array('type' => 'BLOB'),
+              'binary' => 'BLOB',
             );
 
   final public function rename_table($from, $to) {
@@ -87,23 +87,23 @@ class mysql_scheme extends sql_scheme
     return $this->execute(sprintf('DROP INDEX `%s` ON `%s`', $name, $table));
   }
 
-  final protected function begin_transaction() {
+  final public function begin_transaction() {
     return $this->execute('BEGIN TRANSACTION');
   }
 
-  final protected function commit_transaction() {
+  final public function commit_transaction() {
     return $this->execute('COMMIT TRANSACTION');
   }
 
-  final protected function rollback_transaction() {
+  final public function rollback_transaction() {
     return $this->execute('ROLLBACK TRANSACTION');
   }
 
-  final protected function set_encoding() {
+  final public function set_encoding() {
     return $this->execute("SET NAMES 'UTF-8'");
   }
 
-  final protected function fetch_tables() {
+  final public function fetch_tables() {
     $out = array();
     $old = $this->execute('SHOW TABLES');
 
@@ -114,7 +114,7 @@ class mysql_scheme extends sql_scheme
     return $out;
   }
 
-  final protected function fetch_columns($test) {
+  final public function fetch_columns($test) {
     $out = array();
     $old = $this->execute("DESCRIBE `$test`");
 
@@ -132,7 +132,7 @@ class mysql_scheme extends sql_scheme
     return $out;
   }
 
-  final protected function fetch_indexes($test) {
+  final public function fetch_indexes($test) {
     $out = array();
 
     $res = $this->execute("SHOW INDEXES FROM `$test`");
@@ -153,15 +153,15 @@ class mysql_scheme extends sql_scheme
     return $out;
   }
 
-  final protected function ensure_limit($from, $to) {
+  final public function ensure_limit($from, $to) {
     return "\nLIMIT {$from}" . ( ! empty($to) ? ",$to\n" : "\n");
   }
 
-  final protected function quote_string($test) {
+  final public function quote_string($test) {
     return "`$test`";
   }
 
-  final protected function ensure_type($test) {
+  final public function ensure_type($test) {
     if (is_bool($test)) {
       $test = $test ? 1 : 0;
     } elseif (is_null($test)) {
