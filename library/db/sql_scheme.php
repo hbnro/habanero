@@ -12,7 +12,7 @@ class sql_scheme extends sql_query
    * @return boolean
    */
   final public function begin() {
-    return (boolean) $this->begin_transaction();
+    return (boolean) $this->driver->begin_transaction();
   }
 
 
@@ -22,7 +22,7 @@ class sql_scheme extends sql_query
    * @return boolean
    */
   final public function commit() {
-    return (boolean) $this->commit_transaction();
+    return (boolean) $this->driver->commit_transaction();
   }
 
 
@@ -32,7 +32,7 @@ class sql_scheme extends sql_query
    * @return boolean
    */
   final public function rollback() {
-    return (boolean) $this->rollback_transaction();
+    return (boolean) $this->driver->rollback_transaction();
   }
 
 
@@ -44,7 +44,7 @@ class sql_scheme extends sql_query
    * @return mixed
    */
   final public function create($table, array $columns) {
-    return $this->execute($this->build_table($table, $columns));
+    return $this->driver->execute($this->build_table($table, $columns));
   }
 
 
@@ -55,7 +55,7 @@ class sql_scheme extends sql_query
    * @return mixed
    */
   final public function drop($table) {
-    return $this->execute('DROP TABLE ' . $this->quote_string($table));
+    return $this->driver->execute('DROP TABLE ' . $this->quote_string($table));
   }
 
 
@@ -75,7 +75,7 @@ class sql_scheme extends sql_query
 
     if ( ! is_array($old)) {
       if ($raw) {
-        return array_map(array($this, 'execute'), $this->query_parse($test));
+        return array_map(array($this->driver, 'execute'), $this->query_parse($test));
       }
       return FALSE;
     }
@@ -154,7 +154,7 @@ class sql_scheme extends sql_query
    */
   final public function tables($filter = '*') {
     $out  = array();
-    $test = $this->fetch_tables();
+    $test = $this->driver->fetch_tables();
 
     if ($filter === '*') {
       return $test;
@@ -177,7 +177,7 @@ class sql_scheme extends sql_query
    * @return    array
    */
   final public function columns($of) {
-    $test = $this->fetch_columns($of);
+    $test = $this->driver->fetch_columns($of);
 
     foreach ($test as $key => $val) {
       $default     = ! empty($this->types[$val['type']]) ? $this->types[$val['type']] : $val['type'];
@@ -196,7 +196,7 @@ class sql_scheme extends sql_query
    * @return array
    */
   final public function indexes($of) {
-    return $this->fetch_indexes($of);
+    return $this->driver->fetch_indexes($of);
   }
 
 
@@ -207,10 +207,12 @@ class sql_scheme extends sql_query
 
    // single column definition
   final protected function a_field($type, $length = 0, $default = NULL) {
+    $tmp = $this->driver->raw;
+
     if (empty($type)) {
       return FALSE;
     } else {
-      $test = is_string($type) && ! empty($this->raw[$type]) ? $this->raw[$type] : $type;
+      $test = is_string($type) && ! empty($tmp[$type]) ? $tmp[$type] : $type;
     }
 
     if (is_assoc($test)) {
@@ -222,19 +224,19 @@ class sql_scheme extends sql_query
     } elseif (is_array($test)) {
       @list($type, $length, $default) = $test;
 
-      ! $length && ! empty($this->raw[$type]['length']) && $length = $this->raw[$type]['length'];
+      ! $length && ! empty($tmp[$type]['length']) && $length = $tmp[$type]['length'];
 
-      if ( ! empty($this->raw[$type])) {//FIX
-        if (is_string($this->raw[$type])) {
-          return $this->raw[$type];
+      if ( ! empty($tmp[$type])) {//FIX
+        if (is_string($tmp[$type])) {
+          return $tmp[$type];
         }
-        $type = $this->raw[$type]['type'];
+        $type = $tmp[$type]['type'];
       }
     } elseif ($test !== $type) {
       return $test;
     }
 
-    $type  = strtoupper($type);
+    $type  = ! empty($tmp[$type]['type']) ? $tmp[$type]['type'] : strtoupper($type);
     $type .= $length > 0 ? sprintf('(%d)', $length) : '';
 
     if ( ! is_null($default)) {
@@ -247,15 +249,15 @@ class sql_scheme extends sql_query
   }
 
   // generic table definition
-  final protected function build_table($table, array $columns = array()) {
-    $name = $this->quote_string($table);
+  final public function build_table($table, array $columns = array()) {
+    $name = $this->driver->quote_string($table);
 
     $sql  = "CREATE TABLE $name";
     $sql .= "\n(\n";
 
 
     foreach ($columns as $key => $value) {
-      $sql  .= sprintf(" %s %s,\n", $this->quote_string($key), $this->a_field($value));
+      $sql  .= sprintf(" %s %s,\n", $this->driver->quote_string($key), $this->a_field($value));
     }
 
     $sql  = $columns ? substr($sql, 0, - 2) : '';

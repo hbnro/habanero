@@ -24,7 +24,7 @@ class sql_base extends sql_raw
 
     foreach ($set as $i => $val) {
       $test = array_map($callback, explode('.', $val));
-      $char = substr($this->quote_string('x'), 0, 1);
+      $char = substr($this->driver->quote_string('x'), 0, 1);
 
       foreach ($test as $key => $val) {
         if (preg_match('/^[\sa-zA-Z0-9_-]+$/', $val)) {
@@ -55,9 +55,9 @@ class sql_base extends sql_raw
         return array_map(array($this, 'fixate_string'), $test);
       }
     } elseif (is_string($test)) {
-      return "'" . $this->real_escape($test) . "'";
+      return "'" . $this->driver->real_escape($test) . "'";
     }
-    return $this->ensure_type($test);
+    return $this->driver->ensure_type($test);
   }
 
   // fields for SELECT
@@ -71,7 +71,7 @@ class sql_base extends sql_raw
         $sql []= ' ' . $this->protect_names($val);
         continue;
       }
-      $sql []= ' ' . $this->protect_names($key) . ' AS ' . $this->quote_string($val);
+      $sql []= ' ' . $this->protect_names($key) . ' AS ' . $this->driver->quote_string($val);
     }
     return join(",\n", $sql);
   }
@@ -85,7 +85,7 @@ class sql_base extends sql_raw
       $cols = array();
 
       foreach (array_keys($fields) as $one) {
-        $cols []= $this->quote_string($one);
+        $cols []= $this->driver->quote_string($one);
       }
 
       $sql []= '(' . join(', ', $cols) . ')';
@@ -107,7 +107,7 @@ class sql_base extends sql_raw
         if ($insert) {
           $out []= $val;
         } else {
-          $out []= $this->quote_string($key) . " = $val";
+          $out []= $this->driver->quote_string($key) . " = $val";
         }
       }
     }

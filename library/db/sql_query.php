@@ -92,9 +92,9 @@ class sql_query extends sql_base
       $sql  = $this->prepare($sql, $args);
     }
 
-    $out = $this->execute($this->query_repare($sql));
+    $out = $this->driver->execute($this->query_repare($sql));
 
-    if ($message = $this->has_error()) {// FIX
+    if ($message = $this->driver->has_error()) {// FIX
       raise(ln('db.database_query_error', array('message' => $message, 'sql' => end($this->last_query))));
     }
     return $out;
@@ -112,7 +112,7 @@ class sql_query extends sql_base
     if (is_string($test)) {
       $test = $this->query($test);
     }
-    return $this->fetch_result($test) ?: $default;
+    return $this->driver->fetch_result($test) ?: $default;
   }
 
 
@@ -147,7 +147,7 @@ class sql_query extends sql_base
    * @return array
    */
   final public function fetch($result, $output = AS_ARRAY) {
-    return $output === AS_OBJECT ? $this->fetch_object($result) : $this->fetch_assoc($result);
+    return $output === AS_OBJECT ? $this->driver->fetch_object($result) : $this->driver->fetch_assoc($result);
   }
 
 
@@ -158,7 +158,7 @@ class sql_query extends sql_base
    * @return mixed
    */
   final public function numrows($result) {
-    return $this->count_rows($result);
+    return $this->driver->count_rows($result);
   }
 
 
@@ -169,7 +169,7 @@ class sql_query extends sql_base
    * @return mixed
    */
   final public function affected($result) {
-    return $this->affected_rows($result);
+    return $this->driver->affected_rows($result);
   }
 
 
@@ -182,7 +182,7 @@ class sql_query extends sql_base
    * @return mixed
    */
   final public function inserted($result, $table = NULL, $column = NULL) {
-    return $this->last_inserted_id($result, $table, $column);
+    return $this->driver->last_inserted_id($result, $table, $column);
   }
 }
 
