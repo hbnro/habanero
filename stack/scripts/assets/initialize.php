@@ -21,10 +21,8 @@ app_generator::implement('assets:clean', function () {
   }
 
 
-  foreach (array('resources', 'tables') as $one) {
-    notice(ln('assets.removing_file', array('path' => "config/$one".EXT)));
-    is_file($res_file = APP_PATH.DS.'config'.DS.$one.EXT) && unlink($res_file);
-  }
+  notice(ln('assets.removing_file', array('path' => 'config/resources'.EXT)));
+  is_file($res_file = APP_PATH.DS.'config'.DS.'resources'.EXT) && unlink($res_file);
 
   done();
 });
