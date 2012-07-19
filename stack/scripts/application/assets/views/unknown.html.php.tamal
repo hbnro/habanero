@@ -1,1 +1,4 @@
-h1 Error 500
+section
+  header
+    h1 Error 500
+    - dump(error_get_last(), 1)
