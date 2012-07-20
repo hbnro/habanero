@@ -25,7 +25,7 @@ if (check_table($to)) {
         }
       }
 
-      if (sizeof($col) === sizeof($args)) {
+      if (has_schema() && (sizeof($col) === sizeof($args))) {
         success(ln('db.indexing_table', array('name' => $name, 'table' => $to)));
         build_migration('add_index', $to, $col, array(
           'unique' => !! $unique,

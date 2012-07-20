@@ -28,7 +28,7 @@ if (check_table($from)) {
           error(ln('db.unknown_field', array('type' => $type, 'name' => $one)));
         } elseif ($fields[$one]['type'] === $type) {
           error(ln('db.column_already_exists', array('name' => $one)));
-        } else {
+        } elseif (has_schema()) {
           success(ln('db.column_changing', array('type' => $type, 'name' => $one)));
           build_migration('change_column', $from, $one, $col);
           done();

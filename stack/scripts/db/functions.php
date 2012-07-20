@@ -152,7 +152,10 @@ function add_migration($name) {
 }
 
 function has_schema() {
-  return in_array('migration_history', db::tables());
+  if ( ! ($out = in_array('migration_history', db::tables()))) {
+    error(ln('db.missing_schema'));
+  }
+  return $out;
 }
 
 function check_table($name) {

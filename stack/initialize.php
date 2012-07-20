@@ -41,10 +41,10 @@ run(function () {
   if (is_dir($path = APP_PATH.DS.'tasks')) {
     array_map('app_generator::task', dir2arr($path, '*'.EXT));
 
-    $test = array_filter(dir2arr(APP_PATH.DS.'tasks', '*'), 'is_dir');
+    $tasks = array_filter(dir2arr(APP_PATH.DS.'tasks', '*'), 'is_dir');
 
-    foreach ($test as $path) {
-      require $path.DS.'initialize'.EXT;
+    foreach ($tasks as $one) {
+      require $one.DS.'initialize'.EXT;
     }
   }
 
@@ -55,8 +55,10 @@ run(function () {
       require func_get_arg(1);
     }, $test, $mod_file);
   } else {
-    foreach (array_filter(dir2arr(__DIR__.DS.'scripts', '*'), 'is_dir') as $path) {
-      require $path.DS.'initialize'.EXT;
+    $scripts = array_filter(dir2arr(__DIR__.DS.'scripts', '*'), 'is_dir');
+
+    foreach ($scripts as $one) {
+      require $one.DS.'initialize'.EXT;
     }
 
     if (cli::flag('help')) {

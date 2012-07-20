@@ -17,7 +17,7 @@ if (check_table($from)) {
         error(ln('db.column_not_exists', array('name' => $one, 'table' => $from)));
       } elseif ( ! $next) {
         error(ln('db.column_name_missing'));
-      } else {
+      } elseif (has_schema()) {
         success(ln('db.column_renaming', array('from' => $one, 'to' => $next)));
         build_migration('rename_column', $from, $one, $next);
         done();

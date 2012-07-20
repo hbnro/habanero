@@ -10,7 +10,7 @@ if (check_table($from)) {
     foreach ($args as $one) {
       if ( ! in_array($one, $fields)) {
         error(ln('db.column_not_exists', array('name' => $one, 'table' => $from)));
-      } else {
+      } elseif (has_schema()) {
         success(ln('db.column_dropping', array('name' => $one)));
         build_migration('remove_column', $from, $one);
         done();

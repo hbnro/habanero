@@ -11,7 +11,7 @@ if (check_table($from)) {
     foreach ($args as $one) {
       if ( ! array_key_exists($one, $idx)) {
         error(ln('db.index_not_exists', array('name' => $one, 'table' => $from)));
-      } else {
+      } elseif (has_schema()) {
         success(ln('db.index_dropping', array('name' => $one)));
         build_migration('remove_index', $from, $one);
         done();

@@ -18,7 +18,7 @@ if (check_table($to)) {
         error(ln('db.unknown_field', array('type' => $type, 'name' => $name)));
       } elseif (in_array($name, $fields)) {
         error(ln('db.column_already_exists', array('name' => $name)));
-      } else {
+      } elseif (has_schema()) {
         success(ln('db.column_building', array('type' => $type, 'name' => $name)));
         build_migration('add_column', $to, $name, $col);
         done();

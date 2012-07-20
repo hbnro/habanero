@@ -30,11 +30,6 @@ app_generator::alias('db:freeze', 'freeze lock');
 
 
 
-if ( ! has_schema()) {
-  notice(ln('db.missing_schema'));
-}
-
-
 // database status
 app_generator::implement('db:status', function () {
   require __DIR__.DS.'scripts'.DS.'db_status'.EXT;

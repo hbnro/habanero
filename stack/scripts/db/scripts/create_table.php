@@ -45,7 +45,7 @@ if ( ! $table) {
 
     if ($fail) {
       error(ln('db.table_fields_missing', array('name' => $table)));
-    } else {
+    } elseif (has_schema()) {
       success(ln('db.table_building', array('name' => $table)));
       build_migration('create_table', $table, $fields);
 
