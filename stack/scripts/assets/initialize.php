@@ -133,7 +133,7 @@ app_generator::implement('assets:prepare', function () {
 
 
 
-  if ($test = array_filter(rglob('*', GLOB_MARK, APP_PATH.DS.'views'), 'is_file')) {
+  if ($test = array_filter(dir2arr(APP_PATH.DS.'views', '*', DIR_RECURSIVE), 'is_file')) {
     foreach ($test as $partial_file) {
       if (ext($partial_file, TRUE) <> EXT) {
         $key = str_replace(APP_PATH.DS, '', $partial_file);
