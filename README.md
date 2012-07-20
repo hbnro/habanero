@@ -87,7 +87,6 @@ own opinion the first place where you should release your startup application.
 
 
     # Set up your database at first
-    $ heroku addons:add shared-database:5mb
     $ heroku run "bin/atl migrate --schema --seed"
 
 Frequently Asked Questions
