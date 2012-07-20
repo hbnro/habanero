@@ -18,7 +18,7 @@ $set && import($set);
 
 
 run(function () {
-  cli::clear();
+  # cli::clear();
 
   $args     = cli::args();
   $mod_file = FALSE;
