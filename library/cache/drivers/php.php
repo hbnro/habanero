@@ -13,7 +13,7 @@ define('CACHE_DRIVER', 'PHP');
 
 cache::implement('free_all', function () {
   foreach (dir2arr(TMP, '--cache-php*') as $cache_file) {
-    @unlink(TMP.DS.$cache_file);
+    @unlink($cache_file);
   }
 });
 

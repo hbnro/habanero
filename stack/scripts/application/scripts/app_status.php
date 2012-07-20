@@ -2,7 +2,7 @@
 
 info(ln('app.verifying_installation'));
 
-$test  = dir2arr(APP_PATH, '*', DIR_RECURSIVE | DIR_MAP);
+$test  = array_filter(dir2arr(APP_PATH, '*', DIR_RECURSIVE), 'is_file');
 $count = sizeof($test);
 $size  = 0;
 

@@ -41,7 +41,9 @@ run(function () {
   if (is_dir($path = APP_PATH.DS.'tasks')) {
     array_map('app_generator::task', dir2arr($path, '*'.EXT));
 
-    foreach (array_filter(dir2arr(APP_PATH.DS.'tasks', '*'), 'is_dir') as $path) {
+    $test = array_filter(dir2arr(APP_PATH.DS.'tasks', '*'), 'is_dir');
+
+    foreach ($test as $path) {
       require $path.DS.'initialize'.EXT;
     }
   }

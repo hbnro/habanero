@@ -39,7 +39,7 @@ foreach ($libs as $one) {
 
 // compactize!
 if ( !! `php -v`) {
-  $test = dir2arr($tetl_path, '*'.EXT, DIR_RECURSIVE | DIR_MAP);
+  $test = dir2arr($tetl_path, '*'.EXT, DIR_RECURSIVE);
   $test = array_filter($test, 'is_file');
 
   if ( ! cli::flag('no-compress')) {

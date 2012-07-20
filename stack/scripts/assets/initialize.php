@@ -54,8 +54,8 @@ app_generator::implement('assets:prepare', function () {
   $img_path   = $base_path.DS.'img';
   $img_dir    = $static_dir.DS.'img';
 
-  if ($test = dir2arr($img_path, '*', DIR_RECURSIVE | DIR_MAP)) {
-    foreach (array_filter($test, 'is_file') as $file) {
+  if ($test = array_filter(dir2arr($img_path, '*.{jpeg|jpg|png|gif}', DIR_RECURSIVE), 'is_file')) {
+    foreach ($test as $file) {
       $file_hash  = md5(md5_file($file) . filesize($file));
       $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
 
@@ -72,7 +72,7 @@ app_generator::implement('assets:prepare', function () {
 
   $cache = array();
 
-  if ($test = dir2arr($base_path, '*', DIR_MAP)) {
+  if ($test = array_filter(dir2arr($base_path, '*'), 'is_file')) {
     foreach ($test as $file) {
       $out = array();
       $tmp = assets::extract($file);
@@ -133,7 +133,7 @@ app_generator::implement('assets:prepare', function () {
 
 
 
-  if ($test = dir2arr($views_dir, '*', DIR_RECURSIVE | DIR_MAP)) {
+  if ($test = array_filter(rglob('*', GLOB_MARK, APP_PATH.DS.'views'), 'is_file')) {
     foreach ($test as $partial_file) {
       if (ext($partial_file, TRUE) <> EXT) {
         $key = str_replace(APP_PATH.DS, '', $partial_file);

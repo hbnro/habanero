@@ -165,7 +165,7 @@ class zip
     if (is_file($path)) {
       static::add_file(basename($path), read($path));
     } elseif (is_dir($path)) {
-      if ($tmp = dir2arr($path, $filter, ($recursive ? DIR_RECURSIVE : 0) | DIR_MAP)) {
+      if ($tmp = dir2arr($path, $filter, $recursive ? DIR_RECURSIVE : 0)) {
         foreach ($tmp as $old) {
           $new = rtrim($path, '\\/').DS.$old;
 

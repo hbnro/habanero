@@ -10,7 +10,6 @@
 define('DIR_RECURSIVE', 1);
 define('DIR_EMPTY', 2);
 define('DIR_SORT', 4);
-define('DIR_MAP', 8);
 /**#@-*/
 
 
@@ -25,7 +24,7 @@ define('DIR_MAP', 8);
 function unfile($path, $filter = '*', $options = FALSE) {
   if (is_dir($path)) {
     $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
-    $test  = dir2arr($path, $filter, $options | DIR_MAP | DIR_SORT);
+    $test  = array_reverse(dir2arr($path, $filter, $options | DIR_SORT));
 
     foreach ($test as $one) {
       is_file($one) && @unlink($one);
@@ -48,11 +47,11 @@ function unfile($path, $filter = '*', $options = FALSE) {
  */
 function dirsize($of, $recursive = FALSE) {
   if (is_dir($of)) {
-    $length    = 0;
-    $recursive = $recursive ? DIR_RECURSIVE : 0;
+    $length = 0;
+    $test   = array_filter(dir2arr($of, '*', $recursive ? DIR_RECURSIVE : 0), 'is_file');
 
-    foreach (dir2arr($of, '*', DIR_MAP | $recursive) as $old) {
-      $length += is_file($old) ? filesize($old) : 0;
+    foreach ($test as $old) {
+      $length += filesize($old);
     }
 
     return $length;
@@ -65,94 +64,33 @@ function dirsize($of, $recursive = FALSE) {
  *
  * @param     string Directory
  * @param     mixed  Simple filter|Function callback
- * @param     mixed  DIR_RECURSIVE|DIR_EMPTY|DIR_SORT|DIR_MAP
+ * @param     mixed  DIR_RECURSIVE|DIR_SORT
  * @staticvar mixed  Empty paths
  * @staticvar mixed  Function callback
  * @return    mixed
 */
-function dir2arr($from, $filter = '*', $options = FALSE) {
-  static $extra  = array(),
-         $lambda = NULL;
-
-
-  if (is_null($lambda)) {
-    $lambda = function ($a, $b) {
-      $a_depth = substr_count($a, DS);
-      $b_depth = substr_count($b, DS);
-
-      return $a_depth == $b_depth ? 0 : ($a_depth < $b_depth ? 1 : - 1 );
-    };
-  }
-
-
+function dir2arr($from, $filter = '*', $options = 0) {
   $recursive = ((int) $options & DIR_RECURSIVE) == 0 ? FALSE : TRUE;
-  $empty = ((int) $options & DIR_EMPTY) == 0 ? FALSE : TRUE;
   $sort = ((int) $options & DIR_SORT) == 0 ? FALSE : TRUE;
-  $map = ((int) $options & DIR_MAP) == 0 ? FALSE : TRUE;
 
+  if ( ! $from && (($dir = dirname($filter)) <> '.')) {
+    ($dir === DS) && $dir = '';
 
-  $from = realpath($from);
-
-  if ( ! is_dir($from)) {
-    return FALSE;
+    return dir2arr($dir, basename($filter), $options);
   }
 
-  $items = glob(rtrim($from, DS).DS.'*') ?: array();
 
-  array_walk_recursive($items, function ($value, $old)
-    use(&$items, &$extra, $filter, $options, $recursive, $empty, $map) {
-    if (is_dir($value) && $recursive) {
-      $key = ! $map ? basename($value) : $value;
+  $paths = glob($from.DS.'*', GLOB_ONLYDIR | ( ! $sort ? GLOB_NOSORT : 0));
+  $files = glob($from.DS.$filter, GLOB_MARK | GLOB_BRACE | ( ! $sort ? GLOB_NOSORT : 0));
 
-      if ($map && ! in_array($key, $extra)) {//FIX
-        $extra []= $key;
-      }
-
-      if (($test = dir2arr($value, $filter, $options, TRUE)) OR $empty) {
-        $items[$key] = $test;
-      }
-
-      unset($items[$old]);
-
-      ! $map && ksort($items);
-    } elseif ($filter <> '*') {
-      if (is_closure($filter)) {
-        if ( ! $filter($value)) {
-          unset($items[$old]);
-        }
-      } elseif ( ! fnmatch($filter, $value)) {
-        unset($items[$old]);
-      }
-    } else {
-      $value = ! $map ? basename($value) : $value;
+  if ($recursive) {
+    foreach ($paths as $one) {
+      $test  = dir2arr($one, $filter, $options);
+      $files = array_merge($files, $test);
     }
-  }, $items);
-
-
-  if (func_num_args() < 4) {
-    $items = array_merge($items, $extra);
-    $extra = array();
   }
 
-
-  if ($map) {
-    $output = array();
-
-    foreach ($items as $value) {
-      if (is_scalar($value)) {
-        is_file($value) && $output []= $value;
-        is_dir($value) && $empty && $output []= $value;
-      } else {
-        $output = array_merge($output, $value);
-      }
-    }
-
-    $items = array_unique($output);
-  }
-
-  $sort && usort($items, $lambda);
-
-  return $items;
+  return $files;
 }
 
 
@@ -170,7 +108,7 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE) {
     ! is_dir($to) && mkpath($to);
 
     $options = ($recursive ? DIR_RECURSIVE : 0) | DIR_EMPTY;
-    $test    = array_reverse(dir2arr($from, $filter, $options | DIR_MAP | DIR_SORT));
+    $test    = array_reverse(dir2arr($from, $filter, $options | DIR_SORT));
 
     foreach ($test as $file) {
       $new = str_replace(realpath($from), $to, $file);
@@ -224,16 +162,7 @@ function mkpath($dir, $perms = 0755) {
 function findfile($path, $filter = '*', $recursive = FALSE, $index = 0) {
   if (is_dir($path)) {
     $recursive = $recursive ? DIR_RECURSIVE : 0;
-    $output    = dir2arr($path, '*', $recursive | DIR_MAP);
-
-    foreach ($output as $key => $file) {
-      if ( ! fnmatch($filter, basename($file)) OR ! is_file($file)) {
-        unset($output[$key]);
-      }
-    }
-
-    sort($output);
-
+    $output    = array_filter(dir2arr($path, $filter, $recursive | DIR_SORT), 'is_file');
 
     if ($index > 0) {
       return isset($output[$index - 1]) ? $output[$index - 1] : FALSE;

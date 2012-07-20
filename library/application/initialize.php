@@ -57,8 +57,9 @@ core::bind(function ($bootstrap) {
 
   // initializers
   if (is_dir($init_path = APP_PATH.DS.'config'.DS.'initializers')) {
-    foreach (dir2arr($init_path, '*'.EXT) as $file) {
-      require $file;
+    $init_files = dir2arr($init_path, '*'.EXT);
+    foreach ($init_files as $path) {
+      require is_dir($path) ? $path.DS.'initialize'.EXT : $path;
     }
   }
 
