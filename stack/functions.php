@@ -187,6 +187,9 @@ function action($format, $text, $what) {
 }
 
 function status($type, $text = '') {
+  $text && $text = str_replace(APP_PATH.DS, '', "  $text");
+  $text && $text = strtr($text, '\\/', DS.DS);
+
   switch ($type) {
     case 'create';
       action('green', $type, $text);
@@ -204,9 +207,7 @@ function status($type, $text = '') {
       action('yellow', $type, $text);
     break;
     default;
-      $text && $text = str_replace(APP_PATH.DS, '', "  $text");
       $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
-
       cli::write(cli::format("$prefix$text\n"));
     break;
   }
