@@ -108,14 +108,14 @@ function cpfiles($from, $to, $filter = '*', $recursive = FALSE) {
     ! is_dir($to) && mkpath($to);
 
     $options = ($recursive ? DIR_RECURSIVE : 0) | DIR_EMPTY;
-    $test    = array_reverse(dir2arr($from, $filter, $options | DIR_SORT));
+    $test    = dir2arr($from, $filter, $options | DIR_SORT);
 
     foreach ($test as $file) {
       $new = str_replace(realpath($from), $to, $file);
 
       if ( ! file_exists($new)) {
-        is_file($file) && copy($file, $new) && chmod($new, 0644);
         is_dir($file) && mkdir($new, 0755);
+        is_file($file) && copy($file, $new) && chmod($new, 0644);
       }
     }
   }
