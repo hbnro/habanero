@@ -150,6 +150,8 @@ class partial extends prototype
         $output = render($cache_file, TRUE, array(
           'locals' => $vars,
         ));
+      } else {
+        $output = read($file);
       }
     } else {
       $output = render($file, TRUE, array(
