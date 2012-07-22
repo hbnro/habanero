@@ -209,7 +209,7 @@ class chess
         static::add_file($css_file, TRUE);
       break;
       default;
-        static::$css []= static::load_file($match[3], FALSE);
+        return static::load_file($match[3], FALSE);
       break;
     }
   }
