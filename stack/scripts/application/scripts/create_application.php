@@ -93,10 +93,11 @@ $skel_dir = dirname(__DIR__).DS.'assets';
 
     $ignored_files = array(
       '*~',
-      'logs/*',
+      '*.log',
       'tetlphp',
       '.develop',
       '.DS_Store',
+      'logs/*.log',
       'database/db.sqlite',
       'config/resources.php',
       'config/tables.php',
