@@ -77,7 +77,7 @@ class db extends prototype
 
       static::$multi[$dsn_string] = $driver_class::factory($parts);
 
-      if (is_file($tables_file = APP_PATH.DS.'database'.DS.'schema'.EXT)) {
+      if ((APP_ENV === 'production') && is_file($tables_file = APP_PATH.DS.'database'.DS.'schema'.EXT)) {
         static::$multi[$dsn_string]->set = include $tables_file;
       }
 
