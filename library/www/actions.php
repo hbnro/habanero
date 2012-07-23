@@ -53,7 +53,6 @@ function url_for($action, array $params = array()) {
 
   ! preg_match('/(?:\/|\.\w+)$/', $link) && $link .= '/';
 
-
   if ( ! empty($params['locals'])) {
     $test = array();
     $hash = uniqid('--query-prefix');
@@ -248,36 +247,6 @@ function mail_to($address, $text = NULL, array $args = array()) {
   return tag('a', array_merge(array(
     'href' => "mailto:$params[address]$vars",
   ), $args), $params['text']);
-}
-
-
-/**
- * Resolve server-based urls
- *
- * @param     string  File or directory
- * @param     boolean Prefix host?
- * @staticvar string  Root
- * @return    string
- */
-function path_to($path = '.', $host = FALSE) {
-  static $root = NULL;
-
-
-  if (is_null($root)) {// only apply on real root-based files
-    $root = realpath($_SERVER['DOCUMENT_ROOT']);
-  }
-
-
-  if ($path = APP_PATH.DS.'static'.DS.$path) {
-    if ($root <> '/') {
-      $path = str_replace($root, '', $path);
-    }#
-
-    $path = url_for(str_replace('/./', '/', strtr($path, '\\', '/')));
-    $path = $host ? server(TRUE, $path, TRUE) : $path;
-  }
-
-  return $path;
 }
 
 

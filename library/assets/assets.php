@@ -56,7 +56,7 @@ class assets extends prototype
     $name = str_replace(APP_PATH.DS.'assets'.DS, '', $name);
 
     if ($hash = static::fetch($name)) {
-      $name = dirname($name).DS.extn($name, TRUE).$hash.ext($name, TRUE);
+      $name = str_replace(basename($name), extn($name, TRUE).$hash.ext($name, TRUE), $name);
     }
     return $name;
   }
@@ -88,7 +88,7 @@ class assets extends prototype
 
     if (is_file($base_file)) {
       if (APP_ENV === 'production') {
-        $path = path_to("$type/" . static::resolve($base_file));
+        $path = static::url_for(static::resolve($base_file));
 
         if ($type == 'css') {
           return tag('link', array('rel' => 'stylesheet', 'href' => $path));
@@ -96,17 +96,18 @@ class assets extends prototype
           return tag('script', array('src' => $path));
         }
       } else {
+        $set = array();
         $tmp = static::extract($base_file);
-        $set = array_map(function ($val)
-          use($base_path, $type) {
-          $path = url_for(strtr('static'.str_replace($base_path, '', $val), '\\', '/'));
+
+        foreach ($tmp['include'] as $one) {
+          $path = static::url_for(str_replace($base_path.DS.$type, '', $one));
 
           if ($type == 'css') {
-            return tag('link', array('rel' => 'stylesheet', 'href' => $path));
+            $set []= tag('link', array('rel' => 'stylesheet', 'href' => $path));
           } else {
-            return tag('script', array('src' => $path));
+            $set []= tag('script', array('src' => $path));
           }
-        }, $tmp['include']);
+        }
 
         return join("\n", $set);
       }
@@ -144,8 +145,12 @@ class assets extends prototype
    * @param
    * @return string
    */
-  final public static function url_for($path, $prefix = '', $host = FALSE) {
-    return is_url($path) ? $path : path_to(($prefix ? $prefix : ext($path)).DS.$path, $host);
+  final public static function url_for($path, $prefix = '') {
+    if (is_url($path)) {
+      return $path;
+    }
+
+    return server(TRUE, url_for('static'.DS.($prefix ? $prefix : ext($path)).DS.$path), option('host') ?: FALSE);
   }
 
 

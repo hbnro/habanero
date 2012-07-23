@@ -35,11 +35,6 @@ function tag_for() {
   return assets::apply(__FUNCTION__, $args);
 }
 
-// good for routing at mockz!
-function asset_for($url) {
-  return path_to(assets::fetch($for), TRUE);
-}
-
 // resolve paths into urls
 function asset_url() {
   $args = func_get_args();

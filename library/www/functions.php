@@ -207,9 +207,9 @@ function segment($index = 1, $default = FALSE) {
 /**
  * Server variable access
  *
- * @param  string  Identifier
- * @param  mixed   Default value
- * @param  boolean Use full scheme?
+ * @param  string Identifier
+ * @param  mixed  Default value
+ * @param  mixed  Full scheme?|Hostname
  * @return mixed
  */
 function server($key = '', $default = FALSE, $complete = FALSE) {
@@ -234,7 +234,8 @@ function server($key = '', $default = FALSE, $complete = FALSE) {
       $host .= ':';//FIX
     }
 
-    $host .= '//' . strtolower($_SERVER['HTTP_HOST']);
+
+    $host .= '//' . preg_replace('/:\d+/', '', is_string($complete) ? $complete : $_SERVER['HTTP_HOST']);
     $host .= (int) $_SERVER['SERVER_PORT'] !== 80 ? ":$_SERVER[SERVER_PORT]" : '';
     $host .= $default !== FALSE ? $default : '';
 
