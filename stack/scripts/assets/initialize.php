@@ -54,7 +54,7 @@ app_generator::implement('assets:prepare', function () {
   $img_path   = $base_path.DS.'img';
   $img_dir    = $static_dir.DS.'img';
 
-  if ($test = array_filter(dir2arr($img_path, '*.{jpeg|jpg|png|gif}', DIR_RECURSIVE), 'is_file')) {
+  if ($test = array_filter(dir2arr($img_path, '*.{jpeg,jpg,png,gif}', DIR_RECURSIVE), 'is_file')) {
     foreach ($test as $file) {
       $file_hash  = md5(md5_file($file) . filesize($file));
       $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
