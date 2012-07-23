@@ -7,7 +7,7 @@
 $skel_dir = dirname(__DIR__).DS.'assets';
 
    create_dir($app_path);
-   create_dir($app_path.DS.'logs');
+   create_dir($app_path.DS.'logs', TRUE);
         chmod($app_path.DS.'logs', 0777);
 
    create_dir($app_path.DS.'config');
@@ -19,7 +19,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'development'.EXT);
     copy_file($app_path.DS.'config'.DS.'environments', $skel_dir.DS.'production'.EXT);
 
-   create_dir($app_path.DS.'config'.DS.'initializers');
+   create_dir($app_path.DS.'config'.DS.'initializers', TRUE);
     copy_file($app_path.DS.'config', $skel_dir.DS.'routes'.EXT);
 
    create_dir($app_path.DS.'controllers');
@@ -32,8 +32,8 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'database');
         chmod($app_path.DS.'database', 0777);
 
-   create_dir($app_path.DS.'database'.DS.'backup');
-   create_dir($app_path.DS.'database'.DS.'migrate');
+   create_dir($app_path.DS.'database'.DS.'backup', TRUE);
+   create_dir($app_path.DS.'database'.DS.'migrate', TRUE);
 
   create_file($app_path.DS.'database'.DS.'db.sqlite');
         chmod($app_path.DS.'database'.DS.'db.sqlite', 0777);
@@ -44,7 +44,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
    create_dir($app_path.DS.'library');
   create_file($app_path.DS.'library'.DS.'helpers'.EXT, "<?php\n");
 
-   create_dir($app_path.DS.'static');
+   create_dir($app_path.DS.'static', TRUE);
         chmod($app_path.DS.'static', 0777);
 
    create_dir($app_path.DS.'static'.DS.'css');

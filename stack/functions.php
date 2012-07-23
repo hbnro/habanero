@@ -75,9 +75,9 @@ function remove_file($path) {
   is_file($path) && unlink($path);
 }
 
-function create_dir($path) {
+function create_dir($path, $keep = FALSE) {
   status('create', "$path/");
-  mkpath($path);
+  mkpath($path) && $keep && write($path.DS.'.gitkeep', "\n");
 }
 
 function copy_dir($to, $from) {
