@@ -49,8 +49,13 @@ class routing
     $test[1] <> '/' && $params['match'] = rtrim($params['match'], '/');
 
     if ( ! empty($params['path'])) {
-      $parts = explode(' ', $params['match']);
-      url_for::register($params['path'], end($parts));
+      $test = array();
+
+      foreach (array('match', 'subdomain', 'complete', 'host', 'to') as $key) {
+        isset($params[$key]) && $test[$key] = $params[$key];
+      }
+
+      url_for::register($params['path'], $test);
     }
 
     static::$routes []= $params;
