@@ -143,8 +143,9 @@ class partial extends prototype
         }
       }
 
-
-      if (ext($name, TRUE) === EXT) {
+      if ( ! is_file($cache_file)) {
+        $output = FALSE;
+      } elseif (ext($name, TRUE) === EXT) {
         $output = render($cache_file, TRUE, array(
           'locals' => $vars,
         ));
