@@ -11,9 +11,6 @@ class routing
    * @ignore
    */
 
-  // mount root
-  private static $root = '/';
-
   // routing stack
   private static $routes = array();
 
@@ -31,6 +28,7 @@ class routing
    * @return void
    */
   final public static function bind(array $params = array()) {
+    $test   = end(static::$grouped) ?: array();
     $params = array_merge(array(
       'constraints' => array(),
       'defaults'    => array(),
@@ -38,12 +36,12 @@ class routing
       'before'      => array(),
       'after'       => array(),
       'match'       => 'GET /',
+      'root'        => '/',
       'to'          => 'raise',
-    ), $params, static::$grouped);
-
+    ), $params, $test);
 
     $test            = preg_split('/\s+/', $params['match']);
-    $test[1]         = rtrim(static::$root, '/') . $test[1];
+    $test[1]         = rtrim($params['root'], '/') . $test[1];
     $params['match'] = join(' ', $test);
 
     $test[1] <> '/' && $params['match'] = rtrim($params['match'], '/');
@@ -65,44 +63,13 @@ class routing
   /**
    * Route mounting
    *
-   * @param  string Path
-   * @param  array  Options hash
-   * @return void
-   */
-  final public static function load($path, array $params = array()) {
-    is_file($path) && static::mount(function ()
-      use($path) {
-      require $path;
-    }, $params);
-  }
-
-
-  /**
-   * Route mounting
-   *
    * @param  mixed Function callback
    * @param  array Options hash
    * @return void
    */
   final public static function mount(Closure $group, array $params = array()) {
-    $test = $params;
-
-    if (isset($params['root'])) {
-      unset($params['root']);
-    }
-
-    if (isset($params['safe'])) {
-      $params['protect'] = (boolean) $params['safe'];
-      unset($params['safe']);
-    }
-
-    static::$root    = ! empty($test['root']) ? $test['root'] : '/';
-    static::$grouped = $params;
-
-    $group();
-
-    static::$grouped = array();
-    static::$root    = '/';
+    (static::$grouped []= $params) && $group();
+    array_pop(static::$grouped);
   }
 
 
@@ -115,7 +82,16 @@ class routing
     $start  = ticks();
     $method = request::method();
 
+    @list($sub) = explode('.', server('SERVER_NAME'));
+
     foreach (static::$routes as $params) {
+      if ( ! empty($params['subdomain'])) {
+        if ( ! in_array($params['subdomain'], array('*', $sub))) {
+          continue;
+        }
+      }
+
+
       $expr = "^$params[match]$";
       $test = "$method " . URI;
 
@@ -143,6 +119,9 @@ class routing
 
           $_SESSION['--csrf-token'] = option('csrf_token');
         }
+
+
+        params(array('subdomain' => $sub));
 
         $output = request::dispatch($params);
 
