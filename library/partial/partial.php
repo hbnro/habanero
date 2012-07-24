@@ -128,7 +128,7 @@ class partial extends prototype
       $output = FALSE;
     } else {
       if (APP_ENV === 'production') {
-        $cache_file = APP_PATH.DS.'assets'.DS.'_'.DS.$path.DS.$name;
+        $cache_file = ext($file, TRUE) === EXT ? $file : APP_PATH.DS.'assets'.DS.'_'.DS.$path.DS.$name;
       } else {
         $cache_file = TMP.DS.md5($file);
 
