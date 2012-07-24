@@ -131,9 +131,9 @@ class tamal
   final private static function filtrate($filter, $value) {
     $value = static::fixate(static::unescape($value));
 
-    if (preg_match('/^\s+/', $value, $match)) {
+    if (preg_match('/^ +/', $value, $match)) {
       $max   = strlen($match[0]);
-      $value = preg_replace("/^\s{{$max}}/m", '', $value);
+      $value = preg_replace("/^ {{$max}}/m", '', $value);
     }
 
     return tamal_helper::apply($filter, array($value));
