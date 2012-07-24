@@ -100,11 +100,10 @@ $skel_dir = dirname(__DIR__).DS.'assets';
       'logs/*.log',
       'database/db.sqlite',
       'config/resources.php',
-      'config/tables.php',
       'static/img',
       'static/css',
       'static/js',
-      'assets/_',
+      'cache',
     );
 
   create_file($app_path.DS.'.gitignore', join("\n", $ignored_files) . "\n");

@@ -13,7 +13,7 @@ app_generator::implement('assets:clean', function () {
   info(ln('assets.clean_up_resources'));
 
   notice(ln('assets.clean_up_files', array('path' => 'assets/_')));
-  unfile(APP_PATH.DS.'assets'.DS.'_', '*', DIR_RECURSIVE | DIR_EMPTY);
+  unfile(APP_PATH.DS.'cache', '*', DIR_RECURSIVE | DIR_EMPTY);
 
   foreach (array('img', 'css', 'js') as $type) {
     notice(ln('assets.clean_up_files', array('path' => "static/$type")));
@@ -140,7 +140,7 @@ app_generator::implement('assets:prepare', function () {
       $path = str_replace(APP_PATH.DS, '', dirname($partial_file));
 
       if (ext($partial_file, TRUE) <> EXT) {
-        $new = $base_path.DS.'_'.DS.$path.DS.$name;
+        $new = APP_PATH.DS.'cache'.DS.$path.DS.$name;
 
         write(mkpath(dirname($new)).DS.basename($new), partial::parse($partial_file));
         notice(ln('assets.compiling_view', array('name' => $path.DS.$name)));
