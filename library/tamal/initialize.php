@@ -24,11 +24,11 @@ partial::register('tamal', function ($context) {
 // common helpers
 
 tamal_helper::implement('script', function ($value) {
-  return tag('script', array('type' => 'text/javascript'), "\n$value\n");
+  return tag('script', array('type' => 'text/javascript'), $value);
 });
 
 tamal_helper::implement('style', function ($value) {
-  return tag('style', array('type' => 'text/css'), "\n$value\n");
+  return tag('style', array('type' => 'text/css'), $value);
 });
 
 tamal_helper::implement('escape', function ($value) {
@@ -41,6 +41,22 @@ tamal_helper::implement('plain', function ($value) {
 
 tamal_helper::implement('php', function ($value) {
   return '<' . "?php $value ?>";
+});
+
+
+
+// other helpers
+
+tamal_helper::implement('chess', function ($value) {
+  return tag('style', array('type' => 'text/css'), chess::parse($value));
+});
+
+tamal_helper::implement('coffee', function ($value) {
+  return tag('script', array('type' => 'text/javascript'), coffee::parse($value));
+});
+
+tamal_helper::implement('markdown', function ($value) {
+  return md::parse($value);
 });
 
 /**#@-*/

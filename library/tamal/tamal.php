@@ -24,13 +24,13 @@ class tamal
   // code fixes
   private static $fix = array(
                     '/>\|/' => '>',
+                    '/^\s*\|/m' => '',
                     '/>\s*<\?/' => '><?',
                     '/\?>\s*<\//' => '?></',
                     '/\s*<\/pre>/s' => "\n</pre>",
                     '/<\?=\s*(.+?)\s*;?\s*\?>/' => '<?php echo \\1; ?>',
                     '/<\?php\s+(?!echo\s+|\})/' => "<?php ",
                     '/<!--#HASH\d{7}#-->/' => '',
-                    '/^\s*\|(.*?)$/m' => '\\1',
                     '/ *?<!--#PRE#-->/' => '',
                     '/\s*,?\s+\)\s*/' => ')',
                     '/>\s*<\//' => '></',
@@ -129,7 +129,14 @@ class tamal
 
   // apply filters
   final private static function filtrate($filter, $value) {
-    return tamal_helper::apply($filter, array(static::unescape($value)));
+    $value = static::fixate(static::unescape($value));
+
+    if (preg_match('/^\s+/', $value, $match)) {
+      $max   = strlen($match[0]);
+      $value = preg_replace("/^\s{{$max}}/m", '', $value);
+    }
+
+    return tamal_helper::apply($filter, array($value));
   }
 
   // render markup tags
@@ -198,11 +205,11 @@ class tamal
           $out []= static::line($value, '', $indent - static::$defs['indent']);
           continue;
         } elseif (substr(trim($key), 0, 1) === ':') {
-          $value = trim(join("\n", static::flatten($value)));
+          $value = join("\n", static::flatten($value));
           $out []= static::filtrate(substr(trim($key), 1), $value);
           continue;
         } elseif (substr(trim($key), 0, 1) === '/') {
-          $value = join("\n|", static::flatten($value));
+          $value = join("\n", static::flatten($value));
           $out []= '<!--' . trim(substr($key, 1)) . "\n$span$value\n-->";
           continue;
         } elseif (substr(trim($key), 0, 3) === 'pre') {
