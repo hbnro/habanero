@@ -150,7 +150,7 @@ class assets extends prototype
       return $path;
     }
 
-    return server(TRUE, url_for('static'.DS.($prefix ? $prefix : ext($path)).DS.$path), option('host') ?: FALSE);
+    return server(TRUE, url_for('static'.DS.($prefix ? $prefix : ext($path)).DS.$path), option('assets.host') ?: FALSE);
   }
 
 
