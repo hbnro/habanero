@@ -12,7 +12,7 @@ app_generator::alias('assets:clean', 'clean clear');
 app_generator::implement('assets:clean', function () {
   info(ln('assets.clean_up_resources'));
 
-  notice(ln('assets.clean_up_files', array('path' => 'assets/_')));
+  notice(ln('assets.clean_up_files', array('path' => 'cache')));
   unfile(APP_PATH.DS.'cache', '*', DIR_RECURSIVE | DIR_EMPTY);
 
   foreach (array('img', 'css', 'js') as $type) {
