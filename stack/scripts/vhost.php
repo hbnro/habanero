@@ -2,24 +2,28 @@
 
 info(ln('verifying_vhosts'));
 
-$paths = array(
-  '/etc/apache2/sites-available',
-  '/etc/apache2/extra/httpd-vhosts.conf',
-  '/private/etc/apache2/virtualhosts',
-  '/private/etc/apache2/extra/httpd-vhosts.conf',
-);
-
-foreach ($paths as $one) {
-  if (file_exists($one)) {
-    $vhost_path = $one;
-    break;
-  }
-}
-
-if (empty($vhost_path)) {
-  error(ln('missing_vhost_conf'));
+if (IS_WIN) {
+  success(vhost_template());
 } else {
-  is_dir($vhost_path) ? vhost_create($vhost_path) : vhost_write($vhost_path);
+  $paths = array(
+    '/etc/apache2/sites-available',
+    '/etc/apache2/extra/httpd-vhosts.conf',
+    '/private/etc/apache2/virtualhosts',
+    '/private/etc/apache2/extra/httpd-vhosts.conf',
+  );
+
+  foreach ($paths as $one) {
+    if (file_exists($one)) {
+      $vhost_path = $one;
+      break;
+    }
+  }
+
+  if (empty($vhost_path)) {
+    error(ln('missing_vhost_conf'));
+  } else {
+    is_dir($vhost_path) ? vhost_create($vhost_path) : vhost_write($vhost_path);
+  }
 }
 
 done();
