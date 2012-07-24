@@ -20,12 +20,12 @@ class url_for extends prototype
   /**
    * Register path
    *
-   * @param  string Named path
-   * @param  string Real path
+   * @param  string Path
+   * @param  array  Params
    * @return void
    */
-  public static function register($path, $to) {
-    static::$map[$path] = $to;
+  public static function register($path, array $params) {
+    static::$map[$path] = $params;
   }
 
 
@@ -37,25 +37,34 @@ class url_for extends prototype
    * @return string
    */
   public static function missing($method, $arguments) {
-    $params = array();
-
+    $vars = array();
     $test = array_pop($arguments);
 
     if (is_assoc($test)) {
-      $params = $test;
+      $vars = $test;
     } else {
       $test && $arguments []= $test;
     }
 
-    $route = ! empty(static::$map[$method]) ? static::$map[$method] : strtr($method, '_', '/');
-    $extra = $arguments ? '/' . join('/', array_filter($arguments)) : '';
 
-    $route = preg_replace_callback('/:([^:()\/]+)/', function($match)
-      use($params) {
-      return ! empty($params[$match[1]]) ? $params[$match[1]] : $match[0];
-    }, $route);
+    if ( ! empty(static::$map[$method])) {
 
-    $out = url_for($route . $extra, $params);
+      $params = static::$map[$method];
+      $extra  = $arguments ? '/' . join('/', array_filter($arguments)) : '';
+
+      @list(,$route) = explode(' ', $params['match']);
+
+      $route  = preg_replace_callback('/:([^:()\/]+)/', function($match)
+        use($vars) {
+        return ! empty($vars[$match[1]]) ? $vars[$match[1]] : $match[0];
+      }, $route);
+
+      $params['action'] = "$route$extra";
+    } else {
+      $params['action'] = strtr($method, '_', '/');
+    }
+
+    $out = url_for($params);
 
     do {
       $tmp = $out;
