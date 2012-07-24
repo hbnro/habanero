@@ -52,7 +52,7 @@ class url_for extends prototype
       $params = static::$map[$method];
       $extra  = $arguments ? '/' . join('/', array_filter($arguments)) : '';
 
-      @list(,$route) = explode(' ', $params['match']);
+      @list(, $route) = explode(' ', $params['match']);
 
       $route  = preg_replace_callback('/:([^:()\/]+)/', function($match)
         use($vars) {
