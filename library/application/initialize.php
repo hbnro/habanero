@@ -47,13 +47,14 @@ core::bind(function ($bootstrap) {
   get('/static/*path', function () {
     return assets::read(params('path'));
   }, array(
+    'subdomain' => '*', // TODO: Y U NO CDN?
     'constraints' => array(
       '*path' => '(?:img|css|js)/.+',
     ),
   ));
 
-
-  routing::load(APP_PATH.DS.'config'.DS.'routes'.EXT, array('safe' => TRUE));
+  // TODO: no further configuration?
+  require APP_PATH.DS.'config'.DS.'routes'.EXT;
 
   // initializers
   if (is_dir($init_path = APP_PATH.DS.'config'.DS.'initializers')) {
