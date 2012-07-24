@@ -34,6 +34,20 @@ function url_for($action, array $params = array()) {
     'complete' => FALSE,
   ), $params);
 
+
+  if ( ! empty($params['subdomain'])) {
+    // TODO: how should improve this?
+    $server = server('SERVER_NAME');
+
+    if ( ! is_ip($server)) {
+      @list(, $host) = explode('.', $server, 2);
+
+      $params['host'] = TRUE;
+      $params['complete'] = "{$params['subdomain']}.$host";
+    }
+  }
+
+
   $abs     = $params['complete'];
   $link    = $params['host'] ? server(TRUE, ROOT, $abs) : ROOT;
   $rewrite = (boolean) option('rewrite');
