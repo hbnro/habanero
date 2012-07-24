@@ -72,7 +72,7 @@ core::bind(function ($bootstrap) {
 
   request::implement('dispatch', function (array $params = array())
     use($request) {
-    if (is_callable($params['to'])) {
+    if (is_callable($params['to']) OR is_file($params['to'])) {
       return $request['dispatch']($params);
     } else {
       params($params['matches']);
