@@ -131,7 +131,7 @@ class partial extends prototype
         $cache_dir  = APP_PATH.DS.'assets'.DS.'_';
         $cache_file = $cache_dir.DS.str_replace(APP_PATH.DS, '', $file);
       } else {
-        $cache_file = TMP.DS.md5($file);;
+        $cache_file = TMP.DS.md5($file);
 
         if (is_file($cache_file)) {
           if (filemtime($file) > filemtime($cache_file)) {
@@ -146,13 +146,10 @@ class partial extends prototype
         }
       }
 
-      if (strpos($file, EXT) !== FALSE) {
-        $output = render($cache_file, TRUE, array(
-          'locals' => $vars,
-        ));
-      } else {
-        $output = read($file);
-      }
+      // TODO: if the file is plain text WAT?
+      $output = render($cache_file, TRUE, array(
+        'locals' => $vars,
+      ));
     } else {
       $output = render($file, TRUE, array(
         'locals' => $vars,
