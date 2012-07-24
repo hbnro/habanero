@@ -102,7 +102,7 @@ application::implement('execute', function ($controller, $action = 'index') {
     @list($status, $view, $headers) = $class_name::apply('prepare', $test);
     $class_name::$response = compact('status', 'headers');
   } else {
-    $view = partial::render($view_file, (array) $class_name::$view);
+    $view = partial($view_file, (array) $class_name::$view);
 
     if ($class_name::$layout !== FALSE) {
       $layout_file = "layouts/{$class_name::$layout}";

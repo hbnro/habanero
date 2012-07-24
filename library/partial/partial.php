@@ -119,17 +119,16 @@ class partial extends prototype
    * @return string
    */
   final public static function render($file, array $vars = array()) {
-    if ( ! is_file($file)) {
-      return ln('partial.view_missing', array('path' => dirname($file), 'action' => basename($file)));
-    }
-
-
     $start = ticks();
 
-    if (ext($file, TRUE) <> EXT) {
+    $name  = join('.', array_slice(explode('.', basename($file)), 0, 3));
+    $path  = str_replace(APP_PATH.DS, '', dirname($file));
+
+    if ( ! is_file($file)) {
+      $output = FALSE;
+    } else {
       if (APP_ENV === 'production') {
-        $cache_dir  = APP_PATH.DS.'assets'.DS.'_';
-        $cache_file = $cache_dir.DS.str_replace(APP_PATH.DS, '', $file);
+        $cache_file = APP_PATH.DS.'assets'.DS.'_'.DS.$path.DS.$name;
       } else {
         $cache_file = TMP.DS.md5($file);
 
@@ -139,24 +138,27 @@ class partial extends prototype
           }
         }
 
-
         if ( ! is_file($cache_file)) {
-          $output = static::parse($file);
-          write($cache_file, $output);
+          write($cache_file, static::parse($file));
         }
       }
 
-      // TODO: if the file is plain text WAT?
-      $output = render($cache_file, TRUE, array(
-        'locals' => $vars,
-      ));
-    } else {
-      $output = render($file, TRUE, array(
-        'locals' => $vars,
-      ));
+
+      if (ext($name, TRUE) === EXT) {
+        $output = render($cache_file, TRUE, array(
+          'locals' => $vars,
+        ));
+      } else {
+        $output = read($cache_file);
+      }
     }
 
-    logger::debug("Render: ($file) ", ticks($start));
+
+    if ($output === FALSE) {
+      return ln('partial.view_missing', array('path' => dirname($file), 'action' => basename($file)));
+    }
+
+    logger::debug('Render: (', $path.DS.$name, ')', ticks($start));
 
     return $output;
   }
@@ -195,13 +197,20 @@ class partial extends prototype
    * @return string
    */
   final public static function load($from, array $vars = array()) {
-    @list($action, $path) = array(basename($from), dirname($from));
+    if (is_file($from)) {
+      $tpl_file = $from;
+    } else {
+      $tpl_file = APP_PATH.DS.'views'.DS.ltrim(str_replace('/', DS, $from), DS);
 
-    $tpl_file = findfile($path, "$action*", FALSE, 1);
+      @list($action, $path) = array(basename($tpl_file), dirname($tpl_file));
 
-    if ( ! is_file($tpl_file)) {
-      return ln('partial.view_missing', array('path' => $path, 'action' => $action));
+      $tpl_file = findfile($path, "$action*", FALSE, 1);
+
+      if ( ! is_file($tpl_file)) {
+        return ln('partial.view_missing', array('path' => $path, 'action' => $action));
+      }
     }
+
     return static::render($tpl_file, $vars);
   }
 

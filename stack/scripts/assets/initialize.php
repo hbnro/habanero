@@ -133,15 +133,19 @@ app_generator::implement('assets:prepare', function () {
 
 
 
+
   if ($test = array_filter(dir2arr(APP_PATH.DS.'views', '*', DIR_RECURSIVE), 'is_file')) {
     foreach ($test as $partial_file) {
+      $name = join('.', array_slice(explode('.', basename($partial_file)), 0, 3));
+      $path = str_replace(APP_PATH.DS, '', dirname($partial_file));
+
       if (ext($partial_file, TRUE) <> EXT) {
-        $key = str_replace(APP_PATH.DS, '', $partial_file);
-        $new = $base_path.DS.'_'.DS.$key;
+        $new = $base_path.DS.'_'.DS.$path.DS.$name;
 
         write(mkpath(dirname($new)).DS.basename($new), partial::parse($partial_file));
-        notice(ln('assets.compiling_view', array('name' => $key)));
+        notice(ln('assets.compiling_view', array('name' => $path.DS.$name)));
       }
+
     }
   }
 
