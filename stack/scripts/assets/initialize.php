@@ -15,11 +15,14 @@ app_generator::implement('assets:clean', function () {
   notice(ln('assets.clean_up_files', array('path' => 'cache')));
   unfile(APP_PATH.DS.'cache', '*', DIR_RECURSIVE | DIR_EMPTY);
 
-  foreach (array('img', 'css', 'js') as $type) {
-    notice(ln('assets.clean_up_files', array('path' => "static/$type")));
-    unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
+  if (s3_handle()) {
+    s3_clean_bucket();
+  } else {
+    foreach (array('img', 'css', 'js') as $type) {
+      notice(ln('assets.clean_up_files', array('path' => "static/$type")));
+      unfile(APP_PATH.DS.'static'.DS.$type, '*', DIR_RECURSIVE | DIR_EMPTY);
+    }
   }
-
 
   notice(ln('assets.removing_file', array('path' => 'config/resources'.EXT)));
   is_file($res_file = APP_PATH.DS.'config'.DS.'resources'.EXT) && unlink($res_file);
@@ -58,11 +61,14 @@ app_generator::implement('assets:prepare', function () {
     foreach ($test as $file) {
       $file_hash  = md5(md5_file($file) . filesize($file));
       $file_name  = str_replace($img_path.DS, '', extn($file)) . $file_hash . ext($file, TRUE);
-
       $static_img = $img_dir.DS.$file_name;
 
-      ! is_dir(dirname($static_img)) && mkpath(dirname($static_img));
-      ! is_file($static_img) && copy($file, $static_img);
+      if (s3_handle()) {
+        s3_upload_asset($file, str_replace($static_dir.DS, '', $static_img));
+      } else {
+        ! is_dir(dirname($static_img)) && mkpath(dirname($static_img));
+        ! is_file($static_img) && copy($file, $static_img);
+      }
 
       assets::assign($path = str_replace($base_path.DS, '', $file), $file_hash);
       success(ln('assets.compiling_asset', array('name' => $path, 'hash' => $file_hash)));
@@ -82,14 +88,19 @@ app_generator::implement('assets:prepare', function () {
           $key = str_replace($base_path.DS, '', $old);
           $new = $static_dir.DS.$key;
 
-          if ( ! is_file($new) OR ! isset($cache[$key])) {
-            copy($old, mkpath(dirname($new)).DS.basename($new));
-            notice(ln('assets.copying_asset', array('name' => $key)));
+          if ( ! isset($cache[$key])) {
+            if (s3_handle()) {
+              s3_upload_asset($old, $key);
+            } elseif ( ! is_file($new)) {
+              copy($old, mkpath(dirname($new)).DS.basename($new));
+            }
+
             $cache[$key] = 1;
+
+            notice(ln('assets.copying_asset', array('name' => $key)));
           }
         }
       }
-
 
 
       foreach ($tmp['include'] as $test) {
@@ -117,13 +128,18 @@ app_generator::implement('assets:prepare', function () {
           return assets::resolve($match[0]);
         }, $out);
 
-        write($tmp = TMP.DS.md5($file), ext($file) === 'css' ? $css_min($out) : jsmin::minify($out));
+        write($tmp = TMP.DS.md5($file), $out = ext($file) === 'css' ? $css_min($out) : jsmin::minify($out));
 
         $hash     = md5(md5_file($tmp) . filesize($tmp));
         $name     = str_replace($base_path.DS, '', $file);
         $min_file = $static_dir.DS.ext($file).DS.extn($name).$hash.ext($file, TRUE);
 
-        rename($tmp, mkpath(dirname($min_file)).DS.basename($min_file));
+
+        if (s3_handle()) {
+          s3_upload_asset($tmp, str_replace($static_dir.DS, '', $min_file));
+        } else {
+          rename($tmp, mkpath(dirname($min_file)).DS.basename($min_file));
+        }
 
         assets::assign($path = str_replace($base_path.DS, '', $file), $hash);
         success(ln('assets.compiling_asset', array('name' => $path, 'hash' => $hash)));
@@ -153,5 +169,44 @@ app_generator::implement('assets:prepare', function () {
 
   done();
 });
+
+
+
+function s3_handle() {
+  static $s3 = FALSE;
+
+
+  if ( ! $s3 && ($test = option('assets.s3'))) {
+    $s3 = TRUE;
+
+    as3::config($test);
+
+    $set    = as3::buckets();
+    $name   = as3::option('bucket');
+    $region = as3::option('location') ?: FALSE;
+
+    if ( ! isset($set[$name])) {
+      as3::put_bucket($name, S3::ACL_PUBLIC_READ, $region);
+    }
+  }
+  return $s3;
+}
+
+function s3_clean_bucket() {
+  $name = as3::option('bucket');
+  $test = array('img', 'css', 'js');
+
+  foreach ($test as $one) {
+    $old = as3::get_bucket($name, "$one/");
+
+    foreach ($old as $file) {
+      as3::delete_object($name, $file['name']);
+    }
+  }
+}
+
+function s3_upload_asset($file, $path) {
+  as3::put_object_file($file, as3::option('bucket'), $path, S3::ACL_PUBLIC_READ, array(), mime($path));
+}
 
 /* EOF: ./stack/scripts/assets/initialize.php */

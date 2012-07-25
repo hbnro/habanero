@@ -150,7 +150,21 @@ class assets extends prototype
       return $path;
     }
 
-    return server(TRUE, url_for('static'.DS.($prefix ? $prefix : ext($path)).DS.$path), option('assets.host') ?: FALSE);
+
+    $prefix = $prefix ? $prefix : ext($path);
+    $path   = "$prefix/$path";
+
+    if (option('assets.s3')) {// TODO: ok?
+      $name   = option('assets.s3.bucket');
+      $region = option('assets.s3.location');
+
+      return "//$name." . ($region ? "$region." : '') . "s3.amazonaws.com/$path";
+    }
+
+    return url_for("static/$path", array(
+      'complete' => option('assets.host') ?: FALSE,
+      'host' => TRUE,
+    ));
   }
 
 
