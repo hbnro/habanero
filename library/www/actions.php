@@ -27,31 +27,34 @@ function url_for($action, array $params = array()) {
 
 
   $params  = array_merge(array(
-    'action'   => '',
-    'anchor'   => '',
-    'locals'   => array(),
-    'host'     => FALSE,
-    'complete' => FALSE,
+    'action' => '',
+    'anchor' => '',
+    'locals' => array(),
+    'host'   => FALSE,
+    'full'   => FALSE,
   ), $params);
 
 
   if ( ! empty($params['subdomain'])) {
-    // TODO: how should improve this?
-    $server = server('SERVER_NAME');
+    $sub = str_replace('*', 'www', $params['subdomain']);
+    $cur = server('SERVER_NAME');
 
-    if ( ! is_ip($server)) {
-      @list(, $host) = explode('.', $server, 2);
+    if ( ! is_ip($cur)) {
+      @list(, $host) = explode('.', $cur, 2);
 
-      $params['host'] = TRUE;
-      $params['complete'] = "{$params['subdomain']}.$host";
+      $host = "$sub.$host";
+    } else {
+      $host = $cur;
+    }
+
+    if (strpos($cur, "$sub.") === FALSE) {
+      $params['host'] = $params['full'] ? str_replace($cur, $host, server(TRUE)) : "//$host";
     }
   }
 
 
-  $abs     = $params['complete'];
-  $link    = $params['host'] ? server(TRUE, ROOT, $abs) : ROOT;
+  $link    = $params['host'] ? server(TRUE, ROOT, $params['host']) : ROOT;
   $rewrite = (boolean) option('rewrite');
-
 
   ! $rewrite && $link .= INDEX;
 
