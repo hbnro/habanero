@@ -162,8 +162,7 @@ class assets extends prototype
     }
 
     return url_for("static/$path", array(
-      'complete' => option('assets.host') ?: FALSE,
-      'host' => TRUE,
+      'host' => option('assets.host') ?: FALSE,
     ));
   }
 
