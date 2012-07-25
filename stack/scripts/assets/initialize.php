@@ -197,6 +197,7 @@ function s3_clean_bucket() {
   $test = array('img', 'css', 'js');
 
   foreach ($test as $one) {
+    notice(ln('assets.clean_up_files', array('path' => "$one/")));
     $old = as3::get_bucket($name, "$one/");
 
     foreach ($old as $file) {
