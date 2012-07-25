@@ -115,7 +115,7 @@ core::bind(function ($bootstrap) {
     // TODO: try another session drivers?
     // session conf
     if ( ! request::is_local()) {
-      $host = server();
+      $host = server('SERVER_NAME');
       $host = is_ip($host) ? $host : ".$host";
 
       session_set_cookie_params(86400, ROOT, $host);
