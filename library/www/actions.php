@@ -90,37 +90,6 @@ function url_for($action, array $params = array()) {
 
 
 /**
- * Prepare link automatically
- *
- * @param  string Link|Email|Path
- * @return string
- */
-function pre_url($text) {
-  $text = str_replace('mailto:', '', $text);
-
-  if (preg_match('/[?#]/', $text) OR (substr($text, 0, 2) == '//')) {
-    return $text;
-  }
-
-
-  if (is_email($text)) {
-    $text = 'mailto:' . rawurlencode($text);
-  } elseif (substr($text, 0, 1) === '/') {
-    $text = url_for($text, array(
-      'complete' => TRUE,
-      'host' => TRUE,
-    ));
-  } elseif (substr($text, 0, 2) == './') {
-    $text = server(TRUE, ROOT . substr($text, 2), TRUE);
-  } elseif ( ! preg_match('/^[a-z]{2,7}:\/\//', $text)) {
-    $text = "http://$text";
-  }
-
-  return $text;
-}
-
-
-/**
  * HTML tag link builder
  *
  * @param  mixed  Link text|Options hash|Path
