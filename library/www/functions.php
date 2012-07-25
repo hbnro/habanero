@@ -207,39 +207,29 @@ function segment($index = 1, $default = FALSE) {
 /**
  * Server variable access
  *
- * @param  string Identifier
- * @param  mixed  Default value
- * @param  mixed  Full scheme?|Hostname
+ * @param  mixed Key|Build?
+ * @param  mixed Default value
+ * @param  mixed Full scheme?|Hostname
  * @return mixed
  */
-function server($key = '', $default = FALSE, $complete = FALSE) {
+function server($key, $default = FALSE, $hostname = FALSE) {
   global $_SERVER;
 
-  if (func_num_args() == 0) {
-    $test = explode('.', $_SERVER['SERVER_NAME']);
-
-    if ( ! empty($test[0]) && ($test[0] === 'www')) {
-      array_shift($test);
-    }
-
-    return join('.', $test);
-  } elseif ($key === TRUE) {
+  if ($key === TRUE) {
     $host = '';
+    $cur  = $_SERVER['SERVER_NAME'];
 
-    if ($complete) {
+    if (($hostname === TRUE) OR (func_num_args() === 1)) {
       $pre   = explode('/', $_SERVER['SERVER_PROTOCOL']);
 
       $host .= strtolower(array_shift($pre));
       $host .= ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '';
-      $host .= ':';//FIX
+      $host .= "://$cur" . ((int) $_SERVER['SERVER_PORT'] !== 80 ? ":$_SERVER[SERVER_PORT]" : '');
+    } else {
+      $host .= $hostname;
     }
 
-
-    $host .= '//' . preg_replace('/:\d+/', '', is_string($complete) ? $complete : $_SERVER['HTTP_HOST']);
-    $host .= (int) $_SERVER['SERVER_PORT'] !== 80 ? ":$_SERVER[SERVER_PORT]" : '';
-    $host .= $default !== FALSE ? $default : '';
-
-    return $host;
+    return "$host$default";
   } elseif ( ! empty($_SERVER[$key])) {
     return strip_tags($_SERVER[$key]); //FIX?
   }
