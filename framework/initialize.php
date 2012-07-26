@@ -125,17 +125,15 @@ call_user_func(function () {
   i18n::load_path(__DIR__.DS.'locale');
 
 
-  // default error and exception hanlders
-  set_exception_handler(function ($E) {
-    raise(ln('exception_error', array('message' => $E->getMessage(), 'file' => $E->getFile(), 'number' => $E->getLine())));
-  });
-
+  // default error and exception handlers
+  set_exception_handler('raise');
   set_error_handler(function ($errno, $errmsg, $file, $line, $trace) {
     if (($errno & error_reporting()) == $errno) {
-      raise(ln('error_debug', array('error' => $errmsg, 'file' => $file, 'number' => $line)));
+      raise(ln('error_debug', array('error' => $errmsg, 'file' => $file, 'number' => $line)), $trace);
 
       return TRUE;
     }
+    return FALSE;
   });
 });
 

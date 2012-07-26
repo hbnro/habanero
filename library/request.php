@@ -114,7 +114,7 @@ class request extends prototype
   * @return string
   */
   final public static function address() {
-    return is_callable('gethostbyaddr') ? gethostbyaddr(static::remote_ip()) : static::remote_ip();
+    return is_callable('gethostbyaddr') ? gethostbyaddr(static::ip()) : static::ip();
   }
 
 
@@ -165,7 +165,7 @@ class request extends prototype
   * @param  string Default value
   * @return string
   */
-  final public static function remote_ip($or = FALSE) {
+  final public static function ip($or = FALSE) {
     return server('HTTP_X_FORWARDED_FOR', server('HTTP_CLIENT_IP', server('REMOTE_ADDR', $or)));
   }
 
@@ -304,18 +304,11 @@ class request extends prototype
    * @return    boolean
    */
   final public static function is_safe() {
-    static $_token = NULL;
-
-
-    if (is_null($_token)) {
-      $_token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
-    }
-
-
     $check = option('csrf_check');
+    $token = value($_SERVER, 'HTTP_X_CSRF_TOKEN');
 
     @list($old_time, $old_token) = explode(' ', $check);
-    @list($new_time, $new_token) = explode(' ', $_token);
+    @list($new_time, $new_token) = explode(' ', $token);
 
     if (((time() - $old_time) < option('security.csrf_expire', 300)) && ($old_token === $new_token)) {
       return TRUE;

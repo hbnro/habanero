@@ -159,7 +159,7 @@ class partial extends prototype
       return ln('partial.view_missing', array('path' => dirname($file), 'action' => basename($file)));
     }
 
-    logger::debug('Render: (', $path.DS.$name, ')', ticks($start));
+    logger::debug('Render: (', $path.DS.$name, ') ', ticks($start));
 
     return $output;
   }

@@ -94,9 +94,10 @@ core::bind(function ($bootstrap) {
 
 // logger
 logger::implement('write', function ($type, $message) {
+  $ip      = request::ip('--');
   $date    = date('Y-m-d H:i:s');
   $message = preg_replace('/[\r\n]+\s*/', ' ', $message);
-  write(APP_PATH.DS.'logs'.DS.APP_ENV.'.log', "[$date] [$type] $message\n", 1);
+  write(APP_PATH.DS.'logs'.DS.APP_ENV.'.log', "[$date] [$ip] [$type] $message\n", 1);
 });
 
 /**#@-*/

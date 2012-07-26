@@ -77,9 +77,7 @@ class i18n
     $from    = static::load_locale();
 
     $prefix  = $params['scope'] ? "$params[scope]." : '';
-    $default = $params['default'] ?: $params['string'];
-
-    $string  = value($from, "$prefix$params[string]", $default);
+    $string  = value($from, "$prefix$params[string]", $params['default'] ?: dump($params));
 
     $string  = preg_replace_callback('/%\{(.+?)\}/', function ($match)
       use($params) {

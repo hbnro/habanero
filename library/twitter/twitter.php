@@ -137,7 +137,7 @@ class twitter extends prototype
     if ( ! empty($test['oauth_token'])) {
       return static::$authorize_url . '?oauth_token=' . $test['oauth_token'];
     } else {
-      raise(strtr(key($test), '_', ' '));
+      raise(strtr(key($test), '_', ' '), $test);
     }
   }
 

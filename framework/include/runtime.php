@@ -80,7 +80,7 @@ function render($content, $partial = FALSE, array $params = array()) {
   if ( ! empty($params['output'])) {// intentionally plain response
     die($params['output']);
   } elseif ( ! is_file($params['content'])) {
-    raise(ln('file_not_exists', array('name' => $params['content'])));
+    raise(ln('file_not_exists', array('name' => $params['content'])), $params);
   }
 
   $output = $view($params['content'], $params['locals']);
@@ -100,12 +100,16 @@ function render($content, $partial = FALSE, array $params = array()) {
  * @return void
  */
 function raise($message, $debug = NULL) {
-  if (is_closure($message)) {// TODO: there is another way?
-    return core::implement('raise', $message);
+  if (is_object($message)) {
+    if ($message instanceof Exception) {
+      $message = ln('exception_error', array('message' => $message->getMessage(), 'file' => $message->getFile(), 'number' => $message->getLine()));
+    } else { // TODO: no look up for __toString()?
+      $message = (string) $message;
+    }
   }
 
   // invoke custom handler
-  logger::raise("$message ---> " . dump($debug));
+  logger::raise($message, $debug ? ' ---> ' . dump($debug) : '');
   core::raise($message, $debug);
 }
 
