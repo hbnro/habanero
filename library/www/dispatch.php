@@ -93,10 +93,6 @@ function response($content, array $params = array()) {
     $params['output'] = $content;
   }
 
-  if ( ! empty($params['text'])) {
-    $params['output'] = $params['text'];
-  }
-
 
   if (empty($params['output'])) {
     raise(ln('function_param_missing', array('name' => __FUNCTION__, 'input' => 'output')));
