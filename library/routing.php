@@ -115,7 +115,7 @@ class routing
           config('csrf_token', request::is_ajax() ? value($_SERVER, 'HTTP_X_CSRF_TOKEN') : time() . ' ' . sha1(salt(13)));
           config('csrf_check', ! empty($_SESSION['--csrf-token']) ? $_SESSION['--csrf-token'] : NULL);
 
-          ($method <> 'GET') && ! request::is_safe() && raise(ln('invalid_authenticity_token'));
+          ($method <> 'GET') && ! request::is_safe() && raise(ln('invalid_authenticity_token'), $params);
 
           $_SESSION['--csrf-token'] = option('csrf_token');
         }
