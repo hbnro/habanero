@@ -44,6 +44,8 @@ assets::implement('read', function ($path) {
           $out = read($old_file);
         }
       }
+    } else {
+      raise(ln('file_not_exists', array('name' => $path)));
     }
   }
 
