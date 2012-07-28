@@ -31,7 +31,6 @@ function url_for($action, array $params = array()) {
     'anchor' => '',
     'locals' => array(),
     'host'   => FALSE,
-    'full'   => FALSE,
   ), $params);
 
 
@@ -48,7 +47,7 @@ function url_for($action, array $params = array()) {
     }
 
     if (strpos($cur, "$sub.") === FALSE) {
-      $params['host'] = $params['full'] ? str_replace($cur, $host, server(TRUE)) : "//$host";
+      $params['host'] = str_replace($cur, $host, server(TRUE));
     }
   }
 
