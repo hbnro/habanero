@@ -49,7 +49,7 @@ class routing
     if ( ! empty($params['path'])) {
       $test = array();
 
-      foreach (array('match', 'subdomain', 'full', 'host', 'to') as $key) {
+      foreach (array('match', 'subdomain', 'host', 'to') as $key) {
         isset($params[$key]) && $test[$key] = $params[$key];
       }
 
