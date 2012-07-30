@@ -31,6 +31,10 @@ function help() {
   cli::write(cli::format(app_generator::help(cli::flag('help'))));
 }
 
+function task($name, $params) {
+  app_generator::task($name, $params);
+}
+
 function error($text) {
   cli::writeln(cli::format("\bred($text)\b"));
 }

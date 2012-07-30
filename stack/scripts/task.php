@@ -18,8 +18,7 @@ if ( ! $ns) {
 
       mkpath($path);
       write($path.DS.'config'.EXT, '<' . "?php\n\$option = 'value';");
-      write(mkpath($path.DS.'locale').DS.'en'.EXT, '<' . "?php\n\$lang['default_title'] = 'The $ns description';\n");
-      write($path.DS.'initialize'.EXT, '<' . "?php\ni18n::load_path(__DIR__.DS.'locale', '$ns');\n");
+      write($path.DS.'initialize'.EXT, '<' . "?php\n");
     }
 
     notice(ln('creating_script', array('name' => $ns)));
@@ -32,7 +31,7 @@ if ( ! $ns) {
       if (app_generator::exists($ns, $one)) {
         error(ln('task_exists', array('command' => $one)));
       } elseif (is_file($script = $path.DS.'initialize'.EXT)) {
-        write($script, "\napp_generator::task('$ns:$one', array(\n  'desc' => ln('$ns.{$one}_title'),\n  'exec' => function (\$config) {},\n));\n", 1);
+        write($script, "\ntask('$ns:$one', array(\n  'desc' => 'The $one task'),\n  'exec' => function (\$config) {},\n));\n", 1);
         success(ln('creating_task', array('command' => $one)));
       }
     }
