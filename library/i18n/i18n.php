@@ -123,6 +123,7 @@ class i18n
       '.php' => 'array',
       '.csv' => 'csv',
       '.ini' => 'ini',
+      '.yaml' => 'yaml',
     ) as $ext => $type) {
       $callback = 'static::load_' . $type;
 
@@ -303,6 +304,20 @@ class i18n
     $out = parse_ini_file($from, FALSE);
 
     return $out;
+  }
+
+
+  /**
+   * Import YAML translations file
+   *
+   * @param  string path
+   * @return mixed
+   */
+  final public static function load_yaml($from) {
+    if ( ! is_file($from)) {
+      return FALSE;
+    }
+    return yaml::parse_file($from);
   }
 
 }
