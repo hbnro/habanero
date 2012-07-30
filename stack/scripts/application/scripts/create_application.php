@@ -94,7 +94,7 @@ $skel_dir = dirname(__DIR__).DS.'assets';
     $ignored_files = array(
       '*~',
       '*.log',
-      'tetlphp',
+      'habanero',
       '.develop',
       '.DS_Store',
       'logs/*.log',

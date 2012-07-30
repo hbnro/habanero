@@ -4,7 +4,7 @@
  * Web development framework for php5.3+
  *
  * @author Alvaro Cabrera (@pateketrueke)
- * @link   https://github.com/pateketrueke/tetlphp
+ * @link   https://github.com/pateketrueke/habanero
  */
 
 // do!

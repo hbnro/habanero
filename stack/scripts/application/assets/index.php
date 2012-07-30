@@ -2,7 +2,7 @@
 
 chdir(__DIR__);
 
-require 'tetlphp/framework/initialize.php';
+require 'habanero/framework/initialize.php';
 
 import(array('application', 'helpers', 'tamal'));
 import(array('development' => array('chess', 'coffee')));

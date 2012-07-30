@@ -2,10 +2,10 @@
 
 info(ln('copying_libraries'));
 
-$tetl_path  = APP_PATH.DS.'tetlphp';
+$base_path  = APP_PATH.DS.'habanero';
 
-is_dir($tetl_path) && unfile($tetl_path, '*', DIR_RECURSIVE | DIR_EMPTY);
-mkpath($tetl_path);
+is_dir($base_path) && unfile($base_path, '*', DIR_RECURSIVE | DIR_EMPTY);
+mkpath($base_path);
 
 
 $stub_file = APP_PATH.DS.'Stubfile';
@@ -19,10 +19,10 @@ preg_match_all('/\s*-\s*(\S+)/m', $stub, $matches);
 ! empty($matches[1]) && $libs = $matches[1];
 
 // TODO: allow + to copy full paths? i.e. + stack/console
-success(ln('copying_stub_path', array('name' => 'framework', 'path' => str_replace(APP_PATH, '.', $tetl_path))));
-cpfiles(LIB, $tetl_path.DS.'framework', '*', TRUE);
+success(ln('copying_stub_path', array('name' => 'framework', 'path' => str_replace(APP_PATH, '.', $base_path))));
+cpfiles(LIB, $base_path.DS.'framework', '*', TRUE);
 
-$stub_path = $tetl_path.DS.'library';
+$stub_path = $base_path.DS.'library';
 $path      = dirname(LIB).DS.'library';
 
 foreach ($libs as $one) {
@@ -39,7 +39,7 @@ foreach ($libs as $one) {
 
 // compactize!
 if ( !! `php -v`) {
-  $test = dir2arr($tetl_path, '*'.EXT, DIR_RECURSIVE);
+  $test = dir2arr($base_path, '*'.EXT, DIR_RECURSIVE);
   $test = array_filter($test, 'is_file');
 
   if ( ! cli::flag('no-compress')) {
