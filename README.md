@@ -49,7 +49,7 @@ own opinion the first place where you should release your startup application.
 
 
     # Set up your database at first
-    $ heroku run "bin/atl migrate --schema"
+    $ heroku run "bin/hs migrate --schema"
 
 
 Frequently Asked Questions

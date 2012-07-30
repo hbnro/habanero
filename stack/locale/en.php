@@ -6,10 +6,10 @@
 
 $lang['welcome'] = <<<INTRO
 
-  Welcome to the \blight_gray,black(atl)\b console utility!
+  Welcome to the \blight_gray,black(habanero-sauce)\b console utility!
 
   Usage:
-    atl \bgreen(<command>)\b [arguments] [...]
+    hs \bgreen(<command>)\b [arguments] [...]
 
   Extras:
     --run \bcyan(script[:param])\b      Execute tasks and scripts
@@ -27,16 +27,6 @@ $lang['welcome'] = <<<INTRO
     --help                    Display the descriptions of all generators
 
     \cyellow(* needs sudo permissions)\c
-
-  Examples:
-    \bwhite(sudo)\b atl --vhost
-    atl --run rsync:deploy
-    atl --config --global --language=es
-    atl assets:prepare
-    atl app:create blog
-    atl db:create_table post title:string body:text --timestamps
-    atl ar:model post
-
 
 INTRO;
 
