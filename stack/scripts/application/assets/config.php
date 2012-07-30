@@ -3,7 +3,9 @@
 # $config['rewrite'] = 1;
 # $config['language'] = 'en';
 # $config['timezone'] = 'UTC';
-# $config['assets']['host'] = 'www.domain.tld';
+# $config['domain'] = 'domain.tld';
+# $config['subdomain'] = 'www';
+# $config['assets']['host'] = '//www.domain.tld';
 # $config['security']['csrf_expire'] = 300;
 # $config['database']['default'] = 'sqlite:'.APP_PATH.DS.'database'.DS.'db.sqlite';
 
