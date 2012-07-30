@@ -5,6 +5,9 @@ $params = array('locals' => compact('pk', 'model', 'fields'));
 $controller_file = APP_PATH.DS.'controllers'.DS."{$model}s".EXT;
 
 if ( ! is_file($controller_file) OR cli::flag('force')) {
+  $model_file = mkpath(APP_PATH.DS.'models').DS.$model.EXT;
+  ! is_file($model_file) && add_class($model_file, $model, 'db_model');
+
   $routes = render($skel_dir.DS.'routes'.EXT, TRUE, $params);
   $controller = render($skel_dir.DS.'controller'.EXT, TRUE, $params);
 
