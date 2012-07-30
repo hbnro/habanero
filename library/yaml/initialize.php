@@ -18,8 +18,8 @@ if ( ! function_exists('yaml_parse')) {
     return spyc_load(read($link));
   }
 
-  function yaml_parse_file($text) {
-    return spyc_load_file($link);
+  function yaml_parse_file($path) {
+    return spyc_load_file($path);
   }
 
   function yaml_emit($data) {
