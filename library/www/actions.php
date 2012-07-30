@@ -41,12 +41,10 @@ function url_for($action, array $params = array()) {
       @list($sub) = explode(option('domain'), $server);
 
       $current = trim($sub, '.');
-      $test    = $params['subdomain'];
       $host    = '//' . option('domain');
+      $test    = $params['subdomain'] ?: option('subdomain');
 
-      if (($test <> $current) && $test) {
-        $host = str_replace('//', "//$test.", $host);
-      }
+      $test && $host = str_replace('//', "//$test.", $host);
 
       $params['host'] = $host;
     }
