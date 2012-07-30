@@ -34,20 +34,21 @@ function url_for($action, array $params = array()) {
   ), $params);
 
 
-  if ( ! empty($params['subdomain'])) {
-    $sub = str_replace('*', 'www', $params['subdomain']);
-    $cur = server('SERVER_NAME');
+  if (isset($params['subdomain'])) {
+    $server = server('SERVER_NAME');
 
-    if ( ! is_ip($cur)) {
-      @list(, $host) = explode('.', $cur, 2);
+    if ( ! is_ip($server)) {
+      @list($sub) = explode(option('domain'), $server);
 
-      $host = "$sub.$host";
-    } else {
-      $host = $cur;
-    }
+      $current = trim($sub, '.');
+      $test    = $params['subdomain'];
+      $host    = '//' . option('domain');
 
-    if (strpos($cur, "$sub.") === FALSE) {
-      $params['host'] = str_replace($cur, $host, server(TRUE));
+      if (($test <> $current) && $test) {
+        $host = str_replace('//', "//$test.", $host);
+      }
+
+      $params['host'] = $host;
     }
   }
 

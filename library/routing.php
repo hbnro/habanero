@@ -81,12 +81,17 @@ class routing
   final public static function execute() {
     $start  = ticks();
     $method = request::method();
+    $server = server('SERVER_NAME');
 
-    @list($sub) = explode('.', server('SERVER_NAME'));
+    @list($sub) = explode(option('domain'), $server);
+
+    $current = trim($sub, '.');
+
 
     foreach (static::$routes as $params) {
-      if ( ! empty($params['subdomain'])) {
-        if ( ! in_array($params['subdomain'], array('*', $sub))) {
+      if ( ! request::is_local() && isset($params['subdomain'])) {
+        $test = $params['subdomain'] ?: option('subdomain');
+        if ($test <> $current) {
           continue;
         }
       }
@@ -120,8 +125,6 @@ class routing
           $_SESSION['--csrf-token'] = option('csrf_token');
         }
 
-
-        params(array('subdomain' => $sub));
 
         $output = request::dispatch($params);
 

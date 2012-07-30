@@ -47,7 +47,7 @@ core::bind(function ($bootstrap) {
   get('/static/*path', function () {
     return assets::read(params('path'));
   }, array(
-    'subdomain' => '*', // TODO: Y U NO CDN?
+    'subdomain' => '', // TODO: Y U NO CDN?
     'constraints' => array(
       '*path' => '(?:img|css|js)/.+',
     ),
