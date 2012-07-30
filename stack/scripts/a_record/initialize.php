@@ -160,48 +160,49 @@ app_generator::implement('ar:scaffold', function () {
   if ( ! $model) {
     error(ln('ar.missing_model_name'));
   } else {
-    $model_file = APP_PATH.DS.'models'.DS.$model.EXT;
+    $model_file = mkpath(APP_PATH.DS.'models').DS.$model.EXT;
 
     if ( ! is_file($model_file)) {
-      error(ln('ar.missing_model_file', array('name' => $model)));
+      add_class($model_file, $model, 'db_model');
+    }
+
+
+    $fail = FALSE;
+    $out  = array();
+    $old  = $model::columns();
+
+    if ( ! empty($args)) {
+      foreach ($args as $one) {
+        @list($key, $type) = explode(':', $one);
+
+        if ( ! isset($old[$key])) {
+          $fail = TRUE;
+          notice(ln('ar.unknown_field', array('name' => $key)));
+        } elseif ( ! ($test = field_for($type ?: $old[$key]['type'], $key))) {
+          $fail = TRUE;
+          notice(ln('ar.unknown_field_type', array('name' => $key, 'type' => $type)));
+        } else {
+          $out[$key] = $test;
+        }
+      }
     } else {
-      $fail = FALSE;
-      $out  = array();
-      $old  = $model::columns();
-
-      if ( ! empty($args)) {
-        foreach ($args as $one) {
-          @list($key, $type) = explode(':', $one);
-
-          if ( ! isset($old[$key])) {
-            $fail = TRUE;
-            notice(ln('ar.unknown_field', array('name' => $key)));
-          } elseif ( ! ($test = field_for($type ?: $old[$key]['type'], $key))) {
-            $fail = TRUE;
-            notice(ln('ar.unknown_field_type', array('name' => $key, 'type' => $type)));
-          } else {
-            $out[$key] = $test;
-          }
-        }
-      } else {
-        foreach ($old as $key => $val) {
-          $out[$key] = field_for($val['type'], $key);
-        }
+      foreach ($old as $key => $val) {
+        $out[$key] = field_for($val['type'], $key);
       }
+    }
 
-      foreach (array($model::pk(), 'created_at', 'modified_at') as $tmp) {
-        if (isset($out[$tmp])) {
-          unset($out[$tmp]);
-        }
+    foreach (array($model::pk(), 'created_at', 'modified_at') as $tmp) {
+      if (isset($out[$tmp])) {
+        unset($out[$tmp]);
       }
+    }
 
 
-      if ($fail OR ! $out) {
-        error(ln('ar.missing_fields'));
-      } else {
-        build_scaffold($model::pk(), $model, $out);
-        done();
-      }
+    if ($fail OR ! $out) {
+      error(ln('ar.missing_fields'));
+    } else {
+      build_scaffold($model::pk(), $model, $out);
+      done();
     }
   }
 });
