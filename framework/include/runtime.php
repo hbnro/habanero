@@ -21,7 +21,7 @@ function import() {
  * @param  mixed Function callback
  * @return void
  */
-function run(Closure $bootstrap) {
+function run(Closure $bootstrap = NULL) {
   core::exec($bootstrap);
 }
 
