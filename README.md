@@ -29,29 +29,6 @@ The code is not evil, so don't worry about it, it will do the job for you. ;-)
 Have [an issue](https://github.com/pateketrueke/habanero/issues)?
 
 
-Deploying to Heroku
--------------------
-
-Habanero is intensively tested on top of Heroku, the git-based cloud hosting platform. In my
-own opinion the first place where you should release your startup application.
-
-    # NOTE: Make sure you are into git repository
-
-    # Create the heroku app and get your default database settings
-    $ heroku create
-
-    # Configure the default build-pack url for deployment
-    $ heroku config:add BUILDPACK_URL=https://github.com/pateketrueke/heroku-buildpack-habanero
-
-    # Push and go!
-    $ git push heroku master
-    $ heroku open
-
-
-    # Set up your database at first
-    $ heroku run "bin/hs migrate --schema"
-
-
 Frequently Asked Questions
 -------------------------
 
