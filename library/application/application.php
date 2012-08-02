@@ -11,8 +11,8 @@ class application extends prototype
    * @ignore
    */
 
-  // controller type
-  public static $type = '';
+  // output callbacks
+  protected static $stack = array();
 
   // view instance vars
   public static $view = array();
@@ -33,45 +33,63 @@ class application extends prototype
                 );
 
   // output types
-  protected static $respond_to = array();
+  public static $responds_to = array('html');
 
   /**#@-*/
 
 
 
   /**
-   * Output filters
+   * Prepare output
    *
-   * @param  string Output type
-   * @param  mixed  Function callback
-   * @return void
+   * @param  string Format
+   * @param  mixed  Output
+   * @param  array  Options
+   * @return mixed
    */
-  final public static function output($type, Closure $lambda) {
-    static::$respond_to[$type] = $lambda;
+  public static function serve($format, $data, array $params = array()) {
+    if (in_array($format, static::$respond_to)) {
+      if (is_object($data)) {
+        $obj  = $data;
+        $data = array();
+
+        $data[get_class($obj)] = $obj;
+      }
+
+      if ( ! empty(static::$stack[$format])) {
+        return call_user_func(static::$stack[$format][0], $data, $params);
+      } elseif ($format === 'html') {
+        static::$view += $data;
+        return;
+      }
+    }
+
+    raise(ln('app.unknown_type', compact('format')));
   }
 
 
   /**
-   * Response
+   * Response registry
    *
-   * @param  ...
-   * @return array
+   * @param  mixed Format(s)
+   * @param  mixed Function callback
+   * @param  array Options
+   * @return mixed
    */
-  final public static function prepare() {
-    $out = func_get_args();
-
-    if ( ! empty(static::$respond_to[static::$type])) {
-      return call_user_func_array(static::$respond_to[static::$type], $out);
+  public static function responds_with($format, Closure $lambda, array $params = array()) {
+    if (is_array($format)) {
+      foreach ($format as $one) {
+        static::respond_with($one, $lambda, $params);
+      }
+    } else {
+      static::$stack[$format] = array($lambda, $params);
     }
-    return $out;
   }
-
 }
 
 
 // executable actions
 application::implement('execute', function ($controller, $action = 'index') {
-  $view_file       = findfile(APP_PATH.DS.'views'.DS.$controller, "$action.html*", FALSE, 1);
   $controller_file = APP_PATH.DS.'controllers'.DS.$controller.EXT;
 
   if ( ! is_file($controller_file)) {
@@ -86,41 +104,50 @@ application::implement('execute', function ($controller, $action = 'index') {
   // TODO: basename or underscore?
   $class_name = basename($controller) . '_controller';
 
-
   if ( ! class_exists($class_name)) {
     raise(ln('class_not_exists', array('name' => $class_name)));
-  } elseif ( ! $view_file && ! $class_name::defined($action)) {
-    raise(ln('app.action_missing', array('controller' => $class_name, 'action' => $action)));
   }
+
 
   logger::debug("Start: ($controller#$action)");
 
   $start = ticks();
   $class_name::defined('init') && $class_name::init();
 
-  if ($class_name::defined($action) && ($test = $class_name::$action())) {
-    @list($status, $view, $headers) = $class_name::apply('prepare', $test);
-    $class_name::$response = compact('status', 'headers');
-  } else {
-    $view = partial($view_file, (array) $class_name::$view);
+  $params  = $class_name::defined($action) ? $class_name::$action() : NULL;
+  $content = $class_name::$response;
+
+  if (is_array($params)) {
+    array_unshift($params, params('format') ?: 'html');
+
+    $test = $class_name::apply('serve', $params);
+
+    if (is_array($test)) {
+      @list($status, $output, $headers) = $test;
+      $content = compact('status', 'output', 'headers');
+    }
+  }
+
+
+  // TODO: find a better way?
+  if ( ! isset($content['output'])) {
+    $content['output'] = partial($controller.DS."$action.html", $class_name::$view);
 
     if ($class_name::$layout !== FALSE) {
       $layout_file = "layouts/{$class_name::$layout}";
 
-      $view = partial($layout_file, array(
+      $content['output'] = partial($layout_file, array(
         'head' => join("\n", $class_name::$head),
         'title' => $class_name::$title,
-        'body' => $view,
+        'body' => $content['output'],
       ));
     }
   }
 
+
   logger::debug("Execute: ($controller#$action) ", ticks($start));
 
-  $output = $class_name::$response;
-  $output['output'] = $view;
-
-  return $output;
+  return $content;
 });
 
-/* EOF: ./library/application/app_controller.php */
+/* EOF: ./library/application/application.php */

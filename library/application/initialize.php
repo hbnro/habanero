@@ -67,7 +67,29 @@ core::bind(function ($bootstrap) {
   require __DIR__.DS.'application'.EXT;
   require APP_PATH.DS.'controllers'.DS.'base'.EXT;
 
-  i18n::load_path(dirname(__DIR__).DS.'locale', 'app');
+
+  // JSON response
+  application::responds_with('json', function ($data, array $params = array()) {
+    $raw = function (&$set, $re) {
+      foreach ($set as $k => &$v) {
+        if (is_array($v)) {
+          $re($v, $re);
+        } else {
+          $v instanceof a_record && $set[$k] = $v->fields();
+        }
+      }
+    };
+
+    $raw($data, $raw);
+
+    return array(200, json_encode($params + $data), array(
+      'type' => 'application/json',
+    ));
+  });
+
+
+  i18n::load_path(__DIR__.DS.'locale', 'app');
+
 
   $request = request::methods();
 
@@ -79,13 +101,6 @@ core::bind(function ($bootstrap) {
       params($params['matches']);
       return application::apply('execute', explode('#', (string) $params['to']));
     }
-  });
-
-
-  application::output('json', function ($obj, $status = 200, $raw = FALSE) {
-    return array($status, $raw ? $obj : json_encode($obj), array(
-      'content-type' => 'application/json',
-    ));
   });
 
   return $bootstrap;
