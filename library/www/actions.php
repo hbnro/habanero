@@ -66,7 +66,7 @@ function url_for($action, array $params = array()) {
     $link .= ($rewrite ? '' : '/') . ltrim($part, '/');
   }
 
-  ! preg_match('/(?:\/|\.\w+)$/', $link) && $link .= '/';
+  ! preg_match('/(?:\/|\.:?\w+)$/', $link) && $link .= '/';
 
   if ( ! empty($params['locals'])) {
     $test = array();
