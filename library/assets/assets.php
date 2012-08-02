@@ -100,7 +100,7 @@ class assets extends prototype
         $tmp = static::extract($base_file);
 
         foreach ($tmp['include'] as $one) {
-          $path = static::url_for(str_replace($base_path.DS.$type.DS, '', $one));
+          $path = static::url_for(strtr(str_replace($base_path.DS.$type.DS, '', $one), DS, '_'));
 
           if ($type == 'css') {
             $set []= tag('link', array('rel' => 'stylesheet', 'href' => $path));

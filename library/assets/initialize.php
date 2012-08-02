@@ -19,7 +19,7 @@ assets::implement('read', function ($path) {
   if (is_file($static_file)) {
     $out = read($static_file);
   } else {
-    $asset_file = APP_PATH.DS.'assets'.DS.$path;
+    $asset_file = APP_PATH.DS.'assets'.DS.strtr($path, '_', DS);
     $asset_file = findfile(dirname($asset_file), basename($asset_file) . '*', FALSE, 1);
 
     if (is_file($asset_file)) {
