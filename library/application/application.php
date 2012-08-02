@@ -48,7 +48,7 @@ class application extends prototype
    * @return mixed
    */
   public static function serve($format, $data, array $params = array()) {
-    if (in_array($format, static::$respond_to)) {
+    if (in_array($format, static::$responds_to)) {
       if (is_object($data)) {
         $obj  = $data;
         $data = array();
