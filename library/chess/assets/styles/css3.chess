@@ -19,7 +19,7 @@
  background-clip: padding-box;
 }
 
-@mixin radius_box($tl: 5px, $tr: 5px, $br: 5px, $bl: 5px) {
+@mixin radius-box($tl: 5px, $tr: 5px, $br: 5px, $bl: 5px) {
  -moz-border-radius: num($tl) num($tr) num($br) num($bl);
  -webkit-border-radius: num($tl) num($tr) num($br) num($bl);
  border-radius: num($tl) num($tr) num($br) num($bl);
@@ -35,13 +35,13 @@
  box-shadow: num($left) num($top) num($blur) $color;
 }
 
-@mixin inset_shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
+@mixin inset-shadow($left: 0px, $top: 0px, $blur: 5px, $color: #555) {
  -moz-box-shadow: inset num($left) num($top) num($blur) $color;
  -webkit-box-shadow: inset num($left) num($top) num($blur) $color;
  box-shadow: inset num($left) num($top) num($blur) $color;
 }
 
-@mixin text_columns($column_count, $column_gap: 20px) {
+@mixin text-columns($column_count, $column_gap: 20px) {
  -webkit-column-count: num($column_count);
  -webkit-column-gap: num($column_gap);
  -moz-column-count: num($column_count);
@@ -65,7 +65,7 @@
  transition: $transition;
 }
 
-@mixin horizontal_gradient($start: #555, $end: #333) {
+@mixin horizontal-gradient($start: #555, $end: #333) {
  background-color: $end;
  background-repeat: repeat-x;
 
@@ -81,7 +81,7 @@
  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt($start), endColorstr=qt($end), GradientType=1);
 }
 
-@mixin vertical_gradient($start: #555, $end: #333) {
+@mixin vertical-gradient($start: #555, $end: #333) {
  background-color: argv($end, 1);
  background-repeat: repeat-x;
 
@@ -98,7 +98,7 @@
  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=qt(argv($start, 1)), endColorstr=qt(argv($end, 1)), GradientType=0);
 }
 
-@mixin directional_gradient($start: #555, $end: #333, $deg: 45deg) {
+@mixin directional-gradient($start: #555, $end: #333, $deg: 45deg) {
  background-color: $end;
  background-repeat: repeat-x;
 
@@ -109,7 +109,7 @@
  background-image: linear-gradient(format(%ddeg, $deg), $start, $end);
 }
 
-@mixin three_gradient($bottom: #555 0%, $middle: #444 50%, $top: #333 100%) {
+@mixin three-gradient($bottom: #555 0%, $middle: #444 50%, $top: #333 100%) {
  background-color: argv($middle, 1);
  background-repeat: no-repeat;
 

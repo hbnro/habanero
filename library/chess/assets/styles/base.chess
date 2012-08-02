@@ -30,7 +30,7 @@
   }
 }
 
-@mixin center_block {
+@mixin center-block {
   display: block;
   margin: 0 auto;
 }
@@ -46,13 +46,13 @@
   @include size($size, $size);
 }
 
-@mixin sprite_box($x, $y, $w: 16px, $h: 16px, $left: 0, $top: 0) {
+@mixin sprite-box($x, $y, $w: 16px, $h: 16px, $left: 0, $top: 0) {
   background-position: calc((($x * $w) + $left) * -1px) calc((($y * $h) + $top) * -1px);
   @include size($w, $h);
 }
 
-@mixin inline_image($src: 'blank.gif') {
-  @include size(image_size($src, 0), image_size($src, 1));
+@mixin inline-image($src: 'blank.gif') {
+  @include size(image-size($src, 0), image-size($src, 1));
   background: url($src) no-repeat;
   text-indent: -99999px;
   white-space: nowrap;

@@ -11,7 +11,7 @@
  * @param  mixed  Index
  * @return string
  */
-chess_helper::implement('image_size', function ($path, $key = -1) {
+chess_helper::implement('image-size', function ($path, $key = -1) {
   static $cache = array();
 
 

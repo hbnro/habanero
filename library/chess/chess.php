@@ -75,6 +75,13 @@ class chess
     static::$mixins  =
     static::$imports = array();
 
+    // TODO: re-implement this...
+    foreach (array('base', 'grid', 'css3') as $one) {
+      $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$one.chess";
+      static::load_file($css_file, TRUE);
+    }
+
+
     static::parse_buffer($rules);
     static::build_properties(static::$sets);
 
@@ -193,21 +200,6 @@ class chess
       case 'require';
         return static::load_file($match[3], TRUE);
       break;
-      case 'use';
-        if (in_array($match[3], static::$imports)) {
-          break;
-        }
-
-        static::$imports []= $match[3];
-
-        $css_file = __DIR__.DS.'assets'.DS.'styles'.DS."$match[3].chess";
-
-        if ( ! is_file($css_file)) {
-          raise(ln('file_not_exists', array('name' => $css_file)));
-        }
-
-        static::add_file($css_file, TRUE);
-      break;
       default;
         return static::load_file($match[3], FALSE);
       break;
@@ -267,7 +259,7 @@ class chess
   final private static function parse_buffer($text) {
     $text = preg_replace('/\/\*(.+?)\*\//s', '', $text);
     $text = preg_replace('/^(?:\/\/|;).+?$/m', '', $text);
-    $text = preg_replace_callback('/@(import|require|use)\s+([\'"]?)([^;\s]+)\\2;?/s', 'static::fetch_externals', $text);
+    $text = preg_replace_callback('/@(import|require)\s+([\'"]?)([^;\s]+)\\2;?/s', 'static::fetch_externals', $text);
     $text = preg_replace_callback('/^\s*\$([a-z][$\w\d-]*)\s*=\s*(.+?)\s*;?\s*$/mi', 'static::fetch_properties', $text);
     $text = preg_replace(array_keys(static::$fixate_css_expr), static::$fixate_css_expr, static::quote($text));
 

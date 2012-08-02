@@ -81,7 +81,7 @@ chess_helper::implement('rgba', function ($red, $green = 0, $blue = 0, $alpha = 
 
   $alpha = isset($args[3]) ? $args[3] : $alpha;
   $alpha = $alpha > 1 ? ((int) $alpha / 100) : (float) $alpha;
-  $args  = chess_helper::rgb_safe($args);
+  $args  = chess_helper::apply('rgb-safe', $args);
 
   if ((sizeof($args) < 3) OR ($alpha === 0)) {
     return 'transparent';
@@ -371,7 +371,7 @@ chess_helper::implement('lightness', function ($color) {
  * @staticvar mixed  Function callback
  * @return    string
  */
-chess_helper::implement('hex_safe', function ($color) {
+chess_helper::implement('hex-safe', function ($color) {
   static $safe = NULL;
 
 
@@ -398,7 +398,7 @@ chess_helper::implement('hex_safe', function ($color) {
  * @param  integer Blue value
  * @return array
  */
-chess_helper::implement('rgb_safe', function ($red, $green = -1, $blue = -1) {
+chess_helper::implement('rgb-safe', function ($red, $green = -1, $blue = -1) {
   $color = func_get_args();
 
   if (is_array($red)) {
