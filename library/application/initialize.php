@@ -83,7 +83,7 @@ core::bind(function ($bootstrap) {
     $raw($data, $raw);
 
     return array(200, json_encode($params + $data), array(
-      'type' => 'application/json',
+      'content-type' => 'application/json',
     ));
   });
 
