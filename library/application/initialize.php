@@ -7,9 +7,11 @@
 /**#@+
  * @ignore
  */
+import('db');
 import('www');
 import('assets');
 import('partial');
+import('a_record');
 
 $bootstrap = core::methods();
 
