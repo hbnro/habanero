@@ -32,22 +32,28 @@ app_generator::implement('assets:clean', function () {
 
 // assets handling
 app_generator::implement('assets:prepare', function () {
-  static $css_min = NULL;
+  /**
+   * @ignore
+   */
+  require __DIR__.DS.'vendor'.DS.'jsmin'.EXT;
 
-  if (is_null($css_min)) {
-    $css_min = function ($text) {
-      static $expr = array(
-                '/;+/' => ';',
-                '/;?[\r\n\t\s]*\}\s*/s' => '}',
-                '/\/\*.*?\*\/|[\r\n]+/s' => '',
-                '/\s*([\{;:,\+~\}>])\s*/' => '\\1',
-                '/:first-l(etter|ine)\{/' => ':first-l\\1 {', //FIX
-                '/(?<!=)\s*#([a-f\d])\\1([a-f\d])\\2([a-f\d])\\3/i' => '#\\1\\2\\3',
-              );
+  $js_min = function ($text) {
+    return JSMin::minify($text);
+  };
 
-      return preg_replace(array_keys($expr), $expr, $text);
-    };
-  }
+  $css_min = function ($text) {
+    static $expr = array(
+              '/;+/' => ';',
+              '/;?[\r\n\t\s]*\}\s*/s' => '}',
+              '/\/\*.*?\*\/|[\r\n]+/s' => '',
+              '/\s*([\{;:,\+~\}>])\s*/' => '\\1',
+              '/:first-l(etter|ine)\{/' => ':first-l\\1 {', //FIX
+              '/(?<!=)\s*#([a-f\d])\\1([a-f\d])\\2([a-f\d])\\3/i' => '#\\1\\2\\3',
+            );
+
+    return preg_replace(array_keys($expr), $expr, $text);
+  };
+
 
 
   $base_path  = APP_PATH.DS.'assets';
@@ -128,7 +134,7 @@ app_generator::implement('assets:prepare', function () {
           return assets::resolve($match[0]);
         }, $out);
 
-        write($tmp = TMP.DS.md5($file), $out = ext($file) === 'css' ? $css_min($out) : jsmin::minify($out));
+        write($tmp = TMP.DS.md5($file), $out = ext($file) === 'css' ? $css_min($out) : $js_min($out));
 
         $hash     = md5(md5_file($tmp) . filesize($tmp));
         $name     = str_replace($base_path.DS, '', $file);
