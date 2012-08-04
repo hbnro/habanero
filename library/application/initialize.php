@@ -82,9 +82,12 @@ core::bind(function ($bootstrap) {
       }
     };
 
-    $raw($data, $raw);
+    if (is_array($data)) {
+      $raw($data, $raw);
+      $data && $params += $data;
+    }
 
-    return array(200, json_encode($params + $data), array(
+    return array(200, json_encode($params), array(
       'content-type' => 'application/json',
     ));
   });

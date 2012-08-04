@@ -172,9 +172,21 @@ class a_record extends prototype
   /**
    * Retrieve all columns
    *
+   * @param  boolean Changed fields?
    * @return array
    */
-  final public function fields() {
+  final public function fields($updated = FALSE) {
+    if ($updated) {
+      $out = array();
+
+      foreach ($this->changed as $key) {
+        $out[$key] = $this->props[$key];
+      }
+
+      $out[$this->pk()] = $this->id();
+
+      return $out;
+    }
     return $this->props;
   }
 
