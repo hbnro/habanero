@@ -1,0 +1,24 @@
+{
+  "description" : "Habanero Framework",
+  "homepage": "http://hbnro.com",
+  "license": "MIT",
+  "authors": [{
+    "name":"Alvaro Cabrera"
+  }],
+  "require": {
+    "php": ">=5.3",
+    "symfony/yaml": "dev-master",
+    "tedivm/jshrink": "dev-master",
+    "habanero/io": "dev-master",
+    "habanero/broil": "dev-master",
+    "habanero/tailor": "dev-master",
+    "habanero/cashier": "dev-master",
+    "habanero/servant": "dev-master",
+    "habanero/labourer": "dev-master",
+    "oyatel/amazon-s3-php-class": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {"Sauce": "lib/"},
+    "files": ["inc/initialize.php", "inc/conditions.php", "inc/functions.php"]
+  }
+}
