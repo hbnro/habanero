@@ -8,7 +8,7 @@
  */
 
 // bundled full-stack
-$autoload = require 'vendor/autoload.php';
+$autoload = require __DIR__.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
 
 Sauce\Base::$autoload = $autoload;
 
