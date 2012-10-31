@@ -146,9 +146,9 @@ class Base
     \Tailor\Config::set('styles_dir', path(APP_PATH, 'assets', 'css'));
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'assets', 'js'));
 
-    \Tailor\Config::set('images_url', '/static/img');
-    \Tailor\Config::set('styles_url', '/static/css');
-    \Tailor\Config::set('scripts_url', '/static/js');
+    \Tailor\Config::set('images_url', ROOT . 'static/img');
+    \Tailor\Config::set('styles_url', ROOT . 'static/css');
+    \Tailor\Config::set('scripts_url', ROOT . 'static/js');
 
     \Tailor\Base::initialize();
 

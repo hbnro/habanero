@@ -20,7 +20,7 @@ class Bootstrap
 
 
     // static assets
-    get('/static/@path', function () {
+    get('/@path', function () {
       $test = \Sauce\App\Assets::read(params('path'));
       return array(200, array('Content-Type' => $test['type']), $test['output']);
     }, array(// TODO: Y U NO CDN?

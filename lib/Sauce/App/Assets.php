@@ -7,15 +7,18 @@ class Assets
 
   private static $cache = array();
 
+  private static $path = array(
+                    'images_dir' => 'img',
+                    'styles_dir' => 'css',
+                    'scripts_dir' => 'js',
+                  );
+
   private static $set = array(
                     'head' => array(),
                     'body' => array(),
                   );
 
-  private static $ext = array(
-                    'styles_dir' => 'css',
-                    'scripts_dir' => 'js',
-                  );
+
 
 
 
@@ -55,7 +58,7 @@ class Assets
 
   public static function build($from, $on)
   {
-    $ext = isset(static::$ext[$on]) ? static::$ext[$on] : trim(substr($from, -4), '.');
+    $ext = isset(static::$path[$on]) ? static::$path[$on] : trim(substr($from, -4), '.');
 
     $dir = \Tailor\Config::get($on);
     $file = path($dir, "$from.$ext");
@@ -97,7 +100,7 @@ class Assets
     $ext = \IO\File::ext($path);
     $type = \IO\Helpers::mimetype($ext);
 
-    $dir = \Tailor\Config::get(array_search($ext, static::$ext) ?: 'images_dir');
+    $dir = \Tailor\Config::get(array_search($ext, static::$path) ?: 'images_dir');
     $file = strtr(substr($path, strpos($path, '/') + 1), '_', DIRECTORY_SEPARATOR);
     $base = path($dir, trim($file, DIRECTORY_SEPARATOR));
 
@@ -143,8 +146,13 @@ class Assets
   public static function url_for($path, $on)
   {
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
-    (APP_ENV === 'production') OR $path = strtr("/$path", '\\/', '__');
-    return \Broil\Helpers::build("$dir/$path");
+    $ext = ! empty(static::$path[$on]) ? static::$path[$on] : trim(substr($path, -4), '.');
+
+    if (APP_ENV <> 'production') {
+      $path = strtr("/$path", '\\/', '__');
+      return \Broil\Helpers::build("/$ext/$path");
+    }
+    return "$dir/$path";
   }
 
   public static function tag_for($path)
