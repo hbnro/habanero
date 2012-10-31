@@ -118,6 +118,11 @@ function method()
   return \Postman\Request::method();
 }
 
+function server()
+{
+  return call_user_func_array('\\Postman\\Request::env', func_get_args());
+}
+
 function redirect()
 {
   call_user_func_array(array(\Sauce\App\Bootstrap::instance()->response, 'redirect'), func_get_args());
