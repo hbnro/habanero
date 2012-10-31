@@ -69,9 +69,9 @@ class Handler
             'view' => $app->view,
           ));
         }
-
-        \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), option('expires', 300));
       }
+
+      \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), option('expires', 300));
     }
     return $out;
   }

@@ -168,7 +168,7 @@ function before_body()
 
 function javascript_for($name)
 {
-  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir', APP_ENV === 'production')), 'body');
+  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir')), 'body');
 }
 
 function prepend_js($test)
@@ -183,7 +183,7 @@ function append_js($test)
 
 function stylesheet_for($name)
 {
-  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir', APP_ENV === 'production')));
+  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir')));
 }
 
 function prepend_css($test)
@@ -203,7 +203,7 @@ function csrf_meta_tag()
 
 function tag_for($src)
 {
-  return \Sauce\App\Assets::tag_for($src, APP_ENV === 'production');
+  return \Sauce\App\Assets::tag_for($src);
 }
 
 function image_tag($src, $alt = NULL, array $attrs = array())
@@ -215,7 +215,7 @@ function image_tag($src, $alt = NULL, array $attrs = array())
     $attrs['alt'] = $attrs['title'] = $alt ?: $src;
   }
 
-  $attrs['src'] = \Sauce\App\Assets::url_for($src, 'images_dir', APP_ENV === 'production');
+  $attrs['src'] = \Sauce\App\Assets::url_for($src, 'images_dir');
 
   return \Labourer\Web\Html::tag('img', $attrs);
 }

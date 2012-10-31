@@ -236,8 +236,7 @@ class Base
     $output->response = $message;
 
     if (APP_ENV === 'production') {
-      // TODO: WAT?
-      die('/!\\');
+      // TODO: error view?
     } else {
       $tmp = array();
 

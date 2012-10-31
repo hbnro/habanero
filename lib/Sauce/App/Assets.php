@@ -27,9 +27,9 @@ class Assets
     is_dir(dirname($file)) && file_put_contents($file, '<' . "?php return $code;\n");
   }
 
-  public static function solve($name, $cached = FALSE)
+  public static function solve($name)
   {
-    if ($cached && ($hash = static::fetch($name, $cached))) {
+    if ((APP_ENV === 'production') && ($hash = static::fetch($name))) {
       $ext = \IO\File::ext($name);
       $name = str_replace(basename($name), basename($name, ".$ext")."$hash.$ext", $name);
     }
@@ -53,7 +53,7 @@ class Assets
     static::$cache[$key] = $val;
   }
 
-  public static function build($from, $on, $cached = FALSE)
+  public static function build($from, $on)
   {
     $ext = isset(static::$ext[$on]) ? static::$ext[$on] : trim(substr($from, -4), '.');
 
@@ -72,26 +72,21 @@ class Assets
         $path = str_replace($dir, '', preg_replace('/\.(css|js).*$/', '.\\1', $file));
 
         $old = ltrim($path, DIRECTORY_SEPARATOR);
-        $new = strtr($old, DIRECTORY_SEPARATOR, '_');
-
-        $tpl = $cached ? $old : $new;
         $inc = 0;
 
         switch ($group) {
           case 'include';
-            $cached ? $inc += 1 : $out []= static::tag_for(static::solve($tpl));
+            (APP_ENV === 'production') ? $inc += 1 : $out []= static::tag_for(static::solve($old));
           break;
           case 'require';
-            $out []= static::tag_for(static::solve($tpl));
+            $out []= static::tag_for(static::solve($old));
           break;
           default;
             throw new \Exception("Unknown group '$group' of assets for loading");
         }
       }
 
-      if ($cached && $inc) {
-        $out []= static::tag_for(static::solve("$from.$ext", TRUE));
-      }
+      $inc && $out []= static::tag_for(static::solve("$from.$ext"));
     }
 
     return $out;
@@ -145,27 +140,27 @@ class Assets
     return compact('output', 'type');
   }
 
-  public static function url_for($path, $on, $cached = FALSE)
+  public static function url_for($path, $on)
   {
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
-    $cached OR $path = strtr("/$path", '\\/', '__');
+    (APP_ENV === 'production') OR $path = strtr("/$path", '\\/', '__');
     return \Broil\Helpers::build("$dir/$path");
   }
 
-  public static function tag_for($path, $cached = FALSE)
+  public static function tag_for($path)
   {
     $type = \IO\File::ext($path);
 
     switch ($type) {
       case 'css';
-        return \Labourer\Web\Html::link('stylesheet', static::url_for($path, 'styles_dir', $cached), array('type' => 'text/css'));
+        return \Labourer\Web\Html::link('stylesheet', static::url_for($path, 'styles_dir'), array('type' => 'text/css'));
       case 'js';
-        return \Labourer\Web\Html::script(static::url_for($path, 'scripts_dir', $cached));
+        return \Labourer\Web\Html::script(static::url_for($path, 'scripts_dir'));
       case 'jpeg';
       case 'jpg';
       case 'png';
       case 'gif';
-        return \Labourer\Web\Html::img(static::url_for($path, 'images_dir', $cached), $path);
+        return \Labourer\Web\Html::img(static::url_for($path, 'images_dir'), $path);
       default;
         throw new \Exception("Unsupported tag for '$type'");
     }
