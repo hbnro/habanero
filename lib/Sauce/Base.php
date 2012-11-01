@@ -23,84 +23,85 @@ class Base
     $test = strtoupper(PHP_SAPI);
 
     if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
+      define('INDEX', basename(APP_LOADER));
+
+      // root+uri
+      $url = array();
+
+      $url['ORIG_PATH_INFO'] = FALSE;
+      $url['REQUEST_URI']    = FALSE;
+      $url['SCRIPT_URL']     = TRUE;
+      $url['PATH_INFO']      = FALSE;
+      $url['PHP_SELF']       = TRUE;
+
+      foreach ($url as $key => $val) {
+        if ( ! isset($_SERVER[$key])) {
+          continue;
+        }
+
+        if (strpos($_SERVER[$key], INDEX) && ($val === FALSE)) {
+          continue;
+        }
+
+        $url = $_SERVER[$key];
+        break;
+      }
+
+
+      $base = array();
+
+      $base['ORIG_SCRIPT_NAME'] = TRUE;
+      #$base['SCRIPT_FILENAME'] = TRUE;
+      $base['SCRIPT_NAME']      = TRUE;
+      $base['PHP_SELF']         = FALSE;
+
+      foreach ($base as $key => $val) {
+        if ( ! isset($_SERVER[$key])) {
+          continue;
+        }
+
+        if (strpos($_SERVER[$key], INDEX) && ($val === FALSE)) {
+          continue;
+        }
+
+        $base = $_SERVER[$key];
+        break;
+      }
+
+
+      // site root
+      $base = preg_replace('/' . preg_quote(INDEX) . '.*$/', '', $base);
+
+      if (($root = server('DOCUMENT_ROOT')) <> '/') {
+        $base = str_replace($root, '.', $base);
+      }
+
+      define('ROOT', strtr(str_replace(INDEX, '', $base), '\\./', '/'));
+
+
+      // URL cleanup
+      $root  = preg_quote(ROOT, '/');
+      $index = preg_quote(INDEX, '/');
+
+      $parts = explode('?', $url);
+      $parts = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift($parts));
+
+      define('URI', '/' . trim($parts, '/'));
+
+
       if (empty($_SERVER['REQUEST_URI'])) {
         $_SERVER['REQUEST_URI']  = server('SCRIPT_NAME', server('PHP_SELF'));
         $_SERVER['REQUEST_URI'] .= $query = server('QUERY_STRING') ? "?$query" : '';
       }
     } else {
-      // TODO: how set this?
-      $_SERVER['REQUEST_URI'] = '/';
+      define('INDEX', option('base_index'));
+      define('ROOT', option('base_url'));
+      define('URI', '/');
+
+      $_SERVER['REQUEST_URI'] = URI;
       $_SERVER['REQUEST_METHOD'] = 'GET';
       $_SERVER['DOCUMENT_ROOT'] = APP_PATH;
-
-      // TODO: implement a CLI parser?
-      #var_dump($_SERVER['argv']);
-      #die();
     }
-
-
-    // root+uri
-    $url = array();
-
-    $url['ORIG_PATH_INFO'] = FALSE;
-    $url['REQUEST_URI']    = FALSE;
-    $url['SCRIPT_URL']     = TRUE;
-    $url['PATH_INFO']      = FALSE;
-    $url['PHP_SELF']       = TRUE;
-
-    foreach ($url as $key => $val) {
-      if ( ! isset($_SERVER[$key])) {
-        continue;
-      }
-
-      if (strpos($_SERVER[$key], INDEX) && ($val === FALSE)) {
-        continue;
-      }
-
-      $url = $_SERVER[$key];
-      break;
-    }
-
-
-    $base = array();
-
-    $base['ORIG_SCRIPT_NAME'] = TRUE;
-    #$base['SCRIPT_FILENAME'] = TRUE;
-    $base['SCRIPT_NAME']      = TRUE;
-    $base['PHP_SELF']         = FALSE;
-
-    foreach ($base as $key => $val) {
-      if ( ! isset($_SERVER[$key])) {
-        continue;
-      }
-
-      if (strpos($_SERVER[$key], INDEX) && ($val === FALSE)) {
-        continue;
-      }
-
-      $base = $_SERVER[$key];
-      break;
-    }
-
-
-    // site root
-    $base = preg_replace('/' . preg_quote(INDEX) . '.*$/', '', $base);
-
-    if (($root = server('DOCUMENT_ROOT')) <> '/') {
-      $base = str_replace($root, '.', $base);
-    }
-
-    define('ROOT', strtr(str_replace(INDEX, '', $base), '\\./', '/'));
-
-
-    // URL cleanup
-    $root  = preg_quote(ROOT, '/');
-    $index = preg_quote(INDEX, '/');
-
-    $parts = explode('?', $url);
-    $parts = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift($parts));
-
-    define('URI', '/' . trim($parts, '/'));
 
 
     // request vars
@@ -147,7 +148,7 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'assets', 'js'));
 
 
-    $prefix = APP_ENV <> 'production' ? \Broil\Helpers::build('/') : ROOT;
+    $prefix = APP_ENV <> 'production' ? \Broil\Helpers::build('/') : ROOT . 'static/';
 
     \Tailor\Config::set('images_url', "{$prefix}img");
     \Tailor\Config::set('styles_url', "{$prefix}css");
