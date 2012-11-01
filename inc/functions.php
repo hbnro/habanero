@@ -123,9 +123,14 @@ function server()
   return call_user_func_array('\\Postman\\Request::env', func_get_args());
 }
 
-function redirect()
+function redirect($path)
 {
-  call_user_func_array(array(\Sauce\App\Bootstrap::instance()->response, 'redirect'), func_get_args());
+  $params = call_user_func_array(array(\Sauce\App\Bootstrap::instance()->response, 'redirect'), func_get_args());
+  $output = new \Postman\Response($params);
+
+  echo $output;
+
+  exit;
 }
 
 function flash()
