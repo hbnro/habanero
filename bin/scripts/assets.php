@@ -175,8 +175,8 @@ function assets_precompile()
             $set = array_keys($out);
             $out = join("\n", $out);
 
-            $out = preg_replace_callback('/\bimg\/(\S+\.(?:jpe?g|png|gif))\b/i', function ($match) {
-                return \Sauce\App\Assets::solve($match[1]);
+            $out = preg_replace_callback('/(?<=img\/)\S+\.(?:jpe?g|png|gif)\b/i', function ($match) {
+                return \Sauce\App\Assets::solve($match[0]);
               }, $out);
 
 
