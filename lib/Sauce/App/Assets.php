@@ -184,6 +184,14 @@ class Assets
     }
   }
 
+  public static function asset_url($path)
+  {
+    $type = \IO\File::ext($path);
+    $on = array_search($type, static::$path) ?: 'images_dir';
+
+    return static::url_for($path, $on);
+  }
+
   public static function inline($code, $to = '', $before = FALSE)
   {
     static::push($to ?: 'head', $code, $before);
