@@ -18,10 +18,6 @@ define('APP_PATH', realpath(getcwd()));
 define('APP_ENV', getenv('ENV') ?: 'development');
 
 
-// the root-script name
-define('INDEX', basename(APP_LOADER));
-
-
 // PCRE+Unicode
 error_reporting(0);
 ini_set('log_errors', 0);
