@@ -14,7 +14,7 @@ $trace = debug_backtrace(FALSE);
 $trace = array_pop($trace);
 
 define('APP_LOADER', realpath($trace['file']));
-define('APP_PATH', dirname(APP_LOADER));
+define('APP_PATH', realpath(getcwd()));
 define('APP_ENV', getenv('ENV') ?: 'development');
 
 
