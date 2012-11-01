@@ -188,7 +188,7 @@ class Assets
     $type = \IO\File::ext($path);
     $on = array_search($type, static::$path) ?: 'images_dir';
 
-    return static::url_for($path, $on);
+    return static::url_for(static::solve($path), $on);
   }
 
   public static function inline($code, $to = '', $before = FALSE)
