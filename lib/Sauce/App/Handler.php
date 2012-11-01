@@ -57,10 +57,10 @@ class Handler
       @list($out->status, $out->headers, $out->response) = $test;
 
       if ( ! $out->response) {
-        $out->response = partial("$controller/$action", $app->view->all());
+        $out->response = partial("$controller/$action.php", $app->view->all());
 
         if ($app->layout) {
-          $layout_file = "layouts/$app->layout";
+          $layout_file = "layouts/$app->layout.php";
 
           $out->response = partial($layout_file, array(
             'head' => join("\n", $app->head),

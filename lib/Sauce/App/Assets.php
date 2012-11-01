@@ -32,8 +32,10 @@ class Assets
 
   public static function solve($name)
   {
-    if ((APP_ENV === 'production') && ($hash = static::fetch($name))) {
-      $ext = \IO\File::ext($name);
+    $on = \IO\File::ext($name);
+    $ext = isset(static::$path[$on]) ? static::$path[$on] : trim(substr($name, -3), '.');
+
+    if ((APP_ENV === 'production') && ($hash = static::fetch("$ext/$name"))) {
       $name = str_replace(basename($name), basename($name, ".$ext")."$hash.$ext", $name);
     }
     return $name;
@@ -58,7 +60,7 @@ class Assets
 
   public static function build($from, $on)
   {
-    $ext = isset(static::$path[$on]) ? static::$path[$on] : trim(substr($from, -4), '.');
+    $ext = isset(static::$path[$on]) ? static::$path[$on] : trim(substr($from, -3), '.');
 
     $dir = \Tailor\Config::get($on);
     $file = path($dir, "$from.$ext");
@@ -78,6 +80,9 @@ class Assets
         $inc = 0;
 
         switch ($group) {
+          case 'head';
+            ($ext === 'js') && static::script($old);
+          break;
           case 'include';
             (APP_ENV === 'production') ? $inc += 1 : $out []= static::tag_for(static::solve($old));
           break;
@@ -93,6 +98,14 @@ class Assets
     }
 
     return $out;
+  }
+
+  public static function parse($file)
+  {
+    $ext = \IO\File::ext($file);
+    $on = in_array($ext, static::$path) ? array_search($ext, static::$path) : trim(substr($file, -3), '.');
+
+    return static::extract($file, $on);
   }
 
   public static function read($path)
@@ -146,10 +159,10 @@ class Assets
   public static function url_for($path, $on)
   {
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
-    $ext = ! empty(static::$path[$on]) ? static::$path[$on] : trim(substr($path, -4), '.');
+    $ext = ! empty(static::$path[$on]) ? static::$path[$on] : trim(substr($path, -3), '.');
 
     if (APP_ENV <> 'production') {
-      $path = strtr("/$path", '\\/', '__');
+      $path = strtr($path, '\\/', '__');
       return \Broil\Helpers::build("/$ext/$path");
     }
     return "$dir/$path";
@@ -228,8 +241,8 @@ class Assets
 
         if (is_dir($tmp)) {
           \IO\Dir::open($tmp, function ($file)
-            use (&$out, $key, $tmp) {
-              $out[$key] []= path(rtrim($tmp, '\\/'), $file);
+            use (&$out, $key) {
+              $out[$key] []= $file;
             });
         } else {
           $tmp && $out[$key] []= $tmp;
