@@ -99,7 +99,7 @@ function assets_precompile()
           ! is_file($static_img) && copy($file, $static_img);
         }
 
-        \Sauce\App\Assets::assign($path = str_replace($base_path.DIRECTORY_SEPARATOR, '', $file), $file_hash);
+        \Sauce\App\Assets::assign($path = str_replace(path($base_path, 'img').DIRECTORY_SEPARATOR, '', $file), $file_hash);
 
         success("Hashing image '$path' with $file_hash");
       }
@@ -175,8 +175,8 @@ function assets_precompile()
             $set = array_keys($out);
             $out = join("\n", $out);
 
-            $out = preg_replace_callback('/\bimg\/\S+\.(?:jpe?g|png|gif)\b/i', function ($match) {
-                return \Sauce\App\Assets::solve($match[0]);
+            $out = preg_replace_callback('/\bimg\/(\S+\.(?:jpe?g|png|gif))\b/i', function ($match) {
+                return \Sauce\App\Assets::solve($match[1]);
               }, $out);
 
 
@@ -194,7 +194,7 @@ function assets_precompile()
               rename($tmp, $min_file);
             }
 
-            \Sauce\App\Assets::assign($path = str_replace($base_path.DIRECTORY_SEPARATOR, '', $file), $hash);
+            \Sauce\App\Assets::assign($path = str_replace(path($base_path, $type).DIRECTORY_SEPARATOR, '', $file), $hash);
 
             success("Hashing asset file '$path' with $hash");
           }

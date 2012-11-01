@@ -32,10 +32,9 @@ class Assets
 
   public static function solve($name)
   {
-    $on = \IO\File::ext($name);
-    $ext = isset(static::$path[$on]) ? static::$path[$on] : trim(substr($name, -3), '.');
+    $ext = \IO\File::ext($name);
 
-    if ((APP_ENV === 'production') && ($hash = static::fetch("$ext/$name"))) {
+    if ((APP_ENV === 'production') && ($hash = static::fetch($name))) {
       $name = str_replace(basename($name), basename($name, ".$ext")."$hash.$ext", $name);
     }
     return $name;
