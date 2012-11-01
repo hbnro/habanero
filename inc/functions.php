@@ -206,6 +206,11 @@ function tag_for($src)
   return \Sauce\App\Assets::tag_for($src);
 }
 
+function asset_url($path)
+{
+  return \Sauce\App\Assets::asset_url($path);
+}
+
 function image_tag($src, $alt = NULL, array $attrs = array())
 {
   if (is_array($alt)) {
@@ -215,7 +220,14 @@ function image_tag($src, $alt = NULL, array $attrs = array())
     $attrs['alt'] = $attrs['title'] = $alt ?: $src;
   }
 
-  $attrs['src'] = \Sauce\App\Assets::url_for($src, 'images_dir');
+
+  if ($img = \Tailor\Helpers::image($src)) {
+    $attrs['width'] = $img['dims'][0];
+    $attrs['height'] = $img['dims'][1];
+    $attrs['src'] = asset_url($src);
+  } else {
+    $attrs['src'] = $src;
+  }
 
   return \Labourer\Web\Html::tag('img', $attrs);
 }
