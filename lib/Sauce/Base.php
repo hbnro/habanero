@@ -195,26 +195,24 @@ class Base
     is_file($routes_file) && require $routes_file;
 
 
+    // before any initializer!
+    foreach (static::$middleware as $callback) {
+      $lambda = $callback($lambda);
+    }
+
+
     // scripts
     $init_path = path(APP_PATH, 'config', 'initializers');
 
     if (is_dir($init_path)) {
-      \IO\Dir::open($init_path, function ($path)
-        use ($init_path) {
-          $path = path($init_path, $path);
-          $path = is_dir($path) ? path($path, 'initialize.php') : $path;
-
-          require $path;
+      \IO\Dir::open($init_path, function ($path) {
+          require is_dir($path) ? path($path, 'initialize.php') : $path;
         });
     }
 
 
     // start
     static::$loaded = TRUE;
-
-    foreach (static::$middleware as $callback) {
-      $lambda = $callback($lambda);
-    }
 
     echo \Sauce\App\Bootstrap::instance()->run($lambda);
   }
@@ -239,6 +237,7 @@ class Base
       // TODO: error view?
     } else {
       $tmp = array();
+      $test = strtoupper(PHP_SAPI);
 
       foreach ($trace as $i => $on) {
         $type   = ! empty($on['type']) ? $on['type'] : '';
@@ -251,7 +250,13 @@ class Base
       }
 
       $trace = join("\n", array_reverse($tmp));
-      $output .= "<pre>$trace</pre>";
+
+      if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
+        $output .= "<pre>$trace</pre>";
+      } else {
+        $trace = preg_replace('/^/m', '  ', $trace);
+        $output .= "\n\n$trace\n";
+      }
     }
 
     echo "$output\n";
