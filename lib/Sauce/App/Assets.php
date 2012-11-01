@@ -159,12 +159,9 @@ class Assets
   public static function url_for($path, $on)
   {
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
-    $ext = ! empty(static::$path[$on]) ? static::$path[$on] : trim(substr($path, -3), '.');
 
-    if (APP_ENV <> 'production') {
-      $path = strtr($path, '\\/', '__');
-      return \Broil\Helpers::build("/$ext/$path");
-    }
+    (APP_ENV <> 'production') && $path = strtr($path, '\\/', '__');;
+
     return "$dir/$path";
   }
 

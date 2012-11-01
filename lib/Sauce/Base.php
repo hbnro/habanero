@@ -146,9 +146,12 @@ class Base
     \Tailor\Config::set('styles_dir', path(APP_PATH, 'assets', 'css'));
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'assets', 'js'));
 
-    \Tailor\Config::set('images_url', ROOT . 'static/img');
-    \Tailor\Config::set('styles_url', ROOT . 'static/css');
-    \Tailor\Config::set('scripts_url', ROOT . 'static/js');
+
+    $prefix = APP_ENV <> 'production' ? \Broil\Helpers::build('/') : ROOT;
+
+    \Tailor\Config::set('images_url', "{$prefix}img");
+    \Tailor\Config::set('styles_url', "{$prefix}css");
+    \Tailor\Config::set('scripts_url', "{$prefix}js");
 
     \Tailor\Base::initialize();
 
