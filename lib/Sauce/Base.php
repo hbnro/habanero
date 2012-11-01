@@ -19,6 +19,21 @@ class Base
     }
 
 
+
+    // request vars
+    params($_REQUEST);
+
+
+    // configuration
+    $config_file = path(APP_PATH, 'config.php');
+
+    is_file($config_file) && config($config_file);
+
+
+    // timezone
+    date_default_timezone_set(option('timezone', 'UTC'));
+
+
     // setup
     $test = strtoupper(PHP_SAPI);
 
@@ -103,19 +118,6 @@ class Base
       $_SERVER['DOCUMENT_ROOT'] = APP_PATH;
     }
 
-
-    // request vars
-    params($_REQUEST);
-
-
-    // configuration
-    $config_file = path(APP_PATH, 'config.php');
-
-    is_file($config_file) && config($config_file);
-
-
-    // timezone
-    date_default_timezone_set(option('timezone', 'UTC'));
 
 
     // connections
