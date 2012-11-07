@@ -135,7 +135,7 @@ function redirect($path)
 
 function flash()
 {
-  return call_user_func_array('\\Web\\Session::flash', func_get_args());
+  return call_user_func_array('\\Labourer\\Web\\Session::flash', func_get_args());
 }
 
 function path()
