@@ -7,10 +7,11 @@ class Handler
 
   public static function execute($controller, $action = 'index', $cache = FALSE)
   {
+    $ttl = option('expires', 300);
     $out = \Sauce\App\Bootstrap::instance()->response;
-    $hash = URI . '?' . server('QUERY_STRING');
+    $hash = md5(URI . '?' . server('QUERY_STRING') . '#' . session_id());
 
-    if ($cache && ($test = \Cashier\Base::fetch($hash))) {
+    if ($ttl && $cache && ($test = \Cashier\Base::fetch($hash))) {
       @list($out->status, $out->headers, $out->response) = $test;
     } else {
       $controller_path = path(APP_PATH, 'controllers');
@@ -71,7 +72,7 @@ class Handler
         }
       }
 
-      \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), option('expires', 300));
+      \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), $ttl);
     }
     return $out;
   }
