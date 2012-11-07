@@ -3,47 +3,37 @@
 require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
 require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
 
-Sauce\Base::bind(function ($bootstrap) {
+\Sauce\Base::bind(function ($bootstrap) {
     die($bootstrap());
   });
 
 run(function () {
     $xargs = flags();
-    $mod_file = FALSE;
+    $first = key($xargs);
 
-    foreach ($xargs as $key => $val) {
-      $mod_file = path(__DIR__, 'scripts', "$key.php");
-      if ( ! is_numeric($key)) {
-        break;
-      }
-    }
+    $cmd = array_shift($xargs);
+    $set = array(path(__DIR__, 'tasks'));
 
-    $test = array();
-    $cmd  = array_shift($xargs);
+    is_dir($app_tasks = path(APP_PATH, 'tasks')) && $set []= $app_tasks;
 
-    foreach ($xargs as $key => $val) {
-      is_numeric($key) && $test []= $val;
-    }
+    \IO\Dir::open($set, function ($file) {
+        if (is_dir($file)) {
+          require path($file, 'initialize.php');
+        } else {
+          require $file;
+        }
+      });
 
 
-    if (is_file($mod_file)) {
-      is_string($cmd) && array_unshift($test, $cmd);
-      call_user_func(function ($xargs) {
-          require func_get_arg(1);
-        }, $test, $mod_file);
+    if ( ! $cmd) {
+      help();
+    } elseif ($first === 'help') {
+      help($first);
     } else {
-      $dir = path(__DIR__, 'scripts');
-      IO\Dir::open($dir, function ($file) {
-          if (is_dir($file)) {
-            $init_file = path($test, 'initialize.php');
-            require $init_file;
-          }
-        });
-
-      if (arg('help')) {
-        help($cmd);
-      } else {
-        $cmd ? Sauce\Shell\Task::exec($cmd, $test) : help();
+      try {
+        \Sauce\Shell\Task::exec($cmd, $xargs);
+      } catch (\Exception $e) {
+        \Sauce\Shell\CLI::error("\bred({$e->getMessage()})\b");
       }
     }
 

@@ -56,7 +56,7 @@ function yes($text)
 
 function help($cmd = NULL)
 {
-  writeln(colorize(\Sauce\Shell\Task::help($cmd)));
+  \Sauce\Shell\Task::help($cmd);
 }
 
 function task($name, $desc, \Closure $fn)
@@ -66,7 +66,7 @@ function task($name, $desc, \Closure $fn)
 
 function error($text)
 {
-  writeln(colorize("\bred($text)\b"));
+  \Sauce\Shell\CLI::error("\bred($text)\b");
 }
 
 function info($text)
@@ -99,16 +99,22 @@ function pretty($text)
   writeln(colorize($text));
 }
 
-function copy_file($to, $from)
+function copy_file($to, $from, $perms = FALSE)
 {
   status('copy', path(rtrim($to, DIRECTORY_SEPARATOR), basename($from)));
-  copy($from, path(mkdir($to, 0777, TRUE), basename($from)));
+
+  is_dir($to) OR mkdir($to, $perms ?: 0755, TRUE);
+  copy($from, path($to, basename($from)));
 }
 
-function create_file($path, $text = '')
+function create_file($path, $text = '', $perms = FALSE)
 {
   status('create', $path);
-  write(path(mkdir(dirname($path), 0777, TRUE), basename($path)), $text);
+
+  is_dir($dir = dirname($path)) OR mkdir($dir, $perms ?: 0755, TRUE);
+
+  write($path, $text);
+  $perms && chmod($path, $perms);
 }
 
 function remove_file($path)
@@ -117,10 +123,10 @@ function remove_file($path)
   is_file($path) && unlink($path);
 }
 
-function create_dir($path)
+function create_dir($path, $perms = FALSE)
 {
   status('create', $path);
-  mkdir($path, 0777, TRUE);
+  is_dir($path) OR mkdir($path, $perms ?: 0755, TRUE);
 }
 
 function copy_dir($to, $from)
@@ -129,19 +135,14 @@ function copy_dir($to, $from)
   \IO\Dir::cpfiles($from, path($to, basename($from)), '*', TRUE);
 }
 
-function template($to, $from, array $vars = array())
+function template($from, array $vars = array())
 {
-  static $render = NULL;
-
-  $render OR $render = function() {
+  return call_user_func(function () {
       ob_start();
       extract(func_get_arg(1));
       require func_get_arg(0);
       return ob_get_clean();
-    };
-
-  status('create', path($to, basename($from)));
-  write(path($to, basename($from)), $render($from, $vars));
+    }, $from, $vars);
 }
 
 function append_file($path, $content, array $params = array())
@@ -246,25 +247,27 @@ function add_route($from, $to, $path = '', $method = 'get')
 {
   $path OR $path = "{$from}_$to";
   $text = ";\n$method('/$from', '$to', array('path' => '$path'));";
-  return inject_into_file(path(getcwd(), 'config', 'routes.php'), $text, array('before' => '/;[^;]*?$/'));
+  is_dir($dir = path(APP_PATH, 'config')) OR mkdir($dir, 0755, TRUE);
+  return inject_into_file(path($dir, 'routes.php'), $text, array('before' => '/;[^;]*?$/'));
 }
 
-function add_view($parent, $name, $text = '', $ext = '.php')
+function add_view($parent, $name, $text = '')
 {
-  return write(path(mkdir(path(getcwd(), 'views', $parent), 0777, TRUE), "$name.$ext"), $text);
+  is_dir($path = path(APP_PATH, 'views', $parent)) OR mkdir($path, 0755, TRUE);
+  return write(path($path, $name), $text);
 }
 
 function action($format, $text, $what)
 {
   $prefix = str_pad("\b$format($text)\b", 20 + strlen($format), ' ', STR_PAD_LEFT);
-  $text   = strtr(str_replace(getcwd().DIRECTORY_SEPARATOR, '', "\clight_gray($what)\c"), '\\/', '//');
+  $text   = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', "\clight_gray($what)\c");
 
   writeln(colorize("$prefix  $text"));
 }
 
 function status($type, $text = '')
 {
-  $text = strtr(str_replace(getcwd().DIRECTORY_SEPARATOR, '', "  $text"), '\\//', '//');
+  $text = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', "  $text");
 
   switch ($type) {
     case 'create';
