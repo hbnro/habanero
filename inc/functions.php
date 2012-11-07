@@ -242,6 +242,9 @@ function partial($path, array $vars = array())
   if ($tpl = \Tailor\Base::partial($path)) {
     return \Tailor\Base::render($tpl, $vars);
   }
+
+  $path = path(\Tailor\Config::get('views_dir'), $path);
+
   throw new \Exception("Partial view '$path' does not exists");
 }
 
