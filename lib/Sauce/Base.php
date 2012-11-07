@@ -150,7 +150,7 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'assets', 'js'));
 
 
-    $prefix = APP_ENV <> 'production' ? \Broil\Helpers::build('/') : ROOT . 'static/';
+    $prefix = APP_ENV <> 'production' ? '?_=' : ROOT . 'static/';
 
     \Tailor\Config::set('images_url', "{$prefix}img");
     \Tailor\Config::set('styles_url', "{$prefix}css");

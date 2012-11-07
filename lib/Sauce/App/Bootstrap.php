@@ -20,15 +20,13 @@ class Bootstrap
 
 
     // static assets
-    get('/@path', function () {
-      $test = \Sauce\App\Assets::read(params('path'));
-      return array(200, array('Content-Type' => $test['type']), $test['output']);
-    }, array(// TODO: Y U NO CDN?
-      'subdomain' => '',
-      'constraints' => array(
-        '@path' => '(img|css|js)/.+',
-      ),
-    ));
+    if ($path = \Postman\Request::value('_')) {
+      $test   = \Sauce\App\Assets::read($path);
+      $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
+
+      echo $output;
+      exit;
+    }
 
 
     // settings
