@@ -128,7 +128,7 @@ class Assets
         if (\IO\File::ext($test) === $ext) {
           $output = \IO\File::read($test);
         } else {
-          $tmp = path(\Tailor\Config::get('cache_dir'), strtr($file, '\\/', __));
+          $tmp = path(\Tailor\Config::get('cache_dir'), strtr($file, '\\/', '__'));
 
           if (is_file($tmp)) {
             if (filemtime($test) > filemtime($tmp)) {
@@ -139,7 +139,7 @@ class Assets
           if ( ! is_file($tmp)) {
             $tpl = \Tailor\Base::compile($test);
             $now = date('Y-m-d H:i:s', filemtime($test));
-            $output = "/* $now .$file */\n$tpl";
+            $output = "/* $now ./assets/$ext/$file */\n$tpl";
 
             \IO\File::write($tmp, $output);
           } else {
