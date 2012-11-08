@@ -74,14 +74,14 @@ function info($text)
   writeln(colorize("\bcyan($text)\b"));
 }
 
-function bold($text)
+function hi($text)
 {
   writeln(colorize("\bwhite($text)\b"));
 }
 
 function notice($text)
 {
-  writeln(colorize("\byellow($text)\b"));
+  writeln(colorize("\bbrown($text)\b"));
 }
 
 function success($text)
@@ -89,22 +89,13 @@ function success($text)
   writeln(colorize("\bgreen($text)\b"));
 }
 
-function pretty($text)
-{
-  ob_start() && $text();
-
-  $text = preg_replace('/(\$?[\w.-]+)(?=\s=>)/', '\bcyan(\\1)\b', ob_get_clean());
-  $text = preg_replace('/^\s*([\w:.-]+)(\s+)(.+?)$/m', '\bbrown(\\1)\b\\2\clight_gray(\\3)\c', $text);
-
-  writeln(colorize($text));
-}
-
 function copy_file($to, $from, $perms = FALSE)
 {
   status('copy', path(rtrim($to, DIRECTORY_SEPARATOR), basename($from)));
 
   is_dir($to) OR mkdir($to, $perms ?: 0755, TRUE);
-  copy($from, path($to, basename($from)));
+  copy($from, $file = path($to, basename($from)));
+  $perms && chmod($file, $perms);
 }
 
 function create_file($path, $text = '', $perms = FALSE)
@@ -165,11 +156,13 @@ function gsub_file($path, $regex, $replace, $position = 0)
     return FALSE;
   }
 
-
   $content = read($path);
 
   if (preg_match($regex, $content, $match)) {
+    ob_start();
     $replace = $replace instanceof \Closure ? $replace($match) : $replace;
+    ob_end_clean();
+
     $replace = $position < 0 ? "$replace$match[0]" : ($position > 0 ? "$match[0]$replace" : $replace);
     $content = str_replace($match[0], $replace, $content);
 
@@ -193,8 +186,10 @@ function inject_into_file($path, $content, array $params = array())
   return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : ( ! empty($params['after']) ? 1 : 0));
 }
 
-function add_class($path, $name, $parent = '', $methods = '', array $properties = array(), array $constants = array())
+function add_class($path, $name, $parent = '', array $methods = array(), array $properties = array(), array $constants = array())
 {
+  status('create', $path);
+
   $type   = $parent ? " extends $parent" : '';
   $props  =
   $consts =
@@ -211,14 +206,17 @@ function add_class($path, $name, $parent = '', $methods = '', array $properties 
 
   if ( ! empty($methods)) {
     $test = array();
-    foreach ((array) $methods as $one) {
+    foreach ($methods as $one) {
       $prefix = '';
 
       if (strpos($one, ' ') !== FALSE) {
-        @list($prefix, $one) = explode($one, 2);
+        $set = array_filter(explode(' ', $one));
+        $one = array_pop($set);
+
+        $prefix = join(' ', $set) . ' ';
       }
 
-      $test []= "  {$prefix}function $one() {\n  }\n";
+      $test []= "  {$prefix}function $one()\n  {\n  }\n";
     }
     $method = join("\n", $test);
   }
@@ -234,27 +232,88 @@ function add_class($path, $name, $parent = '', $methods = '', array $properties 
         $prefix = join(' ', $parts);
       }
 
-      $test []= "  $prefix $$key = '$val';";
+      $max = strlen("$prefix$$key") + 3;
+      $val = preg_replace('/^/m', str_repeat(' ', $max), var_export($val, TRUE));
+
+      $test []= "  $prefix $$key = $val;";
     }
     $props = join("\n", $test);
     $props = "$props\n";
   }
+
+  $base_dir = dirname($path);
+  is_dir($base_dir) OR mkdir($base_dir, 0755, TRUE);
 
   return write($path, "<?php\n\nclass $name$type\n{\n$consts$props$method}\n");
 }
 
 function add_route($from, $to, $path = '', $method = 'get')
 {
+  status('update', 'config/routes.php');
+
   $path OR $path = "{$from}_$to";
-  $text = ";\n$method('/$from', '$to', array('path' => '$path'));";
-  is_dir($dir = path(APP_PATH, 'config')) OR mkdir($dir, 0755, TRUE);
-  return inject_into_file(path($dir, 'routes.php'), $text, array('before' => '/;[^;]*?$/'));
+
+  $text = ";\n$method('/$from', '$to', array('path' => '$path'))";
+  $from = preg_quote($from, '/');
+
+  $config_dir = path(APP_PATH, 'config');
+  is_dir($config_dir) OR mkdir($config_dir, 0755, TRUE);
+
+  return inject_into_file(path($config_dir, 'routes.php'), $text, array(
+    'unless' => "/$method\s*\(\s*'\/$from'/",
+    'before' => '/;/',
+  ));
+}
+
+function add_model($name, $table = '', array $columns = array(), array $indexes = array(), $parent = 'database', $connection = 'default')
+{
+  static $set = array(
+            'database' => '\\Servant\\Mapper\\Database',
+            'mongo' => '\\Servant\\Mapper\\MongoDB',
+          );
+
+
+  $table = $table ?: $name;
+  $fields = compact('columns', 'indexes');
+  $connect = compact('table', 'connection');
+
+  isset($set[$parent]) && $parent = $set[$parent];
+
+  add_class(path(APP_PATH, 'models', "$name.php"), $name, $parent, array(), $fields, $connect);
 }
 
 function add_view($parent, $name, $text = '')
 {
-  is_dir($path = path(APP_PATH, 'views', $parent)) OR mkdir($path, 0755, TRUE);
-  return write(path($path, $name), $text);
+  status('create', "views/$parent/$name");
+
+  $views_dir = path(APP_PATH, 'views', $parent);
+  is_dir($views_dir) OR mkdir($views_dir, 0755, TRUE);
+
+  return write(path($views_dir, $name), $text);
+}
+
+function add_action($parent, $action, $method = 'get', $route = '/', $path = 'index')
+{
+  $out_file = path(APP_PATH, 'controllers', "$parent.php");
+
+  $test = inject_into_file($out_file, function ()
+    use ($parent, $action, $method, $route, $path) {
+      add_route($route, "$parent#$action", $path, $method);
+
+      if ( ! arg('no-view')) {
+        $text = "section\n  header\n    h1 $parent#$action.view\n  pre = path(APP_PATH, 'views', '$parent', '$action.php.neddle')";
+        add_view($parent, "$action.php.neddle", "$text\n");
+      }
+
+     return "}\n  function $action()\n  {\n  }\n";
+   }, array(
+     'unless' => "/\bfunction\s+$action\s*\(/",
+     'before' => '/\}(?=\s*\}\s*$)/s',
+   ));
+
+  if ( ! $test) {
+    error("\n  Action '$action' already exists\n");
+  }
 }
 
 function action($format, $text, $what)
@@ -283,7 +342,7 @@ function status($type, $text = '')
       action('white', $type, $text);
     break;
     case 'copy';
-      action('yellow', $type, $text);
+      action('brown', $type, $text);
     break;
     default;
       $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
