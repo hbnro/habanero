@@ -216,7 +216,7 @@ class CLI
 
 
     if ( ! $regex) {
-      $expr  = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\(\s*(.*?)\s*\)\\1/s';
+      $expr  = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\((\s*)(.*?)(\s*)\)\\1/s';
       $regex = sprintf($expr, join('|', array_keys(static::$fgcolors)), join('|', array_keys(static::$bgcolors)));
     }
 
@@ -249,7 +249,7 @@ class CLI
         }
 
         $color = "\033[" . ( $out ? join(';', $out) : 0) . 'm';
-        $color = static::is_atty() ? "{$color}{$match[3][$i]}\033[0m" : $match[3][$i];
+        $color = static::is_atty() ? "{$match[3][$i]}{$color}{$match[4][$i]}\033[0m{$match[5][$i]}" : $match[4][$i];
         $text  = str_replace($val, $color, $text);
       }
     }
