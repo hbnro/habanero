@@ -11,9 +11,6 @@ class Task
 
   Welcome to the \blight_gray,black(habanero-sauce)\b console utility!
 
-  Usage:
-    @ \bgreen(<command>)\b [arguments] [...]
-
   Type \bwhite(--help)\b to get more information
 
 INTRO;
@@ -22,41 +19,14 @@ INTRO;
 
   public static function help($all = FALSE)
   {
-    $cmd = ! empty($_SERVER['_']) ? basename($_SERVER['_']) : 'hs';
-
-    \Sauce\Shell\CLI::printf(str_replace('@', $cmd, static::$welcome) . "\n");
-
     if ($all) {
       if ( ! sizeof(static::$tasks)) {
-        \Sauce\Shell\CLI::printf("  \bred(Not available tasks!)\b\n\n");
+        \Sauce\Shell\CLI::printf("\n  \bbrown(Not available tasks!)\b\n\n");
       } else {
-        $max = 0;
-
-        foreach (static::$tasks as $ns => $set) {
-          foreach (array_keys($set) as $k) {
-            $cmd = ($k <> 'default') ? "$ns:$k" : $ns;
-            $max = ($test = strlen($cmd)) > $max ? $test : $max;
-          }
-        }
-
-
-        \Sauce\Shell\CLI::printf("  \bcyan(Available tasks:)\b\n\n");
-
-        foreach (static::$tasks as $ns => $set) {
-          foreach ($set as $key => $val) {
-            $cmd = ($key <> 'default') ? "$ns:$key" : $ns;
-            $pad = str_repeat(' ', ($max + 2) - strlen($cmd));
-
-            if ( ! empty($val['desc'])) {
-              \Sauce\Shell\CLI::printf("  \bbrown(%s)\b$pad\cdark_gray(#)\c \clight_gray(%s)\c\n", $cmd, $val['desc']);
-            } else {
-              \Sauce\Shell\CLI::printf("  \bbrown(%s)\b\n", $cmd);
-            }
-          }
-        }
-
-        \Sauce\Shell\CLI::writeln();
+        static::search();
       }
+    } else {
+      \Sauce\Shell\CLI::printf(static::$welcome . "\n");
     }
   }
 
@@ -65,10 +35,16 @@ INTRO;
     @list($namespace, $task) = explode(':', $mod, 2);
 
     if ( ! static::exists($namespace, $task ?: 'default')) {
-      $suffix = is_string($mod) ? ": $mod" : '';
-      throw new \Exception("Undefined option$suffix");
+      foreach (array_keys(static::$tasks) as $ns) {
+        if (strpos($ns, $mod) === 0) {
+          return static::search($ns);
+        }
+      }
+
+      $argv = join(' ', array_slice($_SERVER['argv'], 1));
+      throw new \Exception("Unknown option: $argv");
     } else {
-      static::run($namespace, $task ?: 'default', $vars);
+      return static::run($namespace, $task ?: 'default', $vars);
     }
   }
 
@@ -108,15 +84,48 @@ INTRO;
   {
     if ( ! empty(static::$tasks[$namespace])) {
       if ( ! empty(static::$tasks[$namespace][$method]['script'])) {
-        require static::$tasks[$namespace][$method]['script'];
+        return require static::$tasks[$namespace][$method]['script'];
       } elseif ( ! empty(static::$tasks[$namespace][$method]['exec'])) {
-        call_user_func(static::$tasks[$namespace][$method]['exec'], $params);
+        return call_user_func(static::$tasks[$namespace][$method]['exec'], $params);
       } else {
         throw new \Exception("Unknown '$method' command");
       }
     } else {
       throw new \Exception("Missing '$namespace' namespace");
     }
+  }
+
+
+  private static function search($q = '')
+  {
+    \Sauce\Shell\CLI::printf("\n  \bcyan(Available tasks:)\b\n\n");
+
+    $max = 0;
+
+    foreach (static::$tasks as $ns => $set) {
+      foreach (array_keys($set) as $k) {
+        $cmd = ($k <> 'default') ? "$ns:$k" : $ns;
+        $max = ($test = strlen($cmd)) > $max ? $test : $max;
+      }
+    }
+
+
+    foreach (static::$tasks as $ns => $set) {
+      if ( ! $q OR (strpos($ns, $q) !== FALSE)) {
+        foreach ($set as $key => $val) {
+          $cmd = ($key <> 'default') ? "$ns:$key" : $ns;
+          $pad = str_repeat(' ', ($max + 2) - strlen($cmd));
+
+          if ( ! empty($val['desc'])) {
+            \Sauce\Shell\CLI::printf("  \bbrown(%s)\b$pad\cdark_gray(#)\c \clight_gray(%s)\c\n", $cmd, $val['desc']);
+          } else {
+            \Sauce\Shell\CLI::printf("  \bbrown(%s)\b\n", $cmd);
+          }
+        }
+      }
+    }
+
+    \Sauce\Shell\CLI::writeln();
   }
 
 }
