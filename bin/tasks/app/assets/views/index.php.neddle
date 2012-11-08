@@ -1,0 +1,3 @@
+section
+  header home#index.view
+  pre = path(APP_PATH, 'views', 'home', 'index.php.neddle')

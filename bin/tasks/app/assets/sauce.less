@@ -1,0 +1,222 @@
+.placeholder(@color: #999) {
+  :-moz-placeholder {
+    color: @color;
+  }
+  ::-webkit-input-placeholder {
+    color: @color;
+  }
+}
+
+.grid() {
+  .clearfix;
+  width: @width;
+}
+
+.columns(@span: 1) {
+  float: left;
+  display: inline;
+  width: ((@width / @columns) * @span) - @separation;
+  margin-left: @separation;
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.nobox() {
+  * {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+}
+
+.btcf() {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.clearfix() {
+  *zoom: 1;
+  &:after,
+  &:before {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.center-block() {
+  display: block;
+  margin: 0 auto;
+}
+
+.square(@size: 5px) {
+  .size(@size, @size);
+}
+
+.background(@color: white, @alpha: 1) {
+  background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+}
+
+.border(@color: white, @alpha: 1) {
+  border-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+  background-clip: padding-box;
+}
+
+.size(@width, @height) {
+  width: @width;
+  height: @height;
+  display: inline-block;
+}
+
+.image(@path) {
+  .size(image-width(@path), image-height(@path));
+  background: image-url(@path) no-repeat;
+  text-indent: -99999px;
+  white-space: nowrap;
+}
+
+.sprite(@x, @y, @w: 16, @h: 16, @left: 0, @top: 0) {
+  background-position: ((@x * @w) + @left) * -1px ((@y * @h) + @top) * -1px;
+}
+
+.clipped(@width: 100%, @type: ellipsis) {
+  text-overflow: @type;
+  white-space: nowrap;
+  overflow: hidden;
+  width: @width;
+}
+
+.opacity(@opacity: 0.5) {
+  -moz-opacity: @opacity;
+  -khtml-opacity: @opacity;
+  -webkit-opacity: @opacity;
+  opacity: @opacity;
+}
+
+.rounded(@size: 5px) {
+  -moz-border-radius: @size;
+  -webkit-border-radius: @size;
+  border-radius: @size;
+
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+.border-radius(@tl: 5px, @tr: 5px, @br: 5px, @bl: 5px) {
+  -moz-border-radius: @tl @tr @br @bl;
+  -webkit-border-radius: @tl @tr @br @bl;
+  border-radius: @tl @tr @br @bl;
+
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+.box-shadow(@left: 0px, @top: 0px, @blur: 5px, @color: #555) {
+  -moz-box-shadow: @left @top @blur @color;
+  -webkit-box-shadow: @left @top @blur @color;
+  box-shadow: @left @top @blur @color;
+}
+
+.inner-shadow(@left: 0px, @top: 0px, @blur: 5px, @color: #555) {
+  -moz-box-shadow: inset @left @top @blur @color;
+  -webkit-box-shadow: inset @left @top @blur @color;
+  box-shadow: inset @left @top @blur @color;
+}
+
+.text-columns(@colwidth: 250px, @colcount: 0, @colgap: 50px, @color: #EEE, @style: solid, @width: 1px) {
+  -moz-column-width: @colwidth;
+  -moz-column-count: @colcount;
+  -moz-column-gap: @colgap;
+  -moz-column-rule-color: @color;
+  -moz-column-rule-style: @style;
+  -moz-column-rule-width: @width;
+  -webkit-column-width: @colwidth;
+  -webkit-column-count: @colcount;
+  -webkit-column-gap: @colgap;
+  -webkit-column-rule-color: @color;
+  -webkit-column-rule-style: @style;
+  -webkit-column-rule-width: @width;
+  column-width: @colwidth;
+  column-count: @colcount;
+  column-gap: @colgap;
+  column-rule-color: @color;
+  column-rule-style: @style;
+  column-rule-width: @width;
+}
+
+.transition-duration(@duration: 0.2s) {
+  -moz-transition-duration: @duration;
+  -webkit-transition-duration: @duration;
+  transition-duration: @duration;
+}
+
+.rotation(@deg: 5deg) {
+  -webkit-transform: rotate(@deg);
+  -moz-transform: rotate(@deg);
+  transform: rotate(@deg);
+}
+
+.scale(@ratio: 1.5) {
+  -webkit-transform: scale(@ratio);
+  -moz-transform: scale(@ratio);
+  transform: scale(@ratio);
+}
+
+.transition(@duration: 0.2s, @ease: ease-out) {
+  -webkit-transition: all @duration @ease;
+  -moz-transition: all @duration @ease;
+  transition: all @duration @ease;
+}
+
+.translate(@x: 0, @y: 0) {
+  -moz-transform: translate(@x, @y);
+  -webkit-transform: translate(@x, @y);
+  -o-transform: translate(@x, @y);
+  -ms-transform: translate(@x, @y);
+  transform: translate(@x, @y);
+}
+
+.gradient(@start: #555, @end: #333) {
+  background-color: @end;
+  background-repeat: repeat-x;
+
+  background-image: -khtml-gradient(linear, left top, right top, from(@start), to(@end));
+  background-image: -moz-linear-gradient(left, @start, @end);
+  background-image: -ms-linear-gradient(left, @start, @end);
+  background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, @start), color-stop(100%, @end));
+  background-image: -webkit-linear-gradient(left, @start, @end);
+  background-image: -o-linear-gradient(left, @start, @end);
+  background-image: linear-gradient(left, @start, @end);
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{start}', endColorstr='@{end}', GradientType=1);
+  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{start}', endColorstr='@{end}', GradientType=1);
+}
+
+.v-gradient(@start: #555, @end: #333) {
+  background-color: @end;
+  background-repeat: repeat-x;
+
+  background-image: -khtml-gradient(linear, left top, left bottom, from(@start), to(@end));
+  background-image: -moz-linear-gradient(@start, @end);
+  background-image: -ms-linear-gradient(@start, @end);
+  background-image: -webkit-linear-gradient(@start, @end);
+  background-image: -o-linear-gradient(@start, @end);
+  background-image: linear-gradient(@start, @end);
+
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(@start, @start), color-stop(@end, @end));
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{start}', endColorstr='@{end}', GradientType=0);
+  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{start}', endColorstr='@{end}', GradientType=0);
+}
+
+.quick-gradient (@origin: left, @alpha: 0.2, @color: black) {
+  background-image: -webkit-linear-gradient(@origin, rgba(@color, 0.0), rgba(@color, @alpha));
+  background-image: -moz-linear-gradient(@origin, rgba(@color, 0.0), rgba(@color, @alpha));
+  background-image: -o-linear-gradient(@origin, rgba(@color, 0.0), rgba(@color, @alpha));
+  background-image: -ms-linear-gradient(@origin, rgba(@color, 0.0), rgba(@color, @alpha));
+  background-image: linear-gradient(@origin, rgba(@color, 0.0), rgba(@color, @alpha));
+}
