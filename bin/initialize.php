@@ -1,5 +1,6 @@
 <?php
 
+
 require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
 require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
 
@@ -30,10 +31,12 @@ run(function () {
     } elseif ($first === 'help') {
       help($first);
     } else {
+      is_string($first) && $xargs[$first] = TRUE;
+
       try {
         \Sauce\Shell\Task::exec($cmd, $xargs);
       } catch (\Exception $e) {
-        \Sauce\Shell\CLI::error("\bred({$e->getMessage()})\b");
+        \Sauce\Shell\CLI::error("\n  \bred({$e->getMessage()})\b\n");
       }
     }
 
