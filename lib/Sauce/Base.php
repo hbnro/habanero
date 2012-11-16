@@ -144,10 +144,10 @@ class Base
     // templating
     \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
 
-    \Tailor\Config::set('views_dir', path(APP_PATH, 'views'));
-    \Tailor\Config::set('images_dir', path(APP_PATH, 'assets', 'img'));
-    \Tailor\Config::set('styles_dir', path(APP_PATH, 'assets', 'css'));
-    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'assets', 'js'));
+    \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
+    \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
+    \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
+    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
     $prefix = APP_ENV <> 'production' ? '?_=' : ROOT . 'static/';

@@ -14,7 +14,7 @@ class Handler
     if ($ttl && $cache && ($test = \Cashier\Base::fetch($hash))) {
       @list($out->status, $out->headers, $out->response) = $test;
     } else {
-      $controller_path = path(APP_PATH, 'controllers');
+      $controller_path = path(APP_PATH, 'app', 'controllers');
       $controller_base = path($controller_path, 'base.php');
       $controller_file = path($controller_path, "$controller.php");
 
@@ -26,7 +26,8 @@ class Handler
       is_file($controller_base) && require $controller_base;
       require $controller_file;
 
-      $class_name = basename($controller) . '_controller';
+      $base_name = camelcase(basename(APP_PATH), TRUE, '\\');
+      $class_name = "\\$base_name\\App\\" . camelcase($controller, TRUE, '\\');
 
       if ( ! class_exists($class_name)) {
         throw new \Exception("Missing '$class_name' class");

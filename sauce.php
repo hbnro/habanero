@@ -25,7 +25,7 @@ if (is_file($namespaces_file) && ($test = require $namespaces_file)) {
 
 \Sauce\Base::$autoload = $autoload;
 
-foreach (array('library', 'models') as $one) {
+foreach (array('library', path('app', 'models')) as $one) {
   $autoload->add('', path(APP_PATH, $one));
 }
 
