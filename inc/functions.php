@@ -276,3 +276,13 @@ function e($text)
 {
   return \Labourer\Web\Html::ents($text, TRUE);
 }
+
+function camelcase()
+{
+  return call_user_func_array('\\Labourer\\Web\\Text::camelcase', func_get_args());
+}
+
+function underscore()
+{
+  return call_user_func_array('\\Labourer\\Web\\Text::underscore', func_get_args());
+}
