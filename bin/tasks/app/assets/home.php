@@ -1,5 +1,8 @@
-<?php
+<?php echo '<' . '?php'; ?>
 
-class home_controller extends base_controller
+
+namespace <?php echo camelcase($app_name, TRUE, '\\'); ?>\App;
+
+class Home extends \<?php echo camelcase($app_name, TRUE, '\\'); ?>\App\Base
 {
 }

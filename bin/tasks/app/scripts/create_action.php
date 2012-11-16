@@ -1,6 +1,6 @@
 <?php
 
-$out_file = path(APP_PATH, 'controllers', "$name.php");
+$out_file = path(APP_PATH, 'app', 'controllers', "$name.php");
 
 if ( ! is_file($out_file)) {
   error("\n  Missing '$name' controller\n");

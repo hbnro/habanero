@@ -1,5 +1,8 @@
-<?php
+<?php echo '<' . '?php'; ?>
 
-class error_controller extends base_controller
+
+namespace <?php echo camelcase($app_name, TRUE, '\\'); ?>\App;
+
+class Error extends \<?php echo camelcase($app_name, TRUE, '\\'); ?>\App\Base
 {
 }

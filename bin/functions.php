@@ -205,10 +205,20 @@ function add_class($path, $name, $parent = '', array $methods = array(), array $
 {
   status('create', $path);
 
+  $ns     = '';
   $type   = $parent ? " extends $parent" : '';
   $props  =
   $consts =
   $method = '';
+
+
+  if (strpos($name, '\\') !== FALSE) {
+    $parts = explode('\\', $name);
+    $name = array_pop($parts);
+    $ns = join('\\', $parts);
+    $ns = "\n\nnamespace $ns;";
+  }
+
 
   if ( ! empty($constants)) {
     $test = array();
@@ -259,7 +269,7 @@ function add_class($path, $name, $parent = '', array $methods = array(), array $
   $base_dir = dirname($path);
   is_dir($base_dir) OR mkdir($base_dir, 0755, TRUE);
 
-  return write($path, "<?php\n\nclass $name$type\n{\n$consts$props$method}\n");
+  return write($path, "<?php$ns\n\nclass $name$type\n{\n$consts$props$method}\n");
 }
 
 function add_route($from, $to, $path = '', $method = 'get')
@@ -278,6 +288,17 @@ function add_route($from, $to, $path = '', $method = 'get')
     'unless' => "/$method\s*\(\s*'\/$from'/",
     'after' => '/;[^;]*?$/',
   ));
+}
+
+function add_controller($name)
+{
+  $out_file = path(APP_PATH, 'app', 'controllers', "$name.php");
+
+  $base = camelcase(basename(APP_PATH), TRUE, '\\');
+  $ucname = camelcase($name, TRUE, '\\');
+  $base_class = "\\$base\\App\\Base";
+
+  add_class($out_file, $ucname, $base_class, array('index'));
 }
 
 function add_model($name, $table = '', array $columns = array(), array $indexes = array(), $parent = 'database', $connection = 'default')
@@ -301,7 +322,7 @@ function add_view($parent, $name, $text = '')
 {
   status('create', "views/$parent/$name");
 
-  $views_dir = path(APP_PATH, 'views', $parent);
+  $views_dir = path(APP_PATH, 'app', 'views', $parent);
   is_dir($views_dir) OR mkdir($views_dir, 0755, TRUE);
 
   return write(path($views_dir, $name), $text);
@@ -309,14 +330,14 @@ function add_view($parent, $name, $text = '')
 
 function add_action($parent, $action, $method = 'get', $route = '/', $path = 'index')
 {
-  $out_file = path(APP_PATH, 'controllers', "$parent.php");
+  $out_file = path(APP_PATH, 'app', 'controllers', "$parent.php");
 
   $test = inject_into_file($out_file, function ()
     use ($parent, $action, $method, $route, $path) {
       add_route($route, "$parent#$action", $path, $method);
 
       if ( ! arg('no-view')) {
-        $text = "section\n  header\n    h1 $parent#$action.view\n  pre = path(APP_PATH, 'views', '$parent', '$action.php.neddle')";
+        $text = "section\n  header\n    h1 $parent#$action.view\n  pre = path(APP_PATH, 'app', 'views', '$parent', '$action.php.neddle')";
         add_view($parent, "$action.php.neddle", "$text\n");
       }
 

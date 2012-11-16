@@ -3,9 +3,9 @@
 $cache      = array();
 $cache_dir  = \Tailor\Config::get('cache_dir');
 
-$base_path  = path(APP_PATH, 'assets');
+$base_path  = path(APP_PATH, 'app', 'assets');
 $static_dir = path(APP_PATH, 'static');
-$views_dir  = path(APP_PATH, 'views');
+$views_dir  = path(APP_PATH, 'app', 'views');
 
 $img_path   = path($base_path, 'img');
 $img_dir    = path($static_dir, 'img');
@@ -18,7 +18,8 @@ if (arg('v', 'views') && is_dir($views_dir)) {
   \IO\Dir::each($views_dir, '*', function ($file) {
       if (is_file($file)) {
         $name = join('.', array_slice(explode('.', basename($file)), 0, 2));
-        $path = str_replace(path(APP_PATH, 'views').DIRECTORY_SEPARATOR, '', dirname($file));
+        $path = str_replace(path(APP_PATH, 'app', 'views').DIRECTORY_SEPARATOR, '', dirname($file));
+        $path = str_replace(path(APP_PATH, 'app', 'views').DIRECTORY_SEPARATOR, '', dirname($file));
 
         $cache_dir  = \Tailor\Config::get('cache_dir');
         $cache_file = path($cache_dir, strtr("$path/$name", '\\/', '__'));
@@ -103,7 +104,7 @@ foreach (array('css' => 'styles', 'js' => 'scripts') as $type => $option) {
               $key = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', $test);
 
               $name = join('.', array_slice(explode('.', basename($test)), 0, 2));
-              $path = str_replace(path(APP_PATH, 'assets', $type).DIRECTORY_SEPARATOR, '', dirname($test));
+              $path = str_replace(path(APP_PATH, 'app', 'assets', $type).DIRECTORY_SEPARATOR, '', dirname($test));
 
               if ($ext <> $type) {
                 $cache_file = path($cache_dir, strtr("$path/$name", '\\/', '__'));
