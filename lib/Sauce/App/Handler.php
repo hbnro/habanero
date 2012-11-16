@@ -27,7 +27,7 @@ class Handler
       require $controller_file;
 
       $base_name = camelcase(basename(APP_PATH), TRUE, '\\');
-      $class_name = "\\$base_name\\App\\" . camelcase($controller, TRUE, '\\');
+      $class_name = camelcase($controller, TRUE, '\\');
 
       if ( ! class_exists($class_name)) {
         throw new \Exception("Missing '$class_name' class");
