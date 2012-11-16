@@ -30,9 +30,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
    create_dir(path($app_path, 'database'), 0777);
    create_dir(path($app_path, 'database', 'backup'), 0777);
   create_file(path($app_path, 'database', 'sqlite.db'), '', 0777);
-
-  create_file(path($app_path, 'database', 'schema.php'), "<?php return array();\n", 0777);
-  create_file(path($app_path, 'database', 'seeds.php'), "<?php\n");
+  create_file(path($app_path, 'database', 'fixtures.yaml'), "---\n", 0777);
 
    create_dir(path($app_path, 'library'));;
 
