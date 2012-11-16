@@ -136,21 +136,19 @@ function template($from, array $vars = array())
     }, $from, $vars);
 }
 
-function append_file($path, $content, array $params = array())
+function append_file($path, $content)
 {
   status('append', $path);
-  empty($params['after']) && $params['after'] = '/.*$/s';
-  return inject_into_file($path, $content, $params);
+  return write($path, $content, TRUE);
 }
 
-function prepend_file($path, $content, array $params = array())
+function prepend_file($path, $content)
 {
   status('prepend', $path);
-  empty($params['before']) && $params['before'] = '/^.*/s';
-  return inject_into_file($path, $content, $params);
+  return write($path, $content . read($path));
 }
 
-function gsub_file($path, $regex, $replace, $position = 0)
+function gsub_file($path, $regex, \Closure $replace)
 {
   if ( ! is_file($path)) {
     return FALSE;
@@ -158,32 +156,49 @@ function gsub_file($path, $regex, $replace, $position = 0)
 
   $content = read($path);
 
-  if (preg_match($regex, $content, $match)) {
+  if (preg_match($regex, $content, $match, PREG_OFFSET_CAPTURE)) {
     ob_start();
-    $replace = $replace instanceof \Closure ? $replace($match) : $replace;
-    ob_end_clean();
+    $content = $replace($match, $content);
+    $buffer = ob_get_clean();
 
-    $replace = $position < 0 ? "$replace$match[0]" : ($position > 0 ? "$match[0]$replace" : $replace);
-    $content = str_replace($match[0], $replace, $content);
-
-    return write($path, $content);
+    return $content === NULL ? $buffer : $content;
   }
+  return FALSE;
 }
 
 function inject_into_file($path, $content, array $params = array())
 {
-  $regex = '/$/s';
-
   if ( ! empty($params['unless'])) {
     if (preg_match($params['unless'], read($path))) {
       return FALSE;
     }
   }
 
-  ! empty($params['after']) && $regex = $params['after'];
-  ! empty($params['before']) && $regex = $params['before'];
+  $regex = ! empty($params['replace']) ? $params['replace'] : '/^.+?$/s';
+  $regex = ! empty($params['before']) ? $params['before'] : $regex;
+  $regex = ! empty($params['after']) ? $params['after'] : $regex;
 
-  return gsub_file($path, $regex, $content, ! empty($params['before']) ? -1 : ( ! empty($params['after']) ? 1 : 0));
+  $replace = $content instanceof \Closure ? $content() : (string) $content;
+  $position = ! empty($params['before']) ? -1 : ( ! empty($params['after']) ? 1 : 0);
+
+  return gsub_file($path, $regex, function ($match, $content)
+    use ($path, $params, $replace, $position) {
+      $offset = array_pop($match[0]);
+      $old = array_pop($match[0]);
+
+      $lft = substr($content, 0, $offset);
+      $rgt = substr($content, strlen($old) + $offset);
+
+      switch ($position) {
+        case -1; // before
+          return write($path, "$lft$replace$old$rgt");
+        case 1; // after
+          return write($path, "$lft$old$replace$rgt");
+        case 0; // replace
+        default;
+          return write($path, $replace);
+      }
+    });
 }
 
 function add_class($path, $name, $parent = '', array $methods = array(), array $properties = array(), array $constants = array())
@@ -253,7 +268,7 @@ function add_route($from, $to, $path = '', $method = 'get')
 
   $path OR $path = "{$from}_$to";
 
-  $text = ";\n$method('/$from', '$to', array('path' => '$path'))";
+  $text = "\n$method('/$from', '$to', array('path' => '$path'));";
   $from = preg_quote($from, '/');
 
   $config_dir = path(APP_PATH, 'config');
@@ -261,7 +276,7 @@ function add_route($from, $to, $path = '', $method = 'get')
 
   return inject_into_file(path($config_dir, 'routes.php'), $text, array(
     'unless' => "/$method\s*\(\s*'\/$from'/",
-    'before' => '/;/',
+    'after' => '/;[^;]*?$/',
   ));
 }
 
@@ -305,10 +320,10 @@ function add_action($parent, $action, $method = 'get', $route = '/', $path = 'in
         add_view($parent, "$action.php.neddle", "$text\n");
       }
 
-     return "}\n  function $action()\n  {\n  }\n";
+     return "  function $action()\n  {\n  }\n";
    }, array(
      'unless' => "/\bfunction\s+$action\s*\(/",
-     'before' => '/\}(?=\s*\}\s*$)/s',
+     'before' => '/\}[^{}]*?$/',
    ));
 
   if ( ! $test) {
@@ -326,8 +341,6 @@ function action($format, $text, $what)
 
 function status($type, $text = '')
 {
-  $text = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', "  $text");
-
   switch ($type) {
     case 'create';
       action('green', $type, $text);
@@ -345,7 +358,9 @@ function status($type, $text = '')
       action('brown', $type, $text);
     break;
     default;
-      $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
+      $text = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', "  $text");
+      $prefix = str_pad("\bwhite($type)\b", 20 + strlen($type), ' ', STR_PAD_LEFT);
+
       writeln(colorize("$prefix$text"));
     break;
   }
