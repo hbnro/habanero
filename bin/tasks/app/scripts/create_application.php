@@ -18,11 +18,13 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
    create_dir(path($app_path, 'app', 'models'), 0777);
 
-    copy_file(path($app_path, 'app', 'controllers'), path($skel_dir, 'error.php'));
-    copy_file(path($app_path, 'app', 'controllers'), path($skel_dir, 'home.php'));
-  create_file(path($app_path, 'app', 'controllers', 'base.php'), template(path($skel_dir, 'base.php'), array(
-        'app_name' => basename($app_path),
-      )));
+   $vars = array(
+      'app_name' => basename($app_path),
+    );
+
+  create_file(path($app_path, 'app', 'controllers', 'error.php'), template(path($skel_dir, 'error.php'), $vars));
+  create_file(path($app_path, 'app', 'controllers', 'home.php'), template(path($skel_dir, 'home.php'), $vars));
+  create_file(path($app_path, 'app', 'controllers', 'base.php'), template(path($skel_dir, 'base.php'), $vars));
 
 
    create_dir(path($app_path, 'database'), 0777);
