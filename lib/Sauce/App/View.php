@@ -57,6 +57,11 @@ class View implements \ArrayAccess
     }
   }
 
+  public function assign($name, $content)
+  {
+    return $this->section($name, $content);
+  }
+
   public function section($name, $content)
   {
     $this->sections[$name] = array($content);
@@ -91,12 +96,16 @@ class View implements \ArrayAccess
     return $out;
   }
 
-  public function all(array $params = array())
+  public function all()
   {
     $out = array();
 
-    foreach (array_keys($this->sections) as $one) {
-      $out[$one] = $this->yield($one, $params);
+    foreach ($this->sections as $key => $val) {
+      if (sizeof($val) === 1) {
+        $out[$key] = array_pop($val);
+      } else {
+        $out[$key] = $val;
+      }
     }
 
     return $out;

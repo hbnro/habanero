@@ -13,25 +13,25 @@ class Bootstrap
 
   private function __construct()
   {
-    // huh stop!
-    if (headers_sent($file, $line)) {
-      throw new \Exception("Headers already sent on $file, line $line");
+    $test = strtoupper(PHP_SAPI);
+
+    if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
+      // TODO: what is happening?
+
+      // static assets
+      if ($path = \Postman\Request::value('_')) {
+        $test   = \Sauce\App\Assets::read($path);
+        $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
+
+        echo $output;
+        exit;
+      }
+
+
+      // settings
+      \Labourer\Web\Session::initialize();
+      ignore_user_abort(FALSE);
     }
-
-
-    // static assets
-    if ($path = \Postman\Request::value('_')) {
-      $test   = \Sauce\App\Assets::read($path);
-      $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
-
-      echo $output;
-      exit;
-    }
-
-
-    // settings
-    \Labourer\Web\Session::initialize();
-    ignore_user_abort(FALSE);
   }
 
 
