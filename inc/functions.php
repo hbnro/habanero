@@ -133,6 +133,15 @@ function redirect($path)
   exit;
 }
 
+function session($key, $value = FALSE)
+{
+  if (func_num_args() === 1) {
+    return \Labourer\Web\Session::get($key);
+  } else {
+    return \Labourer\Web\Session::set($key, $value);
+  }
+}
+
 function flash()
 {
   return call_user_func_array('\\Labourer\\Web\\Session::flash', func_get_args());
