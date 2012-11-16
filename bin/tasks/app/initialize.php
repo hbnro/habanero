@@ -2,17 +2,21 @@
 
 require path(__DIR__, 'functions.php');
 
-task('app:new', 'Create the application skeleton', function ($params) {
+task('new', 'The application skeleton', function ($params) {
   require path(__DIR__, 'scripts', 'check_skeleton.php');
 });
 
 
-0 && task('app:make', 'Generate actions and controllers', function ($params) {
+task('do', 'Actions and controllers', function ($params) {
   require path(__DIR__, 'scripts', 'check_actions.php');
 });
 
+task('model', 'Define models for the application', function ($params) {
+  require path(__DIR__, 'scripts', 'create_model.php');
+});
 
-task('app:config', 'Check and configure the application', function ($params) {
+
+task('config', 'Configuration tool', function ($params) {
   $flags = arg('global', 'app', 'dev', 'prod', 'current');
 
   if ( ! $flags OR ! $params OR isset($params['help'])) {
@@ -35,27 +39,17 @@ INFO;
 });
 
 
-0 && task('db:model', 'Define models for the application', function ($params) {
-  require path(__DIR__, 'scripts', 'create_model.php');
-});
-
-
-task('db:console', 'Interactive model inspection like REPL', function ($params) {
+task('console', 'Interactive mode', function ($params) {
   require path(__DIR__, 'scripts', 'load_console.php');
 });
 
 
-0 && task('db:migrate', 'Perform migrations on production environments', function ($params) {
+0 && task('s', 'Perform migrations', function ($params) {
   require path(__DIR__, 'scripts', 'reload_models.php');
 });
 
 
-task('assets:clean', 'Remove pre-compiled assets from cache', function ($params) {
-  require path(__DIR__, 'scripts', 'assets_clean.php');
-});
-
-
-task('assets:precompile', 'Prepare the application assets for production', function ($params) {
+task('prepare', 'Precompile assets for production', function ($params) {
   $flags = arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts');
 
   if ( ! $flags OR ! $params OR isset($params['help'])) {
@@ -74,4 +68,8 @@ INFO;
   } else {
     require path(__DIR__, 'scripts', 'assets_precompile.php');
   }
+});
+
+task('purge', 'Remove assets from cache', function ($params) {
+  require path(__DIR__, 'scripts', 'assets_clean.php');
 });
