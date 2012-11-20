@@ -12,6 +12,7 @@
     "habanero/io": "dev-master",
     "habanero/broil": "dev-master",
     "habanero/tailor": "dev-master",
+    "habanero/locale": "dev-master",
     "habanero/cashier": "dev-master",
     "habanero/servant": "dev-master",
     "habanero/labourer": "dev-master",

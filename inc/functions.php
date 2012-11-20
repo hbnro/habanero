@@ -61,21 +61,9 @@ function params($key = NULL, $default = FALSE)
   return ! empty($set[$key]) ? $set[$key] : $default;
 }
 
-function ln($input)
+function ln($input, array $params = array())
 {
-  $args = func_get_args();
-
-  if (is_array($input)) {
-    foreach ($input as $key => $value) {
-      $args[0] = $value;
-      $input[$key] = call_user_func_array(__FUNCTION__, $args);
-    }
-  } else {
-    $callback = is_numeric($input) ? 'pluralize' : 'translate';
-    $input = call_user_func_array("\\Sauce\\I18n\\Base::$callback", $args);
-  }
-
-  return $input;
+  return \Locale\Base::digest($input, $params);
 }
 
 function get($path, $to, array $params = array())

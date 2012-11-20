@@ -31,6 +31,16 @@ class Bootstrap
       // settings
       \Labourer\Web\Session::initialize();
       ignore_user_abort(FALSE);
+
+
+      // locales
+      if ( ! ($key = option('language'))) {
+        $set = \Locale\Base::all();
+        $key = key($set);
+      }
+
+      @setlocale(LC_ALL, "$key.UTF-8");
+      \Locale\Base::load_path(path(APP_PATH, 'app', 'languages'));
     }
   }
 
