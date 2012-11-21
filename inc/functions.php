@@ -41,24 +41,16 @@ function config($set = NULL, $value = NULL)
 }
 
 function params($key = NULL, $default = FALSE)
-{ // TODO: mix with get/post vars?
+{
   static $set = array();
 
   if ( ! func_num_args()) {
     return $set;
   } elseif (is_array($key)) {
-    foreach ($key as $a => $value) {
-      if (is_numeric($a)) {
-        continue;
-      }
-
-      $set[trim($a)] = $value;
-    }
-
-    return TRUE;
+    $set = array_merge($set, $key);
+  } else {
+    return value($set, $key, $default);
   }
-
-  return ! empty($set[$key]) ? $set[$key] : $default;
 }
 
 function ln($input, array $params = array())
