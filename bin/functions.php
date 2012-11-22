@@ -221,16 +221,19 @@ function add_class($path, $name, $parent = '', array $methods = array(), array $
 
 
   if ( ! empty($constants)) {
-    $test = array();
+    $test = array('');
+
     foreach ($constants as $one => $val) {
       $one = strtoupper($one);
-      $test []= "  const $one = '$val';\n";
+      $test []= "  const $one = '$val';";
     }
+    $test []= '';
     $consts = join("\n", $test);
   }
 
   if ( ! empty($methods)) {
-    $test = array();
+    $test = array('');
+
     foreach ($methods as $one) {
       $prefix = '';
 
@@ -243,11 +246,13 @@ function add_class($path, $name, $parent = '', array $methods = array(), array $
 
       $test []= "  {$prefix}function $one()\n  {\n  }\n";
     }
+    $test []= '';
     $method = join("\n", $test);
   }
 
   if ( ! empty($properties)) {
     $test = array();
+
     foreach ($properties as $key => $val) {
       $prefix = 'public';
 
@@ -260,10 +265,12 @@ function add_class($path, $name, $parent = '', array $methods = array(), array $
       $max = strlen("$prefix$$key") + 3;
       $val = preg_replace('/^/m', str_repeat(' ', $max), var_export($val, TRUE));
 
-      $test []= "  $prefix $$key = $val;";
+      $test []= "  $prefix $$key = $val;\n";
     }
-    $props = join("\n", $test);
-    $props = "$props\n";
+
+    $props = "\n" . join("\n", $test) . "\n";
+    $props = preg_replace('/=\s+/m', '= ', $props);
+    $props = preg_replace('/\d+\s=>\s+/m', '', $props);
   }
 
   $base_dir = dirname($path);
@@ -309,13 +316,16 @@ function add_model($name, $table = '', array $columns = array(), array $indexes 
           );
 
 
-  $table = $table ?: $name;
+  $table = $table ?: underscore($name);
+  $ucname = camelcase($name, TRUE, '\\');
+
   $fields = compact('columns', 'indexes');
   $connect = compact('table', 'connection');
+  $out_file = path(APP_PATH, 'models', "$name.php");
 
   isset($set[$parent]) && $parent = $set[$parent];
 
-  add_class(path(APP_PATH, 'models', "$name.php"), $name, $parent, array(), $fields, $connect);
+  add_class($out_file, $ucname, $parent, array(), $fields, $connect);
 }
 
 function add_view($parent, $name, $text = '')
