@@ -84,6 +84,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
     copy_file($app_path, path($skel_dir, '.htaccess'));
 
+    copy_file($app_path, path($skel_dir, 'composer.json'));
     copy_file($app_path, path($skel_dir, 'favicon.ico'));
     copy_file($app_path, path($skel_dir, 'config.php'));
     copy_file($app_path, path($skel_dir, 'index.php'));
