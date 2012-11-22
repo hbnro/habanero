@@ -319,7 +319,9 @@ function add_model($name, $table = '', array $columns = array(), array $indexes 
   $table = $table ?: underscore($name);
   $ucname = camelcase($name, TRUE, '\\');
 
-  $fields = compact('columns', 'indexes');
+  $fields['static indexes'] = $indexes;
+  $fields['static columns'] = $columns;
+
   $connect = compact('table', 'connection');
   $out_file = path(APP_PATH, 'app', 'models', "$name.php");
 
