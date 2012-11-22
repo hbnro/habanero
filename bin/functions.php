@@ -321,7 +321,7 @@ function add_model($name, $table = '', array $columns = array(), array $indexes 
 
   $fields = compact('columns', 'indexes');
   $connect = compact('table', 'connection');
-  $out_file = path(APP_PATH, 'models', "$name.php");
+  $out_file = path(APP_PATH, 'app', 'models', "$name.php");
 
   isset($set[$parent]) && $parent = $set[$parent];
 
