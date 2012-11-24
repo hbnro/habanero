@@ -65,16 +65,3 @@ function js_min($text)
 {
   return \JShrink\Minifier::minify($text);
 }
-
-
-function __set($val = NULL, array $vars = array())
-{
-  static $set = array();
-
-  if (func_num_args() === 0) {
-    return $set;
-  } elseif (is_array($vars)) {
-    $set = array_merge($set, $vars);
-  }
-  return $val;
-}

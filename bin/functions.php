@@ -50,8 +50,8 @@ function say($text)
             '/##\s+([^#:]+:)/m' => '\ccyan(\\1)\c',
             '/#\s+([^#:]+:)/m' => '\cgreen(\\1)\c',
             '/--[a-z][\w:-]+|OPTIONS/m' => '\clight_gray(\\0)\c', // --options -o OPTIONS
-            '/\s#\s|[[\]]|=[A-Z][\S[\]]+|\.{2,3}/' => '\cdark_gray(\\0)\c',
-            '/\{([\/\w:-]+)\}/m' => '\cbrown(\\1)\c', // {placeholder}
+            '/\s#\s|[[\]]|=[A-Z]+\b|\.{2,3}/' => '\cdark_gray(\\0)\c',
+            '/\{([\\\\\/\w:-]+)\}/m' => '\cbrown(\\1)\c', // {placeholder}
             '/<[\w:?-]+>/m' => '\cbrown(\\0)\c', // <params>
             '/\*([\w:-]+)\*/m' => '\cwhite(\\1)\c', // *bold*
             '/\+([\w:-]+)\+/m' => '\cwhite,black(\\1)\c', // +strong+
@@ -152,15 +152,29 @@ function template($from, array $vars = array())
     }, $from, $vars);
 }
 
-function append_file($path, $content)
+function append_file($path, $content, $unless = FALSE)
 {
   status('append', $path);
+
+  if ($unless) {
+    if (preg_match($unless, read($path))) {
+      return FALSE;
+    }
+  }
+
   return write($path, $content, TRUE);
 }
 
-function prepend_file($path, $content)
+function prepend_file($path, $content, $unless = FALSE)
 {
   status('prepend', $path);
+
+  if ($unless) {
+    if (preg_match($unless, read($path))) {
+      return FALSE;
+    }
+  }
+
   return write($path, $content . read($path));
 }
 

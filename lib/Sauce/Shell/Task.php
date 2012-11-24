@@ -100,6 +100,11 @@ INTRO;
   {
     \Sauce\Shell\CLI::printf("\n  \ccyan(Available tasks:)\c\n\n");
 
+    uksort(static::$tasks, function ($a, $b) {
+        return strlen($a) > strlen($b) ? 1 : -1;
+      });
+
+
     $max = 0;
 
     foreach (static::$tasks as $ns => $set) {

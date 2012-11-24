@@ -271,3 +271,8 @@ function inspect($what)
 {
   return \Symfony\Component\Yaml\Yaml::dump($what, 2, 2);
 }
+
+function render($file, array $vars = array())
+{
+  return \Tailor\Base::render($file, $vars);
+}
