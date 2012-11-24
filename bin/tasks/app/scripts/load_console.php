@@ -1,6 +1,9 @@
 <?php
 
-say("\n  Press \bwhite(CTRL+C)\b to exit\n");
+$quiet = arg('s', 'run');
+$prefix = $quiet ? "\cwhite,red(*BIO HAZZARD*)\c\n  " : '';
+
+say("\n  {$prefix}Press \bwhite(CTRL+C)\b to exit\n");
 
 $cache = array();
 
@@ -13,28 +16,33 @@ if ($readline = function_exists('readline')) {
 $callback = $readline ? 'readline' : '\\Sauce\\Shell\\CLI::read';
 
 \Sauce\Shell\CLI::main(function ()
-  use($callback, $readline, &$cache) {
+  use($callback, $readline, &$cache, $quiet) {
     $_ = trim(call_user_func($callback, colorize('  > ')));
 
-    if ($readline && $_ && ! in_array($_, $cache)) {
+    if ( ! $_) {
+      return;
+    } elseif ($readline && $_ && ! in_array($_, $cache)) {
       readline_add_history($_);
       $cache []= $_;
     }
 
+
     $code = "extract(__set());return __set($_,get_defined_vars());";
-    $out = (array) @eval($code);
+    $out = $quiet ? (array) @eval($code) : @assert($_);
 
-    foreach ($out as $key => $one) {
-      $prefix = '';
+    if (is_array($out)) {
+      foreach ($out as $key => $one) {
+        $prefix = '';
 
-      if (is_string($key)) {
-        $prefix = "\clight_gray($key: )\c";
+        if (is_string($key)) {
+          $prefix = "\clight_gray($key )\c";
+        }
+
+        $one = preg_replace('/^/m', colorize("  \cgreen(>)\c $prefix"), trim(inspect($one)));
+        writeln($one);
       }
-
-      $one = print_r($one, TRUE);
-      $one = preg_replace('/^/m', colorize("  \bgreen(>)\b $prefix"), $one);
-
-      \Sauce\Shell\CLI::write("$one\n");
+    } else {
+      writeln(colorize(sprintf('  \c%s(> %s)\c', $out ? 'green' : 'red', $_)));
     }
 
   });

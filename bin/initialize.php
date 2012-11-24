@@ -36,7 +36,7 @@ run(function () {
       try {
         \Sauce\Shell\Task::exec($cmd, $xargs);
       } catch (\Exception $e) {
-        \Sauce\Shell\CLI::error("\n  \bred({$e->getMessage()})\b\n");
+        \Sauce\Shell\CLI::error("\n  \cred,black({$e->getMessage()})\c\n");
       }
     }
 

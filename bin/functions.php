@@ -10,12 +10,12 @@ function flags()
   return \Sauce\Shell\CLI::args();
 }
 
-function readln($input = "\n")
+function readln($input = '')
 {
   return \Sauce\Shell\CLI::readln($input);
 }
 
-function writeln($input = "\n")
+function writeln($input = '')
 {
   return \Sauce\Shell\CLI::writeln($input);
 }
@@ -46,6 +46,22 @@ function ask() {
 
 function say($text)
 {
+  static $theme = array(
+            '/##\s+([^#:]+:)/m' => '\ccyan(\\1)\c',
+            '/#\s+([^#:]+:)/m' => '\cgreen(\\1)\c',
+            '/--[a-z][\w:-]+|OPTIONS/m' => '\clight_gray(\\0)\c', // --options -o OPTIONS
+            '/\s#\s|[[\]]|=[A-Z][\S[\]]+|\.{2,3}/' => '\cdark_gray(\\0)\c',
+            '/\{([\/\w:-]+)\}/m' => '\cbrown(\\1)\c', // {placeholder}
+            '/<[\w:?-]+>/m' => '\cbrown(\\0)\c', // <params>
+            '/\*([\w:-]+)\*/m' => '\cwhite(\\1)\c', // *bold*
+            '/\+([\w:-]+)\+/m' => '\cwhite,black(\\1)\c', // +strong+
+            '/_([\w:-]+)_/m' => '\clight_gray(\\1)\c', // _opaque_
+          );
+
+
+  $text = str_replace('{@}', sprintf('\clight_gray(%s)\c', basename($_SERVER['_'])), $text);
+  $text = preg_replace(array_keys($theme), $theme, $text);
+
   writeln(colorize($text));
 }
 
@@ -66,12 +82,12 @@ function task($name, $desc, \Closure $fn)
 
 function error($text)
 {
-  \Sauce\Shell\CLI::error("\bred($text)\b");
+  \Sauce\Shell\CLI::error("\cred,black($text)\c");
 }
 
 function info($text)
 {
-  writeln(colorize("\bcyan($text)\b"));
+  writeln(colorize("\ccyan($text)\c"));
 }
 
 function hi($text)
@@ -81,12 +97,12 @@ function hi($text)
 
 function notice($text)
 {
-  writeln(colorize("\bbrown($text)\b"));
+  writeln(colorize("\cbrown($text)\c"));
 }
 
 function success($text)
 {
-  writeln(colorize("\bgreen($text)\b"));
+  writeln(colorize("\cgreen($text)\c"));
 }
 
 function copy_file($to, $from, $perms = FALSE)
@@ -297,7 +313,7 @@ function add_route($from, $to, $path = '', $method = 'get')
   ));
 }
 
-function add_controller($name)
+function add_controller($name, $empty = FALSE)
 {
   $out_file = path(APP_PATH, 'app', 'controllers', "$name.php");
 
@@ -305,22 +321,22 @@ function add_controller($name)
   $ucname = camelcase($name, TRUE, '\\');
   $base_class = "\\$base\\App\\Base";
 
-  add_class($out_file, $ucname, $base_class, array('index'));
+  add_class($out_file, $ucname, $base_class, $empty ? array() : array('index'));
 }
 
 function add_model($name, $table = '', array $columns = array(), array $indexes = array(), $parent = 'database', $connection = 'default')
 {
   static $set = array(
             'database' => '\\Servant\\Mapper\\Database',
-            'mongo' => '\\Servant\\Mapper\\MongoDB',
+            'mongodb' => '\\Servant\\Mapper\\MongoDB',
           );
 
 
   $table = $table ?: underscore($name);
   $ucname = camelcase($name, TRUE, '\\');
 
-  $fields['static indexes'] = $indexes;
   $fields['static columns'] = $columns;
+  $fields['static indexes'] = $indexes;
 
   $connect = compact('table', 'connection');
   $out_file = path(APP_PATH, 'app', 'models', "$name.php");
@@ -340,33 +356,22 @@ function add_view($parent, $name, $text = '')
   return write(path($views_dir, $name), $text);
 }
 
-function add_action($parent, $action, $method = 'get', $route = '/', $path = 'index')
+function add_action($parent, $action)
 {
   $out_file = path(APP_PATH, 'app', 'controllers', "$parent.php");
 
-  $test = inject_into_file($out_file, function ()
-    use ($parent, $action, $method, $route, $path) {
-      add_route($route, "$parent#$action", $path, $method);
-
-      if ( ! arg('no-view')) {
-        $text = "section\n  header\n    h1 $parent#$action.view\n  pre = path(APP_PATH, 'app', 'views', '$parent', '$action.php.neddle')";
-        add_view($parent, "$action.php.neddle", "$text\n");
-      }
-
-     return "  function $action()\n  {\n  }\n";
-   }, array(
-     'unless' => "/\bfunction\s+$action\s*\(/",
-     'before' => '/\}[^{}]*?$/',
-   ));
-
-  if ( ! $test) {
-    error("\n  Action '$action' already exists\n");
+  if (inject_into_file($out_file, "  function $action()\n  {\n  }\n\n", array(
+    'unless' => "/\bfunction\s+$action\s*\(/",
+    'before' => '/\}[^{}]*?$/',
+  ))) {
+    status('update', "controllers/$parent.php");
+    return TRUE;
   }
 }
 
 function action($format, $text, $what)
 {
-  $prefix = str_pad("\b$format($text)\b", 20 + strlen($format), ' ', STR_PAD_LEFT);
+  $prefix = str_pad("\c$format($text)\c", 20 + strlen($format), ' ', STR_PAD_LEFT);
   $text   = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', "\clight_gray($what)\c");
 
   writeln(colorize("$prefix  $text"));
@@ -375,26 +380,29 @@ function action($format, $text, $what)
 function status($type, $text = '')
 {
   switch ($type) {
+    case 'write';
     case 'create';
+    case 'prepare';
       action('green', $type, $text);
     break;
+    case 'empty';
     case 'remove';
       action('red', $type, $text);
     break;
+    case 'move';
     case 'rename';
       action('cyan', $type, $text);
     break;
-    case 'update';
-      action('white', $type, $text);
-    break;
     case 'copy';
+    case 'update';
+    case 'hydrate';
       action('brown', $type, $text);
     break;
     default;
-      $text = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', "  $text");
-      $prefix = str_pad("\bwhite($type)\b", 20 + strlen($type), ' ', STR_PAD_LEFT);
+      $text = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', $text);
+      $prefix = str_pad("\bwhite($type)\b", 25, ' ', STR_PAD_LEFT);
 
-      writeln(colorize("$prefix$text"));
+      writeln(colorize("$prefix  $text"));
     break;
   }
 }

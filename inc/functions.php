@@ -266,3 +266,8 @@ function underscore()
 {
   return call_user_func_array('\\Labourer\\Web\\Text::underscore', func_get_args());
 }
+
+function inspect($what)
+{
+  return \Symfony\Component\Yaml\Yaml::dump($what, 2, 2);
+}

@@ -26,14 +26,15 @@ function s3_handle()
 function s3_clean_bucket()
 {
   $name = \Labourer\Config::get('s3_bucket');
-  $test = array('img', 'css', 'js');
 
-  foreach ($test as $one) {
-    notice("Removing files from 's3://$name/$one'");
-    $old = \Labourer\AS3::get_bucket($name, "$one/");
+  foreach ($set as $one => $ok) {
+    if ($ok) {
+      notice("Removing files from 's3://$name/$one'");
+      $old = \Labourer\AS3::get_bucket($name, "$one/");
 
-    foreach ($old as $file) {
-      \Labourer\AS3::delete_object($name, $file['name']);
+      foreach ($old as $file) {
+        \Labourer\AS3::delete_object($name, $file['name']);
+      }
     }
   }
 }

@@ -15,19 +15,19 @@ $trap = function () {
 $what = 'current';
 $title = 'Loaded options';
 
-if (arg('dev')) {
+if (arg('d', 'dev')) {
   $what = 'development';
   $title = "Configuration for $what";
   $file = path(APP_PATH, 'config', 'environments', "$what.php");
-} elseif (arg('prod')) {
+} elseif (arg('p', 'prod')) {
   $what = 'production';
   $title = "Configuration for $what";
   $file = path(APP_PATH, 'config', 'environments', "$what.php");
-} elseif (arg('app')) {
+} elseif (arg('a', 'app')) {
   $what = 'application';
   $title = 'Application options';
   $file = path(APP_PATH, 'config', "$what.php");
-} elseif (arg('global')) {
+} elseif (arg('g', 'global')) {
   $title = 'Main options';
   $file = path(APP_PATH, 'config.php');
   $what = 'default';
@@ -35,7 +35,7 @@ if (arg('dev')) {
 
 
 $config = isset($file) ? $trap($file) : config();
-$params = array_diff_key($params, array_flip(array('global', 'app', 'dev', 'prod')));
+$params = array_diff_key($params, array_flip(array('global', 'app', 'dev', 'prod', 'd', 'p', 'a', 'g')));
 
 if ( ! empty($params)) {
   success("\n  $title updated");
@@ -63,4 +63,4 @@ if ( ! empty($params)) {
 
 
 $config = isset($file) ? $trap($file) : config();
-printf("\n%s\n", preg_replace('/^/m', '  ', print_r($config, 1)));
+printf("\n%s\n", preg_replace('/^/m', '  ', inspect($config)));

@@ -1,4 +1,4 @@
 section
   header
     h1 Error 500
-    pre = print_r(error_get_last(), 1)
+    pre = inspect(error_get_last())

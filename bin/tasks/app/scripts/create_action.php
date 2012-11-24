@@ -7,9 +7,27 @@ if ( ! is_file($out_file)) {
 } elseif ( ! $action) {
   error("\n  Missing action for '$name' controller\n");
 } else {
+  $continue = TRUE;
+
   $method = arg('method') ?: 'get';
   $route  = arg('route') ?: "$name/$action";
   $path   = arg('path') ?: "{$name}_$action";
 
-  add_action($name, $action, $method, $route, $path);
+
+  if ( ! arg('A', 'no-action')) {
+    if ( ! add_action($name, $action, $method, $route, $path)) {
+      error("\n  Action '$action' already exists\n");
+      $continue = FALSE;
+    }
+  }
+
+
+  if ($continue) {
+    add_route($route, "$name#$action", $path, $method);
+
+    if ( ! arg('V', 'no-view')) {
+      $text = "section\n  header\n    h1 $name#$action.view\n  pre = path(APP_PATH, 'app', 'views', '$name', '$action.php.neddle')";
+      add_view($name, "$action.php.neddle", "$text\n");
+    }
+  }
 }

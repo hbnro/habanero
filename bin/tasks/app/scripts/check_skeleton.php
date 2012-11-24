@@ -7,9 +7,10 @@ if ( ! $name) {
 } else {
   $app_path = path(APP_PATH, $name);
 
-  if (empty($params['force']) && is_dir($app_path)) {
+  if ( ! arg('f', 'force') && is_dir($app_path)) {
     error("\n  Directory '$name' already exists\n");
   } else {
+    arg('D', 'delete-all') && \IO\Dir::unfile($app_path, '*', TRUE);
     require path(__DIR__, 'create_application.php');
   }
 }

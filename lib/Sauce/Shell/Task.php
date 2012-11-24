@@ -11,7 +11,7 @@ class Task
 
   Welcome to the \blight_gray,black(habanero-sauce)\b console utility!
 
-  Type \bwhite(--help)\b to get more information
+  Type \clight_gray(--help)\c to get more information
 
 INTRO;
 
@@ -21,7 +21,7 @@ INTRO;
   {
     if ($all) {
       if ( ! sizeof(static::$tasks)) {
-        \Sauce\Shell\CLI::printf("\n  \bbrown(Not available tasks!)\b\n\n");
+        \Sauce\Shell\CLI::error("\n  \cred,black(Not available tasks!)\c\n");
       } else {
         static::search();
       }
@@ -37,7 +37,7 @@ INTRO;
     if ( ! static::exists($namespace, $task ?: 'default')) {
       foreach (array_keys(static::$tasks) as $ns) {
         if (strpos($ns, $mod) === 0) {
-          return static::search($ns);
+          return static::search($mod);
         }
       }
 
@@ -98,7 +98,7 @@ INTRO;
 
   private static function search($q = '')
   {
-    \Sauce\Shell\CLI::printf("\n  \bcyan(Available tasks:)\b\n\n");
+    \Sauce\Shell\CLI::printf("\n  \ccyan(Available tasks:)\c\n\n");
 
     $max = 0;
 
@@ -117,9 +117,9 @@ INTRO;
           $pad = str_repeat(' ', ($max + 2) - strlen($cmd));
 
           if ( ! empty($val['desc'])) {
-            \Sauce\Shell\CLI::printf("  \bbrown(%s)\b$pad\cdark_gray(#)\c \clight_gray(%s)\c\n", $cmd, $val['desc']);
+            \Sauce\Shell\CLI::printf("  \cbrown(%s)\c$pad\cdark_gray(#)\c \clight_gray(%s)\c\n", $cmd, $val['desc']);
           } else {
-            \Sauce\Shell\CLI::printf("  \bbrown(%s)\b\n", $cmd);
+            \Sauce\Shell\CLI::printf("  \cbrown(%s)\c\n", $cmd);
           }
         }
       }
