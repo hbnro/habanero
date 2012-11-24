@@ -111,7 +111,7 @@ INTRO;
 
 
     foreach (static::$tasks as $ns => $set) {
-      if ( ! $q OR (strpos($ns, $q) !== FALSE)) {
+      if ( ! $q OR (strpos($ns, $q) === 0)) {
         foreach ($set as $key => $val) {
           $cmd = ($key <> 'default') ? "$ns:$key" : $ns;
           $pad = str_repeat(' ', ($max + 2) - strlen($cmd));
