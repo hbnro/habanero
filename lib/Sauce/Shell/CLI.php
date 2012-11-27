@@ -5,10 +5,12 @@ namespace Sauce\Shell;
 class CLI
 {
 
-  private static $set = array();
-
+  private static $atty = FALSE;
   private static $loop = FALSE;
-  private static $flags = NULL;
+
+  private static $set = array();
+  private static $flags = array();
+  private static $values = array();
 
   private static $width = 80;
   private static $height = 20;
@@ -45,62 +47,42 @@ class CLI
 
 
 
-  public static function args()
+  public static function initialize()
   {
-    if (static::$flags === NULL) {
-      static::$flags = array();
+    static::$atty = function_exists('posix_isatty') && @posix_isatty($stream);
 
-      while ($old = array_search('--', $_SERVER['argv'])) {
-        unset($_SERVER['argv'][$old]);
-      }
-
-      $test   = array_values($_SERVER['argv']);
-      $length = sizeof($test);
-
-
-      for ($i = 0; $i < $length; $i += 1) {
-        $str = $test[$i];
-
-        if ((strlen($str) > 2) && (substr($str, 0, 2) === '--')) {// --does-nothing
-          $str   = substr($str, 2);
-          $parts = explode('=', $str);
-
-          static::$flags[$parts[0]] = TRUE;
-
-          if ((sizeof($parts) === 1) && isset($test[$i + 1])) {// --foo bar
-            if ( ! preg_match('/^--?.+/', $test[$i + 1])) {
-              static::$flags[$parts[0]] = $test[$i + 1];
-            }
-          } else {
-            static::$flags[$parts[0]] = isset($parts[1]) ? $parts[1] : TRUE;
-          }
-        } elseif ((strlen($str) === 2) && ($str[0] === '-')) {// -a
-          static::$flags[$str[1]] = TRUE;
-
-          if (isset($test[$i + 1])) {
-            if ( ! preg_match('/^--?.+/', $test[$i + 1])) {
-              static::$flags[$str[1]] = $test[$i + 1];
-            }
-          }
-        } elseif ((strlen($str) > 1) && ($str[0] === '-')) {// -xyz
-          $k = strlen($str);
-
-          for ($j = 1; $j < $k; $j += 1) {
-            static::$flags[substr($str, $j, 1)] = TRUE;
-          }
-        }
-      }
-
-      foreach (array_reverse(array_slice($test, 1)) as $i => $val) {
-        if ( ! is_numeric($i) OR (substr($val, 0, 1) === '-')) {
-          continue;
-        }
-
-        array_unshift(static::$flags, $val);
-      }
+    while ($old = array_search('--', $_SERVER['argv'])) {
+      unset($_SERVER['argv'][$old]);
     }
 
-    return static::$flags;
+    $test   = array_values($_SERVER['argv']);
+    $length = sizeof($test);
+
+    for ($i = 1; $i < $length; $i += 1) {
+      $key = $test[$i];
+      $val = TRUE;
+
+      if ((strpos($key, '=') === FALSE) && (substr($key, 0, 1) === '-') && isset($test[$i + 1])) {
+        if (substr($test[$i + 1], 0, 1) <> '-') {
+          $val = $test[$i + 1];
+          $i += 1;
+        }
+      }
+
+      if (substr($key, 0, 2) === '--') {
+        if (strpos($key, '=')) {
+          @list($key, $val) = explode('=', $key);
+        }
+
+        static::$flags[substr($key, 2)] = $val;
+      } elseif (substr($key, 0, 1) === '-') {
+        for ($j = 1, $k = strlen($key); $j < $k; $j += 1) {
+          static::$flags[substr($key, $j, 1)] = $val;
+        }
+      } else {
+        static::$values []= $key;
+      }
+    }
   }
 
   public static function register($command, \Closure $callback)
@@ -254,19 +236,6 @@ class CLI
       }
     }
     return $text;
-  }
-
-  public static function flag($name, $or = FALSE)
-  {
-    $set  = static::args();
-    $name = ! is_array($name) ? explode(' ', $name) : $name;
-
-    foreach ($name as $one) {
-      if ( ! empty($set[$one])) {
-        return $set[$one];
-      }
-    }
-    return $or;
   }
 
   public static function prompt($text, $default = '')
@@ -506,7 +475,6 @@ class CLI
     static::flush();
   }
 
-
   public static function flush($test = 0)
   {
     if ($test > 0) {
@@ -517,6 +485,29 @@ class CLI
 
     flush();
   }
+
+  public static function values()
+  {
+    return static::$values;
+  }
+
+  public static function flags()
+  {
+    return static::$flags;
+  }
+
+  public static function arg($name, $or = FALSE)
+  {
+    $name = ! is_array($name) ? explode(' ', $name) : $name;
+
+    foreach ($name as $one) {
+      if ( ! empty(static::$flags[$one])) {
+        return static::$flags[$one];
+      }
+    }
+    return $or;
+  }
+
 
   private static function strips($test)
   {
@@ -532,7 +523,7 @@ class CLI
 
   private static function is_atty()
   {
-    return function_exists('posix_isatty') && @posix_isatty($stream);
+    return static::$atty;
   }
 
 }
