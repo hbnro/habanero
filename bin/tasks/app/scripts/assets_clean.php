@@ -1,10 +1,10 @@
 <?php
 
-if (arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts')) {
+if (arg('v i c j views images styles scripts')) {
   $set = array(
-    'img' => arg('i', 'images'),
-    'css' => arg('c', 'styles'),
-    'js' => arg('j', 'scripts'),
+    'img' => arg('i images'),
+    'css' => arg('c styles'),
+    'js' => arg('j scripts'),
   );
 
   if (s3_handle()) {
@@ -20,7 +20,7 @@ if (arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts')) {
     }
   }
 
-  if (arg('v', 'views')) {
+  if (arg('v views')) {
     status('remove', 'cache');
     \IO\Dir::unfile(path(APP_PATH, 'cache'), '*', TRUE);
     mkdir(path(APP_PATH, 'cache'), 0777);

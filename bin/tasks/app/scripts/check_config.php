@@ -15,19 +15,19 @@ $trap = function () {
 $what = 'current';
 $title = 'Loaded options';
 
-if (arg('d', 'dev')) {
+if (arg('d dev')) {
   $what = 'development';
   $title = "Configuration for $what";
   $file = path(APP_PATH, 'config', 'environments', "$what.php");
-} elseif (arg('p', 'prod')) {
+} elseif (arg('p prod')) {
   $what = 'production';
   $title = "Configuration for $what";
   $file = path(APP_PATH, 'config', 'environments', "$what.php");
-} elseif (arg('a', 'app')) {
+} elseif (arg('a app')) {
   $what = 'application';
   $title = 'Application options';
   $file = path(APP_PATH, 'config', "$what.php");
-} elseif (arg('g', 'global')) {
+} elseif (arg('g global')) {
   $title = 'Main options';
   $file = path(APP_PATH, 'config.php');
   $what = 'default';
@@ -35,7 +35,7 @@ if (arg('d', 'dev')) {
 
 
 $config = isset($file) ? $trap($file) : config();
-$params = array_diff_key($params, array_flip(array('global', 'app', 'dev', 'prod', 'd', 'p', 'a', 'g')));
+$params = array_diff_key(flags(), array_flip(array('global', 'app', 'dev', 'prod', 'd', 'p', 'a', 'g')));
 
 if ( ! empty($params)) {
   success("\n  $title updated");

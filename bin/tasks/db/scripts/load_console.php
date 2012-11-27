@@ -1,7 +1,7 @@
 <?php
 
-$quiet = arg('s', 'run');
-$prefix = $quiet ? "\cwhite,red(*BIO HAZZARD*)\c\n  " : '';
+$warn = arg('s run');
+$prefix = $warn ? "\cwhite,red(*BIO HAZZARD*)\c\n  " : '';
 
 say("\n  {$prefix}Press \bwhite(CTRL+C)\b to exit\n");
 
@@ -16,7 +16,7 @@ if ($readline = function_exists('readline')) {
 $callback = $readline ? 'readline' : '\\Sauce\\Shell\\CLI::read';
 
 \Sauce\Shell\CLI::main(function ()
-  use($callback, $readline, &$cache, $quiet) {
+  use($callback, $readline, &$cache, $warn) {
     $_ = trim(call_user_func($callback, colorize('  > ')));
 
     if ( ! $_) {
@@ -28,7 +28,7 @@ $callback = $readline ? 'readline' : '\\Sauce\\Shell\\CLI::read';
 
 
     $code = "extract(__set());return __set($_,get_defined_vars());";
-    $out = $quiet ? (array) @eval($code) : @assert($_);
+    $out = $warn ? (array) @eval($code) : @assert($_);
 
     if (is_array($out)) {
       foreach ($out as $key => $one) {

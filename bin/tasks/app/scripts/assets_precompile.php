@@ -1,6 +1,6 @@
 <?php
 
-if (arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts')) {
+if (arg('v i c j views images styles scripts')) {
   $cache      = array();
   $cache_dir  = \Tailor\Config::get('cache_dir');
 
@@ -13,7 +13,7 @@ if (arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts')) {
 
 
   // views
-  if (arg('v', 'views') && is_dir($views_dir)) {
+  if (arg('v views') && is_dir($views_dir)) {
     \IO\Dir::each($views_dir, '*', function ($file) {
         if (is_file($file)) {
           $name = join('.', array_slice(explode('.', basename($file)), 0, 2));
@@ -33,7 +33,7 @@ if (arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts')) {
 
 
   // images
-  if (arg('i', 'images') && is_dir($img_path)) {
+  if (arg('i images') && is_dir($img_path)) {
     \IO\Dir::each($img_path, '*.{jpeg,jpg,png,gif}', function ($file)
       use ($base_path, $static_dir, $img_path, $img_dir) {
         if (is_file($file)) {
@@ -58,7 +58,7 @@ if (arg('v', 'i', 'c', 'j', 'views', 'images', 'styles', 'scripts')) {
 
   // scripts & styles
   foreach (array('css' => 'styles', 'js' => 'scripts') as $type => $option) {
-    if (arg(substr($type, 0, 1), $option) && is_dir(path($base_path, $type))) {
+    if (arg(array(substr($type, 0, 1), $option)) && is_dir(path($base_path, $type))) {
       \IO\Dir::open(path($base_path, $type), function ($file)
         use ($base_path, $static_dir, $type, $cache_dir, $cache) {
           if (is_file($file)) {

@@ -4,12 +4,12 @@ $set =
 $out = array();
 $old = Broil\Routing::all();
 
-arg('g', 'get') && isset($old['GET']) && $set['GET'] = $old['GET'];
-arg('u', 'put') && isset($old['PUT']) && $set['PUT'] = $old['PUT'];
-arg('p', 'post') && isset($old['POST']) && $set['POST'] = $old['POST'];
-arg('d', 'delete') && isset($old['DELETE']) && $set['DELETE'] = $old['DELETE'];
+arg('g get') && isset($old['GET']) && $set['GET'] = $old['GET'];
+arg('u put') && isset($old['PUT']) && $set['PUT'] = $old['PUT'];
+arg('p post') && isset($old['POST']) && $set['POST'] = $old['POST'];
+arg('d delete') && isset($old['DELETE']) && $set['DELETE'] = $old['DELETE'];
 
-arg('g', 'u', 'p', 'd', 'get', 'put', 'post', 'delete') OR $set = $old;
+arg('g u p d get put post delete') OR $set = $old;
 
 
 $to =

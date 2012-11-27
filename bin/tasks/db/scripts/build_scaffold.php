@@ -1,12 +1,12 @@
 <?php
 
-$base = arg('b', 'base') ?: $name;
+$base = arg('b base') ?: $name;
 $vars = compact('pk', 'base', 'name', 'fields', 'model_class');
 
 $skel_dir = path(dirname(__DIR__), 'assets');
 $out_file = path(APP_PATH, 'app', 'controllers', "$base.php");
 
-if ( ! is_file($out_file) OR arg('f', 'force')) {
+if ( ! is_file($out_file) OR arg('f force')) {
   $routes = render(path($skel_dir, 'routes.php'), $vars);
   $controller = render(path($skel_dir, 'controller.php'), $vars);
   $show_view = render(path($skel_dir, 'views', 'show.php'), $vars);
@@ -42,5 +42,5 @@ TPL;
 
     append_file(path(APP_PATH, 'config', 'routes.php'), "\n$routes", "/'root'\s*=>\s*'\/$base'/");
 } else {
-  error("Scaffold for '$base' already exists");
+  error("\n  Scaffold for '$base' already exists\n");
 }

@@ -51,7 +51,7 @@ if ( ! $path) {
         }
       };
 
-    if (arg('R', 'recursive')) {
+    if (arg('R recursive')) {
       \IO\Dir::each($mod_path, '*.php', $crawl);
     } else {
       \IO\Dir::open($mod_path, $crawl);

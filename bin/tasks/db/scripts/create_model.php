@@ -19,16 +19,16 @@ if ( ! $name OR is_bool($name) OR (strpos($name, ':') !== FALSE)) {
   } else {
     $out_file = path(APP_PATH, 'app', 'models', "$name.php");
 
-    if (arg('t', 'timestamps')) {
+    if (arg('t timestamps')) {
       $fields['created_at']  =
       $fields['modified_at'] = array('type' => 'timestamp');
     }
 
-    if ( ! is_file($out_file) OR arg('f', 'force')) {
-      $table = arg('n', 'table');
-      $extends = arg('x', 'extends') ?: 'database';
-      $conn = arg('c', 'connection') ?: 'default';
-      $idx = array_filter(explode(',', arg('i', 'indexes')));
+    if ( ! is_file($out_file) OR arg('f force')) {
+      $table = arg('n table');
+      $extends = arg('x extends') ?: 'database';
+      $conn = arg('c connection') ?: 'default';
+      $idx = array_filter(explode(',', arg('i indexes')));
 
       add_model($name, $table, $fields, $idx, $extends, $conn);
     } else {
