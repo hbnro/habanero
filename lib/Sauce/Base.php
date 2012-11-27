@@ -128,19 +128,6 @@ class Base
     }
 
 
-    // routing
-    \Broil\Config::set('root', ROOT);
-    \Broil\Config::set('index_file', INDEX);
-    \Broil\Config::set('rewrite', option('rewrite'));
-
-    \Broil\Config::set('request_uri', URI);
-    \Broil\Config::set('request_method', method());
-
-    \Broil\Config::set('server_name', option('server_name'));
-    \Broil\Config::set('subdomain', option('subdomain'));
-    \Broil\Config::set('domain', option('domain'));
-
-
     // templating
     \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
 
@@ -183,6 +170,19 @@ class Base
     \Labourer\Config::set('s3_permission', 'public_read');
 
     \Labourer\Base::initialize();
+
+
+    // routing
+    \Broil\Config::set('root', ROOT);
+    \Broil\Config::set('index_file', INDEX);
+    \Broil\Config::set('rewrite', option('rewrite'));
+
+    \Broil\Config::set('request_uri', URI);
+    \Broil\Config::set('request_method', method());
+
+    \Broil\Config::set('server_name', option('server_name'));
+    \Broil\Config::set('subdomain', option('subdomain'));
+    \Broil\Config::set('domain', option('domain'));
 
 
     // caching
