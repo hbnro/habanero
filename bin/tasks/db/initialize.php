@@ -77,3 +77,30 @@ INFO;
     require path(__DIR__, 'scripts', 'reload_models.php');
   }
 });
+
+
+task('crud', 'Conventional scaffolding', function ($params) {
+  if (arg('help')) {
+    $message = <<<INFO
+
+  # Usage:
+    *crud* <model> <field:type> <?> ...
+
+  Example:
+    {@} *crud* {user} {email:string}
+    {@} *crud* {profile} {name:string} {address:string} --class=Model\\\\Profile
+    {@} *crud* {response} {body:text} {from_uid:string} {to_uid:string} -b responses
+
+  ## Available options:
+
+  -f, [--force]        # Rewrite CRUD files
+  -b, [--base=PATH]    # Custom +PATH+ basename
+  -c, [--class=CLASS]  # Custom +CLASS+ for model
+
+INFO;
+
+    say($message);
+  } else {
+    require path(__DIR__, 'scripts', 'check_scaffold.php');
+  }
+});
