@@ -11,3 +11,6 @@ section
     div = Form::field(array(type => '<?php echo $val['type']; ?>', name => 'row[<?php echo $key; ?>]', label => '<?php echo $val['title']; ?>', value => $<?php echo $name; ?>-><?php echo $key; ?>))
 <?php } ?>
     = Form::submit('update', 'Update <?php echo $name; ?>')
+    - $action = url_for('delete_<?php echo $name; ?>', array(':id' => $<?php echo $name; ?>-><?php echo $pk; ?>))
+    - $params = array(action => $action, method => 'delete', confirm => '¿Are you sure?')
+    = link_to('Delete', $params)
