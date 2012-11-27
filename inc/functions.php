@@ -150,6 +150,149 @@ function url_for()
   return join('/', $path);
 }
 
+function link_to($text, $url = '', $args = array())
+{
+  $attrs  =
+  $params = array();
+
+  if (is_array($text)) {
+    $params = $text;
+  } elseif (is_array($url)) {
+    $params = array_merge($url, $params);
+    $params['text'] = (string) $text;
+  } elseif ($url instanceof \Closure) {
+    $params['action'] = $text;
+
+    $args = $url;
+  } elseif ( ! isset($params['text'])) {
+    $params['text'] = $text;
+  }
+
+  if (is_array($url)) {
+    $attrs  = $args;
+    $params = array_merge($params, $url);
+  } elseif ( ! isset($params['action']) && is_string($url)) {
+    $params['action'] = $url;
+  }
+
+
+  if ($args instanceof \Closure) {
+    ob_start() && $args();
+    $params['text'] = trim(ob_get_clean());
+  } else {
+    $attrs = array_merge($attrs, (array) $args);
+  }
+
+
+  $params = array_merge(array(
+    'action'  => '',
+    'method'  => 'GET',
+    'confirm' => FALSE,
+    'remote'  => FALSE,
+    'params'  => FALSE,
+    'type'    => FALSE,
+  ), $params);
+
+  return tag('a', $params['action'], $params['text'], array_merge(array(
+    'rel' => $params['method'] <> 'GET' ? 'nofollow' : FALSE,
+    'data-method' => $params['method'] <> 'GET' ? strtolower($params['method']) : FALSE,
+    'data-remote' => $params['remote'] ? 'true' : FALSE,
+    'data-params' => $params['params'] ? json_encode($params['params']) : FALSE,
+    'data-confirm' => $params['confirm'] ?: FALSE,
+    'data-type' => $params['type'] ?: FALSE,
+  ), $attrs));
+}
+
+function button_to($name, $url = '', array $args = array())
+{
+  $params = array();
+
+  if (is_array($name)) {
+    $params = $name;
+  } elseif (is_array($url)) {
+    $params['action'] = (string) $name;
+  } elseif ( ! isset($params['text'])) {
+    $params['text'] = $name;
+  }
+
+  if (is_string($name) && is_array($url)) {
+    $params = array_merge($url, $params);
+  } elseif ( ! isset($params['action'])) {
+    $params['action'] = $url;
+  }
+
+
+  $params = array_merge(array(
+    'type'         => FALSE,
+    'action'       => '',
+    'method'       => 'POST',
+    'remote'       => FALSE,
+    'params'       => FALSE,
+    'confirm'      => FALSE,
+    'disabled'     => FALSE,
+    'disable_with' => '',
+  ), $params);
+
+  $button = tag('input', array_merge(array(
+    'type' => 'submit',
+    'value' => $params['text'],
+    'disabled' => $params['disabled'],
+    'data-disable-with' => $params['disable_with'] ?: FALSE,
+  ), $args));
+
+
+  $extra = '';
+
+  if ($params['method'] <> 'POST') {
+    $extra = tag('input', array(
+      'type' => 'hidden',
+      'name' => '_method',
+      'value' => strtolower($params['method']),
+    ));
+  }
+
+  $extra .= tag('input', array(
+    'type' => 'hidden',
+    'name' => '_token',
+    'value' => \Labourer\Web\Session::token(),
+  ));
+
+
+  return tag('form', array(
+    'class' => 'button-to',
+    'action' => $params['action'],
+    'method' => 'post',
+    'data-type' => $params['type'] ?: FALSE,
+    'data-confirm' => $params['confirm'] ?: FALSE,
+    'data-remote' => $params['remote'] ? 'true' : FALSE,
+    'data-params' => $params['params'] ? http_build_query($params['params']) : FALSE,
+  ), "<div>$extra$button</div>");
+}
+
+function redirect_to($path, array $params = array())
+{
+  static $allow = array('success', 'notice', 'alert', 'error', 'info');
+
+
+  if (is_array($path)) {
+    $params = $path;
+    $path   = '';
+  } else {// TODO: just works with this?
+    $params['to'] = url_for($path);
+  }
+
+
+  foreach ($allow as $type) {
+    if (isset($params[$type])) {
+      flash($type, $params[$type]);
+      unset($params[$type]);
+    }
+  }
+
+  redirect($params);
+}
+
+
 function after_body()
 {
   return \Sauce\App\Assets::after();
