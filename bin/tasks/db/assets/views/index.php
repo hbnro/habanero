@@ -26,8 +26,9 @@ section
           tr
             td = Form::checkbox("pk[$row-><?php echo $pk; ?>]", $row-><?php echo $pk; ?>)
 <?php foreach (array_keys($fields) as $one) { ?>
-            td = Form::label("pk[$row-><?php echo $pk; ?>]", $row-><?php echo $one; ?>)
+            td = Form::label("pk[$row-><?php echo $pk; ?>]", e($row-><?php echo $one; ?>))
 <?php } ?>
+            td = link_to('View', url_for('show_<?php echo $name; ?>', array(':id' => $row-><?php echo $pk; ?>)))
             td = link_to('Edit', url_for('edit_<?php echo $name; ?>', array(':id' => $row-><?php echo $pk; ?>)))
             td
               - $action = url_for('delete_<?php echo $name; ?>', array(':id' => $row-><?php echo $pk; ?>))

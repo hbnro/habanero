@@ -13,6 +13,14 @@
     $this->view['<?php echo $base; ?>'] = $pg->bind($set->offset($from)->limit($to));
   }
 
+  function show()
+  {
+    if ( ! ($row = <?php echo $model_class; ?>::find(params('id')))) {
+      redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
+    }
+    $this->view['<?php echo $name; ?>'] = $row;
+  }
+
   function create()
   {
     $this->view['error'] = array();
@@ -36,10 +44,7 @@
       }
     }
 
-    if ( ! ($row = <?php echo $model_class; ?>::find(params('id')))) {
-      redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
-    }
-    $this->view['<?php echo $name; ?>'] = $row;
+    $this->show();
   }
 
   function delete()

@@ -9,6 +9,7 @@ $out_file = path(APP_PATH, 'app', 'controllers', "$base.php");
 if ( ! is_file($out_file) OR arg('f', 'force')) {
   $routes = render(path($skel_dir, 'routes.php'), $vars);
   $controller = render(path($skel_dir, 'controller.php'), $vars);
+  $show_view = render(path($skel_dir, 'views', 'show.php'), $vars);
   $index_view = render(path($skel_dir, 'views', 'index.php'), $vars);
   $create_view = render(path($skel_dir, 'views', 'create.php'), $vars);
   $modify_view = render(path($skel_dir, 'views', 'modify.php'), $vars);
@@ -31,6 +32,7 @@ TPL;
 
 
      create_dir(path(APP_PATH, 'app', 'views', $base));
+    create_file(path(APP_PATH, 'app', 'views', $base, 'show.php.neddle'), $show_view);
     create_file(path(APP_PATH, 'app', 'views', $base, 'index.php.neddle'), $index_view);
 
     create_file(path(APP_PATH, 'app', 'views', $base, 'create.php.neddle'), $create_view);
