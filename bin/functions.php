@@ -2,12 +2,7 @@
 
 function arg()
 {
-  return \Sauce\Shell\CLI::flag(func_get_args());
-}
-
-function flags()
-{
-  return \Sauce\Shell\CLI::args();
+  return call_user_func_array('\\Sauce\\Shell\\CLI::arg', func_get_args());
 }
 
 function readln($input = '')

@@ -9,15 +9,17 @@ require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
   });
 
 run(function () {
-    $xargs = flags();
-    $first = key($xargs);
+    \Sauce\Shell\CLI::initialize();
 
-    $cmd = array_shift($xargs);
-    $set = array(path(__DIR__, 'tasks'));
+    $xargs = \Sauce\Shell\CLI::values();
+    $command = array_shift($xargs);
 
-    is_dir($app_tasks = path(APP_PATH, 'tasks')) && $set []= $app_tasks;
+    $paths = array();
+    $paths []= path(__DIR__, 'tasks');
+    is_dir($app_tasks = path(APP_PATH, 'tasks')) && $paths []= $app_tasks;
 
-    \IO\Dir::open($set, function ($file) {
+
+    \IO\Dir::open($paths, function ($file) {
         if (is_dir($file)) {
           require path($file, 'initialize.php');
         } else {
@@ -25,16 +27,11 @@ run(function () {
         }
       });
 
-
-    if ( ! $cmd) {
-      help();
-    } elseif ($first === 'help') {
-      help($first);
+    if ( ! $command) {
+      help(arg('help'));
     } else {
-      is_string($first) && $xargs[$first] = TRUE;
-
       try {
-        \Sauce\Shell\Task::exec($cmd, $xargs);
+        \Sauce\Shell\Task::exec($command, $xargs);
       } catch (\Exception $e) {
         \Sauce\Shell\CLI::error("\n  \cred,black({$e->getMessage()})\c\n");
       }
