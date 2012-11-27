@@ -12,7 +12,7 @@ function option($get, $or = FALSE)
 
 function value($from, $that, $or = FALSE)
 {
-  return \Pallid\Helpers::fetch($from, $that, $or);
+  return \Staple\Helpers::fetch($from, $that, $or);
 }
 
 function config($set = NULL, $value = NULL)

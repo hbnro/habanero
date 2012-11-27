@@ -2,7 +2,7 @@
   function index()
   {
     $to = 1;
-    $pg = Pallid\Paginate::build();
+    $pg = Staple\Paginate::build();
 
     $pg->set('count_page', $to);
     $pg->set('link_root', url_for('<?php echo $base; ?>'));
@@ -67,15 +67,15 @@
 
   private function validate($data)
   {
-    Pallid\Validation::setup(array(
+    Staple\Validation::setup(array(
 <?php foreach ($fields as $key => $val) { ?>
       '<?php echo $key; ?>' => array('The field <?php echo $key; ?> is required' => 'required'),
 <?php } ?>
     ));
 
-    if (Pallid\Validation::execute($data)) {
-      return Pallid\Validation::data();
+    if (Staple\Validation::execute($data)) {
+      return Staple\Validation::data();
     }
 
-    $this->view['error'] = Pallid\Validation::errors();
+    $this->view['error'] = Staple\Validation::errors();
   }
