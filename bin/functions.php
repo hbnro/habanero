@@ -5,6 +5,11 @@ function arg()
   return call_user_func_array('\\Sauce\\Shell\\CLI::arg', func_get_args());
 }
 
+function flags()
+{
+  return \Sauce\Shell\CLI::flags();
+}
+
 function readln($input = '')
 {
   return \Sauce\Shell\CLI::readln($input);
