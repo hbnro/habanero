@@ -1,7 +1,7 @@
 
   function index()
   {
-    $to = 1;
+    $to = 10;
     $pg = Staple\Paginate::build();
 
     $pg->set('count_page', $to);
