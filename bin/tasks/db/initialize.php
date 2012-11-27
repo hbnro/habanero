@@ -21,7 +21,7 @@ task('model', 'Build models for the application', function ($params) {
   -x, [--extends=CLASS]   # Choose +database+, +mongodb+ or custom +CLASS+
   -c, [--connection=ID]   # The connection +ID+ to use
   -i, [--indexes=FIELDS]  # Comma separated +FIELDS+ to index
-  -t, [--stamp]           # Fields for +created_at+ and +updated_at+
+  -t, [--timestamps]      # Fields for +created_at+ and +updated_at+
 
 INFO;
 
