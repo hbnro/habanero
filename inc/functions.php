@@ -247,9 +247,9 @@ function read($file)
   return \IO\File::read($file);
 }
 
-function tag($name, array $attrs = array())
+function tag($name)
 {
-  return call_user_func_array("\\Labourer\\Web\\Html::$name", $attrs);
+  return call_user_func_array("\\Labourer\\Web\\Html::$name", array_slice(func_get_args(), 1));
 }
 
 function e($text)
