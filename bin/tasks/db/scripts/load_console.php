@@ -13,7 +13,7 @@ if ($readline = function_exists('readline')) {
   });
 }
 
-$callback = $readline ? 'readline' : '\\Sauce\\Shell\\CLI::read';
+$callback = $readline ? 'readline' : '\\Sauce\\Shell\\CLI::readln';
 
 \Sauce\Shell\CLI::main(function ()
   use($callback, $readline, &$cache, $warn) {
