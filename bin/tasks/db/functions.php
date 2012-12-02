@@ -13,6 +13,24 @@ function __set($val = NULL, array $vars = array())
 }
 
 
+function db($for = 'default')
+{
+  $dsn = option("database.$for");
+  $db = \Grocery\Base::connect($dsn);
+
+  return $db;
+}
+
+function mongo($for = 'mongodb')
+{
+  $dsn = option("database.$for");
+  $collection = substr($dsn, strrpos($dsn, '/') + 1);
+  $mongo = $dsn ? new \Mongo($dsn) : new \Mongo;
+  $db = $mongo->{$collection ?: 'default'};
+
+  return $db;
+}
+
 function field_for($type, $key)
 {
   static $set = array(
