@@ -1,3 +1,3 @@
 <?php
 
-root('home#index', array('path' => 'home'));
+root('home#index', array('path' => 'root'));
