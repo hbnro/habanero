@@ -1,6 +1,6 @@
 <?php
 
-$autoload = require 'sauce/sauce.php';
+$autoload = require 'habanero/sauce.php';
 
 run(function () {
 });
