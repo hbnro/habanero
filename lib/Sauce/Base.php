@@ -129,11 +129,12 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
-    $prefix = rtrim(option('base_url'), '/') . ROOT . (APP_ENV <> 'production' ? '?_=' : 'static/');
+    $doc_root  = option('base_url');
+    $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
 
-    \Tailor\Config::set('images_url', "{$prefix}img");
-    \Tailor\Config::set('styles_url', "{$prefix}css");
-    \Tailor\Config::set('scripts_url', "{$prefix}js");
+    \Tailor\Config::set('images_url', "{$doc_root}img");
+    \Tailor\Config::set('styles_url', "{$doc_root}css");
+    \Tailor\Config::set('scripts_url', "{$doc_root}js");
 
     \Tailor\Base::initialize();
 
