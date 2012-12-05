@@ -1,9 +1,9 @@
 <?php echo '<' . '?php'; ?>
 
 
-namespace <?php echo camelcase($app_name, TRUE, '\\'); ?>\App;
+namespace <?php echo classify($app_name); ?>\App;
 
 class Base extends \Sauce\App\Controller
 {
-  public $title = '<?php echo camelcase($app_name, TRUE, '\\'); ?>';
+  public $title = '<?php echo classify($app_name); ?>';
 }

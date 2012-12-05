@@ -26,8 +26,8 @@ class Handler
       is_file($controller_base) && require $controller_base;
       require $controller_file;
 
-      $base_name = camelcase(basename(APP_PATH), TRUE, '\\');
-      $class_name = camelcase($controller, TRUE, '\\');
+      $base_name = classify(basename(APP_PATH));
+      $class_name = classify($controller);
 
       if ( ! class_exists($class_name)) {
         throw new \Exception("Missing '$class_name' class");

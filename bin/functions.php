@@ -331,8 +331,8 @@ function add_controller($name, $empty = FALSE)
 {
   $out_file = path(APP_PATH, 'app', 'controllers', "$name.php");
 
-  $base = camelcase(basename(APP_PATH), TRUE, '\\');
-  $ucname = camelcase($name, TRUE, '\\');
+  $base = classify(basename(APP_PATH));
+  $ucname = classify($name);
   $base_class = "\\$base\\App\\Base";
 
   add_class($out_file, $ucname, $base_class, $empty ? array() : array('index'));
@@ -347,7 +347,7 @@ function add_model($name, $table = '', array $columns = array(), array $indexes 
 
 
   $table = $table ?: underscore($name);
-  $ucname = camelcase($name, TRUE, '\\');
+  $ucname = classify($name);
 
   $fields['static columns'] = $columns;
   $fields['static indexes'] = $indexes;
