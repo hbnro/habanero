@@ -343,6 +343,12 @@ function tag_for($src)
   return \Sauce\App\Assets::tag_for($src);
 }
 
+function root_url($path = '')
+{
+  is_file($path) && $path = strtr(str_replace(APP_PATH, '', $path), '\\/', '//');
+  return \Broil\Helpers::build(trim($path, '/'), array('static' => TRUE));
+}
+
 function asset_url($path)
 {
   return \Sauce\App\Assets::asset_url($path);
