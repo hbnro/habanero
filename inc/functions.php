@@ -358,12 +358,12 @@ function image_tag($src, $alt = NULL, array $attrs = array())
   }
 
 
-  if ($img = \Tailor\Helpers::image($src)) {
+  if (strpos($src, '://') !== FALSE) {
+    $attrs['src'] = $src;
+  } elseif ($img = \Tailor\Helpers::image($src)) {
     $attrs['width'] = $img['dims'][0];
     $attrs['height'] = $img['dims'][1];
     $attrs['src'] = asset_url($src);
-  } else {
-    $attrs['src'] = $src;
   }
 
   return \Labourer\Web\Html::tag('img', $attrs);
