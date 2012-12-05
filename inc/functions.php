@@ -402,12 +402,22 @@ function e($text)
 
 function camelcase()
 {
-  return call_user_func_array('\\Labourer\\Web\\Text::camelcase', func_get_args());
+  return call_user_func_array('\\Staple\\Helpers::camelcase', func_get_args());
 }
 
 function underscore()
 {
-  return call_user_func_array('\\Labourer\\Web\\Text::underscore', func_get_args());
+  return call_user_func_array('\\Staple\\Helpers::underscore', func_get_args());
+}
+
+function parameterize()
+{
+  return call_user_func_array('\\Staple\\Helpers::parameterize', func_get_args());
+}
+
+function classify()
+{
+  return call_user_func_array('\\Staple\\Helpers::classify', func_get_args());
 }
 
 function inspect($what)
