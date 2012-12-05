@@ -1,6 +1,6 @@
 <?php echo '<' . '?php'; ?>
 
 
-class Home extends \<?php echo camelcase($app_name, TRUE, '\\'); ?>\App\Base
+class Home extends \<?php echo classify($app_name); ?>\App\Base
 {
 }

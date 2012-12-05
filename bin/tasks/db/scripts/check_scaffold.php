@@ -6,7 +6,7 @@ if ( ! $name OR is_bool($name) OR (strpos($name, ':') !== FALSE)) {
   error("\n  Missing model name\n");
 } else {
   $model_file = path(APP_PATH, 'app', 'models', "$name.php");
-  $model_class = arg('c class') ?: camelcase($name, TRUE, '\\');
+  $model_class = arg('c class') ?: classify($name);
 
   if ( ! is_file($model_file)) {
     error("\n  Missing '$name' model\n");

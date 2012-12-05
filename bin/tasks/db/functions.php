@@ -53,7 +53,7 @@ function field_for($type, $key)
 
   if ( ! empty($set[$type])) {
     $out = $set[$type];
-    $out['title'] = camelcase($key, TRUE, ' ');
+    $out['title'] = titlecase($key);
     return $out;
   }
 

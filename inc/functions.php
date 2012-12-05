@@ -415,6 +415,11 @@ function parameterize()
   return call_user_func_array('\\Staple\\Helpers::parameterize', func_get_args());
 }
 
+function titlecase()
+{
+  return call_user_func_array('\\Staple\\Helpers::titlecase', func_get_args());
+}
+
 function classify()
 {
   return call_user_func_array('\\Staple\\Helpers::classify', func_get_args());
