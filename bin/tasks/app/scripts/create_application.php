@@ -22,7 +22,6 @@ $skel_dir = path(dirname(__DIR__), 'assets');
       'app_name' => basename($app_path),
     );
 
-  create_file(path($app_path, 'app', 'controllers', 'error.php'), template(path($skel_dir, 'error.php'), $vars));
   create_file(path($app_path, 'app', 'controllers', 'home.php'), template(path($skel_dir, 'home.php'), $vars));
   create_file(path($app_path, 'app', 'controllers', 'base.php'), template(path($skel_dir, 'base.php'), $vars));
 
@@ -63,8 +62,8 @@ $skel_dir = path(dirname(__DIR__), 'assets');
     copy_file(path($app_path, 'app', 'assets', 'js', 'app'), path($skel_dir, 'script.js.coffee'));
 
    create_dir(path($app_path, 'app', 'views'));
-    copy_file(path($app_path, 'app', 'views', 'error'), path($skel_dir, 'views', 'not_found.php.neddle'));
-    copy_file(path($app_path, 'app', 'views', 'error'), path($skel_dir, 'views', 'unknown.php.neddle'));
+    copy_file(path($app_path, 'app', 'views', 'error'), path($skel_dir, 'views', '404.php.neddle'));
+    copy_file(path($app_path, 'app', 'views', 'error'), path($skel_dir, 'views', '500.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'default.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'home'), path($skel_dir, 'views', 'index.php.neddle'));
 

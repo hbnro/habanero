@@ -1,4 +1,4 @@
 section
   header
     h1 Error 404
-    pre = inspect(params())
+    pre = inspect($message)

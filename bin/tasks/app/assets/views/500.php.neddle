@@ -1,0 +1,4 @@
+section
+  header
+    h1 Error 500
+    pre = inspect($message)

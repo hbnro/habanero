@@ -1,4 +1,0 @@
-section
-  header
-    h1 Error 500
-    pre = inspect(error_get_last())
