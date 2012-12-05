@@ -37,25 +37,26 @@ class Handler
       $app = new $class_name;
       $app->view = new \Sauce\App\View;
 
-      $type = params('format');
+      $test = get_class_methods($app);
+      $type = params('format') ?: 'html';
 
       if ($type && ! in_array($type, $app->responds_to)) {
         throw new \Exception("Unsupported '$type' response");
       }
 
-
       $handle = new \Postman\Handle($app, $type);
 
-      foreach (get_class_methods($app) as $callback) {
+      foreach ($test as $callback) {
         if (substr($callback, 0, 3) === 'as_') {
-          $handle->register('json', function ()
+          $handle->register(substr($callback, 3), function ()
             use ($app, $callback) {
-            return call_user_func_array(array($app, $callback), func_get_args());
-          });
+              return call_user_func_array(array($app, $callback), func_get_args());
+            });
         }
       }
 
-      $test = $handle->execute($action);
+
+      $test = $handle->exists($action) ? $handle->execute($action) : array();
       @list($out->status, $out->headers, $out->response) = $test;
 
       if ( ! $out->response) {
