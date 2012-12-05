@@ -109,8 +109,8 @@ class Base
         $_SERVER['REQUEST_URI'] .= $query = server('QUERY_STRING') ? "?$query" : '';
       }
     } else {
-      define('INDEX', option('base_index'));
-      define('ROOT', option('base_url'));
+      define('INDEX', 'index.php');
+      define('ROOT', '/');
       define('URI', '/');
 
       $_SERVER['REQUEST_URI'] = URI;
@@ -118,14 +118,6 @@ class Base
       $_SERVER['DOCUMENT_ROOT'] = APP_PATH;
     }
 
-
-
-    // connections
-    if ($test = option('database')) {
-      foreach ($test as $key => $val) {
-        \Servant\Config::set($key, $val, APP_ENV === 'production');
-      }
-    }
 
 
     // templating
@@ -137,7 +129,7 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
-    $prefix = APP_ENV <> 'production' ? '?_=' : ROOT . 'static/';
+    $prefix = rtrim(option('base_url'), '/') . ROOT . (APP_ENV <> 'production' ? '?_=' : 'static/');
 
     \Tailor\Config::set('images_url', "{$prefix}img");
     \Tailor\Config::set('styles_url', "{$prefix}css");
@@ -195,6 +187,14 @@ class Base
     \Servant\Config::set('default', 'sqlite::memory:');
 
 
+    // connections
+    if ($test = option('database')) {
+      foreach ($test as $key => $val) {
+        \Servant\Config::set($key, $val, APP_ENV === 'production');
+      }
+    }
+
+
     // load routes
     $routes_file = path(APP_PATH, 'config', 'routes.php');
 
@@ -235,12 +235,14 @@ class Base
     $app = \Sauce\App\Bootstrap::instance();
     $output = $app->response;
 
-    $output->status = 500;
+    $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
+
+    $output->status = $status;
     $output->headers = array();
     $output->response = $message;
 
     if (APP_ENV === 'production') {
-      // TODO: error view?
+      $output = partial("error/$output->status.php", compact('message'));
     } else {
       $tmp = array();
       $test = strtoupper(PHP_SAPI);
