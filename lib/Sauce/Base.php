@@ -173,7 +173,8 @@ class Base
     \Broil\Config::set('request_uri', URI);
     \Broil\Config::set('request_method', method());
 
-    \Broil\Config::set('server_name', option('server_name'));
+
+    \Broil\Config::set('server_base', \Postman\Request::host() ?: option('server_base'));
     \Broil\Config::set('subdomain', option('subdomain'));
     \Broil\Config::set('domain', option('domain'));
 
