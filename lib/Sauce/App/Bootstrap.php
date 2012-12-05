@@ -49,11 +49,6 @@ class Bootstrap
   {
     // defaults
     $out = $this->response;
-
-    $out->response = 'Not Found';
-    $out->headers = array();
-    $out->status = 404;
-
     $lambda($out);
 
 
@@ -101,7 +96,7 @@ class Bootstrap
 
       return $out;
     } else {
-      throw new \Exception("Route not found");
+      throw new \Exception("Route not reach");
     }
   }
 
