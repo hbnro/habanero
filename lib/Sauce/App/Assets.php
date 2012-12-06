@@ -217,12 +217,12 @@ class Assets
 
   public static function before()
   {
-    return join("\n", array_reverse(static::$set['head']));
+    return join("\n", static::$set['head']);
   }
 
   public static function after()
   {
-    return join("\n", array_reverse(static::$set['body']));
+    return join("\n", static::$set['body']);
   }
 
 
