@@ -406,6 +406,11 @@ function e($text)
   return \Labourer\Web\Html::ents($text, TRUE);
 }
 
+function plain($text)
+{
+  return \Labourer\Web\Text::plain(\Labourer\Web\Html::unents($text));
+}
+
 function camelcase()
 {
   return call_user_func_array('\\Staple\\Helpers::camelcase', func_get_args());
@@ -429,6 +434,11 @@ function titlecase()
 function classify()
 {
   return call_user_func_array('\\Staple\\Helpers::classify', func_get_args());
+}
+
+function slugify($text)
+{
+  return parameterize(plain($text));
 }
 
 function inspect($what)
