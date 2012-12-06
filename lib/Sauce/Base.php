@@ -244,7 +244,11 @@ class Base
     $output->response = $message;
 
     if (APP_ENV === 'production') {
-      $output = partial("error/$output->status.php", compact('message'));
+      try {
+        $output = partial('layouts/raising.php', compact('status', 'message'));
+      } catch (\Exception $e) {
+        $output = "<pre>Error $status\n$message</pre>";
+      }
     } else {
       $tmp = array();
       $test = strtoupper(PHP_SAPI);
