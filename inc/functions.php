@@ -308,14 +308,14 @@ function javascript_for($name)
   \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir')), 'body');
 }
 
-function prepend_js($test)
+function prepend_js($test, $to = 'head')
 {
-  \Sauce\App\Assets::prepend($test, 'head');
+  \Sauce\App\Assets::prepend($test, $to);
 }
 
-function append_js($test)
+function append_js($test, $to = 'head')
 {
-  \Sauce\App\Assets::append($test, 'head');
+  \Sauce\App\Assets::append($test, $to);
 }
 
 function stylesheet_for($name)
@@ -323,14 +323,14 @@ function stylesheet_for($name)
   \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir')));
 }
 
-function prepend_css($test)
+function prepend_css($test, $to = 'head')
 {
-  \Sauce\App\Assets::prepend($test, 'head');
+  \Sauce\App\Assets::prepend($test, $to);
 }
 
-function append_css($test)
+function append_css($test, $to = 'head')
 {
-  \Sauce\App\Assets::append($test, 'head');
+  \Sauce\App\Assets::append($test, $to);
 }
 
 function csrf_meta_tag()
