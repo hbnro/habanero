@@ -305,7 +305,7 @@ function before_body()
 
 function javascript_for($name)
 {
-  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir')), 'body');
+  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir')), 'body', TRUE);
 }
 
 function prepend_js($test, $to = 'head')
@@ -320,7 +320,7 @@ function append_js($test, $to = 'head')
 
 function stylesheet_for($name)
 {
-  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir')));
+  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir')), 'head', TRUE);
 }
 
 function prepend_css($test, $to = 'head')
