@@ -155,36 +155,32 @@ function link_to($text, $url = '', $args = array())
   $attrs  =
   $params = array();
 
-  if (is_array($text)) {
-    $params = $text;
-  } elseif (is_array($url)) {
-    $params = array_merge($url, $params);
-    $params['text'] = (string) $text;
-  } elseif ($url instanceof \Closure) {
-    $params['action'] = $text;
-
-    $args = $url;
-  } elseif ( ! isset($params['text'])) {
-    $params['text'] = $text;
-  }
-
-  if (is_array($url)) {
-    $attrs  = $args;
-    $params = array_merge($params, $url);
-  } elseif ( ! isset($params['action']) && is_string($url)) {
-    $params['action'] = $url;
-  }
-
 
   if ($args instanceof \Closure) {
-    ob_start() && $args();
-    $params['text'] = trim(ob_get_clean());
+    $params['text'] = $args;
   } else {
     $attrs = array_merge($attrs, (array) $args);
   }
 
 
+  if (is_array($url)) {
+    $params = array_merge($params, $url);
+  } elseif ($url instanceof \Closure) {
+    $params['text'] = $url;
+    $params['action'] = $text;
+  } else {
+    $params['action'] = (string) $url;
+  }
+
+
+  if (is_array($text)) {
+    $params = array_merge($params, $text);
+  } else {
+    $params['text'] = $text;
+  }
+
   $params = array_merge(array(
+    'text'    => '',
     'action'  => '',
     'method'  => 'GET',
     'confirm' => FALSE,
@@ -193,7 +189,13 @@ function link_to($text, $url = '', $args = array())
     'type'    => FALSE,
   ), $params);
 
-  return tag('a', $params['action'], $params['text'], array_merge(array(
+
+  if ($params['text'] instanceof \Closure) {
+    ob_start() && call_user_func($params['text']);
+    $params['text'] = trim(ob_get_clean());
+  }
+
+  return tag('a', $params['action'], $params['text'] ?: $params['action'], array_merge(array(
     'rel' => $params['method'] <> 'GET' ? 'nofollow' : FALSE,
     'data-method' => $params['method'] <> 'GET' ? strtolower($params['method']) : FALSE,
     'data-remote' => $params['remote'] ? 'true' : FALSE,
