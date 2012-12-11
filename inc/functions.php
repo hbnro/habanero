@@ -375,12 +375,15 @@ function image_tag($src, $alt = NULL, array $attrs = array())
   }
 
 
-  if (strpos($src, '://') !== FALSE) {
-    $attrs['src'] = $src;
-  } elseif ($img = \Tailor\Helpers::image($src)) {
+  try {
+    $img = \Tailor\Helpers::image($src);
+
     $attrs['width'] = $img['dims'][0];
     $attrs['height'] = $img['dims'][1];
+
     $attrs['src'] = asset_url($src);
+  } catch (\Exception $e) {
+    $attrs['src'] = $src;
   }
 
   return \Labourer\Web\Html::tag('img', $attrs);
