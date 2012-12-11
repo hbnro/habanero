@@ -340,6 +340,11 @@ function csrf_meta_tag()
   return \Labourer\Web\Html::meta('csrf-token', \Labourer\Web\Session::token());
 }
 
+function cache_for($id, $ttl, \Closure $lambda)
+{
+  \Cashier\Base::block($id, $ttl < 0 ? time() : (int) $ttl, $lambda);
+}
+
 function tag_for($src)
 {
   return \Sauce\App\Assets::tag_for($src);
@@ -362,7 +367,11 @@ function image_tag($src, $alt = NULL, array $attrs = array())
     $attrs = $alt;
     $alt   = $src;
   } else {
-    $attrs['alt'] = $attrs['title'] = $alt ?: $src;
+    if ( ! $alt) {
+      $ext = \IO\File::ext($src, TRUE);
+      $alt = titlecase(basename($src, $ext));
+    }
+    $attrs['alt'] = $attrs['title'] = $alt;
   }
 
 
