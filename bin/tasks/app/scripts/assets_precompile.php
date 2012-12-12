@@ -18,15 +18,12 @@ if (arg('v i c j views images styles scripts')) {
         if (is_file($file)) {
           $name = join('.', array_slice(explode('.', basename($file)), 0, 2));
           $path = str_replace(path(APP_PATH, 'app', 'views').DIRECTORY_SEPARATOR, '', dirname($file));
-          $path = str_replace(path(APP_PATH, 'app', 'views').DIRECTORY_SEPARATOR, '', dirname($file));
 
           $cache_dir  = \Tailor\Config::get('cache_dir');
           $cache_file = path($cache_dir, strtr("$path/$name", '\\/', '__'));
 
-          if (\IO\File::ext($file, TRUE) <> '.php') {
-            write(path(dirname($cache_file), basename($cache_file)), \Tailor\Base::compile($file));
-            status('prepare', "$path/$name");
-          }
+          write(path(dirname($cache_file), basename($cache_file)), \Tailor\Base::compile($file));
+          status('prepare', "$path/$name");
         }
       });
   }
@@ -99,7 +96,7 @@ if (arg('v i c j views images styles scripts')) {
                 $key = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', $test);
 
                 $name = join('.', array_slice(explode('.', basename($test)), 0, 2));
-                $path = str_replace(path(APP_PATH, 'app', 'assets', $type).DIRECTORY_SEPARATOR, '', dirname($test));
+                $path = str_replace(path(APP_PATH, 'app', 'assets', $type), '__', dirname($test));
 
                 if ($ext <> $type) {
                   $cache_file = path($cache_dir, strtr("$path/$name", '\\/', '__'));
