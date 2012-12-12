@@ -13,9 +13,6 @@ class Config
                     'server_name' => '',
                     'subdomain' => '',
                     'domain' => '',
-                    // prod + assets
-                    'base_url' => '/',
-                    'base_index' => 'index.php',
                   );
 
 
