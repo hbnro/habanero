@@ -120,25 +120,6 @@ class Base
 
 
 
-    // templating
-    \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
-
-    \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
-    \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
-    \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
-    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
-
-
-    $doc_root  = option('base_url');
-    $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
-
-    \Tailor\Config::set('images_url', "{$doc_root}img");
-    \Tailor\Config::set('styles_url', "{$doc_root}css");
-    \Tailor\Config::set('scripts_url', "{$doc_root}js");
-
-    \Tailor\Base::initialize();
-
-
     // web goodies
     \Labourer\Config::set('csrf_salt', '');
     \Labourer\Config::set('csrf_token', '');
@@ -174,9 +155,28 @@ class Base
     \Broil\Config::set('request_method', method());
 
 
-    \Broil\Config::set('server_base', \Postman\Request::host() ?: option('server_base'));
+    \Broil\Config::set('server_base', \Postman\Request::host() ?: option('base_url'));
     \Broil\Config::set('subdomain', option('subdomain'));
     \Broil\Config::set('domain', option('domain'));
+
+
+    // templating
+    \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
+
+    \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
+    \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
+    \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
+    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
+
+
+    $doc_root  = \Broil\Config::get('server_base');
+    $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
+
+    \Tailor\Config::set('images_url', "{$doc_root}img");
+    \Tailor\Config::set('styles_url', "{$doc_root}css");
+    \Tailor\Config::set('scripts_url', "{$doc_root}js");
+
+    \Tailor\Base::initialize();
 
 
     // caching
