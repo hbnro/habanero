@@ -157,6 +157,10 @@ class Assets
 
   public static function url_for($path, $on)
   {
+    if (strpos($path, '://') !== FALSE) {
+      return $path;
+    }
+
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
 
     (APP_ENV <> 'production') && $path = strtr($path, '\\/', '__');;

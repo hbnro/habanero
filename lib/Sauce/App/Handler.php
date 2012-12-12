@@ -37,8 +37,8 @@ class Handler
       $app = new $class_name;
       $app->view = new \Sauce\App\View;
 
+      $type = params('format');
       $test = get_class_methods($app);
-      $type = params('format') ?: 'html';
 
       if ($type && ! in_array($type, $app->responds_to)) {
         throw new \Exception("Unsupported '$type' response");

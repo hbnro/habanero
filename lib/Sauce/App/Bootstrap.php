@@ -40,7 +40,8 @@ class Bootstrap
       }
 
       @setlocale(LC_ALL, "$key.UTF-8");
-      \Locale\Base::load_path(path(APP_PATH, 'app', 'languages'));
+      \Locale\Config::set('default', $key);
+      \Locale\Base::load_path(path(APP_PATH, 'app', 'locale'));
     }
   }
 

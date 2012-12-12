@@ -129,11 +129,12 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
-    $prefix = rtrim(option('base_url'), '/') . ROOT . (APP_ENV <> 'production' ? '?_=' : 'static/');
+    $doc_root  = option('base_url');
+    $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
 
-    \Tailor\Config::set('images_url', "{$prefix}img");
-    \Tailor\Config::set('styles_url', "{$prefix}css");
-    \Tailor\Config::set('scripts_url', "{$prefix}js");
+    \Tailor\Config::set('images_url', "{$doc_root}img");
+    \Tailor\Config::set('styles_url', "{$doc_root}css");
+    \Tailor\Config::set('scripts_url', "{$doc_root}js");
 
     \Tailor\Base::initialize();
 
@@ -172,7 +173,8 @@ class Base
     \Broil\Config::set('request_uri', URI);
     \Broil\Config::set('request_method', method());
 
-    \Broil\Config::set('server_name', option('server_name'));
+
+    \Broil\Config::set('server_base', \Postman\Request::host() ?: option('server_base'));
     \Broil\Config::set('subdomain', option('subdomain'));
     \Broil\Config::set('domain', option('domain'));
 
@@ -242,7 +244,11 @@ class Base
     $output->response = $message;
 
     if (APP_ENV === 'production') {
-      $output = partial("error/$output->status.php", compact('message'));
+      try {
+        $output = partial('layouts/raising.php', compact('status', 'message'));
+      } catch (\Exception $e) {
+        $output = "<pre>Error $status\n$message</pre>";
+      }
     } else {
       $tmp = array();
       $test = strtoupper(PHP_SAPI);

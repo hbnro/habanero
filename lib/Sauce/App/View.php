@@ -83,17 +83,16 @@ class View implements \ArrayAccess
       return; // TODO: raise exception
     }
 
-    $out = '';
+    $set = $this->sections[$section];
 
-    foreach ($this->sections[$section] as $one) {
+    foreach ($set as $i => $one) {
       if (is_callable($one)) {
         ob_start() && call_user_func($one, $params);
-        $one = ob_get_clean();
+        $set[$i] = ob_get_clean();
       }
-      $out .= $one;
     }
 
-    return $out;
+    return sizeof($set) === 1 ? end($set) : $set;
   }
 
   public function all()

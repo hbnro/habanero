@@ -155,36 +155,32 @@ function link_to($text, $url = '', $args = array())
   $attrs  =
   $params = array();
 
-  if (is_array($text)) {
-    $params = $text;
-  } elseif (is_array($url)) {
-    $params = array_merge($url, $params);
-    $params['text'] = (string) $text;
-  } elseif ($url instanceof \Closure) {
-    $params['action'] = $text;
-
-    $args = $url;
-  } elseif ( ! isset($params['text'])) {
-    $params['text'] = $text;
-  }
-
-  if (is_array($url)) {
-    $attrs  = $args;
-    $params = array_merge($params, $url);
-  } elseif ( ! isset($params['action']) && is_string($url)) {
-    $params['action'] = $url;
-  }
-
 
   if ($args instanceof \Closure) {
-    ob_start() && $args();
-    $params['text'] = trim(ob_get_clean());
+    $params['text'] = $args;
   } else {
     $attrs = array_merge($attrs, (array) $args);
   }
 
 
+  if (is_array($url)) {
+    $params = array_merge($params, $url);
+  } elseif ($url instanceof \Closure) {
+    $params['text'] = $url;
+    $params['action'] = $text;
+  } else {
+    $params['action'] = (string) $url;
+  }
+
+
+  if (is_array($text)) {
+    $params = array_merge($params, $text);
+  } else {
+    $params['text'] = $text;
+  }
+
   $params = array_merge(array(
+    'text'    => '',
     'action'  => '',
     'method'  => 'GET',
     'confirm' => FALSE,
@@ -193,7 +189,13 @@ function link_to($text, $url = '', $args = array())
     'type'    => FALSE,
   ), $params);
 
-  return tag('a', $params['action'], $params['text'], array_merge(array(
+
+  if ($params['text'] instanceof \Closure) {
+    ob_start() && call_user_func($params['text']);
+    $params['text'] = trim(ob_get_clean());
+  }
+
+  return tag('a', $params['action'], $params['text'] ?: $params['action'], array_merge(array(
     'rel' => $params['method'] <> 'GET' ? 'nofollow' : FALSE,
     'data-method' => $params['method'] <> 'GET' ? strtolower($params['method']) : FALSE,
     'data-remote' => $params['remote'] ? 'true' : FALSE,
@@ -305,32 +307,32 @@ function before_body()
 
 function javascript_for($name)
 {
-  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir')), 'body');
+  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'scripts_dir')), 'body', TRUE);
 }
 
-function prepend_js($test)
+function prepend_js($test, $to = 'head')
 {
-  \Sauce\App\Assets::prepend($test, 'head');
+  \Sauce\App\Assets::prepend($test, $to);
 }
 
-function append_js($test)
+function append_js($test, $to = 'head')
 {
-  \Sauce\App\Assets::append($test, 'head');
+  \Sauce\App\Assets::append($test, $to);
 }
 
 function stylesheet_for($name)
 {
-  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir')));
+  \Sauce\App\Assets::inline(join("\n", \Sauce\App\Assets::build($name, 'styles_dir')), 'head', TRUE);
 }
 
-function prepend_css($test)
+function prepend_css($test, $to = 'head')
 {
-  \Sauce\App\Assets::prepend($test, 'head');
+  \Sauce\App\Assets::prepend($test, $to);
 }
 
-function append_css($test)
+function append_css($test, $to = 'head')
 {
-  \Sauce\App\Assets::append($test, 'head');
+  \Sauce\App\Assets::append($test, $to);
 }
 
 function csrf_meta_tag()
@@ -338,9 +340,20 @@ function csrf_meta_tag()
   return \Labourer\Web\Html::meta('csrf-token', \Labourer\Web\Session::token());
 }
 
+function cache_for($id, $ttl, \Closure $lambda)
+{
+  \Cashier\Base::block($id, $ttl < 0 ? time() : (int) $ttl, $lambda);
+}
+
 function tag_for($src)
 {
   return \Sauce\App\Assets::tag_for($src);
+}
+
+function root_url($path = '')
+{
+  is_file($path) && $path = strtr(str_replace(APP_PATH, '', $path), '\\/', '//');
+  return \Broil\Helpers::build(trim($path, '/'), array('static' => TRUE));
 }
 
 function asset_url($path)
@@ -354,15 +367,22 @@ function image_tag($src, $alt = NULL, array $attrs = array())
     $attrs = $alt;
     $alt   = $src;
   } else {
-    $attrs['alt'] = $attrs['title'] = $alt ?: $src;
+    if ( ! $alt) {
+      $ext = \IO\File::ext($src, TRUE);
+      $alt = titlecase(basename($src, $ext));
+    }
+    $attrs['alt'] = $attrs['title'] = $alt;
   }
 
 
-  if ($img = \Tailor\Helpers::image($src)) {
+  try {
+    $img = \Tailor\Helpers::image($src);
+
     $attrs['width'] = $img['dims'][0];
     $attrs['height'] = $img['dims'][1];
+
     $attrs['src'] = asset_url($src);
-  } else {
+  } catch (\Exception $e) {
     $attrs['src'] = $src;
   }
 
@@ -400,6 +420,11 @@ function e($text)
   return \Labourer\Web\Html::ents($text, TRUE);
 }
 
+function plain($text)
+{
+  return \Labourer\Web\Text::plain(\Labourer\Web\Html::unents($text));
+}
+
 function camelcase()
 {
   return call_user_func_array('\\Staple\\Helpers::camelcase', func_get_args());
@@ -423,6 +448,11 @@ function titlecase()
 function classify()
 {
   return call_user_func_array('\\Staple\\Helpers::classify', func_get_args());
+}
+
+function slugify($text)
+{
+  return parameterize(plain($text));
 }
 
 function inspect($what)
