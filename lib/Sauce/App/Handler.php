@@ -39,7 +39,7 @@ class Handler
 
       $type = params('format');
       $params = $klass->getStaticProperties();
-      $methods = $klass->getMethods(\ReflectionMethod::IS_PUBLIC);
+      $methods = $klass->getMethods(\ReflectionMethod::IS_STATIC);
 
       if ($type && ! in_array($type, $params['responds_to'])) {
         throw new \Exception("Unknown response for '$type' type");
