@@ -113,7 +113,8 @@ class Assets
     $type = \IO\Helpers::mimetype($ext);
 
     $dir = \Tailor\Config::get(array_search($ext, static::$path) ?: 'images_dir');
-    $file = strtr(substr($path, strpos($path, '/') + 1), '_', DIRECTORY_SEPARATOR);
+
+    $file = substr($path, strpos($path, '/') + 1);
     $base = path($dir, trim($file, DIRECTORY_SEPARATOR));
 
     $test = \Tailor\Helpers::findfile("$base*", 0);
@@ -162,8 +163,6 @@ class Assets
     }
 
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
-
-    (APP_ENV <> 'production') && $path = strtr($path, '\\/', '__');;
 
     return "$dir/$path";
   }
