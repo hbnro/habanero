@@ -73,6 +73,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
       '.DS_Store',
       'database/db.sqlite',
       'config/resources.php',
+      'static/resources/*',
       'static/img/*',
       'static/css/*',
       'static/js/*',

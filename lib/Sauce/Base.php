@@ -6,6 +6,7 @@ class Base
 {
 
   public static $autoload = NULL;
+  public static $response = NULL;
 
   private static $loaded = FALSE;
   private static $middleware = array();
@@ -221,8 +222,9 @@ class Base
 
     // start
     static::$loaded = TRUE;
+    static::$response = new \Postman\Response;
 
-    echo \Sauce\App\Bootstrap::instance()->run($lambda);
+    return \Sauce\App\Bootstrap::initialize($lambda);
   }
 
   public static function raise($message)
@@ -234,9 +236,7 @@ class Base
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
 
-    $app = \Sauce\App\Bootstrap::instance();
-    $output = $app->response;
-
+    $output = \Sauce\Base::$response = new \Postman\Response;
     $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
 
     $output->status = $status;
