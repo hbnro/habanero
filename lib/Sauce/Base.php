@@ -92,7 +92,7 @@ class Base
         $base = str_replace($root, '.', $base);
       }
 
-      define('ROOT', strtr(str_replace(INDEX, '', $base), '\\./', '/'));
+      define('ROOT', ltrim(str_replace(INDEX, '', $base), '.'));
 
 
       // URL cleanup
