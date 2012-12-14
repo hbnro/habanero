@@ -34,6 +34,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
    create_dir(path($app_path, 'library'));;
 
    create_dir(path($app_path, 'static'), 0777);
+   create_dir(path($app_path, 'static', 'font'), 0777);
    create_dir(path($app_path, 'static', 'css'), 0777);
    create_dir(path($app_path, 'static', 'img'), 0777);
    create_dir(path($app_path, 'static', 'js'), 0777);
@@ -42,6 +43,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
    create_dir(path($app_path, 'app', 'assets'));
    create_dir(path($app_path, 'app', 'assets', 'img'));
+   create_dir(path($app_path, 'app', 'assets', 'font'));
 
   create_file(path($app_path, 'app', 'assets', 'css', 'app.css'), "/**\n *= include app/base\n */\n");
     copy_file(path($app_path, 'app', 'assets', 'css', 'app'), path($skel_dir, 'base.css.less'));

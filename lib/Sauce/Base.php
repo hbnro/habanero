@@ -165,6 +165,7 @@ class Base
     \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
 
     \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
+    \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
     \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
     \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
@@ -173,6 +174,7 @@ class Base
     $doc_root  = \Broil\Config::get('server_base');
     $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
 
+    \Tailor\Config::set('fonts_url', "{$doc_root}font");
     \Tailor\Config::set('images_url', "{$doc_root}img");
     \Tailor\Config::set('styles_url', "{$doc_root}css");
     \Tailor\Config::set('scripts_url', "{$doc_root}js");

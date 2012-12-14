@@ -1,15 +1,12 @@
 <?php
 
-if (arg('v i c j views images styles scripts')) {
+if (arg('v f i c j views fonts images styles scripts')) {
   $cache      = array();
   $cache_dir  = \Tailor\Config::get('cache_dir');
 
   $base_path  = path(APP_PATH, 'app', 'assets');
   $static_dir = path(APP_PATH, 'static');
   $views_dir  = path(APP_PATH, 'app', 'views');
-
-  $img_path   = path($base_path, 'img');
-  $img_dir    = path($static_dir, 'img');
 
 
   // views
@@ -29,27 +26,47 @@ if (arg('v i c j views images styles scripts')) {
   }
 
 
-  // images
-  if (arg('i images') && is_dir($img_path)) {
-    \IO\Dir::each($img_path, '*.{jpeg,jpg,png,gif}', function ($file)
-      use ($base_path, $static_dir, $img_path, $img_dir) {
-        if (is_file($file)) {
-          $file_hash  = md5(md5_file($file) . filesize($file));
-          $file_name  = str_replace($img_path.DIRECTORY_SEPARATOR, '', \IO\File::extn($file)) . $file_hash . \IO\File::ext($file, TRUE);
-          $static_img = path($img_dir, $file_name);
+  $handler = function ($on)
+    use ($base_path, $static_dir) {
+      $dir  = path($static_dir, $on);
+      $path = path($base_path, $on);
 
-          if (s3_handle()) {
-            s3_upload_asset($file, str_replace($static_dir.DIRECTORY_SEPARATOR, '', $static_img));
-          } else {
-            ! is_dir(dirname($static_img)) && mkdir(dirname($static_img), 0777, TRUE);
-            ! is_file($static_img) && copy($file, $static_img);
+      return function ($file)
+        use ($on, $dir, $path, $base_path, $static_dir) {
+          if (is_file($file)) {
+            $file_hash = md5(md5_file($file) . filesize($file));
+            $file_name = str_replace($path.DIRECTORY_SEPARATOR, '', \IO\File::extn($file)) . $file_hash . \IO\File::ext($file, TRUE);
+            $file_path = path($dir, $file_name);
+
+            if (s3_handle()) {
+              s3_upload_asset($file, str_replace($static_dir.DIRECTORY_SEPARATOR, '', $file_path));
+            } else {
+              ! is_dir(dirname($file_path)) && mkdir(dirname($file_path), 0777, TRUE);
+              ! is_file($file_path) && copy($file, $file_path);
+            }
+
+            \Sauce\App\Assets::assign($path = str_replace(path($base_path, $on).DIRECTORY_SEPARATOR, '', $file), $file_hash);
+
+            status('hashing', "$path [$file_hash]");
           }
+        };
+      };
 
-          \Sauce\App\Assets::assign($path = str_replace(path($base_path, 'img').DIRECTORY_SEPARATOR, '', $file), $file_hash);
 
-          status('hashing', "$path [$file_hash]");
-        }
-      });
+
+  $test = array(
+    'f fonts' => 'font *.{woff,eot,ttf,svg}',
+    'i images' => 'img *.{jpeg,jpg,png,gif}',
+  );
+
+  // fonts + images
+  foreach ($test as $flags => $set) {
+    @list($path, $filter) = explode(' ', $set);
+
+    $dir = path($base_path, $path);
+    if (arg($flags) && is_dir($dir)) {
+      \IO\Dir::each($dir, $filter, $handler($path));
+    }
   }
 
 
@@ -125,9 +142,16 @@ if (arg('v i c j views images styles scripts')) {
               $set = array_keys($out);
               $out = join("\n", $out);
 
-              $out = preg_replace_callback('/(?<=img\/)\S+\.(?:jpe?g|png|gif)\b/i', function ($match) {
-                  return \Sauce\App\Assets::solve($match[0]);
-                }, $out);
+              $test = array(
+                '/(?<=font\/)\S+\.(?:woff|eot|ttf|svg)\b/i',
+                '/(?<=img\/)\S+\.(?:jpe?g|png|gif)\b/i',
+              );
+
+              foreach ($test as $expr) {
+                $out = preg_replace_callback($expr, function ($match) {
+                    return \Sauce\App\Assets::solve($match[0]);
+                  }, $out);
+              }
 
 
               write($tmp = path(TMP, md5($file)), $out = $type === 'css' ? css_min($out) : js_min($out));
