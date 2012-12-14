@@ -116,14 +116,15 @@ class Assets
 
   public static function read($path)
   {
-    $ext = \IO\File::ext($path);
+    $ext  = \IO\File::ext($path);
     $type = \IO\Helpers::mimetype($ext);
 
-    $dir = \Tailor\Config::get(static::guess($path));
+    $dir  = \Tailor\Config::get(static::guess($path));
 
+    $path = trim(strtr($path, '\\/', '//'), '/');
     $file = substr($path, strpos($path, '/') + 1);
-    $base = path($dir, trim($file, DIRECTORY_SEPARATOR));
 
+    $base = path($dir, $file);
     $test = \Tailor\Helpers::findfile("$base*", 0);
 
     if ( ! is_file($test)) {

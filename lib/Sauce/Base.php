@@ -110,8 +110,9 @@ class Base
         $_SERVER['REQUEST_URI'] .= $query = server('QUERY_STRING') ? "?$query" : '';
       }
     } else {
-      define('INDEX', 'index.php');
-      define('ROOT', '/');
+      // TODO: set URI/REQUEST_METHOD from CLI arguments...
+      define('INDEX', option('index_file') ?: 'index.php');
+      define('ROOT', option('root') ?: '/');
       define('URI', '/');
 
       $_SERVER['REQUEST_URI'] = URI;
@@ -156,9 +157,11 @@ class Base
     \Broil\Config::set('request_method', method());
 
 
-    \Broil\Config::set('server_base', \Postman\Request::host() ?: option('base_url'));
-    \Broil\Config::set('subdomain', option('subdomain'));
-    \Broil\Config::set('domain', option('domain'));
+    // in all cases this should be "scheme://hostname[:port]" only?
+    $base_url = \Postman\Request::host() ?: option('server_base');
+
+    \Broil\Config::set('server_base', rtrim($base_url, '/'));
+    \Broil\Config::set('tld_size', option('tld_size'));
 
 
     // templating
@@ -171,13 +174,21 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
-    $doc_root  = \Broil\Config::get('server_base');
-    $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
+    // assets
+    if (APP_ENV <> 'production') {
+      $doc_root = '?_=';
+    } elseif ( ! ($doc_root = option('asset_host'))) {
+      if ($doc_root = option('asset_subdomain')) {
+        $doc_root = \Broil\Helpers::reduce($base_url, $doc_root);
+      } else {
+        $doc_root = $base_url . ROOT . 'static';
+      }
+    }
 
-    \Tailor\Config::set('fonts_url', "{$doc_root}font");
-    \Tailor\Config::set('images_url', "{$doc_root}img");
-    \Tailor\Config::set('styles_url', "{$doc_root}css");
-    \Tailor\Config::set('scripts_url', "{$doc_root}js");
+    \Tailor\Config::set('fonts_url', "$doc_root/font");
+    \Tailor\Config::set('images_url', "$doc_root/img");
+    \Tailor\Config::set('styles_url', "$doc_root/css");
+    \Tailor\Config::set('scripts_url', "$doc_root/js");
 
     \Tailor\Base::initialize();
 
