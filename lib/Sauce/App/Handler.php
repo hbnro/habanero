@@ -49,12 +49,12 @@ class Handler
       $handle = new \Postman\Handle($app, $type);
 
       foreach ($methods as $callback) {
-        $one = $callback->getName();
+        $fn = $callback->getName();
 
-        if (substr($one, 0, 3) === 'as_') {
-          $handle->register(substr($one, 3), function ()
-            use ($app, $callback) {
-              return call_user_func_array($callback->getClosure(), func_get_args());
+        if (substr($fn, 0, 3) === 'as_') {
+          $handle->register(substr($fn, 3), function ()
+            use ($class_name, $fn) {
+              return call_user_func_array("$class_name::$fn", func_get_args());
             });
         }
       }
