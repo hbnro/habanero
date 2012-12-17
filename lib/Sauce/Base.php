@@ -156,7 +156,7 @@ class Base
     \Broil\Config::set('request_method', method());
 
 
-    $base_url = \Postman\Request::host(ROOT) ?: option('base_url');
+    $base_url = \Postman\Request::host() ?: option('base_url');
 
     \Broil\Config::set('server_base', rtrim($base_url, '/'));
     \Broil\Config::set('subdomain', option('subdomain'));
@@ -173,7 +173,7 @@ class Base
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
-    $doc_root = $base_url . (APP_ENV <> 'production' ? '?_=' : '/static');
+    $doc_root = $base_url . (APP_ENV <> 'production' ? '?_=' : ROOT . 'static');
 
     \Tailor\Config::set('fonts_url', "$doc_root/font");
     \Tailor\Config::set('images_url', "$doc_root/img");
