@@ -5,16 +5,30 @@ namespace Sauce\App;
 class Controller
 {
 
-  public $head = array();
+  public static $view = array();
 
-  public $title = '';
+  public static $head = array();
 
-  public $layout = 'default';
+  public static $title = '';
 
-  public $responds_to = array('html', 'json');
+  public static $layout = 'default';
+
+  public static $responds_to = array('html', 'json');
 
 
-  public function as_json($data, array $params = array())
+  public function __get($key)
+  {
+    return static::$view[$key];
+  }
+
+  public function __set($key, $value)
+  {
+    static::$view[$key] = $value;
+  }
+
+
+
+  public static function as_json($data, array $params = array())
   {
     return array(200, array('Content-Type' => 'application/json'), json_encode($data));
   }

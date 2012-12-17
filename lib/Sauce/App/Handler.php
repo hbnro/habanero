@@ -7,8 +7,8 @@ class Handler
 
   public static function execute($controller, $action = 'index', $cache = FALSE)
   {
-    $ttl = option('expires', 300);
-    $out = \Sauce\App\Bootstrap::instance()->response;
+    $ttl = option('expires', 33);
+    $out = \Sauce\Base::$response;
     $hash = md5(URI . '?' . server('QUERY_STRING') . '#' . session_id());
 
     if ($ttl && $cache && ($test = \Cashier\Base::fetch($hash))) {
@@ -35,41 +35,47 @@ class Handler
 
 
       $app = new $class_name;
-      $app->view = new \Sauce\App\View;
+      $klass = new \ReflectionClass($app);
 
       $type = params('format');
-      $test = get_class_methods($app);
+      $params = $klass->getStaticProperties();
+      $methods = $klass->getMethods(\ReflectionMethod::IS_STATIC);
 
-      if ($type && ! in_array($type, $app->responds_to)) {
-        throw new \Exception("Unsupported '$type' response");
+      if ($type && ! in_array($type, $params['responds_to'])) {
+        throw new \Exception("Unknown response for '$type' type");
       }
+
 
       $handle = new \Postman\Handle($app, $type);
 
-      foreach ($test as $callback) {
-        if (substr($callback, 0, 3) === 'as_') {
-          $handle->register(substr($callback, 3), function ()
+      foreach ($methods as $callback) {
+        $one = $callback->getName();
+
+        if (substr($one, 0, 3) === 'as_') {
+          $handle->register(substr($one, 3), function ()
             use ($app, $callback) {
-              return call_user_func_array(array($app, $callback), func_get_args());
+              return call_user_func_array($callback->getClosure(), func_get_args());
             });
         }
       }
 
 
+
       $test = $handle->exists($action) ? $handle->execute($action) : array();
       @list($out->status, $out->headers, $out->response) = $test;
+      $vars = (array) $class_name::$view;
 
       if ( ! $out->response) {
-        $out->response = partial("$controller/$action.php", $app->view->all());
+        $out->response = partial("$controller/$action.php", $vars);
 
-        if ($app->layout) {
-          $layout_file = "layouts/$app->layout.php";
+        if ($params['layout']) {
+          $layout_file = "layouts/$params[layout].php";
 
           $out->response = partial($layout_file, array(
-            'head' => join("\n", $app->head),
-            'title' => $app->title,
+            'head' => join("\n", $params['head']),
+            'title' => $params['title'],
             'body' => $out->response,
-            'view' => $app->view,
+            'view' => $vars,
           ));
         }
       }

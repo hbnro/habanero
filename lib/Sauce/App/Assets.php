@@ -8,9 +8,10 @@ class Assets
   private static $cache = array();
 
   private static $path = array(
-                    'images_dir' => 'img',
-                    'styles_dir' => 'css',
-                    'scripts_dir' => 'js',
+                    'fonts_dir' => array('woff', 'eot', 'ttf', 'svg'),
+                    'images_dir' => array('jpeg', 'jpg', 'png', 'gif'),
+                    'styles_dir' => array('css'),
+                    'scripts_dir' => array('js'),
                   );
 
   private static $set = array(
@@ -59,7 +60,16 @@ class Assets
 
   public static function build($from, $on)
   {
-    $ext = isset(static::$path[$on]) ? static::$path[$on] : trim(substr($from, -3), '.');
+    switch ($on) {
+      case 'styles_dir';
+        $ext = 'css';
+      break;
+      case 'scripts_dir';
+        $ext = 'js';
+      break;
+      default;
+        throw new \Exception("Cannot build '$from'");
+    }
 
     $dir = \Tailor\Config::get($on);
     $file = path($dir, "$from.$ext");
@@ -101,21 +111,20 @@ class Assets
 
   public static function parse($file)
   {
-    $ext = \IO\File::ext($file);
-    $on = in_array($ext, static::$path) ? array_search($ext, static::$path) : trim(substr($file, -3), '.');
-
-    return static::extract($file, $on);
+    return static::extract($file, static::guess($file));
   }
 
   public static function read($path)
   {
-    $ext = \IO\File::ext($path);
+    $ext  = \IO\File::ext($path);
     $type = \IO\Helpers::mimetype($ext);
 
-    $dir = \Tailor\Config::get(array_search($ext, static::$path) ?: 'images_dir');
-    $file = strtr(substr($path, strpos($path, '/') + 1), '_', DIRECTORY_SEPARATOR);
-    $base = path($dir, trim($file, DIRECTORY_SEPARATOR));
+    $dir  = \Tailor\Config::get(static::guess($path));
 
+    $path = trim(strtr($path, '\\/', '//'), '/');
+    $file = substr($path, strpos($path, '/') + 1);
+
+    $base = path($dir, $file);
     $test = \Tailor\Helpers::findfile("$base*", 0);
 
     if ( ! is_file($test)) {
@@ -163,8 +172,6 @@ class Assets
 
     $dir = \Tailor\Config::get(preg_replace('/_dir$/', '_url', $on));
 
-    (APP_ENV <> 'production') && $path = strtr($path, '\\/', '__');;
-
     return "$dir/$path";
   }
 
@@ -189,10 +196,7 @@ class Assets
 
   public static function asset_url($path)
   {
-    $type = \IO\File::ext($path);
-    $on = array_search($type, static::$path) ?: 'images_dir';
-
-    return static::url_for(static::solve($path), $on);
+    return static::url_for(static::solve($path), static::guess($path));
   }
 
   public static function inline($code, $to = '', $before = FALSE)
@@ -230,6 +234,21 @@ class Assets
   private static function push($on, $test, $prepend = FALSE)
   {
     $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
+  }
+
+  private static function guess($path)
+  {
+    $ext = \IO\File::ext($path);
+    $out = 'images_dir';
+
+    foreach (static::$path as $dir => $set) {
+      if (in_array($ext, $set)) {
+        $out = $dir;
+        break;
+      }
+    }
+
+    return $out;
   }
 
   private static function extract($from, $on)

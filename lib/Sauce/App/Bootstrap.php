@@ -5,13 +5,7 @@ namespace Sauce\App;
 class Bootstrap
 {
 
-  public $response = NULL;
-
-  private static $obj = NULL;
-
-
-
-  private function __construct()
+  public static function initialize(\Closure $lambda)
   {
     $test = strtoupper(PHP_SAPI);
 
@@ -43,13 +37,10 @@ class Bootstrap
       \Locale\Config::set('default', $key);
       \Locale\Base::load_path(path(APP_PATH, 'app', 'locale'));
     }
-  }
 
 
-  public function run(\Closure $lambda)
-  {
     // defaults
-    $out = $this->response;
+    $out = \Sauce\Base::$response;
     $lambda($out);
 
 
@@ -99,15 +90,6 @@ class Bootstrap
     } else {
       throw new \Exception("Route not reach");
     }
-  }
-
-  public static function instance()
-  {
-    if ( ! static::$obj) {
-      static::$obj = new static;
-      static::$obj->response = new \Postman\Response;
-    }
-    return static::$obj;
   }
 
 }

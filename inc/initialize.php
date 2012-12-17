@@ -3,11 +3,9 @@
 // timezone
 date_default_timezone_set('UTC');
 
-
 // benchmark
 define('BEGIN', microtime(TRUE));
 define('USAGE', memory_get_usage());
-
 
 // environment
 $trace = debug_backtrace(FALSE);

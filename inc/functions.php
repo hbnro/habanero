@@ -2,7 +2,7 @@
 
 function run(\Closure $lambda)
 {
-  \Sauce\Base::initialize($lambda);
+  echo \Sauce\Base::initialize($lambda);
 }
 
 function option($get, $or = FALSE)
@@ -105,7 +105,7 @@ function server()
 
 function redirect($path)
 {
-  $params = call_user_func_array(array(\Sauce\App\Bootstrap::instance()->response, 'redirect'), func_get_args());
+  $params = call_user_func_array(array(\Sauce\Base::$response, 'redirect'), func_get_args());
   $output = new \Postman\Response($params);
 
   echo $output;
@@ -391,13 +391,7 @@ function image_tag($src, $alt = NULL, array $attrs = array())
 
 function partial($path, array $vars = array())
 {
-  if ($tpl = \Tailor\Base::partial($path)) {
-    return \Tailor\Base::render($tpl, $vars);
-  }
-
-  $path = path(\Tailor\Config::get('views_dir'), $path);
-
-  throw new \Exception("Partial view '$path' does not exists");
+  return \Tailor\Base::render(\Tailor\Base::partial($path), $vars);
 }
 
 function write($file, $content, $append = FALSE)

@@ -1,3 +1,32 @@
+@width: 960px;
+@columns: 12;
+@separation: 10px;
+
+
+.font(@path, @family, @weight: normal, @style: normal) {
+  @eot: asset-path("@{path}.eot");
+  @woff: asset-path("@{path}.woff");
+  @ttf: asset-path("@{path}.ttf");
+  @svg: asset-path("@{path}.svg");
+
+  @font-face {
+    src: url('@{eot}');
+    src: local("☺"),
+         url('@{eot}?#iefix') format('embedded-opentype'),
+         url('@{woff}') format('woff'),
+         url('@{ttf}') format('truetype'),
+         url('@{svg}#@{family}') format('svg');
+    font-family: @family;
+    font-weight: @weight;
+    font-style: @style;
+  }
+}
+
+.selection(@bg: red, @fg: white) {
+  ::selection { color: @fg; background-color: @bg; text-shadow: none; }
+  ::-moz-selection { color: @fg; background-color: @bg; text-shadow: none; }
+}
+
 .inline-block() {
   display: -moz-inline-stack;
   display: inline-block;
@@ -20,7 +49,7 @@
   width: @width;
 }
 
-.columns(@span: 1, @width: 960px) {
+.columns(@span: 1) {
   float: left;
   display: inline;
   width: ((@width / @columns) * @span) - @separation;
@@ -84,7 +113,7 @@
 
 .image(@path) {
   .size(image-width(@path), image-height(@path));
-  background: image-url(@path) no-repeat;
+  background: asset-url(@path) no-repeat;
   text-indent: -99999px;
   white-space: nowrap;
 }

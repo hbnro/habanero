@@ -1,7 +1,8 @@
 <?php
 
-if (arg('v i c j views images styles scripts')) {
+if (arg('v f i c j views fonts images styles scripts')) {
   $set = array(
+    'font' => arg('f fonts'),
     'img' => arg('i images'),
     'css' => arg('c styles'),
     'js' => arg('j scripts'),
@@ -11,20 +12,28 @@ if (arg('v i c j views images styles scripts')) {
     s3_clean_bucket($set);
   } else {
     foreach ($set as $type => $ok) {
-      if ($ok) {
+      $files_dir = path(APP_PATH, 'static', $type);
+
+      if (is_dir($files_dir) && $ok) {
         status('remove', "static/$type");
-        $files_dir = path(APP_PATH, 'static', $type);
         \IO\Dir::unfile($files_dir, '*', TRUE);
-        mkdir($files_dir, 0777);
       }
+
+      is_dir($files_dir) OR mkdir($files_dir, 0777);
     }
   }
 
   if (arg('v views')) {
     status('remove', 'cache');
-    \IO\Dir::unfile(path(APP_PATH, 'cache'), '*', TRUE);
-    mkdir(path(APP_PATH, 'cache'), 0777);
+
+    $cache_dir = path(APP_PATH, 'cache');
+
+    is_dir($cache_dir) && \IO\Dir::unfile($cache_dir, '*', TRUE);
+    mkdir($cache_dir, 0777);
   }
+
+
+  // TODO: unset from cache?
 
   $res_file = path(APP_PATH, 'config', 'resources.php');
   write($res_file, "<?php return array();\n");

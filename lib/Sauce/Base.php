@@ -6,6 +6,7 @@ class Base
 {
 
   public static $autoload = NULL;
+  public static $response = NULL;
 
   private static $loaded = FALSE;
   private static $middleware = array();
@@ -91,7 +92,7 @@ class Base
         $base = str_replace($root, '.', $base);
       }
 
-      define('ROOT', strtr(str_replace(INDEX, '', $base), '\\./', '/'));
+      define('ROOT', ltrim(str_replace(INDEX, '', $base), '.'));
 
 
       // URL cleanup
@@ -155,7 +156,9 @@ class Base
     \Broil\Config::set('request_method', method());
 
 
-    \Broil\Config::set('server_base', \Postman\Request::host() ?: option('base_url'));
+    $base_url = \Postman\Request::host() ?: option('base_url');
+
+    \Broil\Config::set('server_base', rtrim($base_url, '/'));
     \Broil\Config::set('subdomain', option('subdomain'));
     \Broil\Config::set('domain', option('domain'));
 
@@ -164,17 +167,18 @@ class Base
     \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
 
     \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
+    \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
     \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
     \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
-    $doc_root  = \Broil\Config::get('server_base');
-    $doc_root .= APP_ENV <> 'production' ? '?_=' : 'static/';
+    $doc_root = $base_url . (APP_ENV <> 'production' ? '?_=' : '/static');
 
-    \Tailor\Config::set('images_url', "{$doc_root}img");
-    \Tailor\Config::set('styles_url', "{$doc_root}css");
-    \Tailor\Config::set('scripts_url', "{$doc_root}js");
+    \Tailor\Config::set('fonts_url', "$doc_root/font");
+    \Tailor\Config::set('images_url', "$doc_root/img");
+    \Tailor\Config::set('styles_url', "$doc_root/css");
+    \Tailor\Config::set('scripts_url', "$doc_root/js");
 
     \Tailor\Base::initialize();
 
@@ -221,8 +225,9 @@ class Base
 
     // start
     static::$loaded = TRUE;
+    static::$response = new \Postman\Response;
 
-    echo \Sauce\App\Bootstrap::instance()->run($lambda);
+    return \Sauce\App\Bootstrap::initialize($lambda);
   }
 
   public static function raise($message)
@@ -234,9 +239,7 @@ class Base
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
 
-    $app = \Sauce\App\Bootstrap::instance();
-    $output = $app->response;
-
+    $output = \Sauce\Base::$response = new \Postman\Response;
     $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
 
     $output->status = $status;
