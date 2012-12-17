@@ -156,7 +156,7 @@ class Base
     \Broil\Config::set('request_method', method());
 
 
-    $base_url = \Postman\Request::host() ?: option('base_url');
+    $base_url = \Postman\Request::host(ROOT) ?: option('base_url');
 
     \Broil\Config::set('server_base', rtrim($base_url, '/'));
     \Broil\Config::set('subdomain', option('subdomain'));
