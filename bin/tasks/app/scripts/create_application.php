@@ -16,7 +16,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
    create_dir(path($app_path, 'config', 'initializers'));
     copy_file(path($app_path, 'config'), path($skel_dir, 'routes.php'));
 
-   create_dir(path($app_path, 'app', 'models'), 0777);
+   create_dir(path($app_path, 'app', 'models'), 0777, TRUE);
 
    $vars = array(
       'app_name' => basename($app_path),
@@ -31,7 +31,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
   create_file(path($app_path, 'database', 'sqlite.db'), '', 0777);
   create_file(path($app_path, 'database', 'fixtures.yaml'), "---\n", 0777);
 
-   create_dir(path($app_path, 'library'));;
+   create_dir(path($app_path, 'library'), 0777, TRUE);
 
    create_dir(path($app_path, 'static'), 0777);
    create_dir(path($app_path, 'static', 'font'), 0777);
@@ -80,6 +80,8 @@ $skel_dir = path(dirname(__DIR__), 'assets');
       'static/css/*',
       'static/js/*',
       'cache/*',
+      'composer.lock',
+      'vendor',
     );
 
   create_file(path($app_path, '.gitignore'), join("\n", $ignored_files) . "\n");
