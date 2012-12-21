@@ -10,7 +10,7 @@
     $set  = <?php echo $model_class; ?>::get('<?php echo join("', '", array_keys($fields)); ?>');
     $from = $pg->offset(<?php echo $model_class; ?>::count(), params('p'));
 
-    $this->view['<?php echo $base; ?>'] = $pg->bind($set->offset($from)->limit($to));
+    $this-><?php echo $base; ?> = $pg->bind($set->offset($from)->limit($to));
   }
 
   function show()
@@ -18,12 +18,12 @@
     if ( ! ($row = <?php echo $model_class; ?>::find(params('id')))) {
       redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
     }
-    $this->view['<?php echo $name; ?>'] = $row;
+    $this-><?php echo $name; ?> = $row;
   }
 
   function create()
   {
-    $this->view['error'] = array();
+    $this->error = array();
 
     if (params('save')) {
       if ($data = $this->validate(params('row'))) {
@@ -35,7 +35,7 @@
 
   function modify()
   {
-    $this->view['error'] = array();
+    $this->error = array();
 
     if (params('update')) {
       if ($data = $this->validate(params('row'))) {
@@ -77,5 +77,5 @@
       return Staple\Validation::data();
     }
 
-    $this->view['error'] = Staple\Validation::errors();
+    $this->error = Staple\Validation::errors();
   }
