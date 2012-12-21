@@ -18,10 +18,12 @@ if ( ! $name OR is_bool($name) OR (strpos($name, ':') !== FALSE)) {
 
     if ( ! empty($params)) {
       foreach ($params as $key) {
+        @list($key, $type) = explode(':', $key);
+
         if ( ! isset($columns[$key])) {
           $fail = TRUE;
           error("\n  Unknown '$key' field\n");
-        } elseif ( ! ($test = field_for($columns[$key]['type'], $key))) {
+        } elseif ( ! ($test = field_for($type ?: $columns[$key]['type'], $key))) {
           $fail = TRUE;
           error("\n  Unknown '$key:$type' field type\n");
         } else {
