@@ -1,6 +1,3 @@
-- javascript_for('app')
-- stylesheet_for('app')
-
 section
   = link_to('Show all', url_for('<?php echo $base; ?>'))
   dl

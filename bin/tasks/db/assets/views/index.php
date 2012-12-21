@@ -1,9 +1,6 @@
 - use Labourer\Web\Form as Form,
       Labourer\Web\Html as Html
 
-- javascript_for('app')
-- stylesheet_for('app')
-
 section
   = link_to('New <?php echo $name; ?>', url_for('new_<?php echo $name; ?>'))
   - $options = array(action => url_for('delete_all_<?php echo $base; ?>'), confirm => '¿Are you sure?')

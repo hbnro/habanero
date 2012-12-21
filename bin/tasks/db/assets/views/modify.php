@@ -1,8 +1,5 @@
 - use Labourer\Web\Form as Form
 
-- javascript_for('app')
-- stylesheet_for('app')
-
 section
   = link_to('Cancel', url_for('show_<?php echo $name; ?>', array(':id' => $<?php echo $name; ?>-><?php echo $pk; ?>)))
   = partial('<?php echo $base; ?>/errors.php', compact('error'))
