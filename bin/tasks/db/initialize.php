@@ -11,7 +11,7 @@ task('model', 'Build models for the application', function ($params) {
 
   Example:
     {@} *model* {user} {email:string} {uid:string}
-    {@} *model* {profile} {name:string} {address:string} --stamp -x mongodb
+    {@} *model* {profile} {name:string} {address:string} --timestamps -x mongodb
     {@} *model* {response} {body:text} {from_uid:string} {to_uid:string} -t -n comments -i to_uid
 
   ## Available options:
