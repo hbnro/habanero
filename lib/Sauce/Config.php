@@ -10,9 +10,6 @@ class Config
                     'cache' => 'php',
                     'expires' => 300,
                     'rewrite' => FALSE,
-                    'server_name' => '',
-                    'subdomain' => '',
-                    'domain' => '',
                   );
 
 
