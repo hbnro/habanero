@@ -29,7 +29,7 @@ if (arg('v f i c j views fonts images styles scripts')) {
     $cache_dir = path(APP_PATH, 'cache');
 
     is_dir($cache_dir) && \IO\Dir::unfile($cache_dir, '*', TRUE);
-    mkdir($cache_dir, 0777);
+    is_dir($cache_dir) OR mkdir($cache_dir, 0777);
   }
 
 
