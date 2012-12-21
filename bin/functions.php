@@ -130,10 +130,11 @@ function remove_file($path)
   is_file($path) && unlink($path);
 }
 
-function create_dir($path, $perms = FALSE)
+function create_dir($path, $perms = FALSE, $gitkeep = FALSE)
 {
   status('create', $path);
   is_dir($path) OR mkdir($path, $perms ?: 0755, TRUE);
+  $gitkeep && touch(path($path, '.gitkeep'));
 }
 
 function copy_dir($to, $from)
