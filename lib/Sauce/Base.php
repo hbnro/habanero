@@ -249,41 +249,74 @@ class Base
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
 
-    $output = \Sauce\Base::$response = new \Postman\Response;
-    $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
+    $tmp = array();
+    $test = strtoupper(PHP_SAPI);
 
-    $output->status = $status;
-    $output->headers = array();
-    $output->response = $message;
+    foreach ($trace as $i => $on) {
+      $type   = ! empty($on['type']) ? $on['type'] : '';
+      $system = ! empty($on['file']) && strstr($on['file'], 'vendor') ?: FALSE;
+      $prefix = ! empty($on['object']) ? get_class($on['object']) : ( ! empty($on['class']) ? $on['class'] : '');
+      $call   = $prefix . $type . $on['function'];
+      $format_str = ($true = ! empty($on['file'])) ? '%s %s#%d %s()' : '~ %4$s';
+      $format_val = sprintf($format_str, $system ? '+' : '-', $true ? $on['file'] : '', $true ? $on['line'] : '', $call);
+      $tmp  []= $format_val;
+    }
 
-    if (APP_ENV === 'production') {
+    $trace = array_reverse($tmp);
+
+    if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
+      $output = \Sauce\Base::$response = new \Postman\Response;
+      $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
+
+      $output->status = $status;
+      $output->headers = array();
+      $output->response = $message;
+
+      // raw headers
+      foreach (headers_list() as $one) {
+        list($key, $val) = explode(':', $one);
+        $vars['headers'][$key] = trim($val);
+      }
+
+      // system info
+      $vars['host'] = @php_uname('n') ?: sprintf('<%s>', 'Unknown');
+      $vars['user'] = 'Unknown';
+
+      foreach (array('USER', 'LOGNAME', 'USERNAME', 'APACHE_RUN_USER') as $key) {
+        ($one = @getenv($key)) && $vars['user'] = $one;
+      }
+
+      // environment info
+      $vars['env'] = $_SERVER;
+
+      foreach (array('PATH_TRANSLATED', 'DOCUMENT_ROOT', 'REQUEST_TIME', 'argc', 'argv') as $key) {
+        if (isset($vars['env'][$key])) {
+          unset($vars['env'][$key]);
+        }
+      }
+
+      // received headers
+      foreach ((array) $vars['env'] as $key => $val) {
+        if (preg_match('/^(?:PHP|HTTP|SCRIPT)/', $key)) {
+          if (substr($key, 0, 5) === 'HTTP_') {
+            $vars['received'][camelcase(strtolower(substr($key, 5)), TRUE, '-')] = $val;
+          }
+          unset($vars['env'][$key]);
+        }
+      }
+
       try {
-        $output = partial('layouts/raising.php', compact('status', 'message'));
-      } catch (\Exception $e) {
-        $output = "<pre>Error $status\n$message</pre>";
+        $output = partial('layouts/raising.php', $vars);
+      } catch (\Exception $e) { // TODO: refactor?
+        $tpl = substr(read(__FILE__), __COMPILER_HALT_OFFSET__);
+        $tpl = \Tailor\Base::parse('neddle', $tpl);
+
+        extract($vars);
+        $output = eval('?' . ">$tpl");
       }
     } else {
-      $tmp = array();
-      $test = strtoupper(PHP_SAPI);
-
-      foreach ($trace as $i => $on) {
-        $type   = ! empty($on['type']) ? $on['type'] : '';
-        $system = ! empty($on['file']) && strstr($on['file'], 'vendor') ?: FALSE;
-        $prefix = ! empty($on['object']) ? get_class($on['object']) : ( ! empty($on['class']) ? $on['class'] : '');
-        $call   = $prefix . $type . $on['function'];
-        $format_str = ($true = ! empty($on['file'])) ? '%s %s#%d %s()' : '~ %4$s';
-        $format_val = sprintf($format_str, $system ? '+' : '-', $true ? $on['file'] : '', $true ? $on['line'] : '', $call);
-        $tmp  []= $format_val;
-      }
-
-      $trace = join("\n", array_reverse($tmp));
-
-      if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
-        $output .= "<pre>$trace</pre>";
-      } else {
-        $trace = preg_replace('/^/m', '  ', $trace);
-        $output .= "\n\n$trace\n";
-      }
+      $trace   = preg_replace('/^/m', '  ', $trace);
+      $output .= "\n\n$trace\n";
     }
 
     echo "$output\n";
@@ -295,3 +328,58 @@ class Base
   }
 
 }
+
+__halt_compiler();
+
+- $strip = ($value) ~>
+  - return str_replace(APP_PATH, '.', $value)
+
+html
+  head
+    meta(charset="UTF-8")
+    title Error
+    style
+      |p, .debug {
+      |  padding: .5em;
+      |  font-size: .9em;
+      |  background: #ededed;
+      |  font-family: Palatino, "Palatino Linotype", "Hoefler Text", Times, "Times New Roman", serif;
+      |}
+      |pre {
+      |  overflow: auto;
+      |  padding: 0 .3em !important;
+      |  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+      |  font-size: .8em;
+      |}
+      |h3 {
+      |  border-bottom: 3px dotted #dedede;
+      |  font-family: "Lucida Sans", "Lucida Grande", Lucida, sans-serif;
+      |  font-size: 1.3em;
+      |}
+  body
+    p
+      ~ $message
+    h3 Application
+    pre = inspect(array('user' => "$user@$host",
+        'route' => URI,
+        'method' => method(),
+        'params' => params(),
+        'bootstrap' => APP_LOADER,
+      ))
+    - unless empty($headers)
+      h3 Response headers
+      pre = inspect($headers)
+    - unless empty($received)
+      h3 Received headers
+      pre = inspect($received)
+    h3 Includes
+    pre = $strip(inspect(get_included_files()))
+    - unless empty($trace)
+      h3 Backtrace
+      pre = join("\n", array_map($strip, $trace))
+    - unless empty($env)
+      h3 Environment
+      pre = inspect($env)
+    h3 Configuration
+    pre = inspect(config())
+    p &mdash; #{round(microtime(TRUE) - BEGIN, 4)}s
