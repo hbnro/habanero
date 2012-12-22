@@ -458,3 +458,11 @@ function render($file, array $vars = array())
 {
   return \Tailor\Base::render($file, $vars);
 }
+
+function segment($nth)
+{
+  $set = explode('/', trim(URI, '/'));
+  $out = isset($set[$nth - 1]) ? $set[$nth - 1] : FALSE;
+
+  return $out;
+}
