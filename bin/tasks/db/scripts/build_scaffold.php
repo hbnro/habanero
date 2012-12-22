@@ -23,6 +23,7 @@ TPL;
 
 
   $klass = preg_quote($model_class, '/');
+  $based = preg_quote($base, '/');
 
   add_controller($base, TRUE);
   inject_into_file($out_file, $controller, array(
@@ -40,7 +41,7 @@ TPL;
 
     create_file(path(APP_PATH, 'app', 'views', $base, 'errors.php.neddle'), "$errors_tpl\n");
 
-    append_file(path(APP_PATH, 'config', 'routes.php'), "\n$routes", "/'root'\s*=>\s*'\/$base'/");
+    append_file(path(APP_PATH, 'config', 'routes.php'), "\n$routes", "/'root'\s*=>\s*'\/$based'/");
 } else {
   error("\n  Scaffold for '$base' already exists\n");
 }

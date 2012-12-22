@@ -11,7 +11,7 @@ if ( ! $path) {
     error("\n  Model path '$path' does not exists\n");
   } else {
     $crawl = function ($file) {
-        if (is_file($file) && (\IO\File::ext($file) === 'php')) {
+        if (is_file($file) && strpos($file, '.php')) {
           preg_match_all('/class\s(\S+)\s/', read($file), $match);
 
           require $file;

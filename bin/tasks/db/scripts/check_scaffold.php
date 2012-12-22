@@ -2,7 +2,7 @@
 
 $name = array_shift($params);
 
-if ( ! $name OR is_bool($name) OR (strpos($name, ':') !== FALSE)) {
+if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
   error("\n  Missing model name\n");
 } else {
   $model_file = path(APP_PATH, 'app', 'models', "$name.php");
