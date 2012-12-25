@@ -5,30 +5,36 @@ namespace Sauce\App;
 class Assets
 {
 
-  private static $cache = array();
+  private static $self = NULL;
 
-  private static $path = array(
-                    'fonts_dir' => array('woff', 'eot', 'ttf', 'svg'),
-                    'images_dir' => array('jpeg', 'jpg', 'png', 'gif'),
-                    'styles_dir' => array('css'),
-                    'scripts_dir' => array('js'),
-                  );
+  private $cache = array();
 
-  private static $set = array(
-                    'head' => array(),
-                    'body' => array(),
-                  );
+  private $path = array(
+            'fonts_dir' => array('woff', 'eot', 'ttf', 'svg'),
+            'images_dir' => array('jpeg', 'jpg', 'png', 'gif'),
+            'styles_dir' => array('css'),
+            'scripts_dir' => array('js'),
+          );
+
+  private $set = array(
+            'head' => array(),
+            'body' => array(),
+          );
 
 
 
-
+  private function __construct()
+  {
+    $file = path(APP_PATH, 'config', 'resources.php');
+    is_file($file) && $this->cache = include $file;
+  }
 
   public static function save()
   {
     $file = path(APP_PATH, 'config', 'resources.php');
-    $code = var_export(array_filter(static::$cache, 'is_md5'), TRUE);
+    $code = var_export(array_filter(static::instance()->cache, 'is_md5'), TRUE);
 
-    is_dir(dirname($file)) && file_put_contents($file, '<' . "?php return $code;\n");
+    @file_put_contents($file, '<' . "?php return $code;\n");
   }
 
   public static function solve($name)
@@ -43,19 +49,14 @@ class Assets
 
   public static function fetch($name)
   {
-    if ( ! static::$cache) {
-      $file = path(APP_PATH, 'config', 'resources.php');
-      is_file($file) && static::$cache = include $file;
-    }
-
-    if ( ! empty(static::$cache[$name])) {
-      return static::$cache[$name];
+    if ( ! empty(static::instance()->cache[$name])) {
+      return static::instance()->cache[$name];
     }
   }
 
   public static function assign($key, $val)
   {
-    static::$cache[$key] = $val;
+    static::instance()->cache[$key] = $val;
   }
 
   public static function build($from, $on)
@@ -221,19 +222,19 @@ class Assets
 
   public static function before()
   {
-    return join("\n", static::$set['head']);
+    return join("\n", static::instance()->set['head']);
   }
 
   public static function after()
   {
-    return join("\n", static::$set['body']);
+    return join("\n", static::instance()->set['body']);
   }
 
 
 
   private static function push($on, $test, $prepend = FALSE)
   {
-    $prepend ? array_unshift(static::$set[$on], $test) : static::$set[$on] []= $test;
+    $prepend ? array_unshift(static::instance()->set[$on], $test) : static::instance()->set[$on] []= $test;
   }
 
   private static function guess($path)
@@ -241,7 +242,7 @@ class Assets
     $ext = \IO\File::ext($path);
     $out = 'images_dir';
 
-    foreach (static::$path as $dir => $set) {
+    foreach (static::instance()->path as $dir => $set) {
       if (in_array($ext, $set)) {
         $out = $dir;
         break;
@@ -278,6 +279,14 @@ class Assets
     }
 
     return $out;
+  }
+
+  private static function instance()
+  {
+    if (static::$self === NULL) {
+      static::$self = new self;
+    }
+    return static::$self;
   }
 
 }
