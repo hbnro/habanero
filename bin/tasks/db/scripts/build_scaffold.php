@@ -1,6 +1,6 @@
 <?php
 
-$base = arg('b base') ?: $name;
+$base = arg('b base') ?: plural($name);
 $vars = compact('pk', 'base', 'name', 'fields', 'model_class');
 
 $skel_dir = path(dirname(__DIR__), 'assets');
