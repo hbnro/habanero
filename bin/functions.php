@@ -59,7 +59,9 @@ function say($text)
           );
 
 
-  $text = str_replace('{@}', sprintf('\clight_gray(%s)\c', basename($_SERVER['_'])), $text);
+  $php  = 'hs'; # TODO: basename($_SERVER['_']);
+
+  $text = str_replace('{@}', sprintf('\clight_gray(%s)\c', $php), $text);
   $text = preg_replace(array_keys($theme), $theme, $text);
 
   writeln(colorize($text));
