@@ -419,6 +419,16 @@ function plain($text)
   return \Labourer\Web\Text::plain(\Labourer\Web\Html::unents($text));
 }
 
+function plural($test)
+{
+  return \Staple\Inflector::pluralize($test);
+}
+
+function singular($test)
+{
+  return \Staple\Inflector::singularize($test);
+}
+
 function camelcase()
 {
   return call_user_func_array('\\Staple\\Helpers::camelcase', func_get_args());
