@@ -126,10 +126,12 @@ task('prepare', 'Precompile assets for production', function ($params) {
 
   ## Available options:
 
-  -v, [--views]    # Include views
-  -i, [--images]   # Include images
-  -c, [--styles]   # Include styles
-  -j, [--scripts]  # Include scripts
+  -a, [--all]       # All things
+  -f, [--fonts]     # Font files
+  -v, [--views]     # Views, layouts
+  -i, [--images]    # Static images
+  -c, [--styles]    # Stylesheets
+  -j, [--scripts]   # Javascript
 
 INFO;
 
@@ -152,10 +154,13 @@ task('purge', 'Remove assets from cache', function ($params) {
 
   ## Available options:
 
-  -v, [--views]    # Remove views
-  -i, [--images]   # Remove images
-  -c, [--styles]   # Remove styles
-  -j, [--scripts]  # Remove scripts
+  -a, [--all]       # All things
+  -r, [--reset]     # Clear resources
+  -f, [--fonts]     # Font files
+  -v, [--views]     # Views, layouts
+  -i, [--images]    # Static images
+  -c, [--styles]    # Stylesheets
+  -j, [--scripts]   # Javascript
 
 INFO;
 

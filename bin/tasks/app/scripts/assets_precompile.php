@@ -1,16 +1,16 @@
 <?php
 
-if (arg('v f i c j views fonts images styles scripts')) {
+if (arg('v f i c j a views fonts images styles scripts all')) {
   $cache      = array();
   $cache_dir  = \Tailor\Config::get('cache_dir');
 
   $base_path  = path(APP_PATH, 'app', 'assets');
-  $static_dir = path(APP_PATH, 'static');
   $views_dir  = path(APP_PATH, 'app', 'views');
+  $static_dir = path(APP_PATH, 'static');
 
 
   // views
-  if (arg('v views') && is_dir($views_dir)) {
+  if (arg('v views all') && is_dir($views_dir)) {
     \IO\Dir::each($views_dir, '*', function ($file) {
         if (is_file($file)) {
           $name = join('.', array_slice(explode('.', basename($file)), 0, 2));
@@ -55,8 +55,8 @@ if (arg('v f i c j views fonts images styles scripts')) {
 
 
   $test = array(
-    'f fonts' => 'font *.{woff,eot,ttf,svg}',
-    'i images' => 'img *.{jpeg,jpg,png,gif}',
+    'f fonts all' => 'font *.{woff,eot,ttf,svg}',
+    'i images all' => 'img *.{jpeg,jpg,png,gif}',
   );
 
   // fonts + images
@@ -71,8 +71,8 @@ if (arg('v f i c j views fonts images styles scripts')) {
 
 
   // scripts & styles
-  foreach (array('css' => 'styles', 'js' => 'scripts') as $type => $option) {
-    if (arg(array(substr($type, 0, 1), $option)) && is_dir(path($base_path, $type))) {
+  foreach (array('css' => 'c styles all', 'js' => 'j scripts all') as $type => $option) {
+    if (arg($option) && is_dir(path($base_path, $type))) {
       \IO\Dir::open(path($base_path, $type), function ($file)
         use ($base_path, $static_dir, $type, $cache_dir, $cache) {
           if (is_file($file)) {

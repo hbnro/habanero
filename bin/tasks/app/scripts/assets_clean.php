@@ -1,11 +1,11 @@
 <?php
 
-if (arg('v f i c j views fonts images styles scripts')) {
+if (arg('r v f i c j a reset views fonts images styles scripts all')) {
   $set = array(
-    'font' => arg('f fonts'),
-    'img' => arg('i images'),
-    'css' => arg('c styles'),
-    'js' => arg('j scripts'),
+    'font' => arg('f fonts all'),
+    'img' => arg('i images all'),
+    'css' => arg('c styles all'),
+    'js' => arg('j scripts all'),
   );
 
   if (s3_handle()) {
@@ -23,7 +23,7 @@ if (arg('v f i c j views fonts images styles scripts')) {
     }
   }
 
-  if (arg('v views')) {
+  if (arg('v views all')) {
     status('remove', 'cache');
 
     $cache_dir = path(APP_PATH, 'cache');
@@ -34,10 +34,11 @@ if (arg('v f i c j views fonts images styles scripts')) {
 
 
   // TODO: unset from cache?
-
-  $res_file = path(APP_PATH, 'config', 'resources.php');
-  write($res_file, "<?php return array();\n");
-  status('update', 'config/resources.php');
+  if (arg('r reset all')) {
+    $res_file = path(APP_PATH, 'config', 'resources.php');
+    write($res_file, "<?php return array();\n");
+    status('update', 'config/resources.php');
+  }
 } else {
   error("\n  Nothing to do\n");
 }
