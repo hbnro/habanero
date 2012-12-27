@@ -49,16 +49,18 @@ $skel_dir = path(dirname(__DIR__), 'assets');
     copy_file(path($app_path, 'app', 'assets', 'css', 'app'), path($skel_dir, 'base.css.less'));
     copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'sauce.less'));
 
-    copy_file(path($app_path, 'app', 'assets', 'js'), path($skel_dir, 'jquery.min.js'));
-    copy_file(path($app_path, 'app', 'assets', 'js'), path($skel_dir, 'modernizr.min.js'));
+    copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'jquery.min.js'));
+    copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'modernizr.min.js'));
   create_file(path($app_path, 'app', 'assets', 'js', 'app.js'), sprintf("/**\n %s\n */\n", join("\n ", array(
-    '*= head modernizr',
-    '*= require jquery',
+    '*= head lib/modernizr',
+    '*= require lib/jquery',
+    '*= include lib/kup',
     '*= include lib/console',
     '*= include lib/jquery-ujs',
     '*= include app/script',
   ))));
 
+    copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'kup.js.coffee'));
     copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'console.js'));
     copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'jquery-ujs.js'));
     copy_file(path($app_path, 'app', 'assets', 'js', 'app'), path($skel_dir, 'script.js.coffee'));

@@ -244,7 +244,7 @@ class Base
   {
     if ($message instanceof \Exception) {
       $trace = APP_ENV <> 'production' ? $message->getTrace() : array();
-      $message = "Exception: {$message->getMessage()} ({$message->getFile()}#{$message->getLine()})";
+      $message = "{$message->getMessage()} <{$message->getFile()}#{$message->getLine()}>";
     } else {
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
@@ -271,6 +271,8 @@ class Base
       $output->status = $status;
       $output->headers = array();
       $output->response = $message;
+
+      $vars['status'] = (int) $status;
 
       // raw headers
       foreach (headers_list() as $one) {
@@ -330,10 +332,6 @@ class Base
 }
 
 __halt_compiler();
-
-- $strip = ($value) ~>
-  - return str_replace(APP_PATH, '.', $value)
-
 html
   head
     meta(charset="UTF-8")
@@ -373,10 +371,10 @@ html
       h3 Received headers
       pre = inspect($received)
     h3 Includes
-    pre = $strip(inspect(get_included_files()))
+    pre = inspect(get_included_files())
     - unless empty($trace)
       h3 Backtrace
-      pre = join("\n", array_map($strip, $trace))
+      pre = join("\n", $trace)
     - unless empty($env)
       h3 Environment
       pre = inspect($env)
