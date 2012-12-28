@@ -209,6 +209,11 @@ class Base
     }
 
 
+    // start up
+    \Tailor\Base::initialize();
+    \Labourer\Base::initialize();
+
+
     // load routes
     $routes_file = path(APP_PATH, 'config', 'routes.php');
 
@@ -219,10 +224,6 @@ class Base
     foreach (static::$middleware as $callback) {
       $lambda = $callback($lambda);
     }
-
-    // start up
-    \Tailor\Base::initialize();
-    \Labourer\Base::initialize();
 
 
     // scripts
