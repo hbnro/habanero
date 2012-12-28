@@ -3,23 +3,18 @@
 @separation: 10px;
 
 
-.font(@path, @family, @weight: normal, @style: normal) {
+.font-src(@path, @id) {
   @eot: asset-path("@{path}.eot");
   @woff: asset-path("@{path}.woff");
   @ttf: asset-path("@{path}.ttf");
   @svg: asset-path("@{path}.svg");
 
-  @font-face {
-    src: url('@{eot}');
-    src: local("☺"),
-         url('@{eot}?#iefix') format('embedded-opentype'),
-         url('@{woff}') format('woff'),
-         url('@{ttf}') format('truetype'),
-         url('@{svg}#@{family}') format('svg');
-    font-family: @family;
-    font-weight: @weight;
-    font-style: @style;
-  }
+  src: url('@{eot}');
+  src: local("☺"),
+       url('@{eot}?#iefix') format('embedded-opentype'),
+       url('@{woff}') format('woff'),
+       url('@{ttf}') format('truetype'),
+       url('@{svg}#@{id}') format('svg');
 }
 
 .selection(@bg: red, @fg: white) {
