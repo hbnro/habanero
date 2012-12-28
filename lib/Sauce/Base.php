@@ -109,10 +109,17 @@ class Base
         $_SERVER['REQUEST_URI']  = server('SCRIPT_NAME', server('PHP_SELF'));
         $_SERVER['REQUEST_URI'] .= $query = server('QUERY_STRING') ? "?$query" : '';
       }
+
+      $base_url = \Postman\Request::host();
     } else {
+      $parts    = explode('/', option('base_url'));
+
+      $root     = '/' . join('/', array_slice($parts, 3));
+      $base_url = join('/', array_slice($parts, 0, 3));
+
       // TODO: set URI/REQUEST_METHOD from CLI arguments...
       define('INDEX', option('index_file') ?: 'index.php');
-      define('ROOT', option('root') ?: '/');
+      define('ROOT', $root ?: '/');
       define('URI', '/');
 
       $_SERVER['REQUEST_URI'] = URI;
@@ -120,6 +127,44 @@ class Base
       $_SERVER['DOCUMENT_ROOT'] = APP_PATH;
     }
 
+
+    // routing
+    \Broil\Config::set('root', ROOT);
+    \Broil\Config::set('index_file', INDEX);
+    \Broil\Config::set('rewrite', option('rewrite'));
+
+    \Broil\Config::set('request_uri', URI);
+    \Broil\Config::set('request_method', method());
+
+    \Broil\Config::set('server_base', rtrim($base_url, '/'));
+    \Broil\Config::set('tld_size', option('tld_size'));
+
+
+    // assets
+    if (APP_ENV <> 'production') {
+      $doc_root = $base_url . ROOT . '?_=';
+    } elseif ( ! ($doc_root = option('asset_host'))) {
+      if ($doc_root = option('asset_subdomain')) {
+        $doc_root = \Broil\Helpers::reduce($base_url, $doc_root);
+      } else {
+        $doc_root = $base_url . ROOT . 'static';
+      }
+    }
+
+    \Tailor\Config::set('fonts_url', "$doc_root/font");
+    \Tailor\Config::set('images_url', "$doc_root/img");
+    \Tailor\Config::set('styles_url', "$doc_root/css");
+    \Tailor\Config::set('scripts_url', "$doc_root/js");
+
+
+    // templating
+    \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
+
+    \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
+    \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
+    \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
+    \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
+    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
 
     // web goodies
@@ -145,62 +190,15 @@ class Base
     \Labourer\Config::set('s3_location', FALSE);
     \Labourer\Config::set('s3_permission', 'public_read');
 
-    \Labourer\Base::initialize();
 
-
-    // routing
-    \Broil\Config::set('root', ROOT);
-    \Broil\Config::set('index_file', INDEX);
-    \Broil\Config::set('rewrite', option('rewrite'));
-
-    \Broil\Config::set('request_uri', URI);
-    \Broil\Config::set('request_method', method());
-
-
-    // in all cases this should be "scheme://hostname[:port]" only?
-    $base_url = \Postman\Request::host() ?: option('server_base');
-
-    \Broil\Config::set('server_base', rtrim($base_url, '/'));
-    \Broil\Config::set('tld_size', option('tld_size'));
-
-
-    // templating
-    \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
-
-    \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
-    \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
-    \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
-    \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
-    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
-
-
-    // assets
-    if (APP_ENV <> 'production') {
-      $doc_root = ROOT . '?_=';
-    } elseif ( ! ($doc_root = option('asset_host'))) {
-      if ($doc_root = option('asset_subdomain')) {
-        $doc_root = \Broil\Helpers::reduce($base_url, $doc_root);
-      } else {
-        $doc_root = $base_url . ROOT . 'static';
-      }
-    }
-
-    \Tailor\Config::set('fonts_url', "$doc_root/font");
-    \Tailor\Config::set('images_url', "$doc_root/img");
-    \Tailor\Config::set('styles_url', "$doc_root/css");
-    \Tailor\Config::set('scripts_url', "$doc_root/js");
-
-    \Tailor\Base::initialize();
+    // database
+    \Grocery\Config::set('unserialize', APP_ENV === 'production' ? 'ignore' : 'reset');
+    \Servant\Config::set('default', 'sqlite::memory:');
 
 
     // caching
     \Cashier\Config::set('cache_dir', TMP);
     \Cashier\Config::set('driver', option('cache', 'php'));
-
-
-    // database
-    \Grocery\Config::set('unserialize', APP_ENV === 'production' ? 'ignore' : 'reset');
-    \Servant\Config::set('default', 'sqlite::memory:');
 
 
     // connections
@@ -217,10 +215,14 @@ class Base
     is_file($routes_file) && require $routes_file;
 
 
-    // before any initializer!
+    // before any initializer?
     foreach (static::$middleware as $callback) {
       $lambda = $callback($lambda);
     }
+
+    // start up
+    \Tailor\Base::initialize();
+    \Labourer\Base::initialize();
 
 
     // scripts
@@ -233,7 +235,7 @@ class Base
     }
 
 
-    // start
+    // go!
     static::$loaded = TRUE;
     static::$response = new \Postman\Response;
 
