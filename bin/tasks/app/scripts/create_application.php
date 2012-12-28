@@ -66,8 +66,6 @@ $skel_dir = path(dirname(__DIR__), 'assets');
     copy_file(path($app_path, 'app', 'assets', 'js', 'app'), path($skel_dir, 'script.js.coffee'));
 
    create_dir(path($app_path, 'app', 'views'));
-    copy_file(path($app_path, 'app', 'views', 'error'), path($skel_dir, 'views', '404.php.neddle'));
-    copy_file(path($app_path, 'app', 'views', 'error'), path($skel_dir, 'views', '500.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'default.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'home'), path($skel_dir, 'views', 'index.php.neddle'));
 
@@ -89,6 +87,9 @@ $skel_dir = path(dirname(__DIR__), 'assets');
   create_file(path($app_path, '.gitignore'), join("\n", $ignored_files) . "\n");
 
     copy_file($app_path, path($skel_dir, '.htaccess'));
+
+  create_file(path($app_path, 'deploy.sh'), "#!/bin/sh\nrsync -avlzC --delete --progress --exclude-from exclude.txt --stats -e 'ssh' . root@0.0.0.0:/var/www/domain.tld\n", 0777);
+  create_file(path($app_path, 'exclude.txt'), ".git*\n");
 
     copy_file($app_path, path($skel_dir, 'composer.json'));
     copy_file($app_path, path($skel_dir, 'favicon.ico'));
