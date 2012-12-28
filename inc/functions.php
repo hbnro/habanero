@@ -366,13 +366,14 @@ function image_tag($src, $alt = NULL, array $attrs = array())
   if (is_array($alt)) {
     $attrs = $alt;
     $alt   = $src;
-  } else {
-    if ( ! $alt) {
-      $ext = \IO\File::ext($src, TRUE);
-      $alt = titlecase(basename($src, $ext));
-    }
-    $attrs['alt'] = $attrs['title'] = $alt;
   }
+
+  if ( ! $alt OR ($alt === $src)) {
+    $ext = \IO\File::ext($src, TRUE);
+    $alt = titlecase(basename($src, $ext));
+  }
+
+  $attrs['alt'] = $attrs['title'] = $alt;
 
 
   try {
