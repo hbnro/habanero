@@ -128,18 +128,6 @@ class Base
     }
 
 
-    // routing
-    \Broil\Config::set('root', ROOT);
-    \Broil\Config::set('index_file', INDEX);
-    \Broil\Config::set('rewrite', option('rewrite'));
-
-    \Broil\Config::set('request_uri', URI);
-    \Broil\Config::set('request_method', method());
-
-    \Broil\Config::set('server_base', rtrim($base_url, '/'));
-    \Broil\Config::set('tld_size', option('tld_size'));
-
-
     // assets
     if (APP_ENV <> 'production') {
       $doc_root = $base_url . ROOT . '?_=';
@@ -212,6 +200,18 @@ class Base
     // start up
     \Tailor\Base::initialize();
     \Labourer\Base::initialize();
+
+
+    // routing
+    \Broil\Config::set('root', ROOT);
+    \Broil\Config::set('index_file', INDEX);
+    \Broil\Config::set('rewrite', option('rewrite'));
+
+    \Broil\Config::set('request_uri', URI);
+    \Broil\Config::set('request_method', method());
+
+    \Broil\Config::set('server_base', rtrim($base_url, '/'));
+    \Broil\Config::set('tld_size', option('tld_size'));
 
 
     // load routes
