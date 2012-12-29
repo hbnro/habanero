@@ -247,7 +247,7 @@ class Base
   {
     if ($message instanceof \Exception) {
       $trace = APP_ENV <> 'production' ? $message->getTrace() : array();
-      $message = "{$message->getMessage()} <{$message->getFile()}#{$message->getLine()}>";
+      $message = "{$message->getMessage()} ({$message->getFile()}#{$message->getLine()})";
     } else {
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
@@ -312,12 +312,8 @@ class Base
 
       try {
         $output = partial('layouts/raising.php', $vars);
-      } catch (\Exception $e) { // TODO: refactor?
-        $tpl = substr(read(__FILE__), __COMPILER_HALT_OFFSET__);
-        $tpl = \Tailor\Base::parse('neddle', $tpl);
-
-        extract($vars);
-        $output = eval('?' . ">$tpl");
+      } catch (\Exception $e) {
+        $output = "<title>Error $status</title><pre>$message</pre>";
       }
     } else {
       $trace  = join("\n", $trace);
@@ -335,54 +331,3 @@ class Base
   }
 
 }
-
-__halt_compiler();
-html
-  head
-    meta(charset="UTF-8")
-    title Error
-    style
-      |p, .debug {
-      |  padding: .5em;
-      |  font-size: .9em;
-      |  background: #ededed;
-      |  font-family: Palatino, "Palatino Linotype", "Hoefler Text", Times, "Times New Roman", serif;
-      |}
-      |pre {
-      |  overflow: auto;
-      |  padding: 0 .3em !important;
-      |  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-      |  font-size: .8em;
-      |}
-      |h3 {
-      |  border-bottom: 3px dotted #dedede;
-      |  font-family: "Lucida Sans", "Lucida Grande", Lucida, sans-serif;
-      |  font-size: 1.3em;
-      |}
-  body
-    p
-      ~ $message
-    h3 Application
-    pre = inspect(array('user' => "$user@$host",
-        'route' => URI,
-        'method' => method(),
-        'params' => params(),
-        'bootstrap' => APP_LOADER,
-      ))
-    - unless empty($headers)
-      h3 Response headers
-      pre = inspect($headers)
-    - unless empty($received)
-      h3 Received headers
-      pre = inspect($received)
-    h3 Includes
-    pre = inspect(get_included_files())
-    - unless empty($trace)
-      h3 Backtrace
-      pre = join("\n", $trace)
-    - unless empty($env)
-      h3 Environment
-      pre = inspect($env)
-    h3 Configuration
-    pre = inspect(config())
-    p &mdash; #{round(microtime(TRUE) - BEGIN, 4)}s
