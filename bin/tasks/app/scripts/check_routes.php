@@ -15,11 +15,14 @@ arg('g u p d get put post delete') OR $set = $old;
 $to =
 $path =
 $match = 0;
+$limit = 52;
 
 foreach ($set as $method => $sub) {
   foreach ($sub as $one) {
     foreach (array('to', 'path', 'match') as $i) {
-      isset($one[$i]) && (strlen($one[$i]) > $$i) && $$i = strlen($one[$i]);
+      if (isset($one[$i]) && is_scalar($one[$i]) && (strlen($one[$i]) > $$i)) {
+        $$i = strlen($one[$i]) > $limit ? $limit : strlen($one[$i]);
+      }
     }
   }
 }
@@ -32,11 +35,23 @@ if ( ! empty($set)) {
     $out []= "    \bwhite($method)\b";
 
     foreach ($set as $one) {
-      @list($class, $action) = explode('#', $one['to']);
-      $pad = str_pad($action, $to - strlen($class), ' ', STR_PAD_RIGHT);
-      $path = ! empty($one['path']) ? " {$one['path']}" : '';
+      if (is_scalar($one['to'])) {
+        if (is_url($one['to'])) {
+          $action = \Labourer\Web\Text::short($one['to'], floor($limit / 2), ceil($limit / 2), '...') . ' ';
+          $class = '';
+        } else {
+          @list($class, $action) = explode('#', $one['to']);
+        }
+      } else {
+        $class = '~';
+        $action = '';
+      }
 
-      $out []= sprintf("      \cgreen(%-{$match}s)\c  \cbrown($class)\c\clight_gray(#$pad)\c$path", $one['match']);
+      $call = str_pad($action, $to - strlen($class), ' ', STR_PAD_RIGHT);
+      $name = ! empty($one['path']) ? $one['path'] : '';
+      $char = $class && $action ? '#' : '';
+
+      $out []= sprintf("      \cgreen(%-{$match}s)\c  \cbrown($class)\c\clight_gray($char$call)\c $name", $one['match']);
     }
     $out []= '';
   }
