@@ -320,8 +320,10 @@ class Base
         $output = eval('?' . ">$tpl");
       }
     } else {
-      $trace   = preg_replace('/^/m', '  ', $trace);
-      $output .= "\n\n$trace\n";
+      $trace  = join("\n", $trace);
+      $trace  = preg_replace('/^/m', '  ', $trace);
+
+      $output = "\n\n$trace\n\n  $message\n";
     }
 
     echo "$output\n";
