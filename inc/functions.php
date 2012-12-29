@@ -103,7 +103,7 @@ function server()
   return call_user_func_array('\\Postman\\Request::env', func_get_args());
 }
 
-function redirect($path)
+function redirect($params)
 {
   $params = call_user_func_array(array(\Sauce\Base::$response, 'redirect'), func_get_args());
   $output = new \Postman\Response($params);

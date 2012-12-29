@@ -56,7 +56,7 @@ class Bootstrap
 
       if (is_string($action['to'])) {
         if (strpos($action['to'], '://') !== FALSE) {
-          $out->redirect($action);
+          redirect($action);
         } elseif (strpos($action['to'], '#') !== FALSE) {
           $cache = (APP_ENV === 'production') && (\Postman\Request::method() === 'GET') && empty($action['no-cache']);
           @list($controller, $method) = explode('#', (string) $action['to']);
