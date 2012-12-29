@@ -33,7 +33,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
    create_dir(path($app_path, 'library'), 0777, TRUE);
 
-   create_dir(path($app_path, 'static'), 0777);
+   create_dir(path($app_path, 'static'), 0777, TRUE);
    create_dir(path($app_path, 'static', 'font'), 0777);
    create_dir(path($app_path, 'static', 'css'), 0777);
    create_dir(path($app_path, 'static', 'img'), 0777);
@@ -66,6 +66,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
     copy_file(path($app_path, 'app', 'assets', 'js', 'app'), path($skel_dir, 'script.js.coffee'));
 
    create_dir(path($app_path, 'app', 'views'));
+    copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'raising.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'default.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'home'), path($skel_dir, 'views', 'index.php.neddle'));
 
