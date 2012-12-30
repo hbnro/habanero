@@ -18,8 +18,8 @@
 }
 
 .selection(@bg: red, @fg: white) {
-  ::selection { color: @fg; background-color: @bg; text-shadow: none; }
-  ::-moz-selection { color: @fg; background-color: @bg; text-shadow: none; }
+  ::selection { color: @fg; background-color: @bg; text-shadow: none !important; }
+  ::-moz-selection { color: @fg; background-color: @bg; text-shadow: none !important; }
 }
 
 .inline-block() {
@@ -198,10 +198,10 @@
   transform: scale(@ratio);
 }
 
-.transition(@duration: 0.2s, @ease: ease-out) {
-  -webkit-transition: all @duration @ease;
-  -moz-transition: all @duration @ease;
-  transition: all @duration @ease;
+.transition(@duration: 0.3s, @ease: ease-out, @on: all) {
+  -webkit-transition: @on @ease @duration;
+  -moz-transition: @on @ease @duration;
+  transition: @on @ease @duration;
 }
 
 .translate(@x: 0, @y: 0) {
