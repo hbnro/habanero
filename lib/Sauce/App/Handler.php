@@ -65,7 +65,7 @@ class Handler
       @list($out->status, $out->headers, $out->response) = $test;
       $vars = (array) $class_name::$view;
 
-      if ( ! $out->response) {
+      if ($out->response === NULL) {
         $out->response = partial("$controller/$action.php", $vars);
 
         if ($params['layout']) {
