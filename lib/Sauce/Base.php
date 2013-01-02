@@ -311,6 +311,7 @@ class Base
       }
 
       try {
+        $vars['message'] = $message;
         $output = partial('layouts/raising.php', $vars);
       } catch (\Exception $e) {
         $output = "<title>Error $status</title><pre>$message</pre>";
