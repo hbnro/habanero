@@ -18,6 +18,9 @@ class Controller
 
   public function __get($key)
   {
+    if ( ! isset(static::$view[$key])) {
+      throw new \Exception("Undefined local '$key'");
+    }
     return static::$view[$key];
   }
 
