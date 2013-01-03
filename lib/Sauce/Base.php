@@ -210,7 +210,7 @@ class Base
     \Broil\Config::set('request_uri', URI);
     \Broil\Config::set('request_method', method());
 
-    \Broil\Config::set('server_base', rtrim($base_url, '/'));
+    \Broil\Config::set('server_base', $base_url);
     \Broil\Config::set('tld_size', option('tld_size'));
 
 
