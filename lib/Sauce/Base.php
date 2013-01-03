@@ -196,6 +196,11 @@ class Base
       }
     }
 
+    // debug sql
+    \Grocery\Config::set('logger', function ($message) {
+        \Sauce\Logger::log($message);
+      });
+
 
     // start up
     \Tailor\Base::initialize();
@@ -251,6 +256,9 @@ class Base
     } else {
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
+
+    \Sauce\Logger::raise($message);
+
 
     $tmp = array();
     $test = strtoupper(PHP_SAPI);
