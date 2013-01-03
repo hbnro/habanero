@@ -11,7 +11,10 @@ class Handler
     $out = \Sauce\Base::$response;
     $hash = md5(URI . '?' . server('QUERY_STRING') . '#' . session_id());
 
+    \Sauce\Logger::debug("Executing $controller#$action");
+
     if ($ttl && $cache && ($test = \Cashier\Base::fetch($hash))) {
+      \Sauce\Logger::debug("Using cache for $ttl seconds ($controller#$action)");
       @list($out->status, $out->headers, $out->response) = $test;
     } else {
       $controller_path = path(APP_PATH, 'app', 'controllers');
@@ -64,6 +67,8 @@ class Handler
           throw new \Exception("Unknown response for '$type' type");
         }
 
+        \Sauce\Logger::debug("Using response for '$type' type");
+
         $test = $handle->responds($test[2], $params);
       }
 
@@ -71,9 +76,13 @@ class Handler
 
 
       if ($out->response === NULL) {
+        \Sauce\Logger::debug("Rendering view $controller/$action.php");
+
         $out->response = partial("$controller/$action.php", $vars);
 
         if ($params['layout']) {
+          \Sauce\Logger::debug("Using layout layouts/$params[layout].php");
+
           $layout_file = "layouts/$params[layout].php";
 
           $out->response = partial($layout_file, array(

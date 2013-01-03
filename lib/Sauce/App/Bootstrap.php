@@ -10,10 +10,10 @@ class Bootstrap
     $test = strtoupper(PHP_SAPI);
 
     if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
-      // TODO: what is happening?
-
       // static assets
       if ($path = \Postman\Request::value('_')) {
+        \Sauce\Logger::debug("Serve $path");
+
         $test   = \Sauce\App\Assets::read($path);
         $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
 
@@ -38,6 +38,8 @@ class Bootstrap
       \Locale\Base::load_path(path(APP_PATH, 'app', 'locale'));
     }
 
+    \Sauce\Logger::debug('Ready');
+
 
     // defaults
     $out = \Sauce\Base::$response;
@@ -45,6 +47,12 @@ class Bootstrap
 
 
     if ($action = \Broil\Routing::run()) {
+      $uri = \Broil\Config::get('request_uri');
+      $method = \Broil\Config::get('request_method');
+
+      \Sauce\Logger::debug("$method $uri");
+      \Sauce\Logger::debug("Route $action[match]");
+
       if ( ! empty($action['before'])) {
         foreach ((array) $action['before'] as $callback) {
           $action = call_user_func($callback, $action);
