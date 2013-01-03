@@ -38,15 +38,8 @@ class Handler
       $klass = new \ReflectionClass($app);
 
       $type = params('format');
-      $params = $klass->getStaticProperties();
-      $methods = $klass->getMethods(\ReflectionMethod::IS_STATIC);
-
-      if ($type && ! in_array($type, $params['responds_to'])) {
-        throw new \Exception("Unknown response for '$type' type");
-      }
-
-
       $handle = new \Postman\Handle($app, $type);
+      $methods = $klass->getMethods(\ReflectionMethod::IS_STATIC);
 
       foreach ($methods as $callback) {
         $fn = $callback->getName();
@@ -62,8 +55,20 @@ class Handler
 
 
       $test = $handle->exists($action) ? $handle->execute($action) : array();
-      @list($out->status, $out->headers, $out->response) = $test;
+
       $vars = (array) $class_name::$view;
+      $params = $klass->getStaticProperties();
+
+      if ($type) {
+        if ( ! in_array($type, $params['responds_to'])) {
+          throw new \Exception("Unknown response for '$type' type");
+        }
+
+        $test = $handle->responds($test[2], $params);
+      }
+
+      @list($out->status, $out->headers, $out->response) = $test;
+
 
       if ($out->response === NULL) {
         $out->response = partial("$controller/$action.php", $vars);
