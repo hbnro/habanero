@@ -1,5 +1,7 @@
 <?php
 
+// TODO: group functions by task
+
 function run(\Closure $lambda)
 {
   echo \Sauce\Base::initialize($lambda);
@@ -476,4 +478,29 @@ function segment($nth)
   $out = isset($set[$nth - 1]) ? $set[$nth - 1] : FALSE;
 
   return $out;
+}
+
+function mdate()
+{
+  return call_user_func_array('\\Locale\\Datetime::format', func_get_args());
+}
+
+function fetch($key, $bag = APP_ENV)
+{
+  return \Staple\Registry::fetch($key, $bag);
+}
+
+function exists($key, $bag = APP_ENV)
+{
+  return \Staple\Registry::exists($key, $bag);
+}
+
+function remove($key, $bag = APP_ENV)
+{
+  return \Staple\Registry::delete($key, $bag);
+}
+
+function assign($key, $value, $bag = APP_ENV)
+{
+  return \Staple\Registry::assign($key, $value, $bag);
 }
