@@ -504,3 +504,20 @@ function assign($key, $value, $bag = APP_ENV)
 {
   return \Staple\Registry::assign($key, $value, $bag);
 }
+
+function paginate_to($url, $mapper, $current = 0, $limit = 10)
+{
+  // TODO: allow more params
+  $pg = \Staple\Paginate::build();
+
+  $pg->set('count_page', $limit);
+  $pg->set('link_root', $url);
+
+  $from = $pg->offset($mapper->count(), $current);
+  return $pg->bind($mapper->offset($from)->limit($limit));
+}
+
+function remote_ip()
+{
+  return \Postman\Request::ip() ?: '0.0.0.0';
+}
