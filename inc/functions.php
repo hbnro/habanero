@@ -485,24 +485,24 @@ function mdate()
   return call_user_func_array('\\Locale\\Datetime::format', func_get_args());
 }
 
-function fetch($key, $bag = APP_ENV)
+function fetch()
 {
-  return \Staple\Registry::fetch($key, $bag);
+  return call_user_func_array('\\Staple\\Registry::fetch', func_get_args());
 }
 
-function exists($key, $bag = APP_ENV)
+function exists()
 {
-  return \Staple\Registry::exists($key, $bag);
+  return call_user_func_array('\\Staple\\Registry::exists', func_get_args());
 }
 
-function remove($key, $bag = APP_ENV)
+function remove()
 {
-  return \Staple\Registry::delete($key, $bag);
+  return call_user_func_array('\\Staple\\Registry::delete', func_get_args());
 }
 
-function assign($key, $value, $bag = APP_ENV)
+function assign()
 {
-  return \Staple\Registry::assign($key, $value, $bag);
+  return call_user_func_array('\\Staple\\Registry::assign', func_get_args());
 }
 
 function paginate_to($url, $mapper, $current = 0, $limit = 10)
