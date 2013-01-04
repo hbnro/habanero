@@ -457,7 +457,7 @@ function classify()
 
 function slugify($text)
 {
-  return parameterize(plain($text));
+  return join('/', array_map('parameterize', explode('/', plain($text))));
 }
 
 function inspect($what)
