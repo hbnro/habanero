@@ -273,12 +273,11 @@ class Base
       $tmp  []= $format_val;
     }
 
-    $trace = array_reverse($tmp);
+    $trace  = array_reverse($tmp);
+    $output = \Sauce\Base::$response = new \Postman\Response;
+    $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
 
     if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
-      $output = \Sauce\Base::$response = new \Postman\Response;
-      $status = preg_match('/\b(?:GET|PUT|POST|PATCH|DELETE) \//', $message) ? 404 : 500;
-
       $output->status = $status;
       $output->headers = array();
       $output->response = $message;
@@ -320,15 +319,15 @@ class Base
 
       try {
         $vars['message'] = $message;
-        $output = partial('layouts/raising.php', $vars);
+        $output->response = partial('layouts/raising.php', $vars);
       } catch (\Exception $e) {
-        $output = "<title>Error $status</title><pre>$message</pre>";
+        $output->response = "<title>Error $status</title><pre>$message</pre>";
       }
     } else {
       $trace  = join("\n", $trace);
       $trace  = preg_replace('/^/m', '  ', $trace);
 
-      $output = "\n\n$trace\n\n  $message\n";
+      $output->response = "\n\n$trace\n\n  $message\n";
     }
 
     echo "$output\n";
