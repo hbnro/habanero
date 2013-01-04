@@ -48,7 +48,7 @@ is_dir(TMP) OR mkdir(TMP, 0777, TRUE);
 // default error and exception handlers
 set_error_handler(function ($errno, $errmsg, $file, $line, $trace) {
     if (($errno & error_reporting()) == $errno) {
-      \Sauce\Base::raise("Error: $errmsg ($file#$line)", $trace);
+      \Sauce\Base::raise("$errmsg ($file#$line)", $trace);
 
       return TRUE;
     }
