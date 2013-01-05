@@ -5,7 +5,7 @@ section
     dt <?php echo $val['title']; ?>
 
     dd
-      ~ $<?php echo $name; ?>-><?php echo $key; ?>
+      = $<?php echo $name; ?>-><?php echo $key; ?>
 
 <?php } ?>
   = link_to('Edit', url_for('edit_<?php echo $name; ?>', array(':id' => $<?php echo $name; ?>-><?php echo $pk; ?>)))

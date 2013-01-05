@@ -46,8 +46,11 @@ function field_for($type, $key)
             'datetime' => array('type' => 'datetime'),
             'date' => array('type' => 'date'),
             'time' => array('type' => 'time'),
-            'object' => array('type' => 'hash'),
-            'array' => array('type' => 'enum'),
+            'object' => array('type' => 'object'), // native-dummy on mongo
+            'array' => array('type' => 'array'), // TODO: support for postgres
+            'hash' => array('type' => 'hash'),
+            'list' => array('type' => 'list'),
+            'json' => array('type' => 'json'),
           );
 
 

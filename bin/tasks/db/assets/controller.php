@@ -1,47 +1,44 @@
 
+  function __construct()
+  {
+    $this->error = array();
+  }
+
   function index()
   {
-    $to = 10;
-    $pg = Staple\Paginate::build();
-
-    $pg->set('count_page', $to);
-    $pg->set('link_root', url_for('<?php echo $base; ?>'));
-
-    $set  = <?php echo $model_class; ?>::get('<?php echo join("', '", array_keys($fields)); ?>');
-    $from = $pg->offset(<?php echo $model_class; ?>::count(), params('p'));
-
-    $this-><?php echo $base; ?> = $pg->bind($set->offset($from)->limit($to));
+    $result = \<?php echo $model_class; ?>::get('<?php echo join("', '", array_keys($fields)); ?>');
+    $this-><?php echo $base; ?> = paginate_to(url_for('<?php echo $base; ?>'), $result, params('p'), 33);
   }
 
   function show()
   {
-    if ( ! ($row = <?php echo $model_class; ?>::find(params('id')))) {
-      redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
+    if ( ! ($row = \<?php echo $model_class; ?>::find(params('id')))) {
+      return redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
     }
     $this-><?php echo $name; ?> = $row;
   }
 
   function create()
   {
-    $this->error = array();
-
     if (params('save')) {
-      if ($data = $this->validate(params('row'))) {
-        <?php echo $model_class; ?>::create($data);
-        redirect_to('<?php echo $base; ?>', array('success' => 'New <?php echo $name; ?> was created'));
+      if (\<?php echo $model_class; ?>::create(params('row'))) {
+        return redirect_to('<?php echo $base; ?>', array('success' => 'New <?php echo $name; ?> was created'));
       }
+
+      $this->error = $<?php echo $name; ?>->errors;
     }
   }
 
   function modify()
   {
-    $this->error = array();
-
     if (params('update')) {
-      if ($data = $this->validate(params('row'))) {
-        <?php echo $model_class; ?>::update_all($data, array('<?php echo $pk;  ?>' => params('id')));
-        redirect_to('<?php echo $base; ?>', array('success' => 'A <?php echo $name; ?> was updated'));
+      $<?php echo $name; ?> = \<?php echo $model_class; ?>::first(params('id'));
+
+      if ($<?php echo $name; ?>->update(params('row'))) {
+        return redirect_to('<?php echo $base; ?>', array('success' => 'A <?php echo $name; ?> was updated'));
       }
+
+      $this->error = $<?php echo $name; ?>->errors;
     }
 
     $this->show();
@@ -49,33 +46,17 @@
 
   function delete()
   {
-    if (<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => params('id')))) {
-      redirect_to('<?php echo $base; ?>', array('success' => 'A <?php echo $name; ?> was deleted'));
+    if (\<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => params('id')))) {
+      return redirect_to('<?php echo $base; ?>', array('success' => 'A <?php echo $name; ?> was deleted'));
     }
-    redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
+    return redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
   }
 
   function delete_all()
   {
     if (is_array($set = params('pk'))) {
-      <?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => $set));
-      redirect_to('<?php echo $base; ?>', array('success' => 'All <?php echo $name; ?> things was deleted'));
+      \<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => $set));
+      return redirect_to('<?php echo $base; ?>', array('success' => 'All <?php echo $name; ?> things was deleted'));
     }
-    redirect_to('<?php echo $base; ?>', array('notice' => 'No <?php echo $name; ?> things has found'));
-  }
-
-
-  private function validate($data)
-  {
-    Staple\Validation::setup(array(
-<?php foreach ($fields as $key => $val) { ?>
-      '<?php echo $key; ?>' => array('The field <?php echo $key; ?> is required' => 'required'),
-<?php } ?>
-    ));
-
-    if (Staple\Validation::execute($data)) {
-      return Staple\Validation::data();
-    }
-
-    $this->error = Staple\Validation::errors();
+    return redirect_to('<?php echo $base; ?>', array('notice' => 'No <?php echo $name; ?> things has found'));
   }

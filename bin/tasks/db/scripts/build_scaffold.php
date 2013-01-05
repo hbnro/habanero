@@ -18,7 +18,7 @@ if ( ! is_file($out_file) OR arg('f force')) {
 - if $error
   ul.error { data => array(errors => 'true') }
     - foreach $error as $field => $text
-      li { data => compact('field') } = $text
+      li { data => compact('field') } = "$field $text"
 TPL;
 
 
