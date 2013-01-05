@@ -107,12 +107,7 @@ function server()
 
 function redirect($url = ROOT)
 {
-  $params = call_user_func_array(array(\Sauce\Base::$response, 'redirect'), func_get_args());
-  $output = new \Postman\Response($params);
-
-  echo $output;
-
-  exit;
+  return call_user_func_array(array(\Sauce\Base::$response, 'redirect'), func_get_args());
 }
 
 function session($key, $value = FALSE)
@@ -293,7 +288,7 @@ function redirect_to($path, array $params = array())
     }
   }
 
-  redirect($params);
+  return redirect($params);
 }
 
 

@@ -64,10 +64,13 @@ class Bootstrap
 
       if (is_string($action['to'])) {
         if (strpos($action['to'], '://') !== FALSE) {
-          redirect($action);
+          $out = new \Postman\Response(redirect($action));
         } elseif (strpos($action['to'], '#') !== FALSE) {
-          $cache = (APP_ENV === 'production') && (\Postman\Request::method() === 'GET') && empty($action['no-cache']);
+          $cache = empty($action['no-cache']) ? (isset($action['expires']) ? $action['expires'] : option('expires')) : 0;
+          $cache = (APP_ENV === 'production') && (\Postman\Request::method() === 'GET') ? $cache : 0;
+
           @list($controller, $method) = explode('#', (string) $action['to']);
+
           \Sauce\App\Handler::execute($controller, $method, $cache);
         } else {
           throw new \Exception("Unknown '$action[to]' action");
@@ -83,6 +86,8 @@ class Bootstrap
           $out->status = is_numeric($tmp) ? (int) $tmp : 200;
           $out->response = is_string($tmp) ? $tmp : $old;
         }
+      } elseif (is_array($action['to'])) {
+        $out = new \Postman\Response($action['to']);
       } else {
         throw new \Exception("Cannot execute '$action[to]'");
       }
@@ -93,6 +98,8 @@ class Bootstrap
           $out = call_user_func($callback, $out);
         }
       }
+
+      \Sauce\Logger::debug(sprintf('Finish %s %s', json_encode($out->headers), microtime(TRUE) - BEGIN));
 
       return $out;
     } else {

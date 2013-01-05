@@ -5,16 +5,15 @@ namespace Sauce\App;
 class Handler
 {
 
-  public static function execute($controller, $action = 'index', $cache = FALSE)
+  public static function execute($controller, $action = 'index', $cache = -1)
   {
-    $ttl = option('expires', 33);
     $out = \Sauce\Base::$response;
     $hash = md5(URI . '?' . server('QUERY_STRING') . '#' . session_id());
 
     \Sauce\Logger::debug("Executing $controller#$action");
 
-    if ($ttl && $cache && ($test = \Cashier\Base::fetch($hash))) {
-      \Sauce\Logger::debug("Using cache for $ttl seconds ($controller#$action)");
+    if (($cache > 0) && ($test = \Cashier\Base::fetch($hash))) {
+      \Sauce\Logger::debug("Caching for $cache seconds ($controller#$action)");
       @list($out->status, $out->headers, $out->response) = $test;
     } else {
       $controller_path = path(APP_PATH, 'app', 'controllers');
@@ -94,7 +93,7 @@ class Handler
         }
       }
 
-      \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), $ttl);
+      \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), $cache);
     }
     return $out;
   }
