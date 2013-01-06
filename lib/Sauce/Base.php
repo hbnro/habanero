@@ -146,8 +146,7 @@ class Base
 
 
     // templating
-    \Tailor\Config::set('cache_dir', path(APP_PATH, 'cache'));
-
+    \Tailor\Config::set('cache_dir', path(APP_PATH, 'app', 'cache'));
     \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
     \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
     \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
