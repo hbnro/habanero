@@ -16,7 +16,7 @@ class Logger
 
   public static function log($message, $name = APP_ENV)
   {
-    error_log("$message\n", 3, path(APP_PATH, 'logs', "$name.log"));
+    is_dir($log_dir = path(APP_PATH, 'logs')) && error_log("$message\n", 3, path($log_dir, "$name.log"));
   }
 
 }
