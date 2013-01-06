@@ -13,7 +13,6 @@ class Handler
     \Sauce\Logger::debug("Executing $controller#$action");
 
     if (($cache > 0) && ($test = \Cashier\Base::fetch($hash))) {
-      \Sauce\Logger::debug("Caching for $cache seconds ($controller#$action)");
       @list($out->status, $out->headers, $out->response) = $test;
     } else {
       $controller_path = path(APP_PATH, 'app', 'controllers');
@@ -93,7 +92,10 @@ class Handler
         }
       }
 
-      \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), $cache);
+      if ($cache > 0) {
+        \Sauce\Logger::debug("Caching for $cache seconds ($controller#$action)");
+        \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), $cache);
+      }
     }
     return $out;
   }
