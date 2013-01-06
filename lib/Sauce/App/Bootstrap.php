@@ -99,7 +99,9 @@ class Bootstrap
         }
       }
 
-      \Sauce\Logger::debug(sprintf('Finish %s %s', json_encode($out->headers), microtime(TRUE) - BEGIN));
+      foreach ($out->headers as $key => $val) {
+        \Sauce\Logger::log(" => $key: $val");
+      }
 
       return $out;
     } else {
