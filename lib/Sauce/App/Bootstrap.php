@@ -98,7 +98,7 @@ class Bootstrap
         }
       }
 
-      foreach ($out->headers as $key => $val) {
+      foreach ((array) $out->headers as $key => $val) {
         \Sauce\Logger::log(" <= $key: $val");
       }
 
