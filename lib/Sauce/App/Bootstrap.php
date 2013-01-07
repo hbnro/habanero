@@ -17,8 +17,7 @@ class Bootstrap
         $test   = \Sauce\App\Assets::read($path);
         $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
 
-        echo $output;
-        exit;
+        return $output;
       }
 
 
