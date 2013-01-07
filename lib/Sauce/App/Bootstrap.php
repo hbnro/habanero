@@ -99,7 +99,7 @@ class Bootstrap
       }
 
       foreach ($out->headers as $key => $val) {
-        \Sauce\Logger::log(" => $key: $val");
+        \Sauce\Logger::log(" <= $key: $val");
       }
 
       return $out;

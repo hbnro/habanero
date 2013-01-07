@@ -4,18 +4,16 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
    create_dir($app_path);
    create_dir(path($app_path, 'logs'), 0777);
-   create_dir(path($app_path, 'cache'), 0777);
 
    create_dir(path($app_path, 'config'));
   create_file(path($app_path, 'config', 'application.php'), "<?php\n");
-  create_file(path($app_path, 'config', 'resources.php'), "<?php return array();\n", 0777);
-
     copy_file(path($app_path, 'config', 'environments'), path($skel_dir, 'development.php'));
     copy_file(path($app_path, 'config', 'environments'), path($skel_dir, 'production.php'));
 
    create_dir(path($app_path, 'config', 'initializers'));
     copy_file(path($app_path, 'config'), path($skel_dir, 'routes.php'));
 
+   create_dir(path($app_path, 'app', 'cache'), 0777);
    create_dir(path($app_path, 'app', 'models'), 0777, TRUE);
 
    $vars = array(
@@ -27,9 +25,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
 
    create_dir(path($app_path, 'database'), 0777);
-   create_dir(path($app_path, 'database', 'backup'), 0777);
   create_file(path($app_path, 'database', 'sqlite.db'), '', 0777);
-  create_file(path($app_path, 'database', 'fixtures.yaml'), "---\n", 0777);
 
    create_dir(path($app_path, 'library'), 0777, TRUE);
 
@@ -80,7 +76,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
       'static/img/*',
       'static/css/*',
       'static/js/*',
-      'cache/*',
+      'app/cache/*',
       'composer.lock',
       'vendor',
     );
@@ -89,8 +85,8 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
     copy_file($app_path, path($skel_dir, '.htaccess'));
 
-  create_file(path($app_path, 'deploy.sh'), "#!/bin/sh\nrsync -avlzC --delete --progress --exclude-from exclude.txt --stats -e 'ssh' . root@0.0.0.0:/var/www/domain.tld\n", 0777);
-  create_file(path($app_path, 'exclude.txt'), ".git*\n");
+  create_file(path($app_path, 'deploy.sh'), "#!/bin/sh\nrsync -avzC --delete --progress --exclude-from exclude.txt --stats -e 'ssh' . root@0.0.0.0:/var/www/domain.tld\n", 0777);
+  create_file(path($app_path, 'exclude.txt'), ".git*\nlogs\napp/views\napp/assets\nexclude.txt\n");
 
     copy_file($app_path, path($skel_dir, 'composer.json'));
     copy_file($app_path, path($skel_dir, 'favicon.ico'));
