@@ -70,7 +70,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
       '*~',
       '*.log',
       '.DS_Store',
-      'database/db.sqlite',
+      'database/sqlite.db',
       'config/resources.php',
       'static/resources/*',
       'static/img/*',
