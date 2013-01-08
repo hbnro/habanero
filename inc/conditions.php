@@ -97,7 +97,7 @@ function is_datetime($test)
 
 function is_slug($test)
 {
-  return ! preg_match('/[^\w-\/]/');
+  return ! preg_match('/[^\w-\/_.]/', $test);
 }
 
 function is_money($test, $left = FALSE)

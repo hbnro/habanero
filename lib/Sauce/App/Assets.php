@@ -263,7 +263,7 @@ class Assets
     }
 
     // TODO: accept other formats?
-    if (preg_match_all('/\s+\*=\s+(\w+)\s+(\S+)/m', file_get_contents($from), $match)) {
+    if (preg_match_all('/\s+\*=\s+(\w+)\s+(\S+)/m', read($from), $match)) {
       foreach ($match[1] as $i => $key) {
         $tmp = \Tailor\Helpers::resolve($match[2][$i], $on);
 

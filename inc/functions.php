@@ -517,3 +517,9 @@ function remote_ip()
 {
   return \Postman\Request::ip() ?: '0.0.0.0';
 }
+
+
+function fmtsize($bytes)
+{
+  return \IO\Helpers::fmtsize($bytes);
+}
