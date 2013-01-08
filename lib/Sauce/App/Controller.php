@@ -5,12 +5,13 @@ namespace Sauce\App;
 class Controller
 {
 
-  public static $view = array();
+  public static $status = 200;
+  public static $headers = array();
 
+  public static $view = array();
   public static $head = array();
 
   public static $title = '';
-
   public static $layout = 'default';
 
   public static $responds_to = array('html', 'json');

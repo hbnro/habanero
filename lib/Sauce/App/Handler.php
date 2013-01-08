@@ -72,6 +72,9 @@ class Handler
 
       @list($out->status, $out->headers, $out->response) = $test;
 
+      $params['status'] && $out->status = (int) $params['status'];
+      $params['headers'] && $out->headers = (array) $params['headers'];
+
 
       if ($out->response === NULL) {
         \Sauce\Logger::debug("Rendering view $controller/$action.php");
