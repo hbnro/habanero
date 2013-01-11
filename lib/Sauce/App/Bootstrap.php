@@ -12,10 +12,10 @@ class Bootstrap
     if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
       // static assets
       if ($path = \Postman\Request::value('_')) {
-        \Sauce\Logger::debug("Serve $path");
-
         $test   = \Sauce\App\Assets::read($path);
         $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
+
+        \Sauce\Logger::debug("Serve $path");
 
         return $output;
       }
@@ -98,9 +98,7 @@ class Bootstrap
         }
       }
 
-      foreach ((array) $out->headers as $key => $val) {
-        \Sauce\Logger::log(" <= $key: $val");
-      }
+      \Sauce\Logger::debug('Done ', json_encode((array) $out->headers));
 
       return $out;
     } else {

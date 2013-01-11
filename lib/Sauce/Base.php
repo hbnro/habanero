@@ -197,7 +197,7 @@ class Base
 
     // debug sql
     \Grocery\Config::set('logger', function ($message) {
-        \Sauce\Logger::log($message);
+        \Sauce\Logger::log($message, 'database');
       });
 
 

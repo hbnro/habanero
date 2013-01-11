@@ -5,7 +5,6 @@
 function run(\Closure $lambda)
 {
   echo \Sauce\Base::initialize($lambda);
-  \Sauce\Logger::log(sprintf(' => %s', microtime(TRUE) - BEGIN));
 }
 
 function option($get, $or = FALSE)
