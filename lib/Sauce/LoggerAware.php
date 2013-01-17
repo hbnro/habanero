@@ -12,7 +12,7 @@ class LoggerAware extends \Psr\Log\AbstractLogger
     $log_dir = path(APP_PATH, 'logs');
     $log_name = ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) ? APP_ENV : 'environment';
 
-    $message = $level === 'log' ? "$message\n" : "[{timestamp}] [{level}] $message ({ticks})\n"; // TODO: sure?
+    $message = "[{timestamp}] [{level}] $message ({ticks})\n";
     $message = static::interpolate($message, $context);
 
     if (is_dir($log_dir)) {
@@ -25,10 +25,14 @@ class LoggerAware extends \Psr\Log\AbstractLogger
 
   private static function interpolate($message, array $context = array())
   {
+    if (strpos($message, '{') === FALSE) {
+      return $message;
+    }
+
     $repl = array();
 
     foreach ($context as $key => $val) {
-      $repl["{{$key}}"] = $val;
+      $repl["{{$key}}"] = is_scalar($val) ? $val : json_encode($val);
     }
 
     return strtr($message, $repl);
