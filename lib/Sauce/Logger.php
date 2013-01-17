@@ -38,13 +38,7 @@ class Logger
         }
       }
 
-      $message = join('', $arguments);
-
-      $params['timestamp'] = date('Y-m-d H:i:s');
-      $params['ticks'] = microtime(TRUE) - BEGIN;
-      $params['level'] = $method;
-
-      static::instance()->log($method, $message, $params);
+      static::instance()->log($method, join('', $arguments), $params);
     }
   }
 

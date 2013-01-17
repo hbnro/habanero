@@ -12,7 +12,11 @@ class LoggerAware extends \Psr\Log\AbstractLogger
     $log_dir = path(APP_PATH, 'logs');
     $log_name = ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) ? APP_ENV : 'environment';
 
-    $message = "[{timestamp}] [{level}] $message ({ticks})\n";
+
+    $timestamp = date('Y-m-d H:i:s');
+    $context['ticks'] = microtime(TRUE) - BEGIN;
+
+    $message = "[$timestamp] [$level] $message\n";
     $message = static::interpolate($message, $context);
 
     if (is_dir($log_dir)) {
