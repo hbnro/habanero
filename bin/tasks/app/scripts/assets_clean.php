@@ -11,8 +11,11 @@ if (arg('r v f i c j a reset views fonts images styles scripts all')) {
   if (s3_handle()) {
     s3_clean_bucket($set);
   } else {
+    $static_dir = path(APP_PATH, 'static');
+    is_dir($static_dir) OR mkdir($static_dir, 0777);
+
     foreach ($set as $type => $ok) {
-      $files_dir = path(APP_PATH, 'static', $type);
+      $files_dir = path($static_dir, $type);
 
       if (is_dir($files_dir) && $ok) {
         status('remove', "static/$type");
