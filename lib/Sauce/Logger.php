@@ -7,14 +7,14 @@ class Logger
 
   private static $obj = NULL;
   private static $set = array(
-                    \Psr\Log\Loglevel::EMERGENCY,
-                    \Psr\Log\Loglevel::ALERT,
-                    \Psr\Log\Loglevel::CRITICAL,
-                    \Psr\Log\Loglevel::ERROR,
-                    \Psr\Log\Loglevel::WARNING,
-                    \Psr\Log\Loglevel::NOTICE,
-                    \Psr\Log\Loglevel::INFO,
-                    \Psr\Log\Loglevel::DEBUG,
+                    \Psr\Log\LogLevel::EMERGENCY,
+                    \Psr\Log\LogLevel::ALERT,
+                    \Psr\Log\LogLevel::CRITICAL,
+                    \Psr\Log\LogLevel::ERROR,
+                    \Psr\Log\LogLevel::WARNING,
+                    \Psr\Log\LogLevel::NOTICE,
+                    \Psr\Log\LogLevel::INFO,
+                    \Psr\Log\LogLevel::DEBUG,
                   );
 
 
