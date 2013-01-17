@@ -7,6 +7,7 @@
   }],
   "require": {
     "php": ">=5.3",
+    "psr/log": "dev-master",
     "symfony/yaml": "dev-master",
     "tedivm/jshrink": "dev-master",
     "habanero/io": "dev-master",
