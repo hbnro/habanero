@@ -196,8 +196,11 @@ class Base
     }
 
     // debug sql
-    \Grocery\Config::set('logger', function ($message) {
-        \Sauce\Logger::log($message, 'database');
+    \Grocery\Config::set('logger', function ($sql, $ms) {
+        \Sauce\Logger::log('[{timestamp}] [info] {sql} ({ms})', array(
+          'sql' => str_replace("\n", '', $sql),
+          'ms' => $ms,
+        ));
       });
 
 
@@ -256,7 +259,7 @@ class Base
       $trace = APP_ENV <> 'production' ? debug_backtrace() : array();
     }
 
-    \Sauce\Logger::raise($message);
+    \Sauce\Logger::error($message);
 
 
     $tmp = array();
