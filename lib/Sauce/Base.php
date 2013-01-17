@@ -198,7 +198,7 @@ class Base
     // debug sql
     \Grocery\Config::set('logger', function ($sql, $ms) {
         \Sauce\Logger::log('[{timestamp}] [info] {sql} ({ms})', array(
-          'sql' => str_replace("\n", '', $sql),
+          'sql' => preg_replace('/\s+/', ' ', $sql),
           'ms' => $ms,
         ));
       });
