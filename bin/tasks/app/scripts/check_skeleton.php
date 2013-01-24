@@ -1,11 +1,14 @@
 <?php
 
 $name = array_shift($params);
+$test = realpath(dirname($name));
 
 if ( ! $name) {
   error("\n  Missing application name\n");
+} elseif ( ! is_dir($test)) {
+  error("\n  Can't create the directory\n");
 } else {
-  $app_path = path(APP_PATH, $name);
+  $app_path = path($test, basename($name));
 
   if ( ! arg('f force') && is_dir($app_path)) {
     error("\n  Directory '$name' already exists\n");
