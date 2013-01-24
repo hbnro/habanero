@@ -10,7 +10,12 @@ if ( ! $name OR is_bool($name) OR (strpos($name, ':') !== FALSE)) {
   foreach ($params as $i => $one) {
     if (strpos($one, ':')) {
       @list($field, $type) = explode(':', $one);
-      $fields[$field] = compact('type');
+
+      if ( ! field_for($type)) {
+        return error("\n  Unknown '$type' type on '$field' field\n");
+      } else {
+        $fields[$field] = compact('type');
+      }
     }
   }
 
