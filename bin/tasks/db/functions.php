@@ -31,7 +31,7 @@ function mongo($for = 'mongodb')
   return $db;
 }
 
-function field_for($type, $key)
+function field_for($type, $key = NULL)
 {
   static $set = array(
             'primary_key' => array('type' => 'hidden'),
@@ -49,12 +49,17 @@ function field_for($type, $key)
             'object' => array('type' => 'object'), // native-dummy on mongo
             'array' => array('type' => 'array'), // TODO: support for postgres
             'hash' => array('type' => 'hash'),
-            'list' => array('type' => 'list'),
+            'enum' => array('type' => 'enum'),
             'json' => array('type' => 'json'),
+            'set' => array('type' => 'set'),
           );
 
 
   if ( ! empty($set[$type])) {
+    if ( ! $key) {
+      return TRUE;
+    }
+
     $out = $set[$type];
     $out['title'] = titlecase($key);
     return $out;
