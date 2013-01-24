@@ -5,12 +5,14 @@ $name = array_shift($params);
 if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
   error("\n  Missing model name\n");
 } else {
+  $name = singular($name);
   $model_file = path(APP_PATH, 'app', 'models', "$name.php");
   $model_class = arg('c class') ?: classify($name);
 
   if ( ! is_file($model_file)) {
     error("\n  Missing '$name' model\n");
   } else {
+    require $model_file;
 
     $fail = FALSE;
     $fields = array();
@@ -25,7 +27,7 @@ if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
           error("\n  Unknown '$key' field\n");
         } elseif ( ! ($test = field_for($type ?: $columns[$key]['type'], $key))) {
           $fail = TRUE;
-          error("\n  Unknown '$key:$type' field type\n");
+          error("\n  Unknown '$type' type on '$key' field\n");
         } else {
           $fields[$key] = $test;
         }
