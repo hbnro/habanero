@@ -29,8 +29,10 @@ foreach (array($source_dir, $assets_dir) as $from) {
         if ( ! is_file($out) OR (filemtime($file) > filemtime($out))) {
           switch ($type) {
             case 'html';
-              $uri = join('/', array("/$path", "$name.$type"));
-              provide('current_url', str_replace('//', '/', $uri));
+              $uri  = "/$path";
+              $uri .= $name <> 'index' ? "/$name.$type" : '';
+
+              provide('current_url', $uri);
 
               if ($base) {
                 $view = \Tailor\Base::compile($file);
@@ -41,18 +43,18 @@ foreach (array($source_dir, $assets_dir) as $from) {
               $layout = yield('layout') ?: 'default';
               $layout = \Tailor\Helpers::resolve("layouts/$layout", 'views_dir');
 
+              $hash  = "$layout@";
+              $hash .= md5_file($file);
+              $hash .= filemtime($file);
+
               if (is_file($layout)) {
-                $hash  = md5_file($layout);
-                $hash .= filemtime($layout);
+                $header = \Tailor\Helpers::resolve('_/header', 'views_dir');
+                $footer = \Tailor\Helpers::resolve('_/footer', 'views_dir');
 
-                $tmp_file = path(TMP, $hash);
+                $header && $header = \Tailor\Base::compile($header);
+                $footer && $footer = \Tailor\Base::compile($footer);
 
-                if ( ! is_file($tmp_file)) {
-                  $tpl = \Tailor\Base::compile($layout);
-                  write($tmp_file, $tpl);
-                }
-
-                $view = adjust_tags($view, read($tmp_file));
+                $view = adjust_tags("$header\n$view\n$footer", \Tailor\Base::compile($layout));
               }
 
               status('partial', $out);
