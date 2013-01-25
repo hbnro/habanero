@@ -1,0 +1,10 @@
+<div id="wrapper">
+
+- use Labourer\Web\Html as html
+
+- $links[url_for('/')] = 'Home'
+- $links[url_for('/about')] = 'About us'
+
+header
+  h1 Site title
+  = html::navlist($links, [class => 'main'], yield('current_url'))

@@ -15,7 +15,7 @@ head
   meta ( charset="UTF-8" )
   meta ( http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" )
   link ( rel="shortcut icon" href="favicon.ico" )
-  link { rel => 'stylesheet', href => asset_url('style.css') }
+  link { rel => 'stylesheet', href => asset_url('styles.css') }
   script { src => asset_url('lib/modernizr-2.0.6.min.js') }
 body
   script ( src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" )

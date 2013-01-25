@@ -1,0 +1,6 @@
+footer
+  p
+    The site &copy;
+    = date('Y')
+
+</div>

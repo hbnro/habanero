@@ -41,9 +41,11 @@ $skel_dir = path(dirname(__DIR__), 'assets');
    create_dir(path($app_path, 'app', 'assets', 'img'));
    create_dir(path($app_path, 'app', 'assets', 'font'));
 
-  create_file(path($app_path, 'app', 'assets', 'css', 'app.css'), "/**\n *= include app/base\n */\n");
-    copy_file(path($app_path, 'app', 'assets', 'css', 'app'), path($skel_dir, 'base.css.less'));
+  create_file(path($app_path, 'app', 'assets', 'css', 'app.css'), "/**\n *= include app/styles\n */\n");
+    copy_file(path($app_path, 'app', 'assets', 'css', 'app'), path($skel_dir, 'styles.css.less'));
     copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'sauce.less'));
+    copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'media.less'));
+    copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'base.less'));
 
     copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'jquery.min.js'));
     copy_file(path($app_path, 'app', 'assets', 'js', 'lib'), path($skel_dir, 'modernizr.min.js'));
