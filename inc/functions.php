@@ -480,7 +480,7 @@ function mdate()
   return call_user_func_array('\\Locale\\Datetime::format', func_get_args());
 }
 
-function fetch()
+function yield()
 {
   return call_user_func_array('\\Staple\\Registry::fetch', func_get_args());
 }
@@ -495,7 +495,7 @@ function remove()
   return call_user_func_array('\\Staple\\Registry::delete', func_get_args());
 }
 
-function assign()
+function provide()
 {
   return call_user_func_array('\\Staple\\Registry::assign', func_get_args());
 }
@@ -518,7 +518,17 @@ function remote_ip()
 }
 
 
-function fmtsize($bytes)
+function fmtsize()
 {
-  return \IO\Helpers::fmtsize($bytes);
+  return call_user_func_array('\\IO\\Helpers::fmtsize', func_get_args());
+}
+
+function extn()
+{
+  return call_user_func_array('\\IO\\File::extn', func_get_args());
+}
+
+function ext($bytes)
+{
+  return call_user_func_array('\\IO\\File::ext', func_get_args());
 }
