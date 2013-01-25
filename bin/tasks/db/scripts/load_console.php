@@ -1,7 +1,7 @@
 <?php
 
 $warn = arg('s run');
-$prefix = $warn ? "\cwhite,red(*BIO HAZZARD*)\c\n  " : '';
+$prefix = $warn ? "\cwhite,red(**BIO-HAZZARD**)\c\n  " : '';
 
 say("\n  {$prefix}Press \bwhite(CTRL+C)\b to exit\n");
 
