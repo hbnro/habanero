@@ -109,8 +109,9 @@
 .image(@path) {
   .size(image-width(@path), image-height(@path));
   background: asset-url(@path) no-repeat;
-  text-indent: -99999px;
   white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
 }
 
 .sprite(@x, @y, @w: 16, @h: 16, @left: 0, @top: 0) {
