@@ -134,7 +134,7 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
 
 
                 if ($type === 'css') {
-                  $out[$key] = css_min($out[$key]);
+                  $out[$key] = css_min(solve_paths($out[$key]));
                 } else {
                   if ( ! preg_match('/\.(min|pack)\.js$/', $test)) {
                     $out[$key] = js_min($out[$key]);
@@ -149,21 +149,8 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
             // final integration
             if ( ! empty($out)) {
               $set = array_keys($out);
-              $out = join("\n", $out);
 
-              $test = array(
-                '/(?<=font\/)\S+\.(?:woff|eot|ttf|svg)\b/i',
-                '/(?<=img\/)\S+\.(?:jpe?g|png|gif)\b/i',
-              );
-
-              foreach ($test as $expr) {
-                $out = preg_replace_callback($expr, function ($match) {
-                    return \Sauce\App\Assets::solve($match[0]);
-                  }, $out);
-              }
-
-
-              write($tmp = path(TMP, md5($file)), $out);
+              write($tmp = path(TMP, md5($file)), join("\n", $out));
 
               $hash     = md5(md5_file($tmp) . filesize($tmp));
               $name     = str_replace($base_path.DIRECTORY_SEPARATOR, '', $file);

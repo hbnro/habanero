@@ -47,6 +47,23 @@ function s3_upload_asset($file, $path)
   \Labourer\AS3::put_object_file($file, $bucket, $path, S3::ACL_PUBLIC_READ, array(), $mime);
 }
 
+function solve_paths($text)
+{
+  static $test = array(
+            '/(?<=font\/)\S+\.(?:woff|eot|ttf|svg)\b/i',
+            '/(?<=img\/)\S+\.(?:jpe?g|png|gif)\b/i',
+          );
+
+
+  foreach ($test as $expr) {
+    $text = preg_replace_callback($expr, function ($match) {
+        return \Sauce\App\Assets::solve($match[0]);
+      }, $text);
+  }
+
+  return $text;
+}
+
 function css_min($text)
 {
   static $expr = array(
