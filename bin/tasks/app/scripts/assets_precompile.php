@@ -132,6 +132,15 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
                   $out[$key] = read($test);
                 }
 
+
+                if ($type === 'css') {
+                  $out[$key] = css_min($out[$key]);
+                } else {
+                  if ( ! preg_match('/\.(min|pack)\.js$/', $test)) {
+                    $out[$key] = js_min($out[$key]);
+                  }
+                }
+
                 status('prepare', "$key");
               }
             }
@@ -154,7 +163,7 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
               }
 
 
-              write($tmp = path(TMP, md5($file)), $out = $type === 'css' ? css_min($out) : js_min($out));
+              write($tmp = path(TMP, md5($file)), $out);
 
               $hash     = md5(md5_file($tmp) . filesize($tmp));
               $name     = str_replace($base_path.DIRECTORY_SEPARATOR, '', $file);
