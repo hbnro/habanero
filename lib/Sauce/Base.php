@@ -11,29 +11,22 @@ class Base
   private static $loaded = FALSE;
   private static $middleware = array();
 
-
-
   public static function initialize(\Closure $lambda)
   {
     if (static::$loaded) {
       throw new \Exception("Application already loaded");
     }
 
-
-
     // request vars
     params($_REQUEST);
-
 
     // configuration
     $config_file = path(APP_PATH, 'config.php');
 
     is_file($config_file) && config($config_file);
 
-
     // timezone
     date_default_timezone_set(option('timezone', 'UTC'));
-
 
     // setup
     $test = strtoupper(PHP_SAPI);
@@ -63,7 +56,6 @@ class Base
         break;
       }
 
-
       $base = array();
 
       $base['ORIG_SCRIPT_NAME'] = TRUE;
@@ -84,7 +76,6 @@ class Base
         break;
       }
 
-
       // site root
       $base = preg_replace('/' . preg_quote(INDEX) . '.*$/', '', $base);
 
@@ -94,7 +85,6 @@ class Base
 
       define('ROOT', ltrim(str_replace(INDEX, '', $base), '.'));
 
-
       // URL cleanup
       $root  = preg_quote(ROOT, '/');
       $index = preg_quote(INDEX, '/');
@@ -103,7 +93,6 @@ class Base
       $parts = preg_replace("/^(?:$root(?:$index)?)?$/", '', array_shift($parts));
 
       define('URI', '/' . trim($parts, '/'));
-
 
       if (empty($_SERVER['REQUEST_URI'])) {
         $_SERVER['REQUEST_URI']  = server('SCRIPT_NAME', server('PHP_SELF'));
@@ -127,7 +116,6 @@ class Base
       $_SERVER['DOCUMENT_ROOT'] = APP_PATH;
     }
 
-
     // assets
     if (APP_ENV <> 'production') {
       $doc_root = $base_url . ROOT . '?_=';
@@ -144,7 +132,6 @@ class Base
     \Tailor\Config::set('styles_url', "$doc_root/css");
     \Tailor\Config::set('scripts_url', "$doc_root/js");
 
-
     // templating
     \Tailor\Config::set('cache_dir', path(APP_PATH, 'app', 'cache'));
     \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
@@ -152,7 +139,6 @@ class Base
     \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
     \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
     \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
-
 
     // web goodies
     \Labourer\Config::set('csrf_salt', '');
@@ -177,16 +163,13 @@ class Base
     \Labourer\Config::set('s3_location', FALSE);
     \Labourer\Config::set('s3_permission', 'public_read');
 
-
     // database
     \Grocery\Config::set('unserialize', APP_ENV === 'production' ? 'ignore' : 'reset');
     \Servant\Config::set('default', 'sqlite::memory:');
 
-
     // caching
     \Cashier\Config::set('cache_dir', TMP);
     \Cashier\Config::set('driver', option('cache', 'php'));
-
 
     // connections
     if ($test = option('database')) {
@@ -201,11 +184,9 @@ class Base
         \Sauce\Logger::info("$sql ($ms)");
       });
 
-
     // start up
     \Tailor\Base::initialize();
     \Labourer\Base::initialize();
-
 
     // routing
     \Broil\Config::set('root', ROOT);
@@ -218,18 +199,15 @@ class Base
     \Broil\Config::set('server_base', $base_url);
     \Broil\Config::set('tld_size', option('tld_size'));
 
-
     // load routes
     $routes_file = path(APP_PATH, 'config', 'routes.php');
 
     is_file($routes_file) && require $routes_file;
 
-
     // before any initializer?
     foreach (static::$middleware as $callback) {
       $lambda = $callback($lambda);
     }
-
 
     // scripts
     $init_path = path(APP_PATH, 'config', 'initializers');
@@ -239,7 +217,6 @@ class Base
           require is_dir($path) ? path($path, 'initialize.php') : $path;
         });
     }
-
 
     // go!
     static::$loaded = TRUE;
@@ -258,7 +235,6 @@ class Base
     }
 
     \Sauce\Logger::error($message);
-
 
     $tmp = array();
     $test = strtoupper(PHP_SAPI);

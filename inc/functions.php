@@ -32,6 +32,7 @@ function config($set = NULL, $value = NULL)
     } elseif (is_file($set)) {
       $tmp = call_user_func(function () {
           include func_get_arg(0);
+
           return get_defined_vars();
         }, $set);
 
@@ -152,13 +153,11 @@ function link_to($text, $url = '', $args = array())
   $attrs  =
   $params = array();
 
-
   if ($args instanceof \Closure) {
     $params['text'] = $args;
   } else {
     $attrs = array_merge($attrs, (array) $args);
   }
-
 
   if (is_array($url)) {
     $params = array_merge($params, $url);
@@ -168,7 +167,6 @@ function link_to($text, $url = '', $args = array())
   } else {
     $params['action'] = (string) $url;
   }
-
 
   if (is_array($text)) {
     $params = array_merge($params, $text);
@@ -185,7 +183,6 @@ function link_to($text, $url = '', $args = array())
     'params'  => FALSE,
     'type'    => FALSE,
   ), $params);
-
 
   if ($params['text'] instanceof \Closure) {
     ob_start() && call_user_func($params['text']);
@@ -220,7 +217,6 @@ function button_to($name, $url = '', array $args = array())
     $params['action'] = $url;
   }
 
-
   $params = array_merge(array(
     'type'         => FALSE,
     'action'       => '',
@@ -239,7 +235,6 @@ function button_to($name, $url = '', array $args = array())
     'data-disable-with' => $params['disable_with'] ?: FALSE,
   ), $args));
 
-
   $extra = '';
 
   if ($params['method'] <> 'POST') {
@@ -256,7 +251,6 @@ function button_to($name, $url = '', array $args = array())
     'value' => \Labourer\Web\Session::token(),
   ));
 
-
   return tag('form', array(
     'class' => 'button-to',
     'action' => $params['action'],
@@ -272,14 +266,12 @@ function redirect_to($path, array $params = array())
 {
   static $allow = array('success', 'notice', 'alert', 'error', 'info');
 
-
   if (is_array($path)) {
     $params = $path;
     $path   = '';
   } else {// TODO: just works with this?
     $params['to'] = url_for($path);
   }
-
 
   foreach ($allow as $type) {
     if (isset($params[$type])) {
@@ -290,7 +282,6 @@ function redirect_to($path, array $params = array())
 
   return redirect($params);
 }
-
 
 function after_body()
 {
@@ -350,6 +341,7 @@ function tag_for($src)
 function root_url($path = '')
 {
   is_file($path) && $path = strtr(str_replace(APP_PATH, '', $path), '\\/', '//');
+
   return \Broil\Helpers::build(trim($path, '/'), array('static' => TRUE));
 }
 
@@ -371,7 +363,6 @@ function image_tag($src, $alt = NULL, array $attrs = array())
   }
 
   $attrs['alt'] = $attrs['title'] = $alt;
-
 
   try {
     $img = \Tailor\Helpers::image($src);
@@ -509,6 +500,7 @@ function paginate_to($url, $mapper, $current = 0, $limit = 10)
   $pg->set('link_root', $url);
 
   $from = $pg->offset($mapper->count(), $current);
+
   return $pg->bind($mapper->offset($from)->limit($limit));
 }
 
@@ -516,7 +508,6 @@ function remote_ip()
 {
   return \Postman\Request::ip() ?: '0.0.0.0';
 }
-
 
 function fmtsize()
 {

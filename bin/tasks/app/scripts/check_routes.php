@@ -11,7 +11,6 @@ arg('d delete') && isset($old['DELETE']) && $set['DELETE'] = $old['DELETE'];
 
 arg('g u p d get put post delete') OR $set = $old;
 
-
 $to =
 $path =
 $match = 0;
@@ -26,7 +25,6 @@ foreach ($set as $method => $sub) {
     }
   }
 }
-
 
 if ( ! empty($set)) {
   info("\n  Routes:\n");

@@ -35,7 +35,6 @@ if (arg('r v f i c j a reset views fonts images styles scripts all')) {
     is_dir($cache_dir) OR mkdir($cache_dir, 0777);
   }
 
-
   // TODO: unset from cache?
   if (arg('r reset all')) {
     $res_file = path(APP_PATH, 'config', 'resources.php');

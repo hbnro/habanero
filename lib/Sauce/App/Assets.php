@@ -21,8 +21,6 @@ class Assets
             'body' => array(),
           );
 
-
-
   private function __construct()
   {
     $file = path(APP_PATH, 'config', 'resources.php');
@@ -44,6 +42,7 @@ class Assets
     if ((APP_ENV === 'production') && ($hash = static::fetch($name))) {
       $name = str_replace(basename($name), basename($name, ".$ext")."$hash.$ext", $name);
     }
+
     return $name;
   }
 
@@ -182,13 +181,16 @@ class Assets
 
     switch ($type) {
       case 'css';
+
         return \Labourer\Web\Html::link('stylesheet', static::url_for($path, 'styles_dir'), array('type' => 'text/css'));
       case 'js';
+
         return \Labourer\Web\Html::script(static::url_for($path, 'scripts_dir'));
       case 'jpeg';
       case 'jpg';
       case 'png';
       case 'gif';
+
         return \Labourer\Web\Html::img(static::url_for($path, 'images_dir'), $path);
       default;
         throw new \Exception("Unsupported tag for '$type'");
@@ -229,8 +231,6 @@ class Assets
   {
     return join("\n", static::instance()->set['body']);
   }
-
-
 
   private static function push($on, $test, $prepend = FALSE)
   {
@@ -286,6 +286,7 @@ class Assets
     if (static::$self === NULL) {
       static::$self = new self;
     }
+
     return static::$self;
   }
 

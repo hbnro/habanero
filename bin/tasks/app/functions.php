@@ -82,6 +82,7 @@ function s3_handle()
       \Labourer\AS3::put_bucket($name, S3::ACL_PUBLIC_READ, $region);
     }
   }
+
   return $s3;
 }
 
@@ -115,7 +116,6 @@ function solve_paths($text)
             '/(?<=font\/)\S+\.(?:woff|eot|ttf|svg)\b/i',
             '/(?<=img\/)\S+\.(?:jpe?g|png|gif)\b/i',
           );
-
 
   foreach ($test as $expr) {
     $text = preg_replace_callback($expr, function ($match) {

@@ -15,8 +15,6 @@ class Task
 
 INTRO;
 
-
-
   public static function help($all = FALSE)
   {
     if ($all) {
@@ -95,7 +93,6 @@ INTRO;
     }
   }
 
-
   private static function search($q = '')
   {
     \Sauce\Shell\CLI::printf("\n  \ccyan(Available tasks:)\c\n\n");
@@ -103,7 +100,6 @@ INTRO;
     uksort(static::$tasks, function ($a, $b) {
         return strlen($a) > strlen($b) ? 1 : -1;
       });
-
 
     $max = 0;
 
@@ -113,7 +109,6 @@ INTRO;
         $max = ($test = strlen($cmd)) > $max ? $test : $max;
       }
     }
-
 
     foreach (static::$tasks as $ns => $set) {
       if ( ! $q OR (strpos($ns, $q) === 0)) {

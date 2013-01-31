@@ -16,13 +16,13 @@ class Controller
 
   public static $responds_to = array('html', 'json');
 
-
   public function __get($key)
   {
     if ( ! isset(static::$view[$key])) {
       $klass = get_called_class();
       throw new \Exception("Undefined local '$key' on '$klass' controller");
     }
+
     return static::$view[$key];
   }
 
@@ -30,8 +30,6 @@ class Controller
   {
     static::$view[$key] = $value;
   }
-
-
 
   public static function as_json($data, array $params = array())
   {

@@ -38,7 +38,6 @@ if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
       }
     }
 
-
     $pk = $model_class::pk();
 
     foreach (array($pk, 'created_at', 'modified_at') as $tmp) {
@@ -47,9 +46,8 @@ if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
       }
     }
 
-
-    if ( ! $fail) {
-      if ( ! $fields) {
+    if (! $fail) {
+      if (! $fields) {
         error("\n  Missing fields for '$name' crud\n");
       } else {
         require path(__DIR__, 'build_scaffold.php');

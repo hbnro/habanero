@@ -12,21 +12,23 @@ ul, ol {
 
 
 a {
-  color: #B3503B;
-  &:visited { color: #7D7D7F; }
-  &:focus { outline: none !important; }
+  color: blue;
+  &:visited { color: red; }
+  &:focus { outline: none; }
 }
+
+.break { word-break: break-word; }
+.nobreak { white-space: nowrap; }
 
 .table {
   display: table;
-  &.full { width: 100%; }
+  &.full, .full { width: 100%; }
   .tcell {
     display: table-cell;
     vertical-align: top;
-    &.top { vertical-align: top !important; }
-    &.middle { vertical-align: middle !important; }
-    &.bottom { vertical-align: bottom !important; }
-    &.max, &.full { width: 100%; }
+    &.top { vertical-align: top; }
+    &.middle { vertical-align: middle; }
+    &.bottom { vertical-align: bottom; }
   }
 }
 

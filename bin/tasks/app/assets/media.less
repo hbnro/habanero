@@ -1,31 +1,74 @@
+.m-show { display: none; }
+.m-hidden { display: inherit; }
+
+.m-show-inline { display: none; }
+.m-show-block { display: none; }
+
+.m-hidden-inline { display: inline-block; }
+.m-hidden-block { display: block; }
+
 @media only screen and (min-width: 1176px) {
-  #wrapper { width: 1020px; font-size: 180%; }
+  #wrapper { width: 1020px !important; font-size: 160%; }
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1175px) {
-  #wrapper { width: 972px; font-size: 160%; }
+  #wrapper { width: 972px !important; font-size: 150%; }
 }
 
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-  #wrapper { width: 97%; font-size: 140%; }
+  #wrapper { font-size: 140%; width: 97%; }
 }
 
 @media only screen and (min-width: 568px) and (max-width: 767px) {
-  #wrapper { width: 97%; font-size: 130%; }
+  #wrapper { font-size: 130%; width: 97%; }
 }
 
 @media only screen and (min-width: 480px) and (max-width: 567px) {
-  #wrapper { width: 97%; font-size: 120%; }
+  #wrapper { font-size: 120%; }
 }
 
-@media only screen and (min-width: 260px)  and (max-width: 479px) {
-  #wrapper { width: 97%; font-size: 100%; }
+@media only screen and (min-width: 260px) and (max-width: 479px) {
+  #wrapper { font-size: 110%; }
 }
 
 
 @media only screen and (max-width: 568px) {
-  * { max-width: 100%; }
-  dl.inline dt { float: none; width: 100%; }
-  .table, .table .tcell { width: 100%; min-width: 100%; max-width: 100%; }
+  * {
+    max-width: 100%;
+  }
+
+  .m-show { display: inherit; }
+  .m-hidden { display: none; }
+
+  .m-show-inline { display: inline-block; }
+  .m-show-block { display: block; }
+
+  .m-hidden-inline { display: none; }
+  .m-hidden-block { display: none; }
+
+  dl.inline {
+    padding: 0 !important;
+    dt, dd {
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+    }
+    dt {
+      float: none;
+      text-align: left !important;
+    }
+    dd {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  .table, .table .tcell {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    display: block;
+  }
+
 }

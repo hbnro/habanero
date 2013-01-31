@@ -12,7 +12,6 @@ class LoggerAware extends \Psr\Log\AbstractLogger
     $log_dir = path(APP_PATH, 'logs');
     $log_name = ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) ? APP_ENV : 'environment';
 
-
     $timestamp = date('Y-m-d H:i:s');
     $context['ticks'] = microtime(TRUE) - BEGIN;
 
@@ -25,7 +24,6 @@ class LoggerAware extends \Psr\Log\AbstractLogger
       @error_log($message);
     }
   }
-
 
   private static function interpolate($message, array $context = array())
   {

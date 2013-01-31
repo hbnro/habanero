@@ -9,9 +9,9 @@ function __set($val = NULL, array $vars = array())
   } elseif (is_array($vars)) {
     $set = array_merge($set, $vars);
   }
+
   return $val;
 }
-
 
 function db($for = 'default')
 {
@@ -54,14 +54,14 @@ function field_for($type, $key = NULL)
             'set' => array('type' => 'set'),
           );
 
-
   if ( ! empty($set[$type])) {
-    if ( ! $key) {
+    if (! $key) {
       return TRUE;
     }
 
     $out = $set[$type];
     $out['title'] = titlecase($key);
+
     return $out;
   }
 

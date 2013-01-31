@@ -12,8 +12,6 @@ class Config
                     'rewrite' => FALSE,
                   );
 
-
-
   public static function add(array $set)
   {
     foreach ($set as $key => $val) {

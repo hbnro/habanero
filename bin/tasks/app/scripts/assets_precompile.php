@@ -8,7 +8,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
   $views_dir  = path(APP_PATH, 'app', 'views');
   $static_dir = path(APP_PATH, 'static');
 
-
   // views
   if (arg('v views all') && is_dir($views_dir)) {
     \IO\Dir::each($views_dir, '*', function ($file) {
@@ -24,7 +23,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
         }
       });
   }
-
 
   $handler = function ($on)
     use ($base_path, $static_dir) {
@@ -52,8 +50,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
         };
       };
 
-
-
   $test = array(
     'f fonts all' => 'font *.{woff,eot,ttf,svg}',
     'i images all' => 'img *.{jpeg,jpg,png,gif}',
@@ -68,7 +64,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
       \IO\Dir::each($dir, $filter, $handler($path));
     }
   }
-
 
   // scripts & styles
   foreach (array('css' => 'c styles all', 'js' => 'j scripts all') as $type => $option) {
@@ -105,7 +100,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
               }
             }
 
-
             // asset mashup, grouped
             if ( ! empty($tmp['include'])) {
               foreach ($tmp['include'] as $test) {
@@ -132,7 +126,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
                   $out[$key] = read($test);
                 }
 
-
                 if ($type === 'css') {
                   $out[$key] = css_min(solve_paths($out[$key]));
                 } else {
@@ -145,7 +138,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
               }
             }
 
-
             // final integration
             if ( ! empty($out)) {
               $set = array_keys($out);
@@ -155,7 +147,6 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
               $hash     = md5(md5_file($tmp) . filesize($tmp));
               $name     = str_replace($base_path.DIRECTORY_SEPARATOR, '', $file);
               $min_file = path($static_dir, \IO\File::extn($name)."$hash.$type");
-
 
               if (s3_handle()) {
                 s3_upload_asset($tmp, str_replace($static_dir.DIRECTORY_SEPARATOR, '', $min_file));

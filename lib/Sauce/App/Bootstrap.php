@@ -20,11 +20,9 @@ class Bootstrap
         return $output;
       }
 
-
       // settings
       \Labourer\Web\Session::initialize();
       ignore_user_abort(FALSE);
-
 
       // locales
       if ( ! ($key = option('language'))) {
@@ -39,11 +37,9 @@ class Bootstrap
 
     \Sauce\Logger::debug('Ready');
 
-
     // defaults
     $out = \Sauce\Base::$response;
     $lambda($out);
-
 
     if ($action = \Broil\Routing::run()) {
       $uri = \Broil\Config::get('request_uri');
@@ -57,7 +53,6 @@ class Bootstrap
           $action = call_user_func($callback, $action);
         }
       }
-
 
       params($action['params']);
 
@@ -91,7 +86,6 @@ class Bootstrap
         throw new \Exception("Cannot execute '$action[to]'");
       }
 
-
       if ( ! empty($action['after'])) {
         foreach ((array) $action['after'] as $callback) {
           $out = call_user_func($callback, $out);
@@ -107,4 +101,3 @@ class Bootstrap
   }
 
 }
-

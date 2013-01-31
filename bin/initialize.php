@@ -1,6 +1,5 @@
 <?php
 
-
 require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
 require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
 
@@ -18,7 +17,6 @@ run(function () {
     $paths []= path(__DIR__, 'tasks');
     is_dir($app_tasks = path(APP_PATH, 'tasks')) && $paths []= $app_tasks;
 
-
     \IO\Dir::open($paths, function ($file) {
         if (is_dir($file)) {
           require path($file, 'initialize.php');
@@ -27,7 +25,7 @@ run(function () {
         }
       });
 
-    if ( ! $command) {
+    if (! $command) {
       help(arg('help'));
     } else {
       try {

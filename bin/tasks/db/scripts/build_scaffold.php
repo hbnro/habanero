@@ -21,7 +21,6 @@ if ( ! is_file($out_file) OR arg('f force')) {
       li { data => compact('field') } = "$field $text"
 TPL;
 
-
   $klass = preg_quote($model_class, '/');
   $based = preg_quote($base, '/');
 
@@ -30,7 +29,6 @@ TPL;
     'unless' => "/\b$klass::/",
     'before' => '/\}[^{}]*?$/',
   ));
-
 
      create_dir(path(APP_PATH, 'app', 'views', $base));
     create_file(path(APP_PATH, 'app', 'views', $base, 'show.php.neddle'), $show_view);

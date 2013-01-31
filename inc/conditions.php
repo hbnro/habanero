@@ -20,6 +20,7 @@ function is_num($test, $min, $max = NULL)
   if (func_num_args() == 2) {
     return strpos($min, $test) !== FALSE;
   }
+
   return ($test >= $min) && ($test <= $max);
 }
 
@@ -71,7 +72,6 @@ if ( ! function_exists('is_date')) {
               'D' => '(?:Mon|Tues?|Wed(?:nes)?|Thu(?:rs)?|Fri|Sat(?:ur)?|Sun)(?:day)?',
             );
 
-
     $tmp = array();
 
     foreach (array_filter(preg_split('//', $type)) as $one) {
@@ -109,7 +109,7 @@ function is_money($test, $left = FALSE)
 
   $expr = $regex[(int) $left];
 
-  if ( ! IS_UNICODE) {
+  if (! IS_UNICODE) {
     $expr = str_replace('\p{Sc}', '(?:£|¥|€|¢|\$)', $expr);
   }
 
@@ -125,7 +125,6 @@ function is_uuid($test)
 {
   static $regex = NULL;
 
-
   if (is_null($regex)) {
     $alnum = '[A-Fa-f0-9]';
     $regex = "/{$alnum}{8}-{$alnum}{4}-{$alnum}{4}-{$alnum}{4}-{$alnum}{12}/";
@@ -138,10 +137,10 @@ function is_utf8($test)
 {
   static $utf8_expr = "/^([\x01-\x7F]+|([\xC2-\xDF][\x80-\xBF])|([\xE0-\xEF][\x80-\xBF][\x80-\xBF])|([\xF0-\xF4][\x80-\xBF][\x80-\xBF][\x80-\xBF]))*\$/";
 
-
   if (function_exists('mb_check_encoding')) {
     return mb_check_encoding($test, 'UTF-8');
   }
+
   return preg_match($utf8_expr, $string);
 }
 
@@ -162,7 +161,6 @@ if ( ! function_exists('is_email')) {
   {
     static $regex = '/^([\w\+\-:]+)(\.[\w\+\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i';
 
-
     $test = preg_split('/[,;\|]+/', (string) $test);
 
     if ( ! $multi && (sizeof($test) > 1)) {
@@ -170,7 +168,6 @@ if ( ! function_exists('is_email')) {
     } elseif (empty($test)) {
       return FALSE;
     }
-
 
     foreach ($test as $value) {
       if ( ! preg_match($regex, $value)) {
@@ -202,7 +199,6 @@ function is_ipv6($test)
 {
   static $regex = NULL;
 
-
   if (is_null($regex)) {
     $regex = '/^([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}$|'
            . '^[A-Fa-f0-9]{1,4}::([A-Fa-f0-9]{1,4}:){0,5}[A-Fa-f0-9]{1,4}$|'
@@ -226,7 +222,6 @@ function is_range($test, array $ranges = array())
   if ( ! is_ip($test)) {
     return FALSE;
   }
-
 
   $tmp = array();
   $set = (array) $ranges;

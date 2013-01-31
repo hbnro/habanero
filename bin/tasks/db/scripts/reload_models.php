@@ -2,7 +2,7 @@
 
 $path = array_shift($params);
 
-if ( ! $path) {
+if (! $path) {
   error("\n  Missing model path\n");
 } else {
   $mod_path = path(APP_PATH, $path);

@@ -45,8 +45,6 @@ class CLI
                     'white' => '1;37',
                   );
 
-
-
   public static function initialize()
   {
     static::$atty = function_exists('posix_isatty') && @posix_isatty($stream);
@@ -184,7 +182,7 @@ class CLI
     } else {
       $c = static::$height;
 
-      while($c -= 1) {
+      while ($c -= 1) {
         static::writeln();
       }
     }
@@ -196,12 +194,10 @@ class CLI
   {
     static $regex = NULL;
 
-
-    if ( ! $regex) {
+    if (! $regex) {
       $expr  = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\((\s*)(.*?)(\s*)\)\\1/s';
       $regex = sprintf($expr, join('|', array_keys(static::$fgcolors)), join('|', array_keys(static::$bgcolors)));
     }
-
 
     while (preg_match_all($regex, $text, $match)) {
       foreach ($match[0] as $i => $val) {
@@ -211,7 +207,6 @@ class CLI
         if ($key = array_shift($test)) {
           $out []= static::$fgcolors[$key];
         }
-
 
         if (strstr($match[1][$i], 'b')) {
           $out []= 1;
@@ -225,7 +220,6 @@ class CLI
           $out []= 7;
         }
 
-
         if ($key = array_shift($test)) {
           $out []= static::$bgcolors[$key];
         }
@@ -235,6 +229,7 @@ class CLI
         $text  = str_replace($val, $color, $text);
       }
     }
+
     return $text;
   }
 
@@ -265,7 +260,6 @@ class CLI
 
       static::write("\n", str_pad($i + 1, $pad, ' ', STR_PAD_LEFT), '. ', $val, $test);
     }
-
 
     while (1) {
       $val = static::readln("\n", $title, ': ');
@@ -353,13 +347,11 @@ class CLI
   {
     static $start = 0;
 
-
     $now = ticks();
 
     if ($current == 0) {
       $start = $now;
     }
-
 
     $diff = $current > 0 ? round((($now - $start) / $current) * ($total - $current)) : 0;
     $perc = min(100, str_pad(round(($current / $total) * 100), 4, ' ', STR_PAD_LEFT) +  1);
@@ -427,7 +419,6 @@ class CLI
       }
     }
 
-
     reset($set);
 
     $out = array();
@@ -441,7 +432,6 @@ class CLI
       }
     }
 
-
     $glue   = '';
 
     static::writeln();
@@ -453,7 +443,6 @@ class CLI
       static::write(static::format(" $heads"));
       static::writeln();
     }
-
 
     foreach ($set as $test) { // data
       $key = 0;
@@ -505,9 +494,9 @@ class CLI
         return static::$flags[$one];
       }
     }
+
     return $or;
   }
-
 
   private static function strips($test)
   {

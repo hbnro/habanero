@@ -3,7 +3,7 @@
 $name = array_shift($params);
 $test = realpath(dirname($name));
 
-if ( ! $name) {
+if (! $name) {
   error("\n  Missing application name\n");
 } else {
   $recreate = FALSE;

@@ -23,7 +23,6 @@ class Handler
         throw new \Exception("Missing '$controller_file' file");
       }
 
-
       is_file($controller_base) && require $controller_base;
       require $controller_file;
 
@@ -33,7 +32,6 @@ class Handler
       if ( ! class_exists($class_name)) {
         throw new \Exception("Missing '$class_name' class");
       }
-
 
       $app = new $class_name;
       $klass = new \ReflectionClass($app);
@@ -52,8 +50,6 @@ class Handler
             });
         }
       }
-
-
 
       $test = $handle->exists($action) ? $handle->execute($action) : array();
 
@@ -74,7 +70,6 @@ class Handler
 
       $params['status'] && $out->status = (int) $params['status'];
       $params['headers'] && $out->headers = (array) $params['headers'];
-
 
       if ($out->response === NULL) {
         \Sauce\Logger::debug("Rendering view $controller/$action.php");
@@ -100,6 +95,7 @@ class Handler
         \Cashier\Base::store($hash, array($out->status, $out->headers, $out->response), $cache);
       }
     }
+
     return $out;
   }
 
