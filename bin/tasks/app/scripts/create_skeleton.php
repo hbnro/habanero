@@ -24,7 +24,6 @@ $base_dir = path($tmp_dir, 'static');
     }
   });
 
-
 copy_file(path($target_dir, 'assets', 'css'), path($tmp_dir, 'sauce.less'));
 copy_file(path($target_dir, 'assets', 'css'), path($tmp_dir, 'base.less'));
 copy_file(path($target_dir, 'assets', 'css'), path($tmp_dir, 'media.less'));

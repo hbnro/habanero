@@ -23,7 +23,6 @@ $skel_dir = path(dirname(__DIR__), 'assets');
   create_file(path($app_path, 'app', 'controllers', 'home.php'), template(path($skel_dir, 'home.php'), $vars));
   create_file(path($app_path, 'app', 'controllers', 'base.php'), template(path($skel_dir, 'base.php'), $vars));
 
-
    create_dir(path($app_path, 'database'), 0777);
   create_file(path($app_path, 'database', 'sqlite.db'), '', 0777);
 

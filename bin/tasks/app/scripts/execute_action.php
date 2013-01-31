@@ -7,7 +7,6 @@ arg('u put') && $method = 'PUT';
 arg('p post') && $method = 'POST';
 arg('d delete') && $method = 'DELETE';
 
-
 $uri =  array_shift($params) ?: '/';
 
 arg('u uri') && $method = arg('u uri');

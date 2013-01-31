@@ -19,13 +19,12 @@ $callback = $readline ? 'readline' : '\\Sauce\\Shell\\CLI::readln';
   use($callback, $readline, &$cache, $warn) {
     $_ = trim(call_user_func($callback, colorize('  > ')));
 
-    if ( ! $_) {
+    if (! $_) {
       return;
     } elseif ($readline && $_ && ! in_array($_, $cache)) {
       readline_add_history($_);
       $cache []= $_;
     }
-
 
     $code = "extract(__set());return __set($_,get_defined_vars());";
     $out = $warn ? (array) @eval($code) : @assert($_);

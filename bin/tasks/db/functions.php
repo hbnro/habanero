@@ -9,9 +9,9 @@ function __set($val = NULL, array $vars = array())
   } elseif (is_array($vars)) {
     $set = array_merge($set, $vars);
   }
+
   return $val;
 }
-
 
 function db($for = 'default')
 {
@@ -54,14 +54,14 @@ function field_for($type, $key = NULL)
             'set' => array('type' => 'set'),
           );
 
-
   if ( ! empty($set[$type])) {
-    if ( ! $key) {
+    if (! $key) {
       return TRUE;
     }
 
     $out = $set[$type];
     $out['title'] = titlecase($key);
+
     return $out;
   }
 
@@ -74,7 +74,6 @@ function adjust_tags($from, $layout = FALSE)
          $close = '/\s*<(meta|link)[^>]*?\/?>\s*/s',
          $header = '/<(head)[^<>]*>(.+?)<\/\\1>/s',
          $descript = '/<title>(.+?)<\/title>/s';
-
 
   if (preg_match('/^(?:<html|["\'\[{])/', $from)) {
     return $from;
@@ -102,7 +101,6 @@ function adjust_tags($from, $layout = FALSE)
     use(&$raw) {
       $raw []= $match[2];
     }, $from);
-
 
   preg_match($descript, $layout, $match) && $top_title = $match[1];
   preg_match($descript, $from, $match) && $sub_title = $match[1];

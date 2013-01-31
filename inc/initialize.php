@@ -15,7 +15,6 @@ define('APP_LOADER', realpath($trace['file']));
 define('APP_PATH', realpath(getcwd()));
 define('APP_ENV', getenv('ENV') ?: 'development');
 
-
 // PCRE+Unicode
 error_reporting(0);
 ini_set('log_errors', 0);
@@ -25,7 +24,6 @@ define('IS_UNICODE', @preg_match('/\pL/u', 'ñ') > 0);
 error_reporting(E_ALL |~E_STRICT);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
-
 
 // OS temp path
 if (function_exists('sys_get_temp_dir')) {
@@ -44,7 +42,6 @@ define('TMP', @is_dir($temporary_files) && @is_writable($temporary_files) ? rtri
 
 is_dir(TMP) OR mkdir(TMP, 0777, TRUE);
 
-
 // default error and exception handlers
 set_error_handler(function ($errno, $errmsg, $file, $line, $trace) {
     if (($errno & error_reporting()) == $errno) {
@@ -52,6 +49,7 @@ set_error_handler(function ($errno, $errmsg, $file, $line, $trace) {
 
       return TRUE;
     }
+
     return FALSE;
   });
 

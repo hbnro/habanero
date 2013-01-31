@@ -78,7 +78,6 @@ foreach (array($source_dir, $assets_dir) as $from) {
     });
 }
 
-
 $cache_file = path($target_dir, '.cache');
 
 (sizeof($cache) <> $old) && write($cache_file, join("\n", $cache));

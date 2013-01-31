@@ -17,13 +17,11 @@ class Logger
                     \Psr\Log\LogLevel::DEBUG,
                   );
 
-
   public static function __callStatic($method, array $arguments)
   {
     if (($level = array_search($method, static::$set)) === FALSE) {
       throw new \Exception("Unknown logger '$method' level");
     }
-
 
     $test = \Sauce\Config::get('level') ?: 'debug';
     $test = array_search($test, static::$set);
@@ -42,13 +40,12 @@ class Logger
     }
   }
 
-
   private static function instance()
   {
     if (static::$obj === NULL) {
       $klass = \Sauce\Config::get('logger');
 
-      if ( ! $klass instanceof \Psr\Log\LoggerInterface) {
+      if (! $klass instanceof \Psr\Log\LoggerInterface) {
         $klass = new \Sauce\LoggerAware;
       } elseif (is_string($klass)) {
         $klass = new $klass;
@@ -56,6 +53,7 @@ class Logger
 
       static::$obj = $klass;
     }
+
     return static::$obj;
   }
 

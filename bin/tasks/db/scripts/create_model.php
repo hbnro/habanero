@@ -19,7 +19,7 @@ if ( ! $name OR is_bool($name) OR (strpos($name, ':') !== FALSE)) {
     }
   }
 
-  if ( ! $fields) {
+  if (! $fields) {
     error("\n  Missing columns for '$name' model\n");
   } else {
     $out_file = path(APP_PATH, 'app', 'models', "$name.php");

@@ -40,7 +40,8 @@ function menu()
   return call_user_func_array('\\Sauce\\Shell\\CLI::menu', func_get_args());
 }
 
-function ask() {
+function ask()
+{
   call_user_func_array('prompt', func_get_args());
 }
 
@@ -57,7 +58,6 @@ function say($text)
             '/\+([+\w\/:-]+)\+/m' => '\cwhite,black(\\1)\c', // +strong+
             '/_([\w\/:-]+)_/m' => '\clight_gray(\\1)\c', // _opaque_
           );
-
 
   $php  = 'hs'; # TODO: basename($_SERVER['_']);
 
@@ -151,6 +151,7 @@ function template($from, array $vars = array())
       ob_start();
       extract(func_get_arg(1));
       require func_get_arg(0);
+
       return ob_get_clean();
     }, $from, $vars);
 }
@@ -196,6 +197,7 @@ function gsub_file($path, $regex, \Closure $replace)
 
     return $content === NULL ? $buffer : $content;
   }
+
   return FALSE;
 }
 
@@ -224,11 +226,14 @@ function inject_into_file($path, $content, array $params = array())
 
       switch ($position) {
         case -1; // before
+
           return write($path, "$lft$replace$old$rgt");
         case 1; // after
+
           return write($path, "$lft$old$replace$rgt");
         case 0; // replace
         default;
+
           return write($path, $replace);
       }
     });
@@ -244,14 +249,12 @@ function add_class($path, $name, $parent = '', array $methods = array(), array $
   $consts =
   $method = '';
 
-
   if (strpos($name, '\\') !== FALSE) {
     $parts = explode('\\', $name);
     $name = array_pop($parts);
     $ns = join('\\', $parts);
     $ns = "\n\nnamespace $ns;";
   }
-
 
   if ( ! empty($constants)) {
     $test = array('');
@@ -348,7 +351,6 @@ function add_model($name, $table = '', array $columns = array(), array $indexes 
             'mongodb' => '\\Servant\\Mapper\\MongoDB',
           );
 
-
   $table = $table ?: underscore($name);
   $ucname = classify($name);
 
@@ -382,6 +384,7 @@ function add_action($parent, $action)
     'before' => '/\}[^{}]*?$/',
   ))) {
     status('update', "controllers/$parent.php");
+
     return TRUE;
   }
 }

@@ -8,9 +8,9 @@ $trap = function () {
 
       unset($test);
     }
+
     return isset($config) ? $config : get_defined_vars();
   };
-
 
 $what = 'current';
 $title = 'Loaded options';
@@ -32,7 +32,6 @@ if (arg('d dev')) {
   $file = path(APP_PATH, 'config.php');
   $what = 'default';
 }
-
 
 $config = isset($file) ? $trap($file) : config();
 $params = array_diff_key(flags(), array_flip(array('global', 'app', 'dev', 'prod', 'd', 'p', 'a', 'g')));
@@ -60,7 +59,6 @@ if ( ! empty($params)) {
 } else {
   info("\n  $title:");
 }
-
 
 $config = isset($file) ? $trap($file) : config();
 printf("\n%s\n", preg_replace('/^/m', '  ', inspect($config)));
