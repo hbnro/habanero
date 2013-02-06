@@ -130,14 +130,15 @@ function css_min($text)
 {
   static $expr = array(
             '/;+/' => ';',
+            '/:\s+/' => ':',
             '/;?[\r\n\t\s]*\}\s*/s' => '}',
             '/\/\*.*?\*\/|[\r\n]+/s' => '',
-            '/\s*([\{;:,\+~\}>])\s*/' => '\\1',
+            '/\s*([\{;,\+\}>])\s*/' => '\\1',
             '/:first-l(etter|ine)\{/' => ':first-l\\1 {', //FIX
             '/(?<!=)\s*#([a-f\d])\\1([a-f\d])\\2([a-f\d])\\3/i' => '#\\1\\2\\3',
           );
 
-  return preg_replace(array_keys($expr), $expr, $text);
+  return preg_replace('/\s+/', ' ', preg_replace(array_keys($expr), $expr, $text));
 }
 
 function js_min($text)
