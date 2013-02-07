@@ -7,7 +7,6 @@ function adjust_tags($from, $layout = FALSE)
          $header = '/<(head)[^<>]*>(.+?)<\/\\1>/s',
          $descript = '/<title>(.+?)<\/title>/s';
 
-
   if (preg_match('/^(?:<html|["\'\[{])/', $from)) {
     return $from;
   }
@@ -34,7 +33,6 @@ function adjust_tags($from, $layout = FALSE)
     use(&$raw) {
       $raw []= $match[2];
     }, $from);
-
 
   preg_match($descript, $layout, $match) && $top_title = $match[1];
   preg_match($descript, $from, $match) && $sub_title = $match[1];

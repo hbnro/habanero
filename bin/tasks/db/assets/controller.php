@@ -49,6 +49,7 @@
     if (\<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => params('id')))) {
       return redirect_to('<?php echo $base; ?>', array('success' => 'A <?php echo $name; ?> was deleted'));
     }
+
     return redirect_to('<?php echo $base; ?>', array('error' => 'The <?php echo $name; ?> was not found'));
   }
 
@@ -56,7 +57,9 @@
   {
     if (is_array($set = params('pk'))) {
       \<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => $set));
+
       return redirect_to('<?php echo $base; ?>', array('success' => 'All <?php echo $name; ?> things was deleted'));
     }
+
     return redirect_to('<?php echo $base; ?>', array('notice' => 'No <?php echo $name; ?> things has found'));
   }
