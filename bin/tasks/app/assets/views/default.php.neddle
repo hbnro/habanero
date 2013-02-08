@@ -23,20 +23,12 @@ head
 body
   #wrapper
     header = $title
-    - foreach flash() as $type => $val
-      div { class => "flash $type" }
-        - if is_array($val)
-          ul
-            - foreach $val as $one
-              li = $one
-        - else
-          = $val
-    = $body
+    <main>#{$body}</main>
     footer
       &mdash;
       = round(microtime(TRUE) - BEGIN, 4)
-    script { src => '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' }
-    <script>window.jQuery || document.write("<script src='<?php echo asset_url('jquery.min.js'); ?>'>\x3C/script>")</script>
+    script { src => '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' }
+    <script>window.jQuery || document.write("<script src='<?php echo asset_url('lib/jquery.min.js'); ?>'>\x3C/script>")</script>
   = after_body()
   script
     window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
