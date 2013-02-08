@@ -9,7 +9,7 @@ if (is_file($out_file)) {
   add_route($name, "$name#index", $name);
 
   if ( ! arg('V no-view')) {
-    $text = "section\n  header\n    h1 $name#index.view\n  pre = path(APP_PATH, 'app', 'views', '$name', 'index.php.neddle')";
+    $text = "section\n  header\n    $name#index.view\n  pre = path(APP_PATH, 'app', 'views', '$name', 'index.php.neddle')";
     add_view($name, 'index.php.neddle', "$text\n");
   }
 }

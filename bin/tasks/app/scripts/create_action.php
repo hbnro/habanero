@@ -24,7 +24,7 @@ if ( ! is_file($out_file)) {
     add_route($route, "$name#$action", $path, $method);
 
     if ( ! arg('V no-view')) {
-      $text = "section\n  header\n    h1 $name#$action.view\n  pre = path(APP_PATH, 'app', 'views', '$name', '$action.php.neddle')";
+      $text = "section\n  header\n    $name#$action.view\n  pre = path(APP_PATH, 'app', 'views', '$name', '$action.php.neddle')";
       add_view($name, "$action.php.neddle", "$text\n");
     }
   }
