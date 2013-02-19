@@ -67,3 +67,46 @@ function field_for($type, $key = NULL)
 
   return FALSE;
 }
+
+function hydrate_model($file)
+{
+  if (is_file($file) && strpos($file, '.php')) {
+    preg_match_all('/class\s(\S+)\s/', read($file), $match);
+
+    require $file;
+
+    foreach ($match[1] as $klass) {
+      $re = new \ReflectionClass($klass);
+
+      switch ($re->getParentClass()->getName()) {
+        case 'Servant\\Mapper\\Database';
+          status('hydrate', $file);
+
+          $dsn = option('database.' . $klass::CONNECTION);
+          $db = \Grocery\Base::connect($dsn);
+
+          $columns = $klass::columns();
+          $indexes = $klass::indexes();
+
+          if ( ! isset($db[$klass::table()])) {
+            $db[$klass::table()] = $columns;
+          }
+
+          \Grocery\Helpers::hydrate($db[$klass::table()], $columns, $indexes);
+        break;
+        case 'Servant\\Mapper\\MongoDB';
+          status('hydrate', $file);
+
+          $dsn_string = \Servant\Config::get($klass::CONNECTION);
+          $database = substr($dsn_string, strrpos($dsn_string, '/') + 1);
+          $mongo = $dsn_string ? new \Mongo($dsn_string) : new \Mongo;
+          $db = $mongo->{$database ?: 'default'};
+
+          \Servant\Helpers::reindex($db->{$klass::table()}, $klass::indexes());
+        break;
+        default;
+        break;
+      }
+    }
+  }
+}
