@@ -471,7 +471,7 @@ function mdate()
   return call_user_func_array('\\Locale\\Datetime::format', func_get_args());
 }
 
-function yield()
+function fetch()
 {
   return call_user_func_array('\\Staple\\Registry::fetch', func_get_args());
 }
@@ -486,7 +486,7 @@ function remove()
   return call_user_func_array('\\Staple\\Registry::delete', func_get_args());
 }
 
-function provide()
+function assign()
 {
   return call_user_func_array('\\Staple\\Registry::assign', func_get_args());
 }
