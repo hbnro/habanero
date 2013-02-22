@@ -118,7 +118,7 @@ class Base
 
     // assets
     if (APP_ENV <> 'production') {
-      $doc_root = $base_url . ROOT . '?_=';
+      $doc_root = $base_url . ROOT . '?@=';
     } elseif ( ! ($doc_root = option('asset_host'))) {
       if ($doc_root = option('asset_subdomain')) {
         $doc_root = \Broil\Helpers::reduce($base_url, $doc_root);
