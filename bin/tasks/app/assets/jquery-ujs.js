@@ -48,7 +48,7 @@
               old_text = that[method]();
 
           that[method](disable).data('enable-with', old_text);
-          that.is('input') ? that.attr('disabled', 'disabled') : that.addClass('disabled');
+          that.is('input') ? that.attr('disabled', true) : that.addClass('disabled');
         }
 
         if (is_remote) {
@@ -136,7 +136,7 @@
             method = that.is('input') ? 'val' : 'html',
             new_text = that.data('disable-with');
 
-        that.is('input') ? that.attr('disabled', 'disabled') : that.addClass('disabled');
+        that.is('input') ? that.attr('disabled', true) : that.addClass('disabled');
         ! that.data('enable-with') && that.data('enable-with', that[method]());
         new_text && that[method](new_text);
       });
@@ -158,22 +158,22 @@
     }
   };
 
-  $('form').live('ajax:before.ujs', function(evt) {
+  $('form').on('ajax:before.ujs', function(evt) {
     this == evt.target && $ujs.disable($(this), evt);
   });
 
-  $('form').live('ajax:complete.ujs', function(evt) {
+  $('form').on('ajax:complete.ujs', function(evt) {
     this == evt.target && $ujs.enable($(this), evt);
   });
 
-  $('a[data-disable-with]').live('ajax:complete', function() {
+  $('a[data-disable-with]').on('ajax:complete', function() {
       var el = $(this),
           method = el.is('input') ? 'val' : 'html',
           old_text = el.data('enable-with');
           old_text && el[method](old_text);
   });
 
-  $('form input[type=submit],form input[type=image],form button[type=submit],form button:not([type])').live('click.ujs', function() {
+  $('form input[type=submit],form input[type=image],form button[type=submit],form button:not([type])').on('click.ujs', function() {
     var button = $(this),
         name = button.attr('name'),
         data = name ? { name: name, value: button.val() } : null;
@@ -181,15 +181,15 @@
     button.closest('form').data('submit-button', data);
   });
 
-  $('a[data-disable-with],a[data-confirm],a[data-remote],a[data-method]').live('click.ujs', function() {
+  $('a[data-disable-with],a[data-confirm],a[data-remote],a[data-method]').on('click.ujs', function() {
     return $ujs.handle(this);
   });
 
-  $('textarea[data-remote],select[data-remote],input[data-remote]').live('change.ujs', function() {
+  $('textarea[data-remote],select[data-remote],input[data-remote]').on('change.ujs', function() {
     return $ujs.handle(this);
   });
 
-  $('form').live('submit.ujs', function() {
+  $('form').on('submit.ujs', function() {
     return $ujs.handle(this);
   });
 

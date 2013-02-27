@@ -9,10 +9,10 @@ if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
   $model_file = path(APP_PATH, 'app', 'models', "$name.php");
   $model_class = arg('c class') ?: classify($name);
 
-  if ( ! is_file($model_file)) {
+  if ( ! is_file($model_file) && ! arg('c class')) {
     error("\n  Missing '$name' model\n");
   } else {
-    require $model_file;
+    is_file($model_file) && require $model_file;
 
     $fail = FALSE;
     $fields = array();
@@ -22,10 +22,12 @@ if ( ! $name OR is_numeric($name) OR (strpos($name, ':') !== FALSE)) {
       foreach ($params as $key) {
         @list($key, $type) = explode(':', $key);
 
+        $type = $type ?: $columns[$key]['type'];
+
         if ( ! isset($columns[$key])) {
           $fail = TRUE;
           error("\n  Unknown '$key' field\n");
-        } elseif ( ! ($test = field_for($type ?: $columns[$key]['type'], $key))) {
+        } elseif ( ! ($test = field_for($type, $key))) {
           $fail = TRUE;
           error("\n  Unknown '$type' type on '$key' field\n");
         } else {

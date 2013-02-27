@@ -32,7 +32,8 @@ if (arg('r v f i c j a reset views fonts images styles scripts all')) {
     $cache_dir = path(APP_PATH, 'app', 'cache');
 
     is_dir($cache_dir) && \IO\Dir::unfile($cache_dir, '*', TRUE);
-    is_dir($cache_dir) OR mkdir($cache_dir, 0777);
+    is_dir($cache_dir) OR mkdir($cache_dir);
+    chmod($cache_dir, 0777);
   }
 
   // TODO: unset from cache?

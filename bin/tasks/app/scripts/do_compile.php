@@ -8,14 +8,15 @@ foreach (array($source_dir, $assets_dir) as $from) {
       $key  = md5_file($file);
       $key .= filemtime($file);
 
-      if (preg_match('/\.(html|php|css|js)(?:\.\w+)*?$/', $file, $match)) {
-        if (in_array($key, $cache)) {
-          return;
-        }
+      if (in_array($key, $cache)) {
+        return;
+      }
 
-        $cache []= $key;
+      $cache []= $key;
 
-        $path = trim(dirname(str_replace(array($source_dir, $assets_dir), '', $file)), '.\\/');
+      $path = trim(dirname(str_replace(array($source_dir, $assets_dir), '', $file)), '.\\/');
+
+      if (preg_match('/\.((?:ht|x)ml|rss|txt|php|css|js)(?:\.\w+)*?$/', $file, $match)) {
         $type = $match[1];
 
         @list($name) = explode(".$type", basename($file));
@@ -73,7 +74,15 @@ foreach (array($source_dir, $assets_dir) as $from) {
               }
             break;
           }
-        }
+        } // TODO: more formats or better check-up?
+      } elseif (preg_match('/\.(?:jpe?g|png|gif|woff|eot|ttf|svg|ico|xml|rss|txt|webm|mp[34]|og[gv])$/', $file)) {
+        $out = path($output_dir, $path, basename($file));
+        $dir = dirname($out);
+
+        is_dir($dir) OR mkdir($dir, 0777, TRUE);
+
+        status('copy', $out);
+        copy($file, $out);
       }
     });
 }

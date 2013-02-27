@@ -11,7 +11,7 @@ class Bootstrap
 
     if ((strpos($test, 'CLI') === FALSE) OR ($test === 'CLI-SERVER')) {
       // static assets
-      if ($path = \Postman\Request::value('_')) {
+      if ($path = \Postman\Request::value('@')) {
         $test   = \Sauce\App\Assets::read($path);
         $output = new \Postman\Response(200, array('Content-Type' => $test['type']), $test['output']);
 

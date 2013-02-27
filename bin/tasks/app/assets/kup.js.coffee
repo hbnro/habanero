@@ -152,7 +152,7 @@ area base br col command embed hr img input keygen param source track wbr
           .replace(/\s*\}\s*$/, '')
 
     template = dummy + helpers + template
-      .replace(/\/\/.*/g, '')
+      .replace(/\s\/\/.*/g, '')
       .replace(/^\s*/, '')
       .replace(/\s*$/, '')
       .replace(/^return\s*/, '')

@@ -63,7 +63,7 @@ task('hydrate', 'Model reloading for migrations', function ($params) {
     *hydrate* <path> ...
 
   Example:
-    {@} *hydrate* {app/models}
+    {@} *hydrate* {app/models/user.php}
     {@} *hydrate* {library} -R
 
   ## Available options:
