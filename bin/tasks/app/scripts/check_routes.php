@@ -30,6 +30,7 @@ if ( ! empty($set)) {
   info("\n  Routes:\n");
 
   foreach ($set as $method => $set) {
+    $top = '';
     $out []= "    \bwhite($method)\b";
 
     foreach ($set as $one) {
@@ -45,11 +46,19 @@ if ( ! empty($set)) {
         $action = '';
       }
 
+      $sub = $one['prefix'] ?: $one['subdomain'];
+
+      if ($sub && ($sub <> $top)) {
+        $top = $sub;
+        $out []= "      \cpurple($sub)\c";
+      }
+
+      $name = ! empty($one['path']) ? str_pad($one['path'], $path, ' ', STR_PAD_RIGHT) : '';
       $call = str_pad($action, $to - strlen($class), ' ', STR_PAD_RIGHT);
-      $name = ! empty($one['path']) ? $one['path'] : '';
       $char = $class && $action ? '#' : '';
 
-      $out []= sprintf("      \cgreen(%-{$match}s)\c  \cbrown($class)\c\clight_gray($char$call)\c $name", $one['match']);
+
+      $out []= sprintf("        \cgreen(%-{$match}s)\c  \cbrown($class)\c\clight_gray($char$call)\c $name", $one['match']);
     }
     $out []= '';
   }
