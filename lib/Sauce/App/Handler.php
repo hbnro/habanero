@@ -63,7 +63,11 @@ class Handler
 
         \Sauce\Logger::debug("Using response for '$type' type");
 
-        $test = $handle->responds($test[2], $params);
+        if (isset($test[2])) {
+          $test = $handle->responds($test[2], $params);
+        } else {
+          $test = array(202, array(), '');
+        }
       }
 
       @list($out->status, $out->headers, $out->response) = $test;
