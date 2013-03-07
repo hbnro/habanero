@@ -7,4 +7,4 @@
 
 header
   h1 Site title
-  = html::navlist($links, [class => 'main'], yield('current_url'))
+  = html::navlist($links, [class => 'main'], fetch('current_url'))

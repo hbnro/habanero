@@ -33,7 +33,7 @@ foreach (array($source_dir, $assets_dir) as $from) {
               $uri  = "/$path";
               $uri .= $name <> 'index' ? "/$name.$type" : '';
 
-              provide('current_url', $uri);
+              assign('current_url', $uri);
 
               if ($base) {
                 $view = \Tailor\Base::compile($file);
@@ -41,7 +41,7 @@ foreach (array($source_dir, $assets_dir) as $from) {
                 $view = read($file);
               }
 
-              $layout = yield('layout') ?: 'default';
+              $layout = fetch('layout') ?: 'default';
               $layout = \Tailor\Helpers::resolve("layouts/$layout", 'views_dir');
 
               $hash  = "$layout@";

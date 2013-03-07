@@ -13,7 +13,7 @@ function adjust_tags($from, $layout = FALSE)
 
   $separator = option('separator') ?: ' - ';
   $top_title = option('title');
-  $sub_title = yield('title');
+  $sub_title = fetch('title');
 
   $raw   =
   $head  =
