@@ -30,8 +30,8 @@ foreach (array($source_dir, $assets_dir) as $from) {
         if ( ! is_file($out) OR (filemtime($file) > filemtime($out))) {
           switch ($type) {
             case 'html';
-              $uri  = "/$path";
-              $uri .= $name <> 'index' ? "/$name.$type" : '';
+              $uri  = $path ? "/$path" : '';
+              $uri .= $name <> 'index' ? "/$name.$type" : '/';
 
               assign('current_url', $uri);
 
@@ -49,13 +49,7 @@ foreach (array($source_dir, $assets_dir) as $from) {
               $hash .= filemtime($file);
 
               if (is_file($layout)) {
-                $header = \Tailor\Helpers::resolve('_/header', 'views_dir');
-                $footer = \Tailor\Helpers::resolve('_/footer', 'views_dir');
-
-                $header && $header = \Tailor\Base::compile($header);
-                $footer && $footer = \Tailor\Base::compile($footer);
-
-                $view = adjust_tags("$header\n$view\n$footer", \Tailor\Base::compile($layout));
+                $view = adjust_tags($view, \Tailor\Base::compile($layout));
               }
 
               status('partial', $out);
