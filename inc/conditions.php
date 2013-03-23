@@ -1,5 +1,12 @@
 <?php
 
+if (! function_exists('is_assoc')) {
+  function is_assoc($test)
+  {
+    return array_keys($test) !== range(0, sizeof($test) - 1);
+  }
+}
+
 function is_odd($test)
 {
   return $test & 1;
