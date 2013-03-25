@@ -21,9 +21,9 @@ class Base
     params($_REQUEST);
 
     // configuration
-    $config_file = path(APP_PATH, 'config.php');
-
-    is_file($config_file) && config($config_file);
+    config(path(APP_PATH, 'config.php'));
+    config(path(APP_PATH, 'config', 'application.php'));
+    config(path(APP_PATH, 'config', 'environments', APP_ENV.'.php'));
 
     // timezone
     date_default_timezone_set(option('timezone', 'UTC'));
