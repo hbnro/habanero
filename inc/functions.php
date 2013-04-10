@@ -523,3 +523,17 @@ function ext($bytes)
 {
   return call_user_func_array('\\IO\\File::ext', func_get_args());
 }
+
+function md($text)
+{
+  static $obj = NULL;
+
+  ($obj === NULL) && $obj = new \dflydev\markdown\MarkdownExtraParser;
+
+  return $obj->transformMarkdown($text);
+}
+
+function yaml($test)
+{
+  return \Symfony\Component\Yaml\Yaml::parse($test);
+}
