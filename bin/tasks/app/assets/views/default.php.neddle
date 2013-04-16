@@ -14,6 +14,7 @@
 <!--[if IE 9 ]>    <html class="ie ie9 no-js" lang="en"> <![endif]-->
 <!--[if gt IE 9]><!--><html class="no-js" lang="en"><!--<![endif]-->
 head
+  meta { name => 'viewport', content => 'initial-scale=1.0, maximum-scale=2.0, user-scalable=no' }
   meta { charset => 'UTF-8' }
   title = $title
   = $head
