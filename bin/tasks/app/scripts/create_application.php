@@ -85,6 +85,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
   create_file(path($app_path, '.gitignore'), join("\n", $ignored_files) . "\n");
 
     copy_file($app_path, path($skel_dir, 'htaccess.txt'));
+    copy_file($app_path, path($skel_dir, '.bowerrc'));
 
   create_file(path($app_path, 'deploy.sh'), "#!/bin/sh\nrsync -avzC --delete --progress --exclude-from exclude.txt --stats -e 'ssh' . root@0.0.0.0:/var/www/domain.tld\n", 0777);
   create_file(path($app_path, 'exclude.txt'), ".git*\nlogs\napp/views\napp/assets\nexclude.txt\n");
