@@ -45,9 +45,20 @@ class CLI
                     'white' => '1;37',
                   );
 
+  private static $fmt_regex = NULL;
+  private static $start = 0;
+
   public static function initialize()
   {
     static::$atty = function_exists('posix_isatty') && @posix_isatty($stream);
+
+    if (! static::$fmt_regex) {
+      $test = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\((\s*)(.*?)(\s*)\)\\1/s';
+      $keys = join('|', array_keys(static::$fgcolors));
+      $vals = join('|', array_keys(static::$bgcolors));
+
+      static::$fmt_regex = sprintf($test, $keys, $vals);
+    }
 
     while ($old = array_search('--', $_SERVER['argv'])) {
       unset($_SERVER['argv'][$old]);
@@ -192,14 +203,7 @@ class CLI
 
   public static function format($text)
   {
-    static $regex = NULL;
-
-    if (! $regex) {
-      $expr  = '/(\\\[cbuh]{1,3})((?:%s|)(?:,(?:%s))?)\((\s*)(.*?)(\s*)\)\\1/s';
-      $regex = sprintf($expr, join('|', array_keys(static::$fgcolors)), join('|', array_keys(static::$bgcolors)));
-    }
-
-    while (preg_match_all($regex, $text, $match)) {
+    while (preg_match_all(static::$fmt_regex, $text, $match)) {
       foreach ($match[0] as $i => $val) {
         $out  = array();
         $test = explode(',', $match[2][$i]); // fg,bg
@@ -345,18 +349,16 @@ class CLI
 
   public static function progress($current, $total = 100, $title = '')
   {
-    static $start = 0;
-
-    $now = ticks();
+    $now = microtime(TRUE);
 
     if ($current == 0) {
-      $start = $now;
+      static::$start = $now;
     }
 
-    $diff = $current > 0 ? round((($now - $start) / $current) * ($total - $current)) : 0;
+    $diff = $current > 0 ? round((($now - static::$start) / $current) * ($total - $current)) : 0;
     $perc = min(100, str_pad(round(($current / $total) * 100), 4, ' ', STR_PAD_LEFT) +  1);
 
-    $title  = str_replace('%{elapsed}', static::duration(round($now - $start)), $title);
+    $title  = str_replace('%{elapsed}', static::duration(round($now - static::$start)), $title);
     $title  = str_replace('%{remaining}', static::duration($diff), $title);
     $dummy  = static::strips($title = static::format($title));
     $length = static::$width - (strlen($dummy) + 7);
