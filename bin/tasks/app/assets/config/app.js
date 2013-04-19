@@ -1,8 +1,6 @@
 /*
- *= head lib/modernizr
- *= require lib/jquery.min
- *= include lib/kup
- *= include lib/console
- *= include lib/jquery-ujs
+ *= head lib/modernizr/modernizr
+ *= require lib/jquery/jquery.js
+ *= require lib/jquery-ujs/src/rails
  *= include app/script
  */

@@ -20,16 +20,13 @@ head
   = $head
   = before_body()
   = csrf_meta_tag()
-  link { rel => 'stylesheet', href => 'http://fonts.googleapis.com/css?family=Bangers' }
 body
   #wrapper
     header = $title
-    <main>#{$body}</main>
+    main = $body
     footer
       &mdash;
       = round(microtime(TRUE) - BEGIN, 4)
-    script { src => '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' }
-    <script>window.jQuery || document.write("<script src='<?php echo asset_url('lib/jquery.min.js'); ?>'>\x3C/script>")</script>
   = after_body()
   script
     window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
