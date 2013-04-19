@@ -1,3 +1,6 @@
+# Edit and save, then execute:
+# cat composer.txt | grep -v '#' > composer.json
+
 {
   "require": {
     "php": ">=5.3"

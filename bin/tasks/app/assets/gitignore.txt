@@ -1,0 +1,15 @@
+# Edit and save, then execute:
+# cat gitignore.txt | grep -v '#' > .gitignore
+
+*~
+*.log
+.DS_Store
+database/sqlite.db
+config/resources.php
+static/resources/*
+static/img/*
+static/css/*
+static/js/*
+app/cache/*
+composer.lock
+vendor
