@@ -1,0 +1,9 @@
+{
+  "require": {
+    "php": ">=5.3"
+  },
+  "autoload": {
+    "classmap": ["app/models"],
+    "psr-0": {"": "library/"}
+  }
+}

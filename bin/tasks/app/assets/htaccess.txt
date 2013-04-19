@@ -2,25 +2,20 @@
 # cat htaccess.txt | grep -v '#' > .htaccess
 
 <IfModule mod_rewrite.c>
-  # - Activate
   RewriteEngine On
   RewriteBase /
 
-  # - Canonic URLs
   # RewriteCond %{HTTP_HOST} ^www\.domain\.tld$
   # RewriteRule ^(.*)$ http://domain.tld/$1 [L,R=301]
 
-  # - Conventional rewrite
   RewriteCond %{REQUEST_FILENAME} -d [OR]
   RewriteCond %{REQUEST_FILENAME} !-f [OR]
   RewriteCond $1 !^(static|index\.php) [NC]
   RewriteRule ^(.*)$ index.php/$1 [PT,L]
 
-  # - Default error fallback
   # ErrorDocument 404 /index.php
 </IfModule>
 
 <IfModule mod_env.c>
-  # - Environment options
   SetEnv ENV production
 </IfModule>
