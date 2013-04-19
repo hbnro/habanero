@@ -174,7 +174,8 @@ function link_to($text, $url = '', $args = array())
     $params['text'] = $text;
   }
 
-  $params = array_merge(array(
+
+  $props = array(
     'text'    => '',
     'action'  => '',
     'method'  => 'GET',
@@ -182,7 +183,10 @@ function link_to($text, $url = '', $args = array())
     'remote'  => FALSE,
     'params'  => FALSE,
     'type'    => FALSE,
-  ), $params);
+  );
+
+  $params = array_merge($props, $params, array_intersect_key($args, $props));
+  $attrs  = array_diff_key($attrs, array_intersect_key($attrs, $props));
 
   if ($params['text'] instanceof \Closure) {
     ob_start() && call_user_func($params['text']);
@@ -217,7 +221,8 @@ function button_to($name, $url = '', array $args = array())
     $params['action'] = $url;
   }
 
-  $params = array_merge(array(
+
+  $props = array(
     'type'         => FALSE,
     'action'       => '',
     'method'       => 'POST',
@@ -226,7 +231,10 @@ function button_to($name, $url = '', array $args = array())
     'confirm'      => FALSE,
     'disabled'     => FALSE,
     'disable_with' => '',
-  ), $params);
+  );
+
+  $params = array_merge($props, $params, array_intersect_key($args, $props));
+  $args = array_diff_key($args, array_intersect_key($args, $props));
 
   $button = tag('input', array_merge(array(
     'type' => 'submit',
