@@ -44,7 +44,6 @@ $skel_dir = path(dirname(__DIR__), 'assets');
     copy_file(path($app_path, 'app', 'assets', 'css', 'app'), path($skel_dir, 'styles', 'styles.css.less'));
     copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'styles', 'sauce.less'));
     copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'styles', 'media.less'));
-    copy_file(path($app_path, 'app', 'assets', 'css'), path($skel_dir, 'styles', 'base.less'));
 
     copy_file(path($app_path, 'app', 'assets', 'js'), path($skel_dir, 'config', 'app.js'));
     copy_file(path($app_path, 'app', 'assets', 'js', 'app'), path($skel_dir, 'scripts', 'script.js.coffee'));
