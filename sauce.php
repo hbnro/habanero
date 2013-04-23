@@ -7,12 +7,17 @@
  * @link   https://github.com/pateketrueke/habanero
  */
 
-return call_user_func(function () {
-    // bundled full-stack
-    $autoload = require __DIR__.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+if (! isset($autoload)) {
+  throw new \Exception("The object \$autoload is missing from the scope");
+} elseif (! ($autoload instanceof \Composer\Autoload\ClassLoader)) {
+  throw new \Exception("The \$autoload is not a \\Composer\\Autoload\\ClassLoader");
+}
+
+call_user_func(function ()
+  use ($autoload) {
 
     // local vendors
-    $vendor_dir = APP_PATH.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
+    $vendor_dir = __DIR__.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
     $classmap_file = $vendor_dir.DIRECTORY_SEPARATOR.'autoload_classmap.php';
     $namespaces_file = $vendor_dir.DIRECTORY_SEPARATOR.'autoload_namespaces.php';
 
@@ -24,5 +29,11 @@ return call_user_func(function () {
       }
     }
 
-    return \Sauce\Base::$autoload = $autoload;
+
+    // bundled full-stack
+    $lib_dir = __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR;
+
+    foreach (array('functions.php', 'conditions.php', 'initialize.php') as $script) {
+      require $lib_dir.$script;
+    }
   });

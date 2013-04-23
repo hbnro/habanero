@@ -20,7 +20,6 @@
     "oyatel/amazon-s3-php-class": "dev-master"
   },
   "autoload": {
-    "psr-0": {"Sauce": "lib/"},
-    "files": ["inc/initialize.php", "inc/conditions.php", "inc/functions.php"]
+    "psr-0": {"Sauce": "lib/"}
   }
 }

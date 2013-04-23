@@ -5,7 +5,6 @@ namespace Sauce;
 class Base
 {
 
-  public static $autoload = NULL;
   public static $response = NULL;
 
   private static $loaded = FALSE;
