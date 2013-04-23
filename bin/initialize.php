@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
+require dirname(__DIR__).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
 require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
 
 \Sauce\Base::bind(function ($bootstrap) {
