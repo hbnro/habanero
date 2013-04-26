@@ -278,7 +278,9 @@ class Assets
             });
         } else {
           if ( ! is_file($old)) {
-            $old = "$url/{$match[2][$i]}.$ext";
+            $old = "$url/{$match[2][$i]}";
+
+            (substr($old, -strlen($ext)) <> $ext) && $old .= ".$ext";
           }
 
           $out[$key] []= $old;
