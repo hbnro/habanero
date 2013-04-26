@@ -16,6 +16,11 @@ class Assets
             'scripts_dir' => array('js'),
           );
 
+  private $exts = array(
+            'styles_dir' => 'css',
+            'scripts_dir' => 'js',
+          );
+
   private $set = array(
             'head' => array(),
             'body' => array(),
@@ -60,21 +65,13 @@ class Assets
 
   public static function build($from, $on)
   {
-    switch ($on) {
-      case 'styles_dir';
-        $ext = 'css';
-      break;
-      case 'scripts_dir';
-        $ext = 'js';
-      break;
-      default;
-        throw new \Exception("Cannot build '$from'");
-    }
-
+    $ext = static::extension($on);
     $dir = \Tailor\Config::get($on);
     $file = path($dir, "$from.$ext");
 
-    if ( ! is_file($file)) {
+    if ( ! $ext) {
+      throw new \Exception("Cannot extract '$from'");
+    } elseif ( ! is_file($file)) {
       throw new \Exception("The file '$file' does not exists");
     }
 
@@ -262,23 +259,39 @@ class Assets
       throw new \Exception("The file '$from' does not exists");
     }
 
+
+    $ext = static::extension($on);
+    $dir = \Tailor\Config::get($on);
+    $url = \Tailor\Config::get(str_replace('_dir', '_url', $on));
+
+
     // TODO: accept other formats?
     if (preg_match_all('/\s+\*=\s+(\w+)\s+(\S+)/m', read($from), $match)) {
       foreach ($match[1] as $i => $key) {
-        $tmp = \Tailor\Helpers::resolve($match[2][$i], $on);
+        $tmp = path($dir, $match[2][$i]);
+        $old = \Tailor\Helpers::findfile("$tmp*", 0);
 
-        if (is_dir($tmp)) {
-          \IO\Dir::open($tmp, function ($file)
+        if (is_dir($old)) {
+          \IO\Dir::open($old, function ($file)
             use (&$out, $key) {
               $out[$key] []= $file;
             });
         } else {
-          $tmp && $out[$key] []= $tmp;
+          if ( ! is_file($old)) {
+            $old = "$url/{$match[2][$i]}.$ext";
+          }
+
+          $out[$key] []= $old;
         }
       }
     }
 
     return $out;
+  }
+
+  private static function extension($on)
+  {
+    return isset(static::instance()->exts[$on]) ? static::instance()->exts[$on] : FALSE;
   }
 
   private static function instance()
