@@ -141,5 +141,5 @@ function css_min($text)
 
 function js_min($text)
 {
-  return \JShrink\Minifier::minify($text);
+  return \JShrink\Minifier::minify($text, array('flaggedComments' => FALSE));
 }
