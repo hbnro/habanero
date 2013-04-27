@@ -86,11 +86,11 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
                 $new = path($static_dir, $key);
 
                 if (($type === 'js') && ! preg_match('/\.(min|pack)\.js$/', $key)) {
-                  $tmp = path(TMP, md5($key));
+                  $min = path(TMP, md5($key));
 
-                  write($tmp, js_min(read($old)));
+                  write($min, js_min(read($old)));
 
-                  $old = $tmp;
+                  $old = $min;
                 }
 
 
