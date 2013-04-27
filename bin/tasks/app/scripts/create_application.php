@@ -52,7 +52,7 @@ $skel_dir = path(dirname(__DIR__), 'assets');
     copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'default.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'home'), path($skel_dir, 'views', 'index.php.neddle'));
 
-  create_file(path($app_path, 'component.json'), template(path($skel_dir, 'component.json'), $vars));
+  create_file(path($app_path, 'bower.json'), template(path($skel_dir, 'bower.json'), $vars));
   create_file(path($app_path, '.gitignore'), read(path($skel_dir, 'gitignore.txt')), 0777);
 
     copy_file($app_path, path($skel_dir, '.bowerrc'));
