@@ -85,6 +85,15 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
                 $key = str_replace($base_path.DIRECTORY_SEPARATOR, '', $old);
                 $new = path($static_dir, $key);
 
+                if (($type === 'js') && ! preg_match('/\.(min|pack)\.js$/', $key)) {
+                  $tmp = path(TMP, md5($key));
+
+                  write($tmp, js_min(read($old)));
+
+                  $old = $tmp;
+                }
+
+
                 if ( ! isset($cache[$key])) {
                   if (s3_handle()) {
                     s3_upload_asset($old, $key);
