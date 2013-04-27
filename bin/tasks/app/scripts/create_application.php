@@ -1,24 +1,22 @@
 <?php
 
+$vars['app_name'] = basename($app_path);
+
 $skel_dir = path(dirname(__DIR__), 'assets');
 
    create_dir($app_path);
-   create_dir(path($app_path, 'logs'), 0777);
+   create_dir(path($app_path, 'logs'), 0777, TRUE);
 
    create_dir(path($app_path, 'config'));
   create_file(path($app_path, 'config', 'application.php'), "<?php\n");
     copy_file(path($app_path, 'config', 'environments'), path($skel_dir, 'config', 'development.php'));
     copy_file(path($app_path, 'config', 'environments'), path($skel_dir, 'config', 'production.php'));
 
-   create_dir(path($app_path, 'config', 'initializers'));
+   create_dir(path($app_path, 'config', 'initializers'), 0777, TRUE);
     copy_file(path($app_path, 'config'), path($skel_dir, 'config', 'routes.php'));
 
-   create_dir(path($app_path, 'app', 'cache'), 0777);
+   create_dir(path($app_path, 'app', 'cache'), 0777, TRUE);
    create_dir(path($app_path, 'app', 'models'), 0777, TRUE);
-
-   $vars = array(
-      'app_name' => basename($app_path),
-    );
 
   create_file(path($app_path, 'app', 'controllers', 'home.php'), template(path($skel_dir, 'home.php'), $vars));
   create_file(path($app_path, 'app', 'controllers', 'base.php'), template(path($skel_dir, 'base.php'), $vars));
@@ -47,17 +45,20 @@ $skel_dir = path(dirname(__DIR__), 'assets');
 
     copy_file(path($app_path, 'app', 'assets', 'js'), path($skel_dir, 'config', 'app.js'));
     copy_file(path($app_path, 'app', 'assets', 'js', 'app'), path($skel_dir, 'scripts', 'script.js.coffee'));
-   create_dir(path($app_path, 'app', 'assets', 'js', 'lib'), 0777);
+   create_dir(path($app_path, 'app', 'assets', 'js', 'lib'), 0777, TRUE);
 
    create_dir(path($app_path, 'app', 'views'));
     copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'raising.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'layouts'), path($skel_dir, 'views', 'default.php.neddle'));
     copy_file(path($app_path, 'app', 'views', 'home'), path($skel_dir, 'views', 'index.php.neddle'));
 
-    copy_file($app_path, path($skel_dir, 'gitignore.txt'));
-    copy_file($app_path, path($skel_dir, 'htaccess.txt'));
+  create_file(path($app_path, 'component.json'), template(path($skel_dir, 'component.json'), $vars));
+  create_file(path($app_path, '.gitignore'), read(path($skel_dir, 'gitignore.txt')), 0777);
+
+    copy_file($app_path, path($skel_dir, '.bowerrc'));
+    copy_file($app_path, path($skel_dir, '.htaccess'));
+
     copy_file($app_path, path($skel_dir, 'composer.json'));
-    copy_file($app_path, path($skel_dir, 'bowerrc.txt'));
     copy_file($app_path, path($skel_dir, 'exclude.txt'));
     copy_file($app_path, path($skel_dir, 'deploy.sh'));
 

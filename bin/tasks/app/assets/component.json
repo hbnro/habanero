@@ -1,0 +1,9 @@
+{
+  "name": "<?php echo $app_name; ?>",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "latest",
+    "jquery-ujs": "latest",
+    "modernizr": "latest"
+  }
+}

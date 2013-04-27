@@ -1,6 +1,3 @@
-# Edit and save, then execute:
-# cat htaccess.txt | grep -v '#' > .htaccess
-
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /

@@ -1,5 +1,9 @@
+*~
+*.log
 .git*
-logs
+.DS_Store
+
 app/views
 app/assets
+
 exclude.txt

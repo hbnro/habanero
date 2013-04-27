@@ -1,6 +1,0 @@
-# Edit and save, then execute:
-# cat bowerrc.txt | grep -v '#' > .bowerrc
-
-{
-  "directory": "./app/assets/js/lib"
-}
