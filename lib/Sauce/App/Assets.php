@@ -69,7 +69,7 @@ class Assets
     $dir = \Tailor\Config::get($on);
     $file = path($dir, "$from.$ext");
 
-    if ( ! $ext) {
+    if (! $ext) {
       throw new \Exception("Cannot extract '$from'");
     } elseif ( ! is_file($file)) {
       throw new \Exception("The file '$file' does not exists");
@@ -259,11 +259,9 @@ class Assets
       throw new \Exception("The file '$from' does not exists");
     }
 
-
     $ext = static::extension($on);
     $dir = \Tailor\Config::get($on);
     $url = \Tailor\Config::get(str_replace('_dir', '_url', $on));
-
 
     // TODO: accept other formats?
     if (preg_match_all('/\s+\*=\s+(\w+)\s+(\S+)/m', read($from), $match)) {
