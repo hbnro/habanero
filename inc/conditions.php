@@ -22,6 +22,11 @@ function is_mime($test)
   return preg_match('/^[a-z]+\/[a-z0-9\+-]+$/', $test) > 0;
 }
 
+function is_image($test)
+{
+  return (function_exists('exif_imagetype') ? @exif_imagetype($test) : @getimagesize($test)) !== FALSE;
+}
+
 function is_num($test, $min, $max = NULL)
 {
   if (func_num_args() == 2) {
