@@ -504,6 +504,12 @@ function paginate_to($url, $mapper, $current = 0, $limit = 10)
   // TODO: allow more params
   $pg = \Staple\Paginate::build();
 
+  if (strpos($url, '?') !== FALSE) {
+    list($url, $vars) = explode('?', $url);
+
+    $pg->set('link_href', "?$vars");
+  }
+
   $pg->set('count_page', $limit);
   $pg->set('link_root', $url);
 
