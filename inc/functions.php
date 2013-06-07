@@ -82,20 +82,46 @@ function duration()
 // registry
 function fetch()
 {
-  return call_user_func_array('\\Staple\\Registry::fetch', func_get_args());
+  return call_user_func_array('\\Sauce\\Registry::fetch', func_get_args());
 }
 
 function exists()
 {
-  return call_user_func_array('\\Staple\\Registry::exists', func_get_args());
+  return call_user_func_array('\\Sauce\\Registry::exists', func_get_args());
 }
 
 function remove()
 {
-  return call_user_func_array('\\Staple\\Registry::delete', func_get_args());
+  return call_user_func_array('\\Sauce\\Registry::delete', func_get_args());
 }
 
 function assign()
 {
-  return call_user_func_array('\\Staple\\Registry::assign', func_get_args());
+  return call_user_func_array('\\Sauce\\Registry::assign', func_get_args());
+}
+
+// events
+function override()
+{
+  return call_user_func_array('\\Sauce\\Event::override', func_get_args());
+}
+
+function trigger()
+{
+  return call_user_func_array('\\Sauce\\Event::fire', func_get_args());
+}
+
+function unbind()
+{
+  return call_user_func_array('\\Sauce\\Event::clear', func_get_args());
+}
+
+function bind()
+{
+  return call_user_func_array('\\Sauce\\Event::listen', func_get_args());
+}
+
+function has()
+{
+  return call_user_func_array('\\Sauce\\Event::has_listeners', func_get_args());
 }
