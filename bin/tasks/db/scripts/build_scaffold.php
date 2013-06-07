@@ -10,16 +10,10 @@ if ( ! is_file($out_file) OR arg('f force')) {
   $routes = render(path($skel_dir, 'routes.php'), $vars);
   $controller = render(path($skel_dir, 'controller.php'), $vars);
   $show_view = render(path($skel_dir, 'views', 'show.php'), $vars);
+  $error_view = render(path($skel_dir, 'views', 'error.php'), $vars);
   $index_view = render(path($skel_dir, 'views', 'index.php'), $vars);
   $create_view = render(path($skel_dir, 'views', 'create.php'), $vars);
   $modify_view = render(path($skel_dir, 'views', 'modify.php'), $vars);
-
-  $errors_tpl = <<<'TPL'
-- if $error
-  ul.error { data => array(errors => 'true') }
-    - foreach $error as $field => $text
-      li { data => compact('field') } = "$field $text"
-TPL;
 
   $klass = preg_quote($model_class, '/');
   $based = preg_quote($base, '/');
@@ -37,7 +31,7 @@ TPL;
     create_file(path(APP_PATH, 'app', 'views', $base, 'create.php.neddle'), $create_view);
     create_file(path(APP_PATH, 'app', 'views', $base, 'modify.php.neddle'), $modify_view);
 
-    create_file(path(APP_PATH, 'app', 'views', $base, 'errors.php.neddle'), "$errors_tpl\n");
+    create_file(path(APP_PATH, 'app', 'views', $base, 'errors.php.neddle'), $error_view);
 
     append_file(path(APP_PATH, 'config', 'routes.php'), "\n$routes", "/'root'\s*=>\s*'\/$based'/");
 } else {

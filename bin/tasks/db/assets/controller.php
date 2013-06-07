@@ -57,8 +57,8 @@
 
   function delete_all()
   {
-    if (is_array($set = params('pk'))) {
-      \<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => $set));
+    if (is_array($set = params('pk')) && array_filter($set)) {
+      \<?php echo $model_class; ?>::delete_all(array('<?php echo $pk; ?>' => array_filter($set)));
 
       return redirect_to('<?php echo $base; ?>', array('success' => 'All <?php echo $name; ?> things was deleted'));
     }

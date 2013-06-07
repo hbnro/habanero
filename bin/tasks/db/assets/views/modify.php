@@ -1,4 +1,4 @@
-- use Labourer\Web\Form as form
+- use \Labourer\Web\Form as form
 
 section
   = link_to('Cancel', url_for('show_<?php echo $name; ?>', array(':id' => $<?php echo $name; ?>-><?php echo $pk; ?>)))
