@@ -18,7 +18,7 @@ section
         tr
           td { colspan => 99 }
             = form::submit('delete_all', 'Delete selected items')
-            = html::ul($<?php echo $base; ?>->links())
+            = html::ul($<?php echo $base; ?>->navlinks())
       tbody
         - $<?php echo $base; ?>->each(($row) ~>
           tr

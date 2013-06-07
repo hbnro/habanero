@@ -161,12 +161,12 @@ function paginate_to($url, $mapper, $current = 0, $limit = 10)
     $pg->set('link_href', "?$vars");
   }
 
-  $pg->set('count_page', $limit);
+  $pg->set('per_page', $limit);
   $pg->set('link_root', $url);
+  $pg->set('current', $current);
+  $pg->set('total_items', $mapper->count());
 
-  $from = $pg->offset($mapper->count(), $current);
-
-  return $pg->bind($mapper->offset($from)->limit($limit));
+  return $pg->bind($mapper->offset($pg->offset())->limit($limit));
 }
 
 function redirect_to($path, array $params = array())
