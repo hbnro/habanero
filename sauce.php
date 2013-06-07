@@ -31,9 +31,5 @@ call_user_func(function ()
 
 
     // bundled full-stack
-    $lib_dir = __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR;
-
-    foreach (array('functions.php', 'conditions.php', 'initialize.php') as $script) {
-      require $lib_dir.$script;
-    }
+    require __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR.'initialize.php';
   });

@@ -21,6 +21,6 @@
   },
   "autoload": {
     "psr-0": {"Sauce": "lib/"},
-    "files": ["inc/conditions.php", "inc/functions.php", "inc/initialize.php"]
+    "files": ["inc/initialize.php"]
   }
 }
