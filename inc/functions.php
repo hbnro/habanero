@@ -79,22 +79,7 @@ function duration()
   return call_user_func_array('\\Locale\\Datetime::duration', func_get_args());
 }
 
-function days()
-{
-  return call_user_func_array('\\Locale\\Datetime::days', func_get_args());
-}
-
-function secs()
-{
-  return call_user_func_array('\\Locale\\Datetime::secs', func_get_args());
-}
-
-function gmt()
-{
-  return call_user_func_array('\\Locale\\Datetime::gmt', func_get_args());
-}
-
-// caching
+// registry
 function fetch()
 {
   return call_user_func_array('\\Staple\\Registry::fetch', func_get_args());

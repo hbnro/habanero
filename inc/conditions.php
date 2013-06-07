@@ -1,5 +1,12 @@
 <?php
 
+if (! function_exists('is_serialized')) {
+  function is_serialized($test)
+  {
+    return \Staple\Helpers::is_serialized($test);
+  }
+}
+
 if (! function_exists('is_assoc')) {
   function is_assoc($test)
   {
