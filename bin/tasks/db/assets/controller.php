@@ -21,7 +21,9 @@
   function create()
   {
     if (params('save')) {
-      if (\<?php echo $model_class; ?>::create(params('row'))) {
+      $<?php echo $name; ?> = \<?php echo $model_class; ?>::create(params('row'));
+
+      if ($<?php echo $name; ?>->is_valid()) {
         return redirect_to('<?php echo $base; ?>', array('success' => 'New <?php echo $name; ?> was created'));
       }
 
