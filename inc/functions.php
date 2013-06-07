@@ -19,12 +19,12 @@ function plain($text)
 // inflections
 function plural($test)
 {
-  return \Staple\Inflector::pluralize($test);
+  return \Doctrine\Common\Inflector\Inflector::pluralize($test);
 }
 
 function singular($test)
 {
-  return \Staple\Inflector::singularize($test);
+  return \Doctrine\Common\Inflector\Inflector::singularize($test);
 }
 
 // formatting
