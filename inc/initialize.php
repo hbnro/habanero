@@ -13,7 +13,7 @@ $trace = array_pop($trace);
 
 define('APP_LOADER', realpath($trace['file']));
 define('APP_PATH', realpath(getcwd()));
-define('APP_ENV', getenv('ENV') ?: 'development');
+define('APP_ENV', getenv('ENV') ?: (defined('ENV') ? ENV : 'development'));
 
 // PCRE+Unicode
 error_reporting(0);
