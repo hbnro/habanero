@@ -194,6 +194,11 @@ class Assets
     }
   }
 
+  public static function asset_path($for)
+  {
+    return path(\Tailor\Config::get(static::guess($for)), static::solve($for));
+  }
+
   public static function asset_url($path)
   {
     return static::url_for(static::solve($path), static::guess($path));

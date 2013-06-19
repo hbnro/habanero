@@ -1,6 +1,11 @@
 <?php
 
 // urls
+function asset_path($for)
+{
+  return \Sauce\App\Assets::asset_path($for);
+}
+
 function asset_url($path)
 {
   return \Sauce\App\Assets::asset_url($path);
