@@ -1,8 +1,12 @@
 <?php
 
-$autoload = require getcwd().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+$app_vendor = getcwd().DIRECTORY_SEPARATOR.'vendor';
+$core_vendor = dirname(__DIR__).DIRECTORY_SEPARATOR.'vendor';
 
-require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
+$autoload = require (is_dir($app_vendor) ? $app_vendor : $core_vendor).DIRECTORY_SEPARATOR.'autoload.php';
+
+is_dir($app_vendor) && require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
+
 require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
 
 
