@@ -102,6 +102,11 @@ function write($file, $content, $append = FALSE)
   return \IO\File::write($file, $content, $append);
 }
 
+function findfile()
+{
+  return call_user_func_array('\\IO\\Dir::findfile', func_get_args());
+}
+
 function fmtsize()
 {
   return call_user_func_array('\\IO\\Helpers::fmtsize', func_get_args());
