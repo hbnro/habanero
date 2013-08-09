@@ -33,7 +33,7 @@ if ( ! is_file($out_file) OR arg('f force')) {
 
     create_file(path(APP_PATH, 'app', 'views', $base, 'errors.php.neddle'), $error_view);
 
-    append_file(path(APP_PATH, 'config', 'routes.php'), "\n$routes", "/'root'\s*=>\s*'\/$based'/");
+    append_file(path(APP_PATH, 'app', 'routes.php'), "\n$routes", "/'root'\s*=>\s*'\/$based'/");
 } else {
   error("\n  Scaffold for '$base' already exists\n");
 }

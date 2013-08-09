@@ -200,8 +200,10 @@ class Base
 
     // load routes
     $routes_file = path(APP_PATH, 'config', 'routes.php');
+    $routes_app = path(APP_PATH, 'app', 'routes.php');
 
     is_file($routes_file) && require $routes_file;
+    is_file($routes_app) && require $routes_app;
 
     // before any initializer?
     foreach (static::$middleware as $callback) {

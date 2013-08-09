@@ -8,15 +8,16 @@ $skel_dir = path(dirname(__DIR__), 'assets');
    create_dir(path($app_path, 'logs'), 0777, TRUE);
 
    create_dir(path($app_path, 'config'));
+  create_file(path($app_path, 'config', 'routes.php'), "<?php\n");
   create_file(path($app_path, 'config', 'application.php'), "<?php\n");
     copy_file(path($app_path, 'config', 'environments'), path($skel_dir, 'config', 'development.php'));
     copy_file(path($app_path, 'config', 'environments'), path($skel_dir, 'config', 'production.php'));
 
    create_dir(path($app_path, 'config', 'initializers'), 0777, TRUE);
-    copy_file(path($app_path, 'config'), path($skel_dir, 'config', 'routes.php'));
 
    create_dir(path($app_path, 'app', 'cache'), 0777, TRUE);
    create_dir(path($app_path, 'app', 'models'), 0777, TRUE);
+    copy_file(path($app_path, 'app'), path($skel_dir, 'config', 'routes.php'));
 
   create_file(path($app_path, 'app', 'controllers', 'home.php'), template(path($skel_dir, 'home.php'), $vars));
   create_file(path($app_path, 'app', 'controllers', 'base.php'), template(path($skel_dir, 'base.php'), $vars));
