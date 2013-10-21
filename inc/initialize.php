@@ -57,7 +57,6 @@ set_exception_handler(function ($E) {
     \Sauce\Base::raise($E);
   });
 
-
 // helpers
 require __DIR__.DIRECTORY_SEPARATOR.'runtime.php';
 require __DIR__.DIRECTORY_SEPARATOR.'conditions.php';

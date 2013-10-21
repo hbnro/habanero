@@ -53,7 +53,6 @@ function link_to($text, $url = '', $args = array())
     $params['text'] = $text;
   }
 
-
   $props = array(
     'text'    => '',
     'action'  => '',
@@ -99,7 +98,6 @@ function button_to($name, $url = '', array $args = array())
   } elseif ( ! isset($params['action'])) {
     $params['action'] = $url;
   }
-
 
   $props = array(
     'type'         => FALSE,

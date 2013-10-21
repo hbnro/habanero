@@ -90,7 +90,6 @@ function yaml($test)
   return \Symfony\Component\Yaml\Yaml::parse($test);
 }
 
-
 // filesystem
 function read($file)
 {
