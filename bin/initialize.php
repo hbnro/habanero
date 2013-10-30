@@ -1,13 +1,31 @@
 <?php
 
-$app_vendor = getcwd().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
-$core_vendor = dirname(__DIR__).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+error_reporting(-1);
+date_default_timezone_set('America/Mexico_City');
 
-$autoload = require (is_file($app_vendor) ? $app_vendor : $core_vendor);
+call_user_func(function () {
+  $vendor_dirs = array(
+    getcwd(),
+    dirname(__DIR__),
+    dirname(dirname(__DIR__)),
+    dirname(dirname(dirname(__DIR__))),
+  );
 
-is_file($app_vendor) && require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
 
-require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
+  foreach ($vendor_dirs as $path) {
+    $vendor_file = join(array($path, 'vendor', 'autoload.php'), DIRECTORY_SEPARATOR);
+    if (is_file($vendor_file)) {
+      $autoload = require $vendor_file;
+      break;
+    }
+  }
+
+  if (!function_exists('run')) {
+    require dirname(__DIR__).DIRECTORY_SEPARATOR.'sauce.php';
+  }
+
+  require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
+});
 
 
 \Sauce\Base::bind(function ($bootstrap) {
