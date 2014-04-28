@@ -266,7 +266,6 @@ class Assets
 
     $ext = static::extension($on);
     $dir = \Tailor\Config::get($on);
-    $url = \Tailor\Config::get(str_replace('_dir', '_url', $on));
 
     // TODO: accept other formats?
     if (preg_match_all('/\s+\*=\s+(\w+)\s+(\S+)/m', read($from), $match)) {
@@ -280,13 +279,7 @@ class Assets
               $out[$key] []= $file;
             });
         } else {
-          if ( ! is_file($old)) {
-            $old = "$url/{$match[2][$i]}";
-
-            (substr($old, -strlen($ext)) <> $ext) && $old .= ".$ext";
-          }
-
-          $out[$key] []= $old;
+          $out[$key] []= is_file($old) ? $old : "$tmp.*";
         }
       }
     }
