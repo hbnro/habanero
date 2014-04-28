@@ -33,10 +33,11 @@ call_user_func(function () {
   });
 
 run(function () {
-    \Sauce\Shell\CLI::initialize();
+    \Sauce\Shell\CLI::initialize(dirname(__DIR__));
 
     $xargs = \Sauce\Shell\CLI::values();
     $command = array_shift($xargs);
+    $status = 0;
 
     $paths = array();
     $paths []= path(__DIR__, 'tasks');
@@ -53,15 +54,19 @@ run(function () {
     if (! $command) {
       help(arg('help'));
     } else {
-      writeln(colorize(sprintf('Executing at \cyellow(%s)\c ...', APP_ENV)));
+      writeln(colorize(sprintf('Environment: \cyellow(%s)\c', APP_ENV)));
 
       try {
         \Sauce\Shell\Task::exec($command, $xargs);
-      } catch (\Exception $e) {
-        \Sauce\Shell\CLI::error("\n  \cred,black({$e->getMessage()})\c\n");
-      }
 
-      writeln('Done.');
+        success('Done, without errors.');
+      } catch (\Exception $e) {
+        $status = 1;
+
+        error("\n  \cred,black({$e->getMessage()})\c\n");
+        notice('Aborted due warnings.');
+      }
     }
 
+    exit($status);
   });
