@@ -82,6 +82,11 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
             // required scripts, stand-alone
             if ($test) {
               foreach ($test as $old) {
+                if (! is_file($old)) {
+                  status('warning', "$old [not found]");
+                  continue;
+                }
+
                 $key = str_replace($base_path.DIRECTORY_SEPARATOR, '', $old);
                 $new = path($static_dir, $key);
 
@@ -112,6 +117,11 @@ if (arg('v f i c j a views fonts images styles scripts all')) {
             // asset mashup, grouped
             if ( ! empty($tmp['include'])) {
               foreach ($tmp['include'] as $test) {
+                if (! is_file($test)) {
+                  status('warning', "$test [not found]");
+                  continue;
+                }
+
                 $ext = \IO\File::ext($test);
                 $key = str_replace(APP_PATH.DIRECTORY_SEPARATOR, '', $test);
 

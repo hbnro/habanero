@@ -407,6 +407,7 @@ function status($type, $text = '')
     break;
     case 'empty';
     case 'remove';
+    case 'warning';
       action('red', $type, $text);
     break;
     case 'move';
