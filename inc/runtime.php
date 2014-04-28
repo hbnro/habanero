@@ -1,9 +1,9 @@
 <?php
 
 // core
-function run(\Closure $lambda)
+function run(\Closure $lambda = NULL)
 {
-  echo \Sauce\Base::initialize($lambda);
+  echo \Sauce\Base::initialize($lambda ?: function() {});
 }
 
 function option($get, $or = FALSE)
