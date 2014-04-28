@@ -53,11 +53,15 @@ run(function () {
     if (! $command) {
       help(arg('help'));
     } else {
+      writeln(colorize(sprintf('Executing at \cyellow(%s)\c ...', APP_ENV)));
+
       try {
         \Sauce\Shell\Task::exec($command, $xargs);
       } catch (\Exception $e) {
         \Sauce\Shell\CLI::error("\n  \cred,black({$e->getMessage()})\c\n");
       }
+
+      writeln('Done.');
     }
 
   });
