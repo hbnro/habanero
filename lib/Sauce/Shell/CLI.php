@@ -47,9 +47,11 @@ class CLI
 
   private static $fmt_regex = NULL;
   private static $start = 0;
+  private static $cwd = NULL;
 
-  public static function initialize()
+  public static function initialize($cwd)
   {
+    static::$cwd = is_dir($cwd) ? $cwd : getcwd();
     static::$atty = function_exists('posix_isatty') && @posix_isatty($stream);
 
     if (! static::$fmt_regex) {
@@ -113,6 +115,10 @@ class CLI
       break;
     }
     static::help('Available options', static::$set);
+  }
+
+  public static function getcwd() {
+    return static::$cwd;
   }
 
   public static function main(\Closure $callback)
