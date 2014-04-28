@@ -30,6 +30,16 @@ call_user_func(function ()
     }
 
 
+    if (! empty($_SERVER['argv'])) {
+      $params = new \Clipper\Params;
+      $params->parse(array(
+        'env' => array('e', 'env'),
+      ));
+
+      $params['env'] && define('ENV', $params['env']);
+    }
+
+
     // bundled full-stack
     require __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR.'initialize.php';
   });
