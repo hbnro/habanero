@@ -17,6 +17,7 @@
     "habanero/cashier": "dev-master",
     "habanero/servant": "dev-master",
     "habanero/labourer": "dev-master",
+    "habanero/clipper": "dev-master",
     "oyatel/amazon-s3-php-class": "dev-master"
   },
   "autoload": {
