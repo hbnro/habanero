@@ -2,7 +2,7 @@
 
 # sudo
   if [ `whoami` != 'root' ]; then
-    sudo $0 $* || exit 1
+    echo "Run \`$0 $*\` with sudo" || exit 1
     exit 0
   fi
 
@@ -12,7 +12,7 @@
   BINPATH="$(dirname $PHPBIN)"
 
   if [ -z "$($PHPBIN -v)" ]; then
-    echo "PHP not found!"
+    echo "PHP not found"
     exit 1
   fi
 
@@ -30,26 +30,37 @@
   SHARED="/usr/share/php"
 
   echo "Using $SHARED as include_path"
-  echo "Please configure it manually in your php.ini"
+  echo "- Please configure it manually in your php.ini"
 
   INCPATH="$SHARED/habanero"
 
-
-# dependencies
-  COMPOSER_URL="http://getcomposer.org/composer.phar"
-
-  if [ ! -f "$BINPATH/composer" ]; then
-    printf "\rDownloading the composer... "
-
-    curl --max-time 60 -sL $COMPOSER_URL > $BINPATH/composer
-    chmod +x $BINPATH/composer
-    echo 'done'
+  if [ -d "$INCPATH" ]; then
+    rm -rf "$INCPATH"
   fi
 
-  $BINPATH/composer update --prefer-source
+
+# dependencies
+  if [ ! -d "$PWD/vendor" ]; then
+    COMPOSER_URL="http://getcomposer.org/composer.phar"
+
+    if [ ! -f "$BINPATH/composer" ]; then
+      printf "\rDownloading the composer... "
+
+      curl --max-time 60 -sL $COMPOSER_URL > $BINPATH/composer
+      chmod +x $BINPATH/composer
+      echo 'done'
+    fi
+
+    echo "- Please run \`composer install --prefer-source\` manually"
+  fi
+
 
 # setup
   SYMLINK="$BINPATH/hs"
+
+  if [ -f "$SYMLINK" ]; then
+    unlink "$SYMLINK"
+  fi
 
   echo "Configuring at $INCPATH"
 
@@ -61,3 +72,7 @@
   echo "Created symlink at $SYMLINK"
 
   echo 'Ready'
+
+
+# exit
+  sudo -k
