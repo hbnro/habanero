@@ -64,7 +64,7 @@
 
   echo "Configuring at $INCPATH"
 
-  ln -s . $INCPATH
+  ln -s $PWD $INCPATH
 
   echo "#!/bin/sh\nphp $INCPATH/bin/initialize.php -- \"\$@\"" > $SYMLINK
   chmod +x $SYMLINK
