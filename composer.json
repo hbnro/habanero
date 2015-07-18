@@ -12,13 +12,16 @@
     "tedivm/jshrink": "dev-master",
     "habanero/io": "dev-master",
     "habanero/broil": "dev-master",
-    "habanero/tailor": "dev-master",
+    "habanero/tailor": "v0.1.1",
     "habanero/locale": "dev-master",
     "habanero/cashier": "dev-master",
     "habanero/servant": "dev-master",
     "habanero/labourer": "dev-master",
-    "habanero/clipper": "dev-master",
+    "habanero/clipper": "v0.2.1",
     "oyatel/amazon-s3-php-class": "dev-master"
+  },
+  "require-dev": {
+    "habanero/spectre": "v0.2.4"
   },
   "autoload": {
     "psr-0": {"Sauce": "lib/"},
