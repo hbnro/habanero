@@ -7,6 +7,8 @@
  * @link   https://github.com/pateketrueke/habanero
  */
 
+$autoload = require getcwd().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+
 if (! isset($autoload)) {
   throw new \Exception("The object \$autoload is missing from the scope");
 } elseif (! ($autoload instanceof \Composer\Autoload\ClassLoader)) {
@@ -43,3 +45,5 @@ call_user_func(function ()
     // bundled full-stack
     require __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR.'initialize.php';
   });
+
+return $autoload;

@@ -7,18 +7,19 @@ class Logger
 
   private static $obj = NULL;
   private static $set = array(
-                    \Psr\Log\LogLevel::EMERGENCY,
-                    \Psr\Log\LogLevel::ALERT,
-                    \Psr\Log\LogLevel::CRITICAL,
-                    \Psr\Log\LogLevel::ERROR,
-                    \Psr\Log\LogLevel::WARNING,
-                    \Psr\Log\LogLevel::NOTICE,
-                    \Psr\Log\LogLevel::INFO,
-                    \Psr\Log\LogLevel::DEBUG,
+                    // \Psr\Log\LogLevel::EMERGENCY,
+                    // \Psr\Log\LogLevel::ALERT,
+                    // \Psr\Log\LogLevel::CRITICAL,
+                    // \Psr\Log\LogLevel::ERROR,
+                    // \Psr\Log\LogLevel::WARNING,
+                    // \Psr\Log\LogLevel::NOTICE,
+                    // \Psr\Log\LogLevel::INFO,
+                    // \Psr\Log\LogLevel::DEBUG,
                   );
 
   public static function __callStatic($method, array $arguments)
   {
+    return;
     if (($level = array_search($method, static::$set)) === FALSE) {
       throw new \Exception("Unknown logger '$method' level");
     }

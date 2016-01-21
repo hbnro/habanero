@@ -126,18 +126,18 @@ class Base
       }
     }
 
-    \Tailor\Config::set('fonts_url', "$doc_root/font");
-    \Tailor\Config::set('images_url', "$doc_root/img");
-    \Tailor\Config::set('styles_url', "$doc_root/css");
-    \Tailor\Config::set('scripts_url', "$doc_root/js");
+    // \Tailor\Config::set('fonts_url', "$doc_root/font");
+    // \Tailor\Config::set('images_url', "$doc_root/img");
+    // \Tailor\Config::set('styles_url', "$doc_root/css");
+    // \Tailor\Config::set('scripts_url', "$doc_root/js");
 
-    // templating
-    \Tailor\Config::set('cache_dir', path(APP_PATH, 'app', 'cache'));
-    \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
-    \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
-    \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
-    \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
-    \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
+    // // templating
+    // \Tailor\Config::set('cache_dir', path(APP_PATH, 'app', 'cache'));
+    // \Tailor\Config::set('views_dir', path(APP_PATH, 'app', 'views'));
+    // \Tailor\Config::set('fonts_dir', path(APP_PATH, 'app', 'assets', 'font'));
+    // \Tailor\Config::set('images_dir', path(APP_PATH, 'app', 'assets', 'img'));
+    // \Tailor\Config::set('styles_dir', path(APP_PATH, 'app', 'assets', 'css'));
+    // \Tailor\Config::set('scripts_dir', path(APP_PATH, 'app', 'assets', 'js'));
 
     // web goodies
     \Labourer\Config::set('csrf_salt', '');
@@ -184,7 +184,7 @@ class Base
       });
 
     // start up
-    \Tailor\Base::initialize();
+    // \Tailor\Base::initialize();
     \Labourer\Base::initialize();
 
     // routing
