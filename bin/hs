@@ -1,2 +1,2 @@
 #!/usr/bin/env php
-<?php require 'run.php';
+<?php require 'main/run.php';
