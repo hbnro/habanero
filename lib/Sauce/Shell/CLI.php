@@ -1,5 +1,7 @@
 <?php
 
+// TODO: replace with clipper
+
 namespace Sauce\Shell;
 
 class CLI
