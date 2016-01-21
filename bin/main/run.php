@@ -44,6 +44,13 @@ call_user_func(function () use ($argv) {
     $cli->writeln("\nUsage: $cmd [options] <folders|files>\n");
     $cli->writeln($cli->params->usage());
     $cli->writeln();
-    exit;
+    exit(1);
   }
+
+  \Sauce\Shell\Tasks::initialize($cli);
+
+  require join(DIRECTORY_SEPARATOR, [dirname(dirname(__DIR__)), 'inc', 'runtime.php']);
+
+  require __DIR__.DIRECTORY_SEPARATOR.'functions.php';
+  require __DIR__.DIRECTORY_SEPARATOR.'initialize.php';
 });

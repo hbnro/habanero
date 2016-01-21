@@ -8,14 +8,14 @@
   "require": {
     "php": ">=5.3",
     "psr/log": "v1.0.0",
-    "habanero/spectre": "v0.2.4"
+    "habanero/spectre": "v0.2.4",
+    "habanero/io": "dev-master"
   },
   "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
       "": "lib"
-    },
-    "files": ["inc/initialize.php"]
+    }
   },
   "bin": ["bin/hs"],
   "config": {

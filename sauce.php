@@ -4,46 +4,49 @@
  * Web development framework for php5.3+
  *
  * @author Alvaro Cabrera (@pateketrueke)
- * @link   https://github.com/pateketrueke/habanero
+ * @link   https://github.com/hbnro/habanero
  */
 
-$autoload = require getcwd().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+var_dump('TODO');
+exit;
 
-if (! isset($autoload)) {
-  throw new \Exception("The object \$autoload is missing from the scope");
-} elseif (! ($autoload instanceof \Composer\Autoload\ClassLoader)) {
-  throw new \Exception("The \$autoload is not a \\Composer\\Autoload\\ClassLoader");
-}
+// $autoload = require getcwd().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
 
-call_user_func(function ()
-  use ($autoload) {
+// if (! isset($autoload)) {
+//   throw new \Exception("The object \$autoload is missing from the scope");
+// } elseif (! ($autoload instanceof \Composer\Autoload\ClassLoader)) {
+//   throw new \Exception("The \$autoload is not a \\Composer\\Autoload\\ClassLoader");
+// }
 
-    // local vendors
-    $vendor_dir = __DIR__.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
-    $classmap_file = $vendor_dir.DIRECTORY_SEPARATOR.'autoload_classmap.php';
-    $namespaces_file = $vendor_dir.DIRECTORY_SEPARATOR.'autoload_namespaces.php';
+// call_user_func(function ()
+//   use ($autoload) {
 
-    is_file($classmap_file) && $autoload->addClassMap(require $classmap_file);
+//     // local vendors
+//     $vendor_dir = __DIR__.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
+//     $classmap_file = $vendor_dir.DIRECTORY_SEPARATOR.'autoload_classmap.php';
+//     $namespaces_file = $vendor_dir.DIRECTORY_SEPARATOR.'autoload_namespaces.php';
 
-    if (is_file($namespaces_file) && ($test = require $namespaces_file)) {
-      foreach ($test as $key => $val) {
-        $autoload->add($key, $val);
-      }
-    }
+//     is_file($classmap_file) && $autoload->addClassMap(require $classmap_file);
 
-
-    if (! empty($_SERVER['argv'])) {
-      $params = new \Clipper\Params;
-      $params->parse(array(
-        'env' => array('e', 'env'),
-      ));
-
-      $params['env'] && define('ENV', $params['env']);
-    }
+//     if (is_file($namespaces_file) && ($test = require $namespaces_file)) {
+//       foreach ($test as $key => $val) {
+//         $autoload->add($key, $val);
+//       }
+//     }
 
 
-    // bundled full-stack
-    require __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR.'initialize.php';
-  });
+//     if (! empty($_SERVER['argv'])) {
+//       $params = new \Clipper\Params;
+//       $params->parse(array(
+//         'env' => array('e', 'env'),
+//       ));
 
-return $autoload;
+//       $params['env'] && define('ENV', $params['env']);
+//     }
+
+
+//     // bundled full-stack
+//     require __DIR__.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR.'initialize.php';
+//   });
+
+// return $autoload;

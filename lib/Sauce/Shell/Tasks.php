@@ -2,8 +2,10 @@
 
 namespace Sauce\Shell;
 
-class Task
+class Tasks
 {
+
+  private static $cli = NULL;
 
   private static $tasks = array();
 
@@ -15,16 +17,20 @@ class Task
 
 INTRO;
 
+  public static function initialize($cli) {
+    self::$cli = $cli;
+  }
+
   public static function help($all = FALSE)
   {
     if ($all) {
       if ( ! sizeof(static::$tasks)) {
-        \Sauce\Shell\CLI::error("\n  \cred,black(Not available tasks!)\c\n");
+        var_dump('error', "\n  \cred,black(Not available tasks!)\c\n");
       } else {
         static::search();
       }
     } else {
-      \Sauce\Shell\CLI::printf(static::$welcome . "\n");
+      var_dump('printf', static::$welcome . "\n");
     }
   }
 
@@ -95,7 +101,7 @@ INTRO;
 
   private static function search($q = '')
   {
-    \Sauce\Shell\CLI::printf("\n  \ccyan(Available tasks:)\c\n\n");
+    var_dump('printf', "\n  \ccyan(Available tasks:)\c\n\n");
 
     $max = 0;
 
@@ -113,15 +119,15 @@ INTRO;
           $pad = str_repeat(' ', ($max + 2) - strlen($cmd));
 
           if ( ! empty($val['desc'])) {
-            \Sauce\Shell\CLI::printf("  \cbrown(%s)\c$pad\cdark_gray(#)\c \clight_gray(%s)\c\n", $cmd, $val['desc']);
+            var_dump('printf', "  \cbrown(%s)\c$pad\cdark_gray(#)\c \clight_gray(%s)\c\n", $cmd, $val['desc']);
           } else {
-            \Sauce\Shell\CLI::printf("  \cbrown(%s)\c\n", $cmd);
+            var_dump('printf', "  \cbrown(%s)\c\n", $cmd);
           }
         }
       }
     }
 
-    \Sauce\Shell\CLI::writeln();
+    var_dump('writeln');
   }
 
 }
