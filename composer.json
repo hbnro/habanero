@@ -7,24 +7,18 @@
   }],
   "require": {
     "php": ">=5.3",
-    "psr/log": "dev-master",
-    "symfony/yaml": "dev-master",
-    "tedivm/jshrink": "dev-master",
-    "habanero/io": "dev-master",
-    "habanero/broil": "dev-master",
-    "habanero/tailor": "v0.1.1",
-    "habanero/locale": "dev-master",
-    "habanero/cashier": "dev-master",
-    "habanero/servant": "dev-master",
-    "habanero/labourer": "dev-master",
-    "habanero/clipper": "v0.2.1",
-    "oyatel/amazon-s3-php-class": "dev-master"
-  },
-  "require-dev": {
+    "psr/log": "v1.0.0",
     "habanero/spectre": "v0.2.4"
   },
+  "minimum-stability": "dev",
   "autoload": {
-    "psr-0": {"Sauce": "lib/"},
+    "psr-4": {
+      "": "lib"
+    },
     "files": ["inc/initialize.php"]
+  },
+  "bin": ["bin/hs"],
+  "config": {
+    "bin-dir": "bin"
   }
 }
