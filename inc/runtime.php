@@ -111,10 +111,10 @@
 //   return call_user_func_array('\\IO\\Helpers::fmtsize', func_get_args());
 // }
 
-function path()
-{
-  return call_user_func_array('\\IO\\Helpers::join', func_get_args());
-}
+// function path()
+// {
+//   return call_user_func_array('\\IO\\Helpers::join', func_get_args());
+// }
 
 // function extn()
 // {
